@@ -1,0 +1,1 @@
+document.getElementById('app').innerText = 'OpenHouse site loaded successfully.';

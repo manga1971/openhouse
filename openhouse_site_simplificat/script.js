@@ -1,1 +1,0 @@
-console.log('Site OpenHouse simplificat încărcat.');

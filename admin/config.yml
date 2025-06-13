@@ -1,1 +1,52 @@
 
+backend:
+  name: github
+  repo: manga1971/openhouse # Asigură-te că acesta este depozitul tău
+  branch: main # Asigură-te că aceasta este ramura ta principală
+
+media_folder: "uploads" # Folderul unde sunt încărcate imaginile (relativ la rădăcina Git)
+public_folder: "/uploads" # Calea publică către folderul de media (relativ la rădăcina site-ului)
+
+collections:
+  - name: "site_content" # O singură colecție pentru a gestiona tot conținutul principal
+    label: "Conținut Site Principal"
+    files:
+      - label: "Date Pagină"
+        name: "page_data"
+        file: "content.json" # Calea către fișierul tău content.json
+
+        fields:
+          # Secțiunea 1 - Hero
+          - name: "hero"
+            label: "Secțiunea 1 – Acasă (Hero)"
+            widget: "object"
+            fields:
+              - { label: "Titlu", name: "title", widget: "string" }
+              - { label: "Subtitlu", name: "subtitle", widget: "text" }
+              - { label: "Link Video (YouTube Embed)", name: "videoBackground", widget: "string", hint: "Asigură-te că este un link de EMBED, ex: https://www.youtube.com/embed/VIDEO_ID?autoplay=1&loop=1&playlist=VIDEO_ID&controls=0&mute=1" }
+
+          # Secțiunea 2 - Ce facem
+          - name: "section2"
+            label: "Secțiunea 2 – Ce facem"
+            widget: "object"
+            fields:
+              - { label: "Titlu", name: "title", widget: "string" }
+              - { label: "Text", name: "text", widget: "markdown", hint: "Folosește formatarea Markdown pentru a adăuga rânduri noi, bold etc." } # Recomandat markdown
+              - { label: "Imagine", name: "image", widget: "image", hint: "Încarcă imaginea pentru secțiunea 2. Va fi stocată în /uploads" }
+              - { label: "Link Buton", name: "link", widget: "string" }
+
+          # Secțiunea 3 - Contact
+          - name: "contact"
+            label: "Secțiunea 3 – Contact"
+            widget: "object"
+            fields:
+              - { label: "Titlu/Heading Contact", name: "heading", widget: "string" }
+              - { label: "Email", name: "email", widget: "string" }
+              - { label: "Telefon", name: "phone", widget: "string" }
+              - name: "social"
+                label: "Linkuri Social Media"
+                widget: "object"
+                fields:
+                  - { label: "YouTube URL", name: "youtube", widget: "string" }
+                  - { label: "Instagram URL", name: "instagram", widget: "string" }
+                  - { label: "TikTok URL", name: "tiktok", widget: "string" }

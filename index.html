@@ -18,20 +18,21 @@
   </header>
 
   <section id="hero" class="snap-scroll hero-section">
+    <iframe id="hero-video" frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; mute"
+      allowfullscreen></iframe>
     <div class="overlay">
       <h1 id="hero-title"></h1>
       <p id="hero-subtitle"></p>
     </div>
-    <iframe id="hero-video" frameborder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; mute"
-      allowfullscreen></iframe>
   </section>
 
   <section id="section2" class="snap-scroll split-screen">
     <div class="text-side">
       <h2 id="section2-title"></h2>
       <p id="section2-text"></p>
-      <a id="section2-link" class="cta-button" target="_blank">Povesti de succes</a> </div>
+      <a id="section2-link" class="cta-button" target="_blank">Povesti de succes</a>
+    </div>
     <div class="image-side">
       <img id="section2-image" src="" alt="Imagine" />
     </div>
@@ -45,14 +46,13 @@
         <input type="text" placeholder="Numele tău" required />
         <input type="email" placeholder="Emailul tău" required />
         <textarea placeholder="Mesajul tău" required></textarea>
-        <button type="submit">Trimite</button>
-      </form>
+        <button type="submit" class="outline-button">Trimite</button> </form>
     </div>
   </section>
 
   <section id="contact-info-section" class="snap-scroll contact-info-split">
     <div class="text-side-contact-info">
-      <p id="contact-info-text"></p>
+      <h3 id="contact-info-title"></h3> <p id="contact-info-text"></p>
     </div>
     <div class="details-side-contact-info">
       <p>📞 Telefon: <span id="contact-info-phone"></span></p>

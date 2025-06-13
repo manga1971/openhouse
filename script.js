@@ -3,7 +3,7 @@ fetch("content.json")
   .then(data => {
     // Snap-scroll 1 (Hero)
     document.getElementById("hero-title").innerText = data.hero.title;
-    // Am folosit innerHTML pentru a permite newline-uri in subtitle
+    // Păstrăm HTML pentru că subtitlul poate avea nevoie de <br> pe desktop
     document.getElementById("hero-subtitle").innerHTML = data.hero.subtitle.replace(/\n/g, '<br>');
     document.getElementById("hero-video").src = data.hero.videoBackground;
 
@@ -15,10 +15,17 @@ fetch("content.json")
 
     // Snap-scroll 3 (Contact Form)
     document.getElementById("contact-form-heading").innerText = data.contactForm.heading;
-    document.getElementById("contact-form-subtitle").innerHTML = data.contactForm.subtitle.replace(/\n/g, '<br>');
+    // Pe mobil, subtitlul din contactForm va fi ascuns, pe desktop va fi afisat
+    if (window.innerWidth > 768) { // Doar pe desktop
+        document.getElementById("contact-form-subtitle").innerHTML = data.contactForm.subtitle.replace(/\n/g, '<br>');
+    } else { // Pe mobil ascundem acest subtitlu (conform cererii)
+        document.getElementById("contact-form-subtitle").style.display = 'none';
+    }
+
 
     // Snap-scroll 4 (Contact Info & Social)
-    document.getElementById("contact-info-text").innerHTML = data.contactInfo.text.replace(/✅/g, '<br>✅'); // Adaugă <br> înainte de fiecare ✅ pentru rânduri noi
+    document.getElementById("contact-info-title").innerText = data.contactInfo.title; // Noul titlu pentru s4
+    document.getElementById("contact-info-text").innerHTML = data.contactInfo.text.replace(/\n/g, '<br>'); // Folosim br pentru rânduri noi
     document.getElementById("contact-info-phone").innerText = data.contactInfo.phone;
     document.getElementById("contact-info-email").innerText = data.contactInfo.email;
     document.getElementById("social-youtube").href = data.contactInfo.social.youtube;

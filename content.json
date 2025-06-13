@@ -1,0 +1,23 @@
+{
+  "hero": {
+    "title": "Ce înseamnă ACASĂ pentru tine?",
+    "subtitle": "Un spațiu de liniște, apartenență și reîntoarcere.",
+    "videoBackground": "https://www.youtube.com/embed/evY2dgvNdLU"
+  },
+  "section2": {
+    "title": "Peste 200.000 de locuințe la vânzare",
+    "text": "Dar doar câteva dintre ele sunt potrivite pentru tine. Găsește ACASĂ alături de OpenHouse.",
+    "image": "uploads/exemplu.jpg",
+    "link": "https://openhouse.ro/cauta"
+  },
+  "contact": {
+    "heading": "Hai să vorbim!",
+    "email": "intravilan@gmail.com",
+    "phone": "+40726340034",
+    "social": {
+      "youtube": "https://youtube.com/@openhouse",
+      "instagram": "https://instagram.com/openhouse",
+      "tiktok": "https://tiktok.com/@openhouse"
+    }
+  }
+}

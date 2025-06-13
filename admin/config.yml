@@ -1,4 +1,3 @@
-
 backend:
   name: github
   repo: manga1971/openhouse # Asigură-te că acesta este depozitul tău
@@ -22,8 +21,9 @@ collections:
             widget: "object"
             fields:
               - { label: "Titlu", name: "title", widget: "string" }
-              - { label: "Subtitlu", name: "subtitle", widget: "text" }
-              - { label: "Link Video (YouTube Embed)", name: "videoBackground", widget: "string", hint: "Asigură-te că este un link de EMBED, ex: https://www.youtube.com/embed/VIDEO_ID?autoplay=1&loop=1&playlist=VIDEO_ID&controls=0&mute=1" }
+              - { label: "Subtitlu", name: "subtitle", widget: "text", hint: "Textul va apărea pe două rânduri, al 2-lea și al 3-lea. Folosește Enter pentru rânduri noi." }
+
+              - { label: "Link Video (YouTube Embed)", name: "videoBackground", widget: "string", hint: "Asigură-te că este un link de EMBED cu parametri (ex: https://www.youtube.com/embed/vNscPtijCe4?si=i9SfPcBphva5po0C)" }
 
           # Secțiunea 2 - Ce facem
           - name: "section2"
@@ -31,16 +31,24 @@ collections:
             widget: "object"
             fields:
               - { label: "Titlu", name: "title", widget: "string" }
-              - { label: "Text", name: "text", widget: "markdown", hint: "Folosește formatarea Markdown pentru a adăuga rânduri noi, bold etc." } # Recomandat markdown
+              - { label: "Text", name: "text", widget: "markdown", hint: "Folosește formatarea Markdown pentru a adăuga rânduri noi, bold etc." }
               - { label: "Imagine", name: "image", widget: "image", hint: "Încarcă imaginea pentru secțiunea 2. Va fi stocată în /uploads" }
-              - { label: "Link Buton", name: "link", widget: "string" }
+              - { label: "Link Buton (Povesti de succes)", name: "link", widget: "string" }
 
-          # Secțiunea 3 - Contact
-          - name: "contact"
-            label: "Secțiunea 3 – Contact"
+          # Secțiunea 3 - Formular de contact (Desktop: stanga, Mobile: deasupra)
+          - name: "contactForm"
+            label: "Secțiunea 3 – Formular Contact"
             widget: "object"
             fields:
-              - { label: "Titlu/Heading Contact", name: "heading", widget: "string" }
+              - { label: "Titlu", name: "heading", widget: "string" }
+              - { label: "Subtitlu (peste camp contact)", name: "subtitle", widget: "text", hint: "Textul va apărea pe 2 rânduri. Folosește Enter pentru rânduri noi." }
+
+          # Secțiunea 4 - Informații Contact și Social Media (Desktop: dreapta, Mobile: deasupra)
+          - name: "contactInfo"
+            label: "Secțiunea 4 – Informații Contact & Social Media"
+            widget: "object"
+            fields:
+              - { label: "Text Intro", name: "text", widget: "text", hint: "Ex: 🟡 OpenHouse ✅ Experiență reală. ✅ Tranzacții reușite. Folosește Enter pentru fiecare rând nou." }
               - { label: "Email", name: "email", widget: "string" }
               - { label: "Telefon", name: "phone", widget: "string" }
               - name: "social"

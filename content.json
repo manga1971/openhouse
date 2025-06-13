@@ -1,12 +1,12 @@
 {
   "hero": {
     "title": "Un nou inceput pentru tine?",
-    "subtitle": "Cand vinzi sau cumperi o proprietate ai nevoie de informatii corecte.\nExperienta noastra face diferenta - in favoarea ta.",
+    "subtitle": "Cand vinzi sau cumperi o proprietate ai nevoie de informatii corecte.",
     "videoBackground": "https://www.youtube.com/embed/vNscPtijCe4?si=i9SfPcBphva5po0C"
   },
   "section2": {
     "title": "Solutii integrate - rezultate exceptionale",
-    "text": "Construim strategii perfect adaptate nevoilor și aspirațiilor tale:\n\nConsultanță strategică & evaluare personalizată;\n\nAchiziții, vânzări și reconversii imobiliare;\n\nInvestiții în terenuri, locuințe, spații logistice;\n\nDe la idee la rezultat – un singur pas.\n\n🟡 OpenHouse – Inspirație. Informație. Imobiliare.",
+    "text": "Construim strategii perfect adaptate nevoilor și aspirațiilor tale:\n\nConsultanță strategică & evaluare personalizată;\n\nAchiziții, vânzări și reconversii imobiliare;\n\nInvestiții în terenuri, locuințe, spații logistice;\n\nDe la idee la rezultat – un singur pas.\n\n🟡 OpenHouse ✅ Inspirație ✅ Informație ✅ Imobiliare.",
     "image": "uploads/example.jpg",
     "link": "https://openhouse.ro/povesti-de-succes"
   },
@@ -15,13 +15,14 @@
     "subtitle": "De 25 de ani ascultăm, înțelegem și construim drumul către ACASĂ pentru toți cei care îndrăznesc să viseze."
   },
   "contactInfo": {
-    "text": "🟡 OpenHouse ✅ Experiență reală. ✅ Tranzacții reușite.",
+    "title": "🟡 OpenHouse",
+    "text": "✅ Experienta reala.\n✅ Tranzactii de succes.",
     "email": "intravilan@gmail.com",
     "phone": "+40726340034",
     "social": {
-      "youtube": "https://youtube.com/@openhouse",
-      "instagram": "https://instagram.com/openhouse",
-      "tiktok": "https://tiktok.com/@openhouse"
+      "youtube": "https://www.youtube.com/channel/UCOcWcHA1ueYo9n-bJ3ZYVOw",
+      "instagram": "https://www.instagram.com/mihaighita71/",
+      "tiktok": "https://www.tiktok.com/@openhousero"
     }
   }
 }

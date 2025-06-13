@@ -1,0 +1,21 @@
+backend:
+  name: github
+  repo: manga1971/openhouse
+  branch: main
+
+media_folder: "uploads"
+public_folder: "/uploads"
+
+collections:
+  - name: "content"
+    label: "Conținut Site"
+    files:
+      - file: "content.json"
+        label: "Texte & Videouri"
+        name: "site_content"
+        fields:
+          - { label: "Titlu Pagina 1", name: "title1", widget: "string" }
+          - { label: "Text Pagina 1", name: "text1", widget: "text" }
+          - { label: "Video Pagina 1", name: "video1", widget: "string" }
+          - { label: "Email", name: "email", widget: "string" }
+          - { label: "Telefon", name: "phone", widget: "string" }

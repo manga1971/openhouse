@@ -12,9 +12,9 @@
 <body>
   <header>
     <img src="uploads/logo.png" alt="OpenHouse Logo" class="logo" /> <nav>
-      <a href="#hero">Acasă</a> <a href="#section2">Ce facem</a>
-      <a href="#contact">Contact</a>
-    </nav>
+      <a href="#hero">Acasă</a>
+      <a href="#section2">Ce facem</a>
+      <a href="#contact-form-section">Contact</a> <a href="#contact-info-section">Despre noi</a> </nav>
   </header>
 
   <section id="hero" class="snap-scroll hero-section">
@@ -31,28 +31,32 @@
     <div class="text-side">
       <h2 id="section2-title"></h2>
       <p id="section2-text"></p>
-      <a id="section2-link" class="cta-button" target="_blank">Vezi detalii</a>
-    </div>
+      <a id="section2-link" class="cta-button" target="_blank">Povesti de succes</a> </div>
     <div class="image-side">
       <img id="section2-image" src="" alt="Imagine" />
     </div>
   </section>
 
-  <section id="contact" class="snap-scroll contact-section">
-    <div class="form-side">
-      <h3 id="contact-heading"></h3>
+  <section id="contact-form-section" class="snap-scroll contact-form-split">
+    <div class="text-and-form-side">
+      <h3 id="contact-form-heading"></h3>
+      <p id="contact-form-subtitle"></p>
       <form>
         <input type="text" placeholder="Numele tău" required />
         <input type="email" placeholder="Emailul tău" required />
         <textarea placeholder="Mesajul tău" required></textarea>
         <button type="submit">Trimite</button>
       </form>
-      <p style="margin-top: 2rem;">„Suntem aici să te ascultăm, să înțelegem ce ai nevoie și să construim împreună drumul spre acel acasă care ți se potrivește.”</p>
-      <p>🟡 OpenHouse ✅ Experiență reală. ✅ Tranzacții reușite.</p>
     </div>
-    <div class="info-side">
-      <p>📞 Telefon: <span id="contact-phone"></span></p>
-      <p>📧 Email: <span id="contact-email"></span></p>
+  </section>
+
+  <section id="contact-info-section" class="snap-scroll contact-info-split">
+    <div class="text-side-contact-info">
+      <p id="contact-info-text"></p>
+    </div>
+    <div class="details-side-contact-info">
+      <p>📞 Telefon: <span id="contact-info-phone"></span></p>
+      <p>📧 Email: <span id="contact-info-email"></span></p>
       <p>📍 Adresă: București / România</p>
       <div class="social-links">
         <a id="social-youtube" target="_blank">📹 YouTube</a>

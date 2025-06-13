@@ -1,0 +1,23 @@
+{
+  "hero": {
+    "title": "Un nou început pentru tine?",
+    "subtitle": "Când vinzi sau cumperi o proprietate, ai nevoie de informații corecte și de încredere pentru a lua decizii bune și sigure. Experiența noastră face diferența. În favoarea ta.",
+    "videoBackground": "https://www.youtube.com/watch?v=vNscPtijCe4"
+  },
+  "section2": {
+    "title": "Soluții integrate. Rezultate personalizate.",
+    "text": "Construim strategii perfect adaptate nevoilor și aspirațiilor tale:\n\nConsultanță strategică & evaluare personalizată;\n\nAchiziții, vânzări și reconversii imobiliare;\n\nInvestiții în terenuri, locuințe, spații logistice;\n\nÎnchiriere, mobilare, amenajare, administrare;\n\nDe la idee la rezultat – un singur pas.\n\nOrice proiect ai avea, te îndrumăm cu atenție, dedicare și experiență pentru o tranzacție de succes. Deschide un nou capitol. Cu încredere. Tu decizi. Noi te sustinem.\n\n🟡 OpenHouse – Inspirație. Informație. Imobiliare.",
+    "image": "uploads/example.jpg",
+    "link": "https://openhouse.ro/cauta"
+  },
+  "contact": {
+    "heading": "Fiecare decizie bună începe cu o conversație sincera.",
+    "email": "intravilan@gmail.com",
+    "phone": "+40726340034",
+    "social": {
+      "youtube": "https://youtube.com/@openhouse",
+      "instagram": "https://instagram.com/openhouse",
+      "tiktok": "https://tiktok.com/@openhouse"
+    }
+  }
+}

@@ -1,0 +1,109 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  scroll-behavior: smooth;
+}
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+  z-index: 1000;
+}
+.logo {
+  color: white;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+nav a {
+  color: white;
+  text-decoration: none;
+  margin-left: 15px;
+}
+.full-screen {
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+.video-section video {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+.text-bottom-left {
+  position: absolute;
+  bottom: 60px;
+  left: 40px;
+  color: white;
+}
+.scroll-down {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2rem;
+  color: white;
+}
+.red-link {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 5px 10px;
+  border: 2px solid red;
+  color: red;
+  text-decoration: none;
+}
+.split-section {
+  display: flex;
+  flex-wrap: wrap;
+  height: 100vh;
+}
+.split-section .left, .split-section .right {
+  flex: 1;
+  padding: 40px;
+}
+.split-section img {
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+.contact-section {
+  display: flex;
+  flex-wrap: wrap;
+  height: 100vh;
+}
+.form-side {
+  flex: 1;
+  padding: 40px;
+}
+.form-side form {
+  display: flex;
+  flex-direction: column;
+}
+.form-side input, .form-side textarea {
+  margin-bottom: 10px;
+  padding: 10px;
+}
+.contact-info {
+  flex: 1;
+  background: #111;
+  color: white;
+  padding: 40px;
+}
+.social-icons a {
+  color: red;
+  text-decoration: none;
+  margin-right: 10px;
+}
+footer {
+  text-align: center;
+  padding: 15px;
+  background: #f4f4f4;
+}

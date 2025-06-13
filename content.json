@@ -1,17 +1,21 @@
 {
   "hero": {
-    "title": "Un nou început pentru tine?",
-    "subtitle": "Când vinzi sau cumperi o proprietate, ai nevoie de informații corecte și de încredere pentru a lua decizii bune și sigure. Experiența noastră face diferența. În favoarea ta.",
+    "title": "Un nou inceput pentru tine?",
+    "subtitle": "Cand vinzi sau cumperi o proprietate ai nevoie de informatii corecte.\nExperienta noastra face diferenta - in favoarea ta.",
     "videoBackground": "https://www.youtube.com/embed/vNscPtijCe4?si=i9SfPcBphva5po0C"
   },
   "section2": {
-    "title": "Soluții integrate. Rezultate personalizate.",
-    "text": "Construim strategii perfect adaptate nevoilor și aspirațiilor tale:\n\nConsultanță strategică & evaluare personalizată;\n\nAchiziții, vânzări și reconversii imobiliare;\n\nInvestiții în terenuri, locuințe, spații logistice;\n\nÎnchiriere, mobilare, amenajare, administrare;\n\nDe la idee la rezultat – un singur pas.\n\n🟡 OpenHouse – Inspirație. Informație. Imobiliare.",
+    "title": "Solutii integrate - rezultate exceptionale",
+    "text": "Construim strategii perfect adaptate nevoilor și aspirațiilor tale:\n\nConsultanță strategică & evaluare personalizată;\n\nAchiziții, vânzări și reconversii imobiliare;\n\nInvestiții în terenuri, locuințe, spații logistice;\n\nDe la idee la rezultat – un singur pas.\n\n🟡 OpenHouse – Inspirație. Informație. Imobiliare.",
     "image": "uploads/example.jpg",
-    "link": "https://openhouse.ro/cauta"
+    "link": "https://openhouse.ro/povesti-de-succes"
   },
-  "contact": {
-    "heading": "Fiecare decizie bună începe cu o conversație sincera.",
+  "contactForm": {
+    "heading": "O decizie buna incepe cu o conversatie sincera",
+    "subtitle": "De 25 de ani ascultăm, înțelegem și construim drumul către ACASĂ pentru toți cei care îndrăznesc să viseze."
+  },
+  "contactInfo": {
+    "text": "🟡 OpenHouse ✅ Experiență reală. ✅ Tranzacții reușite.",
     "email": "intravilan@gmail.com",
     "phone": "+40726340034",
     "social": {

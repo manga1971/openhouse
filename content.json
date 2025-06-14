@@ -1,22 +1,20 @@
 {
   "hero": {
-    "title": "Un nou inceput pentru tine?",
-    "subtitle": "Cand vinzi sau cumperi o proprietate ai nevoie de informatii corecte.",
-    "videoBackground": "https://www.youtube.com/embed/vNscPtijCe4?si=i9SfPcBphva5po0C"
+    "title": "„Când vinzi sau cumperi o proprietate, ai nevoie de îndrumare profesionista pentru a lua decizia corecta. Noi îți oferim experiență reală și de încredere – exact când ai mai mare nevoie.”"
   },
   "section2": {
-    "title": "Solutii integrate - rezultate exceptionale",
-    "text": "Construim strategii perfect adaptate nevoilor și aspirațiilor tale:\n\nConsultanță strategică & evaluare personalizată;\n\nAchiziții, vânzări și reconversii imobiliare;\n\nInvestiții în terenuri, locuințe, spații logistice;\n\nDe la idee la rezultat – un singur pas.\n\n🟡 OpenHouse ✅ Inspirație ✅ Informație ✅ Imobiliare.",
+    "title": "Soluții complete. Rezultate reale. Strategii personalizate pentru achiziții, vânzări și închirieri – in toate segmentele imobiliare. De la idee la rezultat, un singur pas.",
+    "text": "",
     "image": "uploads/example.jpg",
     "link": "https://openhouse.ro/povesti-de-succes"
   },
   "contactForm": {
-    "heading": "O decizie buna incepe cu o conversatie sincera",
-    "subtitle": "De 25 de ani ascultăm, înțelegem și construim drumul către ACASĂ pentru toți cei care îndrăznesc să viseze."
+    "heading": "Te invitam la o discutie sincera despre imobiliare.",
+    "subtitle_desktop": "Poate fi la o cafea adevarata sau la una virtuala.\nEsti la un click distanta."
   },
   "contactInfo": {
-    "title": "🟡 OpenHouse",
-    "text": "✅ Experienta reala.\n✅ Tranzactii de succes.",
+    "title_desktop": "Am ascultat, am înțeles și am oferit soluții – de peste 25 de ani.\nȘi continuăm, cu entuziasm. Experienta reala, tranzactii de succes",
+    "title_mobile": "Experienta reala, tranzactii de succes",
     "email": "intravilan@gmail.com",
     "phone": "+40726340034",
     "social": {

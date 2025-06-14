@@ -11,16 +11,26 @@
 </head>
 <body>
   <header>
-    <img src="uploads/logo.png" alt="OpenHouse Logo" class="logo" /> <nav>
+    <img src="uploads/logo.png" alt="OpenHouse Logo" class="logo" />
+    <div class="menu-icon" id="menu-icon">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    <nav id="main-nav">
       <a href="#hero">Acasă</a>
       <a href="#section2">Ce facem</a>
-      <a href="#contact-form-section">Contact</a> <a href="#contact-info-section">Despre noi</a> </nav>
+      <a href="#contact-form-section">Contact</a>
+      <a href="#contact-info-section">Despre noi</a>
+    </nav>
   </header>
 
   <section id="hero" class="snap-scroll hero-section">
     <iframe id="hero-video" frameborder="0"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; mute"
-      allowfullscreen></iframe>
+      allowfullscreen
+      src="https://www.youtube.com/embed/vNscPtijCe4?si=i9SfPcBphva5po0C?controls=0&autoplay=1&mute=1&loop=1&playlist=uWwV01-X7zY&showinfo=0">
+    </iframe>
     <div class="overlay">
       <h1 id="hero-title"></h1>
       <p id="hero-subtitle"></p>
@@ -30,7 +40,6 @@
   <section id="section2" class="snap-scroll split-screen">
     <div class="text-side">
       <h2 id="section2-title"></h2>
-      <p id="section2-text"></p>
       <a id="section2-link" class="cta-button" target="_blank">Povesti de succes</a>
     </div>
     <div class="image-side">
@@ -41,19 +50,18 @@
   <section id="contact-form-section" class="snap-scroll contact-form-split">
     <div class="text-and-form-side">
       <h3 id="contact-form-heading"></h3>
-      <p id="contact-form-subtitle"></p>
-      <form>
+      <p id="contact-form-subtitle-desktop"></p> <form>
         <input type="text" placeholder="Numele tău" required />
         <input type="email" placeholder="Emailul tău" required />
         <textarea placeholder="Mesajul tău" required></textarea>
-        <button type="submit" class="outline-button">Trimite</button> </form>
+        <button type="submit" class="outline-button">Trimite</button>
+      </form>
     </div>
   </section>
 
   <section id="contact-info-section" class="snap-scroll contact-info-split">
     <div class="text-side-contact-info">
-      <h3 id="contact-info-title"></h3> <p id="contact-info-text"></p>
-    </div>
+      <h3 id="contact-info-title"></h3> <p id="contact-info-text-mobile"></p> </div>
     <div class="details-side-contact-info">
       <p>📞 Telefon: <span id="contact-info-phone"></span></p>
       <p>📧 Email: <span id="contact-info-email"></span></p>

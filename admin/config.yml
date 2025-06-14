@@ -20,18 +20,17 @@ collections:
             label: "Secțiunea 1 – Acasă (Hero)"
             widget: "object"
             fields:
-              - { label: "Titlu", name: "title", widget: "string" }
-              - { label: "Subtitlu", name: "subtitle", widget: "text", hint: "Textul va apărea pe două rânduri, al 2-lea și al 3-lea. Folosește Enter pentru rânduri noi." }
-
-              - { label: "Link Video (YouTube Embed)", name: "videoBackground", widget: "string", hint: "Asigură-te că este un link de EMBED cu parametri (ex: https://www.youtube.com/embed/vNscPtijCe4?si=i9SfPcBphva5po0C)" }
+              - { label: "Text Intro (Titlu)", name: "title", widget: "text", hint: "Tot textul pentru Hero Section. Va fi centrat jos-stânga pe desktop, jos-centru pe mobil." }
+              # Removed subtitle field as it's now part of the title for mobile simplification
+              # - { label: "Link Video (YouTube Embed)", name: "videoBackground", widget: "string", hint: "Asigură-te că este un link de EMBED cu parametri (ex: https://www.youtube.com/embed/vNscPtijCe4?si=i9SfPcBphva5po0C)" }
 
           # Secțiunea 2 - Ce facem
           - name: "section2"
             label: "Secțiunea 2 – Ce facem"
             widget: "object"
             fields:
-              - { label: "Titlu", name: "title", widget: "string" }
-              - { label: "Text", name: "text", widget: "markdown", hint: "Folosește formatarea Markdown pentru a adăuga rânduri noi, bold etc." }
+              - { label: "Text Secțiune 2", name: "title", widget: "text", hint: "Tot textul pentru secțiunea 2. Va fi nebolduit." }
+              # Removed text field as it's now part of the title
               - { label: "Imagine", name: "image", widget: "image", hint: "Încarcă imaginea pentru secțiunea 2. Va fi stocată în /uploads" }
               - { label: "Link Buton (Povesti de succes)", name: "link", widget: "string" }
 
@@ -41,14 +40,15 @@ collections:
             widget: "object"
             fields:
               - { label: "Titlu", name: "heading", widget: "string" }
-              - { label: "Subtitlu (peste camp contact)", name: "subtitle", widget: "text", hint: "Textul va apărea pe 2 rânduri. Folosește Enter pentru rânduri noi." }
+              - { label: "Subtitlu (doar desktop, 2 rânduri)", name: "subtitle_desktop", widget: "text", hint: "Textul de pe desktop. Va fi ascuns pe mobil." }
 
           # Secțiunea 4 - Informații Contact și Social Media (Desktop: dreapta, Mobile: deasupra)
           - name: "contactInfo"
             label: "Secțiunea 4 – Informații Contact & Social Media"
             widget: "object"
             fields:
-              - { label: "Text Intro", name: "text", widget: "text", hint: "Ex: 🟡 OpenHouse ✅ Experiență reală. ✅ Tranzacții reușite. Folosește Enter pentru fiecare rând nou." }
+              - { label: "Text Intro (doar desktop)", name: "title_desktop", widget: "text", hint: "Textul pentru desktop. Va apărea pe rânduri noi. Ascuns pe mobil." }
+              - { label: "Text Intro (doar mobil)", name: "title_mobile", widget: "string", hint: "Textul scurt pentru mobil. Va apărea deasupra datelor de contact." }
               - { label: "Email", name: "email", widget: "string" }
               - { label: "Telefon", name: "phone", widget: "string" }
               - name: "social"

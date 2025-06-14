@@ -25,9 +25,10 @@ header {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.2); /* Transparență 80% */
   z-index: 1000;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  backdrop-filter: blur(5px); /* Efect de blur pentru transparență */
 }
 
 header .logo {
@@ -47,10 +48,41 @@ header nav a:hover {
   color: #e74c3c;
 }
 
+/* Meniu Hamburger Icon */
+.menu-icon {
+  display: none; /* Ascuns pe desktop */
+  flex-direction: column;
+  justify-content: space-around;
+  width: 30px;
+  height: 25px;
+  cursor: pointer;
+  z-index: 1001; /* Deasupra navigației pe mobil */
+}
+
+.menu-icon .bar {
+  width: 100%;
+  height: 3px;
+  background-color: #e74c3c; /* Roșu */
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+/* Transformări iconiță hamburger la activare */
+.menu-icon.active .bar:nth-child(1) {
+  transform: translateY(11px) rotate(45deg);
+}
+.menu-icon.active .bar:nth-child(2) {
+  opacity: 0;
+}
+.menu-icon.active .bar:nth-child(3) {
+  transform: translateY(-11px) rotate(-45deg);
+}
+
+
 /* Stiluri generale Snap-scroll */
 .snap-scroll {
   height: 100vh;
-  min-height: 600px; /* Asigură o înălțime minimă pentru a preveni suprapunerea pe conținut scurt */
+  min-height: 500px; /* Înălțime minimă pentru secțiuni */
   scroll-snap-align: start;
   display: flex;
   align-items: center;
@@ -96,16 +128,16 @@ header nav a:hover {
 .overlay h1 {
   font-family: 'Montserrat', sans-serif;
   font-size: 3rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0; /* Elimină spațiul suplimentar de jos */
   line-height: 1.2;
   color: #e74c3c; /* Culoare roșie pentru titlu */
   font-weight: 400; /* Ne-bolduit */
 }
 
-.overlay p {
+.overlay p { /* Subtitlul de la hero (acum nefolosit direct) */
   font-size: 1.2rem;
   line-height: 1.5;
-  margin-top: 0;
+  margin-top: 0.5rem; /* Spațiu mic deasupra */
   color: white; /* Culoare albă pentru subtitlu */
   font-weight: 400; /* Ne-bolduit */
 }
@@ -135,9 +167,10 @@ header nav a:hover {
   margin-bottom: 1.5rem;
   color: #e74c3c;
   font-weight: 400; /* Ne-bolduit */
+  line-height: 1.3; /* Pentru textul pe un singur rând */
 }
 
-.split-screen .text-side p {
+.split-screen .text-side p { /* Acum nefolosit, textul e în h2 */
   font-size: 1.1rem;
   line-height: 1.8;
   margin-bottom: 2rem;
@@ -151,16 +184,13 @@ header nav a:hover {
   justify-content: center;
   background-color: black;
   overflow: hidden;
-  position: relative; /* Pentru a poziționa imaginea de fundal */
+  position: relative;
 }
 
 .split-screen .image-side img {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Asigură că imaginea acoperă toată zona */
+  object-fit: cover; /* Asigură că imaginea acoperă toată suprafața */
   z-index: 0;
 }
 
@@ -172,7 +202,7 @@ header nav a:hover {
   font-weight: 700;
   border-radius: 5px;
   transition: all 0.3s ease;
-  background-color: transparent; /* Face fundalul transparent */
+  background-color: transparent;
 }
 
 .cta-button:hover {
@@ -185,9 +215,23 @@ header nav a:hover {
   flex-direction: row;
   background: black;
   color: white;
-  justify-content: center; /* Centrare orizontală */
-  align-items: center; /* Centrare verticală */
-  padding: 0; /* Revizuire padding */
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  background-size: cover; /* Asigură că imaginea de fundal acoperă */
+  background-position: center; /* Centrează imaginea de fundal */
+  background-repeat: no-repeat;
+  /* Adaugă aici imaginea de fundal, ex: */
+  background-image: url('uploads/example1.jpg'); /* !!! Asigură-te că imaginea e acolo !!! */
+}
+
+.contact-form-split::before { /* Overlay pentru imaginea de fundal */
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Strat negru transparent peste imagine */
+  z-index: 0;
 }
 
 .contact-form-split .text-and-form-side {
@@ -196,34 +240,11 @@ header nav a:hover {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-start; /* Aliniere stânga */
+  align-items: flex-start;
   text-align: left;
-}
-/* Pe desktop, jumătatea dreaptă va fi formularul, lăsând spațiu aici */
-.contact-form-split .text-and-form-side {
-  width: 50%; /* Ocupă jumătate pe desktop */
+  width: 50%; /* Jumătate pe desktop */
   box-sizing: border-box;
-}
-/* Formularul va ocupa jumătatea dreaptă */
-.contact-form-split form {
-  flex: 1; /* Formularul va ocupa spațiul rămas, dacă e flex item */
-  padding: 4rem;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 400px; /* Limită de lățime pentru formular */
-  box-sizing: border-box;
-}
-/* Re-aplicăm stilurile pentru text-and-form-side pentru a avea textul în jumătatea stângă */
-.contact-form-split .text-and-form-side {
-    padding: 4rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center; /* Vertical center */
-    align-items: flex-start; /* Align left */
-    text-align: left;
-    width: 50%; /* Half width */
-    box-sizing: border-box;
+  z-index: 1; /* Asigură că textul și formularul sunt deasupra overlay-ului */
 }
 
 .contact-form-split h3 {
@@ -234,11 +255,19 @@ header nav a:hover {
   font-weight: 400; /* Ne-bolduit */
 }
 
-.contact-form-split p {
+.contact-form-split p { /* Subtitlul de desktop */
   font-size: 1.1rem;
   line-height: 1.6;
   margin-bottom: 1.5rem;
   white-space: pre-line;
+}
+
+.contact-form-split form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
 }
 
 .contact-form-split input,
@@ -260,9 +289,9 @@ header nav a:hover {
 /* Buton cu chenar roșu */
 .outline-button {
   padding: 1rem;
-  background: transparent; /* Fundal transparent */
-  color: #e74c3c; /* Text roșu */
-  border: 2px solid #e74c3c; /* Chenar roșu */
+  background: transparent;
+  color: #e74c3c;
+  border: 2px solid #e74c3c;
   border-radius: 5px;
   cursor: pointer;
   font-size: 1.1rem;
@@ -282,7 +311,7 @@ header nav a:hover {
   color: white;
   justify-content: space-around;
   align-items: center;
-  padding: 0; /* Revizuire padding */
+  padding: 0;
 }
 
 .contact-info-split .text-side-contact-info {
@@ -294,11 +323,11 @@ header nav a:hover {
   align-items: flex-start;
   text-align: left;
 }
-.contact-info-split .text-side-contact-info h3 { /* Noul titlu din snap-scroll 4 */
+.contact-info-split .text-side-contact-info h3 { /* Titlul din snap-scroll 4 (desktop) */
   font-family: 'Montserrat', sans-serif;
   font-size: 2.2rem;
   margin-bottom: 0.5rem;
-  color: #e74c3c; /* Culoare roșie */
+  color: white; /* Acum alb pentru "OpenHouse" */
   font-weight: 400; /* Ne-bolduit */
 }
 
@@ -306,7 +335,8 @@ header nav a:hover {
   font-size: 1.2rem;
   line-height: 1.8;
   margin: 0;
-  white-space: pre-line; /* Pentru ✅ pe rânduri noi */
+  white-space: pre-line;
+  color: white; /* Text alb */
 }
 
 .contact-info-split .details-side-contact-info {
@@ -342,12 +372,36 @@ header nav a:hover {
   /* Header */
   header {
     padding: 1rem;
+    background-color: rgba(255, 255, 255, 0.9); /* Transparență redusă pe mobil pentru lizibilitate */
   }
   header .logo {
     height: 30px;
   }
   header nav {
-    display: none;
+    display: none; /* Ascunde navigatia pe mobil */
+    flex-direction: column;
+    position: absolute;
+    top: 0; /* Începe de sus, sub header */
+    right: 0;
+    width: 100%; /* Full width */
+    height: 100vh; /* Ocupă tot ecranul */
+    background-color: rgba(0, 0, 0, 0.95); /* Fundal întunecat pentru meniu */
+    padding-top: 60px; /* Spațiu pentru header */
+    transform: translateX(100%); /* Ascuns în dreapta */
+    transition: transform 0.3s ease-in-out;
+    justify-content: center; /* Centrează linkurile */
+    align-items: center;
+  }
+  header nav.active {
+    transform: translateX(0); /* Vizibil */
+  }
+  header nav a {
+    color: white; /* Link-uri albe în meniul mobil */
+    margin: 1.5rem 0; /* Spațiu vertical între link-uri */
+    font-size: 1.5rem;
+  }
+  .menu-icon {
+    display: flex; /* Afișează iconița hamburger pe mobil */
   }
 
   /* Snap-scroll general pe mobil */
@@ -358,6 +412,7 @@ header nav a:hover {
     text-align: center; /* Centrare text implicit pe mobil */
     min-height: auto; /* Permite secțiunilor să se adapteze la conținut */
     height: 100vh; /* Păstrează înălțimea viewport-ului, dar cu grijă la conținut */
+    scroll-snap-align: start; /* Păstrează scroll-snap */
   }
 
   /* Hero Section (Snap-scroll 1) pe mobil */
@@ -367,58 +422,58 @@ header nav a:hover {
     left: auto;
     transform: none;
     padding: 1.5rem;
-    width: 100%; /* Acoperă toată lățimea */
-    height: auto; /* Înălțimea se adaptează conținutului */
-    margin: 0 auto; /* Centrare orizontală */
-    align-items: center; /* Centrare text */
+    width: 100%;
+    height: auto;
+    margin: 0 auto;
+    align-items: center;
     text-align: center;
-    background-color: rgba(0, 0, 0, 0.7); /* Overlay mai opac */
+    background-color: rgba(0, 0, 0, 0.7);
   }
   .overlay h1 {
-    font-size: 1.8rem; /* Dimensiune mai mică pentru titlu */
+    font-size: 1.6rem; /* Dimensiune mai mică pentru titlu */
     line-height: 1.3;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0; /* Elimină spațiul suplimentar */
   }
-  .overlay p {
-    font-size: 1rem; /* Dimensiune mai mică pentru subtitlu */
-    line-height: 1.4;
-    margin-top: 0;
+  .overlay p { /* Subtitlul de la hero (acum ascuns pe mobil) */
+    display: none;
   }
 
   /* Section 2 (Split Screen) pe mobil */
   .split-screen {
     flex-direction: column;
     justify-content: flex-end; /* Textul jos */
-    background: black; /* Păstrează fundalul negru */
+    background: black;
+    height: 100vh; /* Menține înălțimea completă */
   }
   .split-screen .text-side {
     padding: 1.5rem;
     align-items: center;
     text-align: center;
     justify-content: flex-end; /* Aliniere jos */
-    height: auto; /* Înălțimea se adaptează conținutului */
-    z-index: 1; /* Asigură că textul este deasupra imaginii */
-    position: relative; /* Pentru z-index */
+    height: auto;
+    z-index: 1;
+    position: relative;
   }
   .split-screen .text-side h2 {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
+    line-height: 1.4; /* Spațiere mai mică */
     margin-bottom: 1rem;
   }
   .split-screen .text-side p {
-    font-size: 0.95rem; /* Text mai mic */
-    line-height: 1.6;
-    margin-bottom: 1.5rem;
+    font-size: 0.9rem; /* Text mai mic */
+    line-height: 1.5; /* Spațiere mai mică */
+    margin-bottom: 1rem;
   }
   .split-screen .image-side {
-    position: absolute; /* Imaginea în spate */
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 0; /* Imaginea sub text */
+    z-index: 0;
   }
   .split-screen .image-side img {
-      object-fit: cover; /* Asigură că imaginea umple spațiul */
+      object-fit: cover;
   }
 
   /* Snap-scroll 3 - Contact Form Section pe mobil */
@@ -428,28 +483,29 @@ header nav a:hover {
     justify-content: flex-end; /* Aliniere jos */
   }
   .contact-form-split .text-and-form-side {
-    padding: 1rem; /* Padding redus */
+    padding: 1rem;
     width: 100%;
-    align-items: center; /* Centrare pe mobil */
+    align-items: center;
     text-align: center;
-    justify-content: flex-end; /* Aliniere jos */
-    order: 2; /* Formularul vine după text */
+    justify-content: flex-end;
+    order: 2;
   }
   .contact-form-split h3 {
-    font-size: 1.6rem; /* Text mai mic */
+    font-size: 1.6rem;
     margin-bottom: 0.5rem;
   }
-  .contact-form-split p {
+  .contact-form-split p#contact-form-subtitle-desktop {
     display: none; /* Ascunde subtitlul "De 25 de ani..." pe mobil */
   }
   .contact-form-split form {
-    order: 3; /* Formularul vine după text */
-    padding: 1rem; /* Padding redus pentru formular */
+    order: 3;
+    padding: 1rem;
     width: 100%;
+    max-width: none; /* Elimină max-width pe mobil */
   }
   .contact-form-split input,
   .contact-form-split textarea {
-    margin: 0.5rem 0; /* Spațiere mai mică */
+    margin: 0.5rem 0;
   }
 
   /* Snap-scroll 4 - Contact Info & Social pe mobil */
@@ -461,32 +517,32 @@ header nav a:hover {
   .contact-info-split .text-side-contact-info {
     padding: 1rem;
     width: 100%;
-    align-items: center; /* Centrare pe mobil */
+    align-items: center;
     text-align: center;
-    justify-content: flex-end; /* Aliniere jos */
+    justify-content: flex-end;
     order: 1; /* Textul vine deasupra datelor de contact */
   }
-  .contact-info-split .text-side-contact-info h3 {
-    font-size: 1.6rem;
-    margin-bottom: 0.5rem;
+  .contact-info-split .text-side-contact-info h3 { /* Titlul desktop e ascuns, acesta e pentru mobile */
+    display: none;
   }
-  .contact-info-split .text-side-contact-info p {
-    font-size: 0.95rem;
+  .contact-info-split .text-side-contact-info p#contact-info-text-mobile {
+    display: block; /* Afișează textul mobil */
+    font-size: 1rem;
     line-height: 1.5;
   }
   .contact-info-split .details-side-contact-info {
     padding: 1.5rem;
     width: 100%;
-    align-items: center; /* Centrare pe mobil */
+    align-items: center;
     text-align: center;
-    justify-content: flex-end; /* Aliniere jos */
-    order: 2; /* Datele de contact vin după text */
+    justify-content: flex-end;
+    order: 2;
   }
   .contact-info-split .details-side-contact-info p {
     font-size: 1rem;
     margin-bottom: 0.8rem;
   }
   .contact-info-split .social-links a {
-    margin: 0 1rem; /* Spațiere butoane social media */
+    margin: 0 1rem;
   }
 }

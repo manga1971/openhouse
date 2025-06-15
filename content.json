@@ -1,27 +1,27 @@
 {
   "hero": {
-    "title": "„Când vinzi sau cumperi o proprietate, ai nevoie de îndrumare profesionista pentru a lua decizia corecta. Noi îți oferim experiență reală și de încredere – exact când ai mai mare nevoie.”",
-    "videoBackground": "1"
+    "title": "Un nou început pentru tine?\nCând vinzi sau cumperi o proprietate, ai nevoie de îndrumare pentru a lua decizia corectă.",
+    "videoBackground": "https://www.youtube.com/embed/vNscPtijCe4?si=t8X407aBTCrIaI5E&controls=0"
   },
   "section2": {
-    "title": "Soluții complete. Rezultate reale. Strategii personalizate pentru achiziții, vânzări și închirieri – in toate segmentele imobiliare. De la idee la rezultat, un singur pas.",
-    "text": "",
-    "image": "uploads/example.jpg",
-    "link": "https://openhouse.ro/povesti-de-succes"
+    "title": "Soluții complete. Rezultate reale. Imobiliare.\nConstruim strategii personalizate pentru achiziții, vânzări și închirieri.",
+    "videoBackground": "https://www.youtube.com/embed/2yH7_SWAQ1Y?si=knTCgWgmV2B0ZcdP&controls=0",
+    "link": "/povesti-de-succes.html"
   },
-  "contactForm": {
-    "heading": "Te invitam la o discutie sincera despre imobiliare.",
-    "subtitle_desktop": "Poate fi la o cafea adevarata sau la una virtuala.\nEsti la un click distanta."
+  "section3": {
+    "title": "Un nou început începe cu o decizie corectă,\nO decizie corectă se poate lua în baza experienței,\nExperiența poate fi a ta sau a agentului tău imobiliar,\nNoi avem experienta. Din 1998."
   },
   "contactInfo": {
-    "title_desktop": "Am ascultat, am înțeles și am oferit soluții – de peste 25 de ani.\nȘi continuăm, cu entuziasm. Experienta reala, tranzactii de succes",
-    "title_mobile": "Experienta reala, tranzactii de succes",
-    "email": "intravilan@gmail.com",
+    "title_desktop": "Te invitam la o discuție sinceră despre imobiliare.\nPoate fi la o cafea reală sau la una virtuală.\nEste decizia ta. Cu noi poate fi una corectă.",
+    "title_mobile": "Te invitam la o discuție sinceră despre imobiliare.\nPoate fi la o cafea reală sau la una virtuală.\nEste decizia ta. Poate fi una corectă.",
     "phone": "+40726340034",
+    "email": "intravilan@gmail.com",
     "social": {
-      "youtube": "2",
-      "instagram": "https://instagram.com/openhouse",
-      "tiktok": "https://tiktok.com/@openhouse"
-    }
+      "youtube": "https://www.youtube.com/@OpenHouseRo",
+      "instagram": "https://www.instagram.com/mihaighita71/",
+      "tiktok": "https://www.tiktok.com/@openhousero"
+    },
+    "image_left": "uploads/example1.jpg",
+    "image_right": "uploads/example.jpg"
   }
 }

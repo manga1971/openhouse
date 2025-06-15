@@ -12,7 +12,7 @@
 </head>
 <body>
   <header>
-    <img src="uploads/logo.png" alt="OpenHouse Logo" class="logo" />
+    <img src="uploads/buton 2.png" alt="OpenHouse Logo" class="logo" />
     <div class="menu-icon" id="menu-icon">
       <div class="bar"></div>
       <div class="bar"></div>
@@ -21,8 +21,8 @@
     <nav id="main-nav">
       <a href="#hero">Acasă</a>
       <a href="#section2">Ce facem</a>
-      <a href="#contact-form-section">Contact</a>
-      <a href="#contact-info-section">Despre noi</a>
+      <a href="#section4">Despre noi</a>
+      <a href="#section3">Contact</a>
     </nav>
   </header>
 
@@ -30,27 +30,26 @@
     <iframe id="hero-video" frameborder="0"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       allowfullscreen></iframe>
-    <div class="overlay">
+    <div class="overlay bottom-left">
       <h1 id="hero-title"></h1>
-      <p id="hero-subtitle"></p>
     </div>
   </section>
 
   <section id="section2" class="snap-scroll split-screen">
-    <div class="text-side">
+    <iframe id="section2-video" frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen></iframe>
+    <div class="overlay bottom-left">
       <h2 id="section2-title"></h2>
-      <p id="section2-text"></p>
-      <a id="section2-link" class="cta-button" target="_blank">Vezi detalii</a>
-    </div>
-    <div class="image-side">
-      <img id="section2-image" src="" alt="Imagine" />
+      <a id="section2-link" class="outline-button" target="_blank">Poveste de succes</a>
     </div>
   </section>
 
-  <section id="contact-form-section" class="snap-scroll contact-form-split">
-    <div class="text-and-form-side">
-      <h3 id="contact-form-heading"></h3>
-      <p id="contact-form-subtitle-desktop"></p>
+  <section id="section3" class="snap-scroll contact-form-split">
+    <div class="text-side-contact-form">
+      <h3 id="section3-title"></h3>
+    </div>
+    <div class="form-side-contact-form">
       <form>
         <input type="text" placeholder="Numele tău" required />
         <input type="email" placeholder="Emailul tău" required />
@@ -60,20 +59,36 @@
     </div>
   </section>
 
-  <section id="contact-info-section" class="snap-scroll contact-info-split">
-    <div class="text-side-contact-info">
-      <h3 id="contact-info-title"></h3>
-      <p id="contact-info-text-mobile"></p>
-    </div>
-    <div class="details-side-contact-info">
-      <p>📞 Telefon: <span id="contact-info-phone"></span></p>
-      <p>📧 Email: <span id="contact-info-email"></span></p>
-      <p>📍 Adresă: București / România</p>
-      <div class="social-links">
-        <a id="social-youtube" href="#" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-        <a id="social-instagram" href="#" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-        <a id="social-tiktok" href="#" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+  <section id="section4" class="snap-scroll contact-info-split">
+    <div class="background-left" id="section4-bg-left"></div>
+    <div class="background-right" id="section4-bg-right"></div>
+    <div class="text-content-wrapper">
+      <div class="text-side-contact-info overlay bottom-left">
+        <h3 id="contact-info-title-desktop"></h3>
+        <p id="contact-info-title-mobile"></p>
       </div>
+      <div class="details-side-contact-info">
+        <p> <span id="contact-info-phone"></span> <a href="#" id="whatsapp-link" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a></p>
+        <p class="email-red"> <span id="contact-info-email"></span></p>
+        <div class="social-links">
+          <div>
+            <a id="social-youtube" href="#" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+            <p>youtube</p>
+          </div>
+          <div>
+            <a id="social-instagram" href="#" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <p>instagram</p>
+          </div>
+          <div>
+            <a id="social-tiktok" href="#" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+            <p>tiktok</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-links">
+      <a href="confidentialitate.html">Confidentialitate</a>
+      <a href="termeni-conditii.html">Termeni și condiții</a>
     </div>
   </section>
 

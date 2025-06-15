@@ -1,1 +1,47 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Termeni și Condiții - OpenHouse</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="static-page-body">
+  <header>
+    <img src="uploads/buton 2.png" alt="OpenHouse Logo" class="logo" />
+    <div class="menu-icon" id="menu-icon">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    <nav id="main-nav">
+      <a href="index.html#hero">Acasă</a>
+      <a href="index.html#section2">Ce facem</a>
+      <a href="index.html#section4">Despre noi</a>
+      <a href="index.html#section3">Contact</a>
+    </nav>
+  </header>
 
+  <section class="static-content-section">
+    <h1>Termeni și Condiții</h1>
+    <p>Bine ați venit pe site-ul OpenHouse. Prin accesarea și utilizarea acestui site, sunteți de acord să respectați și să fiți legat de următorii termeni și condiții de utilizare.</p>
+    <h2>Utilizarea Site-ului</h2>
+    <p>Conținutul acestui site este destinat informării generale și utilizării personale. Nu este permisă utilizarea acestuia în scopuri comerciale fără acordul prealabil scris al OpenHouse.</p>
+    <h2>Drepturi de Proprietate Intelectuală</h2>
+    <p>Toate drepturile de autor, mărcile comerciale și alte drepturi de proprietate intelectuală asupra conținutului și designului acestui site aparțin OpenHouse sau licențiatorilor săi.</p>
+    <h2>Limitarea Răspunderii</h2>
+    <p>OpenHouse nu își asumă responsabilitatea pentru nicio pierdere sau daună rezultată din utilizarea acestui site sau a informațiilor furnizate pe acesta.</p>
+    <h2>Link-uri către Terțe Părți</h2>
+    <p>Site-ul nostru poate conține link-uri către site-uri web ale unor terțe părți. Aceste link-uri sunt furnizate doar pentru comoditatea dvs. și nu implică aprobarea conținutului lor de către OpenHouse.</p>
+    <h2>Modificări ale Termenilor</h2>
+    <p>OpenHouse își rezervă dreptul de a modifica acești Termeni și Condiții în orice moment, fără notificare prealabilă. Vă încurajăm să revizuiți periodic această pagină pentru a fi la curent cu eventualele modificări.</p>
+    <p>Prin continuarea utilizării site-ului după publicarea modificărilor, sunteți de acord cu termenii și condițiile modificate.</p>
+    <p>Ultima actualizare: 15 Iunie 2025</p>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>

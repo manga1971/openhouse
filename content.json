@@ -1,6 +1,7 @@
 {
   "hero": {
-    "title": "„Când vinzi sau cumperi o proprietate, ai nevoie de îndrumare profesionista pentru a lua decizia corecta. Noi îți oferim experiență reală și de încredere – exact când ai mai mare nevoie.”"
+    "title": "„Când vinzi sau cumperi o proprietate, ai nevoie de îndrumare profesionista pentru a lua decizia corecta. Noi îți oferim experiență reală și de încredere – exact când ai mai mare nevoie.”",
+    "videoBackground": "1"
   },
   "section2": {
     "title": "Soluții complete. Rezultate reale. Strategii personalizate pentru achiziții, vânzări și închirieri – in toate segmentele imobiliare. De la idee la rezultat, un singur pas.",
@@ -18,9 +19,9 @@
     "email": "intravilan@gmail.com",
     "phone": "+40726340034",
     "social": {
-      "youtube": "https://www.youtube.com/channel/UCOcWcHA1ueYo9n-bJ3ZYVOw",
-      "instagram": "https://www.instagram.com/mihaighita71/",
-      "tiktok": "https://www.tiktok.com/@openhousero"
+      "youtube": "2",
+      "instagram": "https://instagram.com/openhouse",
+      "tiktok": "https://tiktok.com/@openhouse"
     }
   }
 }

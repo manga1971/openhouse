@@ -1,60 +1,51 @@
 backend:
   name: github
-  repo: manga1971/openhouse # Asigură-te că acesta este depozitul tău
-  branch: main # Asigură-te că aceasta este ramura ta principală
+  repo: manga1971/openhouse # Replace with your GitHub repo
+  branch: main # Branch to commit to
 
-media_folder: "uploads" # Folderul unde sunt încărcate imaginile (relativ la rădăcina Git)
-public_folder: "/uploads" # Calea publică către folderul de media (relativ la rădăcina site-ului)
+media_folder: "uploads" # Folder where uploaded files will be stored
+public_folder: "/uploads" # The public path to the media folder
 
 collections:
-  - name: "site_content" # O singură colecție pentru a gestiona tot conținutul principal
-    label: "Conținut Site Principal"
+  - name: "site-content" # A friendly name for the collection
+    label: "Conținut Site" # The label for the collection in the CMS
     files:
-      - label: "Date Pagină"
-        name: "page_data"
-        file: "content.json" # Calea către fișierul tău content.json
-
+      - name: "main-content"
+        label: "Pagină Principală"
+        file: "content.json"
         fields:
-          # Secțiunea 1 - Hero
-          - name: "hero"
-            label: "Secțiunea 1 – Acasă (Hero)"
+          - label: "Hero Section (Snap-scroll 1)"
+            name: "hero"
             widget: "object"
             fields:
-              - { label: "Text Intro (Titlu)", name: "title", widget: "text", hint: "Tot textul pentru Hero Section. Va fi centrat jos-stânga pe desktop, jos-centru pe mobil." }
-              # Removed subtitle field as it's now part of the title for mobile simplification
-              # - { label: "Link Video (YouTube Embed)", name: "videoBackground", widget: "string", hint: "Asigură-te că este un link de EMBED cu parametri (ex: https://www.youtube.com/embed/vNscPtijCe4?si=i9SfPcBphva5po0C)" }
-
-          # Secțiunea 2 - Ce facem
-          - name: "section2"
-            label: "Secțiunea 2 – Ce facem"
+              - {label: "Text Titlu", name: "title", widget: "textarea", hint: "Primul rând va fi bold. Folosește Enter pentru rânduri noi."}
+              - {label: "Video Background URL (YouTube)", name: "videoBackground", widget: "string", hint: "Ex: https://www.youtube.com/watch?v=VIDEO_ID sau https://www.youtube.com/embed/VIDEO_ID"}
+          - label: "Section 2 (Snap-scroll 2)"
+            name: "section2"
             widget: "object"
             fields:
-              - { label: "Text Secțiune 2", name: "title", widget: "text", hint: "Tot textul pentru secțiunea 2. Va fi nebolduit." }
-              # Removed text field as it's now part of the title
-              - { label: "Imagine", name: "image", widget: "image", hint: "Încarcă imaginea pentru secțiunea 2. Va fi stocată în /uploads" }
-              - { label: "Link Buton (Povesti de succes)", name: "link", widget: "string" }
-
-          # Secțiunea 3 - Formular de contact (Desktop: stanga, Mobile: deasupra)
-          - name: "contactForm"
-            label: "Secțiunea 3 – Formular Contact"
+              - {label: "Text Titlu", name: "title", widget: "textarea", hint: "Primul rând va fi bold. Folosește Enter pentru rânduri noi."}
+              - {label: "Video Background URL (YouTube)", name: "videoBackground", widget: "string", hint: "Ex: https://www.youtube.com/watch?v=VIDEO_ID sau https://www.youtube.com/embed/VIDEO_ID"}
+              - {label: "Link Buton 'Poveste de succes'", name: "link", widget: "string", default: "/povesti-de-succes.html"}
+          - label: "Section 3 (Snap-scroll 3 - Contact Form)"
+            name: "section3"
             widget: "object"
             fields:
-              - { label: "Titlu", name: "heading", widget: "string" }
-              - { label: "Subtitlu (doar desktop, 2 rânduri)", name: "subtitle_desktop", widget: "text", hint: "Textul de pe desktop. Va fi ascuns pe mobil." }
-
-          # Secțiunea 4 - Informații Contact și Social Media (Desktop: dreapta, Mobile: deasupra)
-          - name: "contactInfo"
-            label: "Secțiunea 4 – Informații Contact & Social Media"
+              - {label: "Text Descriere", name: "title", widget: "textarea", hint: "Primul rând va fi bold. Folosește Enter pentru rânduri noi."}
+          - label: "Contact Info (Snap-scroll 4)"
+            name: "contactInfo"
             widget: "object"
             fields:
-              - { label: "Text Intro (doar desktop)", name: "title_desktop", widget: "text", hint: "Textul pentru desktop. Va apărea pe rânduri noi. Ascuns pe mobil." }
-              - { label: "Text Intro (doar mobil)", name: "title_mobile", widget: "string", hint: "Textul scurt pentru mobil. Va apărea deasupra datelor de contact." }
-              - { label: "Email", name: "email", widget: "string" }
-              - { label: "Telefon", name: "phone", widget: "string" }
-              - name: "social"
-                label: "Linkuri Social Media"
+              - {label: "Text Titlu Desktop", name: "title_desktop", widget: "textarea", hint: "Primul rând va fi bold. Folosește Enter pentru rânduri noi."}
+              - {label: "Text Titlu Mobile", name: "title_mobile", widget: "textarea", hint: "Primul rând va fi bold. Folosește Enter pentru rânduri noi."}
+              - {label: "Număr Telefon", name: "phone", widget: "string"}
+              - {label: "Email", name: "email", widget: "string"}
+              - label: "Social Media"
+                name: "social"
                 widget: "object"
                 fields:
-                  - { label: "YouTube URL", name: "youtube", widget: "string" }
-                  - { label: "Instagram URL", name: "instagram", widget: "string" }
-                  - { label: "TikTok URL", name: "tiktok", widget: "string" }
+                  - {label: "YouTube URL", name: "youtube", widget: "string"}
+                  - {label: "Instagram URL", name: "instagram", widget: "string"}
+                  - {label: "TikTok URL", name: "tiktok", widget: "string"}
+              - {label: "Imagine Fundal Stânga (Desktop)", name: "image_left", widget: "image", required: false}
+              - {label: "Imagine Fundal Dreapta (Desktop & Mobile)", name: "image_right", widget: "image", required: false}

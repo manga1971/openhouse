@@ -1,1 +1,48 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Confidentialitate - OpenHouse</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="static-page-body">
+  <header>
+    <img src="uploads/buton 2.png" alt="OpenHouse Logo" class="logo" />
+    <div class="menu-icon" id="menu-icon">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    <nav id="main-nav">
+      <a href="index.html#hero">Acasă</a>
+      <a href="index.html#section2">Ce facem</a>
+      <a href="index.html#section4">Despre noi</a>
+      <a href="index.html#section3">Contact</a>
+    </nav>
+  </header>
 
+  <section class="static-content-section">
+    <h1>Politica de Confidențialitate</h1>
+    <p>Această Politică de Confidențialitate descrie modul în care OpenHouse colectează, utilizează și protejează informațiile dvs. personale.</p>
+    <h2>Colectarea informațiilor</h2>
+    <p>Colectăm informații pe care ni le furnizați direct, cum ar fi numele, adresa de email și numărul de telefon, atunci când completați formulare de contact sau interacționați cu site-ul nostru.</p>
+    <h2>Utilizarea informațiilor</h2>
+    <p>Informațiile colectate sunt utilizate pentru a răspunde solicitărilor dvs., a vă oferi servicii imobiliare, a îmbunătăți experiența dvs. pe site și a comunica cu dvs. despre servicii relevante.</p>
+    <h2>Partajarea informațiilor</h2>
+    <p>Nu vindem, nu închiriem și nu divulgăm informațiile dvs. personale unor terțe părți, cu excepția cazurilor în care acest lucru este necesar pentru a furniza serviciile solicitate sau conform legii.</p>
+    <h2>Securitatea datelor</h2>
+    <p>Implementăm măsuri de securitate pentru a proteja informațiile dvs. personale împotriva accesului neautorizat, modificării, divulgării sau distrugerii.</p>
+    <h2>Drepturile dvs.</h2>
+    <p>Aveți dreptul de a accesa, rectifica, șterge sau restricționa prelucrarea datelor dvs. personale. Pentru a exercita aceste drepturi, vă rugăm să ne contactați folosind informațiile de contact de pe site.</p>
+    <h2>Modificări ale Politicii de Confidențialitate</h2>
+    <p>Ne rezervăm dreptul de a actualiza această Politică de Confidențialitate periodic. Orice modificări vor fi publicate pe această pagină.</p>
+    <p>Ultima actualizare: 15 Iunie 2025</p>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>

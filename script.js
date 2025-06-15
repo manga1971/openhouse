@@ -1,65 +1,67 @@
 fetch("content.json")
   .then(res => res.json())
   .then(data => {
+    // Helper function to set video source
+    function setVideoSrc(elementId, videoUrl) {
+        let videoId = '';
+        if (videoUrl.includes('v=')) {
+            videoId = videoUrl.split('v=')[1].split('&')[0];
+        } else if (videoUrl.includes('youtube.com/embed/')) {
+            videoId = videoUrl.split('embed/')[1].split('?')[0];
+        } else {
+            videoId = videoUrl.split('/').pop().split('?')[0];
+        }
+
+        if (!videoId || videoId.length < 5) {
+            videoId = "dQw4w9WgXcQ"; // Rick Astley - default placeholder
+            console.error(`Could not extract a valid YouTube video ID from ${videoUrl}. Using a placeholder video. Please update 'videoBackground' in content.json.`);
+        }
+        document.getElementById(elementId).src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&mute=1&controls=0&playlist=${videoId}&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3`;
+    }
+
     // Snap-scroll 1 (Hero)
-    document.getElementById("hero-title").innerText = data.hero.title;
-    document.getElementById("hero-subtitle").innerText = data.hero.subtitle;
-
-    // Set YouTube video src with parameters for autoplay, loop, mute, no controls
-    const rawVideoUrl = data.hero.videoBackground;
-    let videoId = '';
-
-    // Attempt to extract video ID from various YouTube URL formats
-    if (rawVideoUrl.includes('v=')) {
-        videoId = rawVideoUrl.split('v=')[1].split('&')[0];
-    } else if (rawVideoUrl.includes('youtu.be/')) {
-        videoId = rawVideoUrl.split('youtu.be/')[1].split('?')[0];
-    } else if (rawVideoUrl.includes('embed/')) {
-        videoId = rawVideoUrl.split('embed/')[1].split('?')[0];
-    } else {
-        // Fallback: If it's just the ID or an unexpected format, try to use it directly
-        // This is a weak point, encourage using embed URL or pure ID in content.json
-        videoId = rawVideoUrl.split('/').pop().split('?')[0];
-    }
-
-    // Basic check for video ID validity and set a placeholder if invalid
-    if (!videoId || videoId.length < 5) {
-        videoId = "dQw4w9WgXcQ"; // Rick Astley - default placeholder
-        console.error("Could not extract a valid YouTube video ID from content.json for hero.videoBackground. Using a placeholder video. Please update 'hero.videoBackground' in content.json with a proper YouTube embed URL or video ID.");
-    }
-
-    // Construct the embed URL with necessary parameters
-    document.getElementById("hero-video").src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&mute=1&controls=0&playlist=${videoId}&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3`;
-
+    document.getElementById("hero-title").innerHTML = data.hero.title.replace(/(\r\n|\n|\r)/gm, '<br>').replace(/^(.*?)(<br>|$)/, '<span class="bold">$1</span>$2');
+    setVideoSrc("hero-video", data.hero.videoBackground);
 
     // Snap-scroll 2
-    document.getElementById("section2-title").innerText = data.section2.title;
-    document.getElementById("section2-text").innerText = data.section2.text;
-    document.getElementById("section2-image").src = data.section2.image;
+    document.getElementById("section2-title").innerHTML = data.section2.title.replace(/(\r\n|\n|\r)/gm, '<br>').replace(/^(.*?)(<br>|$)/, '<span class="bold">$1</span>$2');
     document.getElementById("section2-link").href = data.section2.link;
+    setVideoSrc("section2-video", data.section2.videoBackground);
+
 
     // Snap-scroll 3 (Contact Form)
-    document.getElementById("contact-form-heading").innerText = data.contactForm.heading;
-    document.getElementById("contact-form-subtitle-desktop").innerHTML = data.contactForm.subtitle_desktop.replace(/\\n/g, '<br>');
+    document.getElementById("section3-title").innerHTML = data.section3.title.replace(/(\r\n|\n|\r)/gm, '<br>').replace(/^(.*?)(<br>|$)/, '<span class="bold">$1</span>$2');
 
     // Snap-scroll 4 (Contact Info)
-    // Conditional display for desktop/mobile titles based on screen width
-    function updateContactInfoTitle() {
+    function updateContactInfoDisplay() {
+      const desktopTitle = document.getElementById("contact-info-title-desktop");
+      const mobileTitle = document.getElementById("contact-info-title-mobile");
+      const bgLeft = document.getElementById("section4-bg-left");
+      const bgRight = document.getElementById("section4-bg-right");
+
       if (window.innerWidth > 768) { // Desktop
-        document.getElementById("contact-info-title").innerHTML = data.contactInfo.title_desktop.replace(/\\n/g, '<br>');
-        document.getElementById("contact-info-text-mobile").style.display = 'none'; // Hide mobile text on desktop
-        document.getElementById("contact-info-title").style.display = 'block';
+        desktopTitle.innerHTML = data.contactInfo.title_desktop.replace(/(\r\n|\n|\r)/gm, '<br>').replace(/^(.*?)(<br>|$)/, '<span class="bold">$1</span>$2');
+        desktopTitle.style.display = 'block';
+        mobileTitle.style.display = 'none';
+        bgLeft.style.backgroundImage = `url(${data.contactInfo.image_left})`;
+        bgRight.style.backgroundImage = `url(${data.contactInfo.image_right})`;
+        bgLeft.style.display = 'block';
+        bgRight.style.display = 'block';
       } else { // Mobile
-        document.getElementById("contact-info-title").style.display = 'none'; // Hide desktop title on mobile
-        document.getElementById("contact-info-text-mobile").innerHTML = data.contactInfo.title_mobile; // Text for mobile
-        document.getElementById("contact-info-text-mobile").style.display = 'block';
+        mobileTitle.innerHTML = data.contactInfo.title_mobile.replace(/(\r\n|\n|\r)/gm, '<br>').replace(/^(.*?)(<br>|$)/, '<span class="bold">$1</span>$2');
+        mobileTitle.style.display = 'block';
+        desktopTitle.style.display = 'none';
+        bgLeft.style.display = 'none';
+        bgRight.style.backgroundImage = `url(${data.contactInfo.image_right})`; // Only right image for mobile
+        bgRight.style.display = 'block';
       }
     }
 
-    updateContactInfoTitle(); // Call on load
-    window.addEventListener('resize', updateContactInfoTitle); // Call on resize
+    updateContactInfoDisplay(); // Call on load
+    window.addEventListener('resize', updateContactInfoDisplay); // Call on resize
 
     document.getElementById("contact-info-phone").innerText = data.contactInfo.phone;
+    document.getElementById("whatsapp-link").href = `https://wa.me/${data.contactInfo.phone.replace(/\s/g, '').replace('+', '')}`; // Link WhatsApp
     document.getElementById("contact-info-email").innerText = data.contactInfo.email;
     
     // Set hrefs for social media links

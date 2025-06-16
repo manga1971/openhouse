@@ -46,24 +46,28 @@
   </section>
 
   <section id="section3" class="snap-scroll contact-form-split">
-    <div class="text-side-contact-form">
-      <h3 id="section3-title"></h3>
-    </div>
-    <div class="form-side-contact-form">
-      <form>
-        <input type="text" placeholder="Numele tău" required />
-        <input type="email" placeholder="Emailul tău" required />
-        <textarea placeholder="Mesajul tău" required></textarea>
-        <button type="submit" class="outline-button">Trimite</button>
-      </form>
+    <div class="background-left-form" id="section3-bg-left"></div> <div class="content-wrapper-form"> <div class="text-side-contact-form">
+            <h3 id="section3-title"></h3>
+        </div>
+        <div class="form-side-contact-form">
+            <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+                <input type="hidden" name="form-name" value="contact" />
+                <p class="hidden-field">
+                    <label>Don’t fill this out if you’re human: <input name="bot-field" /></label>
+                </p>
+                <input type="text" name="name" placeholder="Numele tău" required />
+                <input type="email" name="email" placeholder="Emailul tău" required />
+                <textarea name="message" placeholder="Mesajul tău" required></textarea>
+                <button type="submit" class="outline-button">Trimite</button>
+            </form>
+        </div>
     </div>
   </section>
 
   <section id="section4" class="snap-scroll contact-info-split">
     <div class="background-left" id="section4-bg-left"></div>
     <div class="background-right" id="section4-bg-right"></div>
-    <div class="text-content-wrapper">
-      <div class="text-side-contact-info overlay bottom-left">
+    <div class="content-wrapper-info"> <div class="text-side-contact-info">
         <h3 id="contact-info-title-desktop"></h3>
         <p id="contact-info-title-mobile"></p>
       </div>

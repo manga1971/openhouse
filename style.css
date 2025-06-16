@@ -103,7 +103,7 @@ header nav a:hover {
   position: relative;
   color: white;
   text-align: center;
-  flex-direction: column; /* Centrare verticală și orizontală a textului */
+  flex-direction: column;
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.7); /* Fundal fallback sau overlay */
 }
@@ -119,8 +119,8 @@ header nav a:hover {
 }
 
 .overlay {
-  position: relative; /* Pentru a poziționa textul în interiorul overlay-ului */
-  background-color: rgba(0, 0, 0, 0.5); /* Overlay semi-transparent pentru text */
+  position: relative;
+  background-color: rgba(0, 0, 0, 0.5);
   padding: 2rem;
   max-width: 800px;
   text-align: left;
@@ -132,36 +132,31 @@ header nav a:hover {
   position: absolute;
   bottom: 2rem;
   left: 2rem;
-  max-width: 50%; /* Limitează lățimea overlay-ului */
+  max-width: 50%;
   text-align: left;
-  background-color: rgba(0, 0, 0, 0.6); /* Un pic mai întunecat pentru contrast */
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
-.hero-section h1, .split-screen h2, .contact-form-split h3, .contact-info-split h3 {
-  font-family: 'Open Sans', sans-serif; /* Un font mai elegant și normal */
+.hero-section h1, .split-screen h2, .contact-form-split h3, .contact-info-split h3, .contact-info-split p {
+  font-family: 'Open Sans', sans-serif;
   font-size: 1.6rem; /* Dimensiune text ajustată */
   margin-bottom: 0.5rem;
   color: white;
   line-height: 1.4;
 }
 
-.hero-section h1 span.bold, .split-screen h2 span.bold, .contact-form-split h3 span.bold, .contact-info-split h3 span.bold {
-  font-weight: 700; /* Doar primul rând bold */
-}
-
-.hero-section p {
-  font-size: 1.1rem; /* Dimensiune consistentă */
-  color: white; /* Culoare albă */
+.hero-section h1 span.bold, .split-screen h2 span.bold, .contact-form-split h3 span.bold, .contact-info-split h3 span.bold, .contact-info-split p span.bold {
+  font-weight: 700;
 }
 
 /* Snap-scroll 2 - Split Screen */
 .split-screen {
   position: relative;
-  flex-direction: column; /* Inițial ca un singur bloc */
-  background-color: #333; /* Fundal default */
+  flex-direction: column;
+  background-color: #333;
   color: white;
-  justify-content: flex-start; /* Aliniere sus */
-  align-items: flex-start; /* Aliniere stânga */
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
 .split-screen iframe {
@@ -182,94 +177,6 @@ header nav a:hover {
   text-align: left;
 }
 
-.cta-button {
-  display: inline-block;
-  background-color: transparent;
-  color: #e74c3c;
-  border: 2px solid #e74c3c;
-  padding: 0.8rem 1.5rem;
-  border-radius: 5px;
-  text-decoration: none;
-  font-weight: 700;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.cta-button:hover {
-  background-color: #e74c3c;
-  color: white;
-}
-
-/* Snap-scroll 3 - Contact Form Section */
-.contact-form-split {
-  display: flex;
-  flex-direction: row; /* Desktop layout */
-  background-color: #333; /* Fundal pentru secțiune */
-  color: white; /* Text alb */
-  justify-content: center;
-  align-items: center;
-}
-
-.contact-form-split .text-side-contact-form {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end; /* Aliniază textul la bază */
-  align-items: flex-start;
-  padding: 3rem;
-  text-align: left;
-  height: 100%; /* Ocupă toată înălțimea pentru aliniere */
-}
-
-.contact-form-split .form-side-contact-form {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end; /* Aliniază formularul la bază */
-  align-items: center;
-  padding: 3rem;
-  height: 100%; /* Ocupă toată înălțimea pentru aliniere */
-}
-
-
-.contact-form-split h3 {
-  font-family: 'Open Sans', sans-serif;
-  font-size: 1.6rem;
-  margin-bottom: 0; /* Elimină margin-bottom pentru control mai bun */
-  color: white;
-  line-height: 1.4;
-}
-
-.contact-form-split form {
-  width: 100%;
-  max-width: 400px; /* Dimensiune fixă pentru formular */
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.contact-form-split input,
-.contact-form-split textarea {
-  padding: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.3); /* Chenar alb semitransparent */
-  border-radius: 5px;
-  background-color: rgba(255, 255, 255, 0.1); /* Fundal transparent */
-  color: white; /* Text alb în input */
-  font-family: 'Open Sans', sans-serif;
-  font-size: 1rem;
-}
-
-.contact-form-split input::placeholder,
-.contact-form-split textarea::placeholder {
-  color: rgba(255, 255, 255, 0.7); /* Placeholder text mai vizibil */
-}
-
-.contact-form-split input:focus,
-.contact-form-split textarea:focus {
-  outline: none;
-  border-color: #e74c3c; /* Accent roșu la focus */
-  box-shadow: 0 0 5px rgba(231, 76, 60, 0.5);
-}
-
 .outline-button {
   background-color: transparent;
   color: #e74c3c;
@@ -278,6 +185,8 @@ header nav a:hover {
   border-radius: 5px;
   font-weight: 700;
   cursor: pointer;
+  text-decoration: none; /* Pentru buton ca link */
+  display: inline-block; /* Pentru buton ca link */
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -287,13 +196,115 @@ header nav a:hover {
 }
 
 
+/* Snap-scroll 3 - Contact Form Section */
+.contact-form-split {
+  position: relative; /* Adăugat pentru poziționarea absolută a fundalului */
+  display: flex;
+  flex-direction: row; /* Desktop layout */
+  background-color: #333;
+  color: white;
+  justify-content: center;
+  align-items: center;
+}
+
+.contact-form-split .background-left-form { /* NOU: Pentru imaginea de fundal din stânga */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%; /* Ocupă jumătate din lățime */
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  z-index: 1; /* Sub conținutul principal */
+}
+
+.contact-form-split .content-wrapper-form { /* NOU: Wrapper pentru text și formular */
+  position: relative;
+  z-index: 2; /* Peste imaginile de fundal */
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: flex-end; /* Aliniază conținutul la bază */
+  justify-content: space-around; /* Spațiu între coloane */
+  padding: 3rem;
+  box-sizing: border-box;
+}
+
+.contact-form-split .text-side-contact-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* Aliniază textul la bază */
+  align-items: flex-start;
+  padding-right: 2rem; /* Spațiu între coloane */
+  text-align: left;
+  height: 100%;
+  color: white;
+}
+
+.contact-form-split .form-side-contact-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* Aliniază formularul la bază */
+  align-items: center; /* Centrează formularul orizontal */
+  padding-left: 2rem; /* Spațiu între coloane */
+  height: 100%;
+}
+
+.contact-form-split h3 {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 1.6rem;
+  margin-bottom: 0;
+  color: white;
+  line-height: 1.4;
+}
+
+.contact-form-split form {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.contact-form-split input,
+.contact-form-split textarea {
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 1rem;
+}
+
+.contact-form-split input::placeholder,
+.contact-form-split textarea::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.contact-form-split input:focus,
+.contact-form-split textarea:focus {
+  outline: none;
+  border-color: #e74c3c;
+  box-shadow: 0 0 5px rgba(231, 76, 60, 0.5);
+}
+
+.contact-form-split .hidden-field { /* Stil pentru câmpul honeypot */
+    display: none;
+}
+
+
 /* Snap-scroll 4 - Contact Info Section */
 .contact-info-split {
   position: relative;
   display: flex;
-  flex-direction: row; /* Desktop layout */
-  background-color: #222; /* Fundal mai închis pentru contrast */
+  flex-direction: row;
+  background-color: #222;
   color: white;
+  justify-content: center; /* Centrează conținutul pe orizontală */
+  align-items: center; /* Centrează conținutul pe verticală */
 }
 
 .contact-info-split .background-left,
@@ -304,6 +315,7 @@ header nav a:hover {
   height: 100%;
   background-size: cover;
   background-position: center;
+  z-index: 1; /* Sub conținutul principal */
 }
 
 .contact-info-split .background-left {
@@ -314,11 +326,16 @@ header nav a:hover {
   right: 0;
 }
 
-.contact-info-split .text-content-wrapper {
+.contact-info-split .content-wrapper-info { /* Redenumit pentru claritate */
   position: relative;
-  z-index: 2; /* Asigură că textul este peste fundal */
+  z-index: 2;
   display: flex;
   width: 100%;
+  height: 100%;
+  align-items: flex-end; /* Aliniază conținutul la bază (jos) */
+  justify-content: space-around; /* Distribuie spațiu între cele două jumătăți */
+  padding: 3rem;
+  box-sizing: border-box;
 }
 
 .contact-info-split .text-side-contact-info {
@@ -327,7 +344,7 @@ header nav a:hover {
   flex-direction: column;
   justify-content: flex-end; /* Aliniere text la bază */
   align-items: flex-start;
-  padding: 3rem;
+  padding-right: 2rem;
   text-align: left;
 }
 
@@ -340,7 +357,7 @@ header nav a:hover {
 }
 
 .contact-info-split p#contact-info-title-mobile {
-  display: none; /* Ascuns pe desktop */
+  display: none;
   font-family: 'Open Sans', sans-serif;
   font-size: 1.6rem;
   margin-bottom: 1rem;
@@ -352,28 +369,28 @@ header nav a:hover {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-end; /* Aliniază conținutul la bază */
   align-items: flex-start; /* Aliniază la stânga detaliile */
-  padding: 3rem;
+  padding-left: 2rem;
 }
 
-.contact-info-split p {
-  font-size: 1.1rem; /* Dimensiune consistentă */
+.contact-info-split .details-side-contact-info p {
+  font-size: 1.1rem;
   margin-bottom: 0.8rem;
   color: white;
-  display: flex; /* Permite alinierea iconiței WhatsApp */
+  display: flex;
   align-items: center;
-  gap: 10px; /* Spațiu între text și iconiță */
+  gap: 10px;
 }
 
 .contact-info-split .email-red {
-  color: #e74c3c; /* Culoare roșie pentru email */
+  color: #e74c3c;
 }
 
 .contact-info-split .social-links {
   margin-top: 1.5rem;
-  display: flex; /* Pentru desktop - pe aceeași linie */
-  gap: 2.5rem; /* Spațiu între iconițe, mărit */
+  display: flex;
+  gap: 2.5rem;
 }
 
 .contact-info-split .social-links > div {
@@ -383,18 +400,18 @@ header nav a:hover {
 }
 
 .contact-info-split .social-links a {
-  color: white; /* Iconițe albe */
-  font-size: 4rem; /* Dimensiune iconițe dublă */
+  color: white;
+  font-size: 4rem;
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
 .contact-info-split .social-links a:hover {
-  color: #e74c3c; /* Roșu la hover */
+  color: #e74c3c;
 }
 
 .contact-info-split .social-links p {
-  font-size: 0.9rem; /* Text sub iconițe */
+  font-size: 0.9rem;
   margin-top: 5px;
   color: white;
   text-align: center;
@@ -426,27 +443,27 @@ header nav a:hover {
   /* Header Mobile */
   header {
     padding: 0.8rem 1rem;
-    background-color: rgba(255, 255, 255, 0.05); /* Header mai transparent pe mobil */
-    backdrop-filter: blur(10px); /* Blur mai pronunțat */
-    justify-content: space-between; /* Asigură spațiu între logo și meniu */
+    background-color: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    justify-content: space-between;
   }
 
   header nav {
-    display: none; /* Ascunde meniul pe mobil implicit */
+    display: none;
     flex-direction: column;
     position: absolute;
-    top: 60px; /* Sub header */
+    top: 60px;
     left: 0;
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.9); /* Fundal meniu deschis */
+    background-color: rgba(0, 0, 0, 0.9);
     box-shadow: 0 5px 10px rgba(0,0,0,0.2);
     padding: 1rem 0;
     z-index: 999;
-    align-items: center; /* Centrează link-urile în meniul mobil */
+    align-items: center;
   }
 
   header nav.active {
-    display: flex; /* Afișează meniul când e activ */
+    display: flex;
   }
 
   header nav a {
@@ -463,32 +480,32 @@ header nav a:hover {
   }
 
   .menu-icon {
-    display: block; /* Afișează hamburger pe mobil */
-    position: relative; /* Nu mai este absolut, se aliniează la dreapta */
-    right: 0; /* Elimină decalajul la dreapta */
+    display: block;
+    position: relative;
+    right: 0;
     top: auto;
     transform: none;
   }
   .menu-icon .bar {
-    background-color: white; /* Bare albe pentru contrast pe fundalul headerului */
+    background-color: white;
   }
 
   /* Snap-scroll general pe mobil */
   .snap-scroll {
     padding: 1.5rem;
-    height: auto; /* Permite secțiunilor să se adapteze la conținut */
-    min-height: 80vh; /* Asigură un scroll decent */
+    height: auto;
+    min-height: 80vh;
   }
 
   /* Hero Section Mobile */
   .hero-section .overlay.bottom-left {
-    position: relative; /* Ajustează poziția pentru mobil */
+    position: relative;
     bottom: auto;
     left: auto;
     max-width: 100%;
     padding: 1.5rem;
     text-align: center;
-    margin-top: 10vh; /* Spațiu de sus pentru text */
+    margin-top: 10vh;
   }
   .hero-section h1 {
     font-size: 1.8rem;
@@ -496,13 +513,13 @@ header nav a:hover {
 
   /* Split Screen Mobile */
   .split-screen .overlay.bottom-left {
-    position: relative; /* Ajustează poziția pentru mobil */
+    position: relative;
     bottom: auto;
     left: auto;
     max-width: 100%;
     padding: 1.5rem;
     text-align: center;
-    margin-top: 10vh; /* Spațiu de sus pentru text */
+    margin-top: 10vh;
   }
   .split-screen h2 {
     font-size: 1.8rem;
@@ -512,19 +529,36 @@ header nav a:hover {
   .contact-form-split {
     flex-direction: column;
   }
+
+  .contact-form-split .background-left-form { /* Ascunde imaginea de fundal pe mobil */
+    display: none;
+  }
+
+  .contact-form-split .content-wrapper-form {
+    flex-direction: column;
+    padding-top: 5vh; /* Ajustează dacă e necesar */
+    align-items: center;
+    height: auto;
+  }
+
   .contact-form-split .text-side-contact-form,
   .contact-form-split .form-side-contact-form {
     padding: 2rem 1.5rem;
     align-items: center;
-    justify-content: flex-start; /* Aliniere sus pentru mobil */
-    height: auto; /* Lățime automată pentru conținut */
+    justify-content: flex-start;
+    height: auto;
+    width: 100%; /* Ocupă toată lățimea */
+    background-color: rgba(0, 0, 0, 0.6); /* Overlay pentru lizibilitate */
+    border-radius: 8px;
+    margin-bottom: 2rem; /* Spațiu între blocuri */
   }
+
   .contact-form-split h3 {
     text-align: center;
-    margin-bottom: 1.5rem; /* Adaugă spațiu între text și formular */
+    margin-bottom: 1.5rem;
   }
   .contact-form-split form {
-    max-width: 100%; /* Formularul ocupă toată lățimea disponibilă */
+    max-width: 100%;
   }
 
   /* Contact Info Section Mobile */
@@ -533,38 +567,38 @@ header nav a:hover {
     text-align: center;
   }
   .contact-info-split .background-left {
-    display: none; /* Ascunde imaginea din stânga pe mobil */
+    display: none;
   }
   .contact-info-split .background-right {
-    width: 100%; /* Imaginea din dreapta ocupă tot fundalul */
+    width: 100%;
     left: 0;
   }
 
-  .contact-info-split .text-content-wrapper {
+  .contact-info-split .content-wrapper-info { /* Reedenumit */
     flex-direction: column;
     align-items: center;
     width: 100%;
-    padding-top: 15vh; /* Asigură spațiu de sus pentru textul care apare peste imagine */
+    padding-top: 15vh;
   }
 
   .contact-info-split .text-side-contact-info {
     padding: 2rem 1.5rem;
     align-items: center;
     text-align: center;
-    position: relative; /* Ajustează poziționarea */
+    position: relative;
     bottom: auto;
     left: auto;
     max-width: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* Overlay pentru lizibilitate */
+    background-color: rgba(0, 0, 0, 0.6);
     border-radius: 8px;
     margin-bottom: 2rem;
   }
 
   .contact-info-split h3#contact-info-title-desktop {
-    display: none; /* Ascunde titlul desktop pe mobil */
+    display: none;
   }
   .contact-info-split p#contact-info-title-mobile {
-    display: block; /* Afișează titlul mobil */
+    display: block;
     text-align: center;
   }
 
@@ -572,21 +606,21 @@ header nav a:hover {
     padding: 2rem 1.5rem;
     align-items: center;
     text-align: center;
-    width: 100%; /* Ocupă toată lățimea */
+    width: 100%;
   }
 
-  .contact-info-split p {
-    justify-content: center; /* Centrează textul și iconița */
+  .contact-info-split .details-side-contact-info p {
+    justify-content: center;
   }
 
   .contact-info-split .social-links {
-    flex-direction: row; /* Iconițe pe un singur rând pe mobil, dacă încap */
-    flex-wrap: wrap; /* Permit wrap pe rândul următor dacă nu încap */
+    flex-direction: row;
+    flex-wrap: wrap;
     justify-content: center;
-    gap: 1.5rem; /* Spațiu ajustat */
+    gap: 1.5rem;
   }
   .contact-info-split .social-links a {
-    font-size: 2.5rem; /* Ajustare dimensiune iconițe pe mobil */
+    font-size: 2.5rem;
   }
   .contact-info-split .social-links p {
     font-size: 0.8rem;

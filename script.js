@@ -1,36 +1,53 @@
 fetch("content.json")
   .then(res => res.json())
   .then(data => {
-    // Helper function to set video source
+    // Helper function to set YouTube video source
     function setVideoSrc(elementId, videoUrl) {
-        let videoId = '';
-        if (videoUrl.includes('v=')) {
-            videoId = videoUrl.split('v=')[1].split('&')[0];
-        } else if (videoUrl.includes('youtube.com/embed/')) {
-            videoId = videoUrl.split('embed/')[1].split('?')[0];
-        } else {
-            videoId = videoUrl.split('/').pop().split('?')[0];
-        }
+      let videoId = '';
+      if (videoUrl.includes('v=')) {
+        videoId = videoUrl.split('v=')[1].split('&')[0];
+      } else if (videoUrl.includes('youtube.com/embed/')) {
+        videoId = videoUrl.split('embed/')[1].split('?')[0];
+      } else if (videoUrl.includes('youtu.be/')) {
+        videoId = videoUrl.split('youtu.be/')[1].split('?')[0];
+      } else {
+        videoId = videoUrl; // Assume it's just the ID
+      }
 
-        if (!videoId || videoId.length < 5) {
-            videoId = "dQw4w9WgXcQ"; // Rick Astley - default placeholder
-            console.error(`Could not extract a valid YouTube video ID from ${videoUrl}. Using a placeholder video. Please update 'videoBackground' in content.json.`);
+      // Basic validation for YouTube ID format (usually 11 characters)
+      if (!videoId || videoId.length !== 11) {
+        videoId = "dQw4w9WgXcQ"; // Rick Astley - default placeholder
+        console.error(`Could not extract a valid YouTube video ID from ${videoUrl} for ${elementId}. Using a placeholder video. Please check 'videoBackground' in content.json.`);
+      }
+      document.getElementById(elementId).src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&mute=1&controls=0&playlist=${videoId}&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3`;
+    }
+
+    // Function to apply bold to the first line of text
+    function formatTextWithBoldFirstLine(text) {
+        const lines = text.split('\n');
+        if (lines.length > 0) {
+            return `<span class="bold">${lines[0]}</span><br>${lines.slice(1).join('<br>')}`;
         }
-        document.getElementById(elementId).src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&mute=1&controls=0&playlist=${videoId}&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3`;
+        return text;
     }
 
     // Snap-scroll 1 (Hero)
-    document.getElementById("hero-title").innerHTML = data.hero.title.replace(/(\r\n|\n|\r)/gm, '<br>').replace(/^(.*?)(<br>|$)/, '<span class="bold">$1</span>$2');
+    document.getElementById("hero-title").innerHTML = formatTextWithBoldFirstLine(data.hero.title);
     setVideoSrc("hero-video", data.hero.videoBackground);
 
     // Snap-scroll 2
-    document.getElementById("section2-title").innerHTML = data.section2.title.replace(/(\r\n|\n|\r)/gm, '<br>').replace(/^(.*?)(<br>|$)/, '<span class="bold">$1</span>$2');
+    document.getElementById("section2-title").innerHTML = formatTextWithBoldFirstLine(data.section2.title);
     document.getElementById("section2-link").href = data.section2.link;
-    setVideoSrc("section2-video", data.section2.videoBackground);
-
+    setVideoSrc("section2-video", data.section2.videoBackground); // Verificare video
 
     // Snap-scroll 3 (Contact Form)
-    document.getElementById("section3-title").innerHTML = data.section3.title.replace(/(\r\n|\n|\r)/gm, '<br>').replace(/^(.*?)(<br>|$)/, '<span class="bold">$1</span>$2');
+    document.getElementById("section3-title").innerHTML = formatTextWithBoldFirstLine(data.section3.title);
+    // Set background image for left side of contact form
+    const section3BgLeft = document.getElementById("section3-bg-left");
+    if (section3BgLeft) {
+      section3BgLeft.style.backgroundImage = `url(${data.section3.imageBackgroundLeft})`;
+    }
+
 
     // Snap-scroll 4 (Contact Info)
     function updateContactInfoDisplay() {
@@ -40,7 +57,7 @@ fetch("content.json")
       const bgRight = document.getElementById("section4-bg-right");
 
       if (window.innerWidth > 768) { // Desktop
-        desktopTitle.innerHTML = data.contactInfo.title_desktop.replace(/(\r\n|\n|\r)/gm, '<br>').replace(/^(.*?)(<br>|$)/, '<span class="bold">$1</span>$2');
+        desktopTitle.innerHTML = formatTextWithBoldFirstLine(data.contactInfo.title_desktop);
         desktopTitle.style.display = 'block';
         mobileTitle.style.display = 'none';
         bgLeft.style.backgroundImage = `url(${data.contactInfo.image_left})`;
@@ -48,7 +65,7 @@ fetch("content.json")
         bgLeft.style.display = 'block';
         bgRight.style.display = 'block';
       } else { // Mobile
-        mobileTitle.innerHTML = data.contactInfo.title_mobile.replace(/(\r\n|\n|\r)/gm, '<br>').replace(/^(.*?)(<br>|$)/, '<span class="bold">$1</span>$2');
+        mobileTitle.innerHTML = formatTextWithBoldFirstLine(data.contactInfo.title_mobile);
         mobileTitle.style.display = 'block';
         desktopTitle.style.display = 'none';
         bgLeft.style.display = 'none';
@@ -61,7 +78,7 @@ fetch("content.json")
     window.addEventListener('resize', updateContactInfoDisplay); // Call on resize
 
     document.getElementById("contact-info-phone").innerText = data.contactInfo.phone;
-    document.getElementById("whatsapp-link").href = `https://wa.me/${data.contactInfo.phone.replace(/\s/g, '').replace('+', '')}`; // Link WhatsApp
+    document.getElementById("whatsapp-link").href = `https://wa.me/${data.contactInfo.phone.replace(/\s/g, '').replace('+', '')}`;
     document.getElementById("contact-info-email").innerText = data.contactInfo.email;
     
     // Set hrefs for social media links
@@ -77,13 +94,13 @@ fetch("content.json")
 const menuIcon = document.getElementById('menu-icon');
 const nav = document.getElementById('main-nav');
 
-if (menuIcon && nav) { // Asigură-te că elementele există
+if (menuIcon && nav) {
     menuIcon.addEventListener('click', () => {
         nav.classList.toggle('active');
         menuIcon.classList.toggle('active');
     });
 
-    // Închide meniul când se dă click pe un link (doar pe mobil)
+    // Close menu when a link is clicked (mobile only)
     nav.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', () => {
             if (window.innerWidth <= 768) {

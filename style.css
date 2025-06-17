@@ -370,8 +370,8 @@ header nav a:hover {
   display: flex;
   flex-direction: column;
   justify-content: flex-end; /* Aliniază conținutul la bază */
-  align-items: flex-start; /* Aliniază la stânga detaliile */
-  padding-left: 2rem;
+  align-items: center; /* NOU: Acum va centra conținutul pe orizontală */
+  padding-left: 2rem; /* Păstrăm padding-ul pentru spațiu față de jumătatea stângă */
 }
 
 .contact-info-split .details-side-contact-info p {

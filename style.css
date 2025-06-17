@@ -139,7 +139,7 @@ header nav a:hover {
 
 .hero-section h1, .split-screen h2, .contact-form-split h3, .contact-info-split h3, .contact-info-split p {
   font-family: 'Open Sans', sans-serif;
-  font-size: 1.6rem; /* Dimensiune text ajustată */
+  font-size: 1.2rem; /* Dimensiune text ajustată */
   margin-bottom: 0.5rem;
   color: white;
   line-height: 1.4;

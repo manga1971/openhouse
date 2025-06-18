@@ -183,7 +183,7 @@ header nav a:hover {
   border: 2px solid #e74c3c;
   padding: 0.8rem 1.5rem;
   border-radius: 5px;
-  font-weight: 700;
+  font-weight: 400;
   cursor: pointer;
   text-decoration: none; /* Pentru buton ca link */
   display: inline-block; /* Pentru buton ca link */
@@ -375,7 +375,7 @@ header nav a:hover {
 }
 
 .contact-info-split .details-side-contact-info p {
-  font-size: 1.1rem;
+  font-size: 0.8rem;
   margin-bottom: 0.8rem;
   color: white;
   display: flex;
@@ -401,7 +401,7 @@ header nav a:hover {
 
 .contact-info-split .social-links a {
   color: white;
-  font-size: 4rem;
+  font-size: 3rem;
   text-decoration: none;
   transition: color 0.3s ease;
 }
@@ -411,7 +411,7 @@ header nav a:hover {
 }
 
 .contact-info-split .social-links p {
-  font-size: 0.9rem;
+  font-size: 0.6rem;
   margin-top: 5px;
   color: white;
   text-align: center;
@@ -430,7 +430,7 @@ header nav a:hover {
 .contact-info-split .footer-links a {
   color: white;
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 0.6rem;
   transition: color 0.3s ease;
 }
 

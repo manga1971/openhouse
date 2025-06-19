@@ -1,94 +1,145 @@
 fetch("content.json")
   .then(res => res.json())
   .then(data => {
-    // Helper function to set YouTube video source
-    function setVideoSrc(elementId, videoUrl) {
+    // Helper function to extract YouTube video ID
+    function getYouTubeVideoId(videoUrl) {
       let videoId = '';
-      // Regex to extract YouTube video ID from various URL formats
-      const youtubeRegex = /(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-      const match = videoUrl.match(youtubeRegex);
-
-      if (match && match[1]) {
-        videoId = match[1];
+      if (videoUrl.includes('v=')) {
+        videoId = videoUrl.split('v=')[1].split('&')[0];
+      } else if (videoUrl.includes('embed/')) {
+        videoId = videoUrl.split('embed/')[1].split('?')[0];
       } else {
-        // If not a full URL, assume it's just the ID
-        videoId = videoUrl;
+        videoId = videoUrl; // Assume it's just the ID
       }
-
-      // Basic validation for YouTube ID format (usually 11 characters)
-      if (!videoId || videoId.length !== 11) {
-        videoId = "dQw4w9WgXcQ"; // Rick Astley - default placeholder
-        console.error(`Could not extract a valid YouTube video ID from ${videoUrl} for ${elementId}. Using a placeholder video. Please check 'videoBackground' in content.json.`);
-      }
-      document.getElementById(elementId).src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&mute=1&controls=0&playlist=${videoId}&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3`;
+      return (videoId && videoId.length === 11) ? videoId : "dQw4w9WgXcQ"; // Default to Rick Astley if invalid
     }
 
-    // Function to apply bold to the first line of text and keep other lines separate
-    function formatTextWithBoldFirstLine(text) {
+    // Helper function to set YouTube video source for iframe
+    function setVideoIframeSrc(elementId, videoUrl, controls = 0) {
+      const videoId = getYouTubeVideoId(videoUrl);
+      document.getElementById(elementId).src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&mute=1&controls=${controls}&playlist=${videoId}&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3`;
+    }
+
+    // Function to separate text into title and content spans/paragraphs
+    function formatTextForDisplay(text) {
         const lines = text.split('\n');
-        if (lines.length > 0) {
-            const firstLine = `<span class="bold">${lines[0]}</span>`;
-            const remainingLines = lines.slice(1).join('<br>');
-            return `${firstLine}${remainingLines ? '<br>' + remainingLines : ''}`;
-        }
-        return text;
+        const title = lines[0];
+        const content = lines.slice(1).join('\n');
+        return { title: title, content: content };
     }
 
     // Snap-scroll 1 (Hero)
-    document.getElementById("hero-title").innerHTML = formatTextWithBoldFirstLine(data.hero.title);
-    setVideoSrc("hero-video", data.hero.videoBackground);
+    const heroText = formatTextForDisplay(data.hero.title);
+    document.getElementById("hero-title").innerText = heroText.title;
+    document.getElementById("hero-content").innerText = heroText.content;
+    setVideoIframeSrc("hero-video", data.hero.videoBackground, 0); // No controls for hero video
 
-    // Snap-scroll 2
-    document.getElementById("section2-title").innerHTML = formatTextWithBoldFirstLine(data.section2.title);
-    document.getElementById("section2-link").href = data.section2.link;
-    setVideoSrc("section2-video", data.section2.videoBackground); // Verificare video
+    // Snap-scroll 2 (Desktop & Mobile)
+    const snap2LeftText = formatTextForDisplay(data.section2.left_content.title);
+    document.getElementById("snap2-left-title").innerText = snap2LeftText.title; // desktop
+    document.getElementById("snap2-left-content").innerText = snap2LeftText.content; // desktop
+    document.getElementById("snap2-left-link").href = data.section2.left_content.link; // Set 'Poveste de succes' link to Despre noi
 
-    // Snap-scroll 3 (Contact Form)
-    document.getElementById("section3-title").innerHTML = formatTextWithBoldFirstLine(data.section3.title);
-    // Set background image for left side of contact form
-    const section3BgLeft = document.getElementById("section3-bg-left");
-    if (section3BgLeft) {
-      section3BgLeft.style.backgroundImage = `url(${data.section3.imageBackgroundLeft})`;
-    }
+    const snap2Mobile1Text = formatTextForDisplay(data.section2.mobile_2_1.title);
+    document.getElementById("snap2-1-title-mobile").innerText = snap2Mobile1Text.title; // mobile 2.1
+    document.getElementById("snap2-1-content-mobile").innerText = snap2Mobile1Text.content; // mobile 2.1
 
 
-    // Snap-scroll 4 (Contact Info)
-    function updateContactInfoDisplay() {
-      const desktopTitle = document.getElementById("contact-info-title-desktop");
-      const mobileTitle = document.getElementById("contact-info-title-mobile");
-      const bgLeft = document.getElementById("section4-bg-left");
-      const bgRight = document.getElementById("section4-bg-right");
+    // Snap-scroll 3 (Desktop & Mobile)
+    const snap3LeftText = formatTextForDisplay(data.section3.left_content.title);
+    document.getElementById("snap3-left-title").innerText = snap3LeftText.title; // desktop
+    document.getElementById("snap3-left-content").innerText = snap3LeftText.content; // desktop
 
-      if (window.innerWidth > 768) { // Desktop
-        desktopTitle.innerHTML = formatTextWithBoldFirstLine(data.contactInfo.title_desktop);
-        desktopTitle.style.display = 'block';
-        mobileTitle.style.display = 'none';
-        bgLeft.style.backgroundImage = `url(${data.contactInfo.image_left})`;
-        bgRight.style.backgroundImage = `url(${data.contactInfo.image_right})`;
-        bgLeft.style.display = 'block';
-        bgRight.style.display = 'block';
-      } else { // Mobile
-        mobileTitle.innerHTML = formatTextWithBoldFirstLine(data.contactInfo.title_mobile);
-        mobileTitle.style.display = 'block';
-        desktopTitle.style.display = 'none';
-        bgLeft.style.display = 'none';
-        bgRight.style.backgroundImage = `url(${data.contactInfo.image_right})`; // Only right image for mobile
-        bgRight.style.display = 'block';
-      }
-    }
+    const snap3Mobile1Text = formatTextForDisplay(data.section3.mobile_3_1.title);
+    document.getElementById("snap3-1-title-mobile").innerText = snap3Mobile1Text.title; // mobile 3.1
+    document.getElementById("snap3-1-content-mobile").innerText = snap3Mobile1Text.content; // mobile 3.1
 
-    updateContactInfoDisplay(); // Call on load
-    window.addEventListener('resize', updateContactInfoDisplay); // Call on resize
+    // Snap-scroll 4 (Desktop & Mobile)
+    const snap4LeftText = formatTextForDisplay(data.contactInfo.left_content.title);
+    document.getElementById("snap4-left-title").innerText = snap4LeftText.title; // desktop
+    document.getElementById("snap4-left-content").innerText = snap4LeftText.content; // desktop
 
+    const snap4Mobile1Text = formatTextForDisplay(data.contactInfo.mobile_4_1.title);
+    document.getElementById("snap4-1-title-mobile").innerText = snap4Mobile1Text.title; // mobile 4.1
+    document.getElementById("snap4-1-content-mobile").innerText = snap4Mobile1Text.content; // mobile 4.1
+
+
+    // Background Images
+    document.getElementById("snap2-left-bg").style.backgroundImage = `url(${data.section2.left_content.image})`;
+    document.getElementById("snap2-right-bg").style.backgroundImage = `url(${data.section2.right_content.image})`;
+    document.getElementById("snap2-1-bg-mobile").style.backgroundImage = `url(${data.section2.mobile_2_1.image})`;
+    document.getElementById("snap2-2-bg-mobile").style.backgroundImage = `url(${data.section2.mobile_2_2.image})`;
+
+    document.getElementById("snap3-left-bg").style.backgroundImage = `url(${data.section3.left_content.image})`;
+    document.getElementById("snap3-right-bg").style.backgroundImage = `url(${data.section3.right_content.image})`;
+    document.getElementById("snap3-1-bg-mobile").style.backgroundImage = `url(${data.section3.mobile_3_1.image})`;
+    document.getElementById("snap3-2-bg-mobile").style.backgroundImage = `url(${data.section3.mobile_3_2.image})`;
+
+    document.getElementById("snap4-left-bg").style.backgroundImage = `url(${data.contactInfo.left_content.image})`;
+    document.getElementById("snap4-right-bg").style.backgroundImage = `url(${data.contactInfo.right_content.image})`;
+    document.getElementById("snap4-1-bg-mobile").style.backgroundImage = `url(${data.contactInfo.mobile_4_1.image})`;
+    document.getElementById("snap4-2-bg-mobile").style.backgroundImage = `url(${data.contactInfo.mobile_4_2.image})`;
+
+    // Contact Info (phone, email, social) - Desktop
     document.getElementById("contact-info-phone").innerText = data.contactInfo.phone;
-    // Updated WhatsApp link to explicitly include 'target="_blank"' for consistency
     document.getElementById("whatsapp-link").href = `https://wa.me/${data.contactInfo.phone.replace(/\s/g, '').replace('+', '')}`;
+    document.getElementById("contact-info-email").href = `mailto:${data.contactInfo.email}`; // Make email active link
     document.getElementById("contact-info-email").innerText = data.contactInfo.email;
-    
-    // Set hrefs for social media links
     document.getElementById("social-youtube").href = data.contactInfo.social.youtube;
     document.getElementById("social-instagram").href = data.contactInfo.social.instagram;
     document.getElementById("social-tiktok").href = data.contactInfo.social.tiktok;
+
+    // Contact Info (phone, email, social) - Mobile
+    document.getElementById("contact-info-phone-mobile").innerText = data.contactInfo.phone;
+    document.getElementById("whatsapp-link-mobile").href = `https://wa.me/${data.contactInfo.phone.replace(/\s/g, '').replace('+', '')}`;
+    document.getElementById("contact-info-email-mobile").href = `mailto:${data.contactInfo.email}`; // Make email active link
+    document.getElementById("contact-info-email-mobile").innerText = data.contactInfo.email;
+    document.getElementById("social-youtube-mobile").href = data.contactInfo.social.youtube;
+    document.getElementById("social-instagram-mobile").href = data.contactInfo.social.instagram;
+    document.getElementById("social-tiktok-mobile").href = data.contactInfo.social.tiktok;
+
+
+    // Video Modal Logic for "video VP"
+    const videoModal = document.getElementById("videoModal");
+    const modalVideoIframe = document.getElementById("modal-video-iframe");
+    const closeButton = document.querySelector(".close-button");
+
+    function openVideoModal(videoUrl) {
+        const videoId = getYouTubeVideoId(videoUrl);
+        // Using controls=1 as requested for modal video
+        modalVideoIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3`;
+        videoModal.style.display = "flex";
+    }
+
+    function closeVideoModal() {
+        modalVideoIframe.src = ""; // Stop the video
+        videoModal.style.display = "none";
+    }
+
+    // Attach click listeners to play buttons/thumbnails
+    document.getElementById("play-video-vp").addEventListener("click", () => {
+        openVideoModal(data.section2.right_content.video);
+    });
+    document.getElementById("play-video-vp-mobile").addEventListener("click", () => {
+        openVideoModal(data.section2.mobile_2_2.video);
+    });
+
+    closeButton.addEventListener("click", closeVideoModal);
+
+    window.addEventListener("click", (event) => {
+        if (event.target == videoModal) {
+            closeVideoModal();
+        }
+    });
+
+    // Handle thumbnail loading
+    function setThumbnailSrc(imgElementId, videoUrl) {
+        const videoId = getYouTubeVideoId(videoUrl);
+        document.getElementById(imgElementId).src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+    }
+    setThumbnailSrc("video-vp-thumbnail", data.section2.right_content.video);
+    setThumbnailSrc("video-vp-thumbnail-mobile", data.section2.mobile_2_2.video);
+
 
   })
   .catch(error => console.error('Error fetching content.json:', error));

@@ -19,82 +19,191 @@
       <div class="bar"></div>
     </div>
     <nav id="main-nav">
-      <a href="#hero">Acasă</a>
-      <a href="#section2">Ce facem</a>
-      <a href="#section4">Despre noi</a>
-      <a href="#section3">Contact</a>
+      <a href="#snap-scroll-1">Acasă</a>
+      <a href="#snap-scroll-2-desktop">Ce facem</a>
+      <a href="#snap-scroll-4-desktop">Despre noi</a>
+      <a href="#snap-scroll-3-desktop">Contact</a>
     </nav>
   </header>
 
-  <section id="hero" class="snap-scroll hero-section">
+  <section id="snap-scroll-1" class="snap-scroll hero-section">
     <iframe id="hero-video" frameborder="0"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       allowfullscreen></iframe>
     <div class="overlay bottom-left">
-      <h1 id="hero-title"></h1>
+      <h1 class="text-title" id="hero-title"></h1>
+      <p class="text-content" id="hero-content"></p>
     </div>
   </section>
 
-  <section id="section2" class="snap-scroll split-screen">
-    <iframe id="section2-video" frameborder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowfullscreen></iframe>
-    <div class="overlay bottom-left">
-      <h2 id="section2-title"></h2>
-      <a id="section2-link" class="outline-button" target="_blank">Poveste de succes</a>
-    </div>
-  </section>
-
-  <section id="section3" class="snap-scroll contact-form-split">
-    <div class="background-left-form" id="section3-bg-left"></div> <div class="content-wrapper-form"> <div class="text-side-contact-form">
-            <h3 id="section3-title"></h3>
+  <section id="snap-scroll-2-desktop" class="snap-scroll split-screen desktop-only">
+    <div class="split-left" id="snap2-left-bg">
+        <div class="overlay bottom-left">
+            <h2 class="text-title" id="snap2-left-title"></h2>
+            <p class="text-content" id="snap2-left-content"></p>
+            <a id="snap2-left-link" class="outline-button">Poveste de succes</a>
         </div>
-        <div class="form-side-contact-form">
-            <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
-                <input type="hidden" name="form-name" value="contact" />
-                <p class="hidden-field">
-                    <label>Don’t fill this out if you’re human: <input name="bot-field" /></label>
-                </p>
-                <input type="text" name="name" placeholder="Numele tău" required />
-                <input type="email" name="email" placeholder="Emailul tău" required />
-                <textarea name="message" placeholder="Mesajul tău" required></textarea>
-                <button type="submit" class="outline-button">Trimite</button>
-            </form>
+    </div>
+    <div class="split-right" id="snap2-right-bg">
+        <div class="video-thumbnail-container">
+            <img src="uploads/video_placeholder.jpg" alt="Video Placeholder" class="video-thumbnail" id="video-vp-thumbnail">
+            <div class="play-button" id="play-video-vp">
+                <i class="fas fa-play"></i>
+            </div>
         </div>
     </div>
   </section>
 
-  <section id="section4" class="snap-scroll contact-info-split">
-    <div class="background-left" id="section4-bg-left"></div>
-    <div class="background-right" id="section4-bg-right"></div>
-    <div class="content-wrapper-info"> <div class="text-side-contact-info">
-        <h3 id="contact-info-title-desktop"></h3>
-        <p id="contact-info-title-mobile"></p>
-      </div>
-      <div class="details-side-contact-info">
-        <p> <span id="contact-info-phone"></span> <a href="#" id="whatsapp-link" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a></p>
-        <p class="email-red"> <span id="contact-info-email"></span></p>
-        <div class="social-links">
-          <div>
-            <a id="social-youtube" href="#" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-            <p>youtube</p>
-          </div>
-          <div>
-            <a id="social-instagram" href="#" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-            <p>instagram</p>
-          </div>
-          <div>
-            <a id="social-tiktok" href="#" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
-            <p>tiktok</p>
-          </div>
+  <section id="snap-scroll-2-1-mobile" class="snap-scroll split-screen-mobile mobile-only">
+    <div class="full-width-bg" id="snap2-1-bg-mobile">
+        <div class="overlay bottom">
+            <h2 class="text-title" id="snap2-1-title-mobile"></h2>
+            <p class="text-content" id="snap2-1-content-mobile"></p>
         </div>
-      </div>
-    </div>
-    <div class="footer-links">
-      <a href="confidentialitate.html">Confidentialitate</a>
-      <a href="termeni-conditii.html">Termeni și condiții</a>
     </div>
   </section>
+
+  <section id="snap-scroll-2-2-mobile" class="snap-scroll split-screen-mobile mobile-only">
+    <div class="full-width-bg" id="snap2-2-bg-mobile">
+        <div class="video-thumbnail-container">
+            <img src="uploads/video_placeholder.jpg" alt="Video Placeholder" class="video-thumbnail" id="video-vp-thumbnail-mobile">
+            <div class="play-button" id="play-video-vp-mobile">
+                <i class="fas fa-play"></i>
+            </div>
+        </div>
+    </div>
+  </section>
+
+  <section id="snap-scroll-3-desktop" class="snap-scroll contact-form-split desktop-only">
+    <div class="background-left-form" id="snap3-left-bg">
+        <div class="overlay bottom-left">
+            <h3 class="text-title" id="snap3-left-title"></h3>
+            <p class="text-content" id="snap3-left-content"></p>
+        </div>
+    </div>
+    <div class="background-right-form" id="snap3-right-bg">
+        <div class="content-wrapper-form">
+            <div class="form-side-contact-form">
+                <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+                    <input type="hidden" name="form-name" value="contact" />
+                    <p class="hidden-field">
+                        <label>Don’t fill this out if you’re human: <input name="bot-field" /></label>
+                    </p>
+                    <input type="text" name="name" placeholder="Numele tău" required />
+                    <input type="email" name="email" placeholder="Emailul tău" required />
+                    <textarea name="message" placeholder="Mesajul tău" required></textarea>
+                    <button type="submit" class="outline-button">Trimite</button>
+                </form>
+            </div>
+        </div>
+    </div>
+  </section>
+
+  <section id="snap-scroll-3-1-mobile" class="snap-scroll split-screen-mobile mobile-only">
+    <div class="full-width-bg" id="snap3-1-bg-mobile">
+        <div class="overlay bottom">
+            <h3 class="text-title" id="snap3-1-title-mobile"></h3>
+            <p class="text-content" id="snap3-1-content-mobile"></p>
+        </div>
+    </div>
+  </section>
+
+  <section id="snap-scroll-3-2-mobile" class="snap-scroll split-screen-mobile mobile-only">
+    <div class="full-width-bg" id="snap3-2-bg-mobile">
+        <div class="content-wrapper-form-mobile">
+            <div class="form-side-contact-form">
+                <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+                    <input type="hidden" name="form-name" value="contact" />
+                    <p class="hidden-field">
+                        <label>Don’t fill this out if you’re human: <input name="bot-field" /></label>
+                    </p>
+                    <input type="text" name="name" placeholder="Numele tău" required />
+                    <input type="email" name="email" placeholder="Emailul tău" required />
+                    <textarea name="message" placeholder="Mesajul tău" required></textarea>
+                    <button type="submit" class="outline-button">Trimite</button>
+                </form>
+            </div>
+        </div>
+    </div>
+  </section>
+
+  <section id="snap-scroll-4-desktop" class="snap-scroll contact-info-split desktop-only">
+    <div class="background-left" id="snap4-left-bg">
+        <div class="overlay bottom-left">
+            <h3 class="text-title" id="snap4-left-title"></h3>
+            <p class="text-content" id="snap4-left-content"></p>
+        </div>
+    </div>
+    <div class="background-right" id="snap4-right-bg">
+        <div class="content-wrapper-info">
+            <div class="details-side-contact-info">
+                <p> <span id="contact-info-phone"></span> <a href="#" id="whatsapp-link" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a></p>
+                <p class="email-red"> <a href="#" id="contact-info-email"></a></p>
+                <div class="social-links">
+                    <div>
+                        <a id="social-youtube" href="#" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                        <p>youtube</p>
+                    </div>
+                    <div>
+                        <a id="social-instagram" href="#" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <p>instagram</p>
+                    </div>
+                    <div>
+                        <a id="social-tiktok" href="#" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                        <p>tiktok</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </section>
+
+  <section id="snap-scroll-4-1-mobile" class="snap-scroll split-screen-mobile mobile-only">
+    <div class="full-width-bg" id="snap4-1-bg-mobile">
+        <div class="overlay bottom">
+            <h3 class="text-title" id="snap4-1-title-mobile"></h3>
+            <p class="text-content" id="snap4-1-content-mobile"></p>
+        </div>
+    </div>
+  </section>
+
+  <section id="snap-scroll-4-2-mobile" class="snap-scroll split-screen-mobile mobile-only">
+    <div class="full-width-bg" id="snap4-2-bg-mobile">
+        <div class="content-wrapper-info-mobile">
+            <div class="details-side-contact-info">
+                <p> <span id="contact-info-phone-mobile"></span> <a href="#" id="whatsapp-link-mobile" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a></p>
+                <p class="email-red"> <a href="#" id="contact-info-email-mobile"></a></p>
+                <div class="social-links">
+                    <div>
+                        <a id="social-youtube-mobile" href="#" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                        <p>youtube</p>
+                    </div>
+                    <div>
+                        <a id="social-instagram-mobile" href="#" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <p>instagram</p>
+                    </div>
+                    <div>
+                        <a id="social-tiktok-mobile" href="#" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                        <p>tiktok</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </section>
+
+
+  <div class="footer-links">
+    <a href="confidentialitate.html">Confidentialitate</a>
+    <a href="termeni-conditii.html">Termeni și condiții</a>
+  </div>
+
+  <div id="videoModal" class="modal">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <iframe id="modal-video-iframe" width="100%" height="100%" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>

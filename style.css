@@ -554,6 +554,7 @@ header nav a:hover {
 
   /* ... restul regulilor CSS pentru mobil ... */
 }
+
   .mobile-only {
       display: flex; /* Or whatever the default display is for the section */
   }

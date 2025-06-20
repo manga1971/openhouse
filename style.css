@@ -339,6 +339,8 @@ header nav a:hover {
 
 .contact-form-split .hidden-field { /* Stil pentru câmpul honeypot */
     display: none;
+    position: absolute; /* Adăugat pentru a ascunde și mai bine */
+    left: -9999px; /* Adăugat pentru a ascunde și mai bine */
 }
 
 

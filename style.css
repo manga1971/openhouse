@@ -671,6 +671,10 @@ header nav a:hover {
       backdrop-filter: blur(2px);
       padding: 2rem;
       max-width: 100%; /* Permite formularului să ocupe toată lățimea */
+      /* Adăugat/confirmat pentru centrare buton */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
   }
 
   /* Contact Info Mobile (4.2) */
@@ -700,20 +704,27 @@ header nav a:hover {
     gap: 1.5rem;
   }
   .contact-info-split .social-links a {
-    font-size: 2.5rem;
+    font-size: 2.5rem; /* Ajustare dimensiune iconițe social media pe mobil */
   }
   .contact-info-split .social-links p {
     font-size: 0.8rem;
   }
 
+  /* Specific pentru iconița WhatsApp */
+  .contact-info-split .details-side-contact-info p #whatsapp-link-mobile i { /* Calea exactă pentru iconița WhatsApp */
+    font-size: 2rem; /* Măriți dimensiunea pentru WhatsApp */
+  }
+
   /* Footer Links Mobile */
   .footer-links {
-    flex-direction: column;
-    gap: 0.5rem; /* Mai puțin spațiu între ele */
+    flex-direction: row; /* Am modificat la row pentru a le pune pe un singur rând */
+    justify-content: center; /* Centrare orizontală */
+    gap: 1.5rem; /* Spațiu între link-uri */
     padding: 0.8rem;
-    position: relative; /* Nu mai este absolut */
+    position: relative;
     bottom: auto;
     left: auto;
     transform: none;
+    flex-wrap: wrap; /* Permite wrap pe linii noi dacă spațiul este prea mic */
   }
 }

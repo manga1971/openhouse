@@ -531,29 +531,10 @@ header nav a:hover {
 
 /* Media Queries pentru Responsive Design */
 @media (max-width: 768px) {
-  /* ... alte reguli CSS pentru mobil ... */
-
-  .hero-section .overlay.bottom-left {
-    position: absolute;
-    bottom: 2rem;
-    left: 0;    /* Modificat: de la left: 50%; */
-    right: 0;   /* Adăugat */
-    transform: none; /* Modificat: de la translateX(-50%); - nu mai este necesar */
-    max-width: 100%; /* Modificat: asigură că poate ocupa toată lățimea containerului */
-    padding: 0 1.5rem; /* Ajustat padding-ul pentru a lăsa spațiu lateral, ex: 1.5rem stânga/dreapta */
-    text-align: center;
+  /* Utility classes for desktop/mobile visibility */
+  .desktop-only {
+      display: none;
   }
-  .hero-section .text-title {
-    font-size: 1.2rem; /* Păstrează sau ajustează această valoare */
-    line-height: 1.3; /* Poți ajusta line-height pentru o mai bună lizibilitate */
-  }
-  .hero-section .text-content {
-    font-size: 0.9rem; /* Păstrează sau ajustează această valoare */
-    line-height: 1.5;
-  }
-
-  /* ... restul regulilor CSS pentru mobil ... */
-}
 
   .mobile-only {
       display: flex; /* Or whatever the default display is for the section */
@@ -623,12 +604,12 @@ header nav a:hover {
     bottom: 2rem;
     left: 50%;
     transform: translateX(-50%);
-    max-width: 98%;
+    max-width: 90%;
     padding: 1.5rem;
     text-align: center; /* Centrare text pe mobil */
   }
   .hero-section .text-title {
-    font-size: 1.2rem; /* Ajustare dimensiune font */
+    font-size: 1.5rem; /* Ajustare dimensiune font */
   }
   .hero-section .text-content {
     font-size: 1rem;

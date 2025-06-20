@@ -718,7 +718,7 @@ header nav a:hover {
   }
 
   /* Footer Links Mobile */
-  .footer-links {
+.footer-links {
   flex-direction: row; /* Am modificat la row pentru a le pune pe un singur rând */
   justify-content: center; /* Centrare orizontală */
   gap: 1.5rem; /* Spațiu între link-uri */
@@ -729,3 +729,4 @@ header nav a:hover {
   transform: none;
   flex-wrap: wrap; /* Permite wrap pe linii noi dacă spațiul este prea mic */
 }
+} /* Aceasta este acolada finală corectă pentru @media */

@@ -6,7 +6,7 @@
   "section2": {
     "left_content": {
       "title": "Soluții complete. Rezultate reale.\nConstruim strategii personalizate pentru achiziții, vânzări și închirieri.",
-      "content": "Piața imobiliară este într-o continuă schimbare. Noi suntem aici să te ajutăm să navighezi prin complexitatea acesteia și să obții cele mai bune rezultate. De la prima consultație până la finalizarea tranzacției, suntem partenerul tău de încredere.",
+      "content": "Partenerul tău de încredere pentru orice tranzactie imobiliara.",
       "image": "uploads/foto1.jpg",
       "link": "#snap-scroll-4-desktop"
     },
@@ -16,7 +16,7 @@
     },
     "mobile_2_1": {
       "title": "Soluții complete. Rezultate reale.\nConstruim strategii personalizate pentru achiziții, vânzări și închirieri.",
-      "content": "Piața imobiliară este într-o continuă schimbare. Noi suntem aici să te ajutăm să navighezi prin complexitatea acesteia și să obții cele mai bune rezultate. De la prima consultație până la finalizarea tranzacției, suntem partenerul tău de încredere.",
+      "content": "Partenerul tău de încredere pentru orice tranzactie imobiliara.",
       "image": "uploads/foto1.jpg"
     },
     "mobile_2_2": {
@@ -26,16 +26,16 @@
   },
   "section3": {
     "left_content": {
-      "title": "Un nou început începe cu o decizie corectă,\nO decizie corectă se poate lua în baza experienței,",
-      "content": "Experiența poate fi a ta sau a agentului tău imobiliar.\nNoi avem experienta. Din 1998.",
+      "title": "Un nou început începe cu o decizie corectă,\nO decizie corectă se poate lua în baza experienței. Noi avem. Din 1998.",
+      "content": "Da",
       "image": "uploads/foto3.jpg"
     },
     "right_content": {
       "image": "uploads/foto4.jpg"
     },
     "mobile_3_1": {
-      "title": "Un nou început începe cu o decizie corectă,\nO decizie corectă se poate lua în baza experienței,",
-      "content": "Experiența poate fi a ta sau a agentului tău imobiliar.\nNoi avem experienta. Din 1998.",
+      "title": "Un nou început începe cu o decizie corectă,\nO decizie corectă se poate lua în baza experienței. Noi avem. Din 1998.",
+      "content": "Da",
       "image": "uploads/foto3.jpg"
     },
     "mobile_3_2": {
@@ -62,6 +62,7 @@
     "phone": "+40726340034",
     "email": "intravilan@gmail.com",
     "social": {
+      "linkedin.com": "https://www.linkedin.com/in/ghita-mihai-adrian-ba182016/",
       "youtube": "https://www.youtube.com",
       "instagram": "https://www.instagram.com/mihaighita71/",
       "tiktok": "https://www.tiktok.com/@openhousero"

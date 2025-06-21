@@ -112,7 +112,7 @@ header nav a:hover {
 /* Stiluri pentru Titlu și Conținut */
 .text-title {
     font-family: 'Open Sans', sans-serif;
-    font-weight: 700; /* Titlul va fi bold */
+    font-weight: 400; /* Titlul va fi bold */
     font-size: 1.8rem; /* Dimensiune inițială, ajustabilă */
     margin-bottom: 0.5rem;
     color: white;

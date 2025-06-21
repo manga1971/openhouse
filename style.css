@@ -609,10 +609,10 @@ header nav a:hover {
     text-align: center; /* Centrare text pe mobil */
   }
   .hero-section .text-title {
-    font-size: 1.5rem; /* Ajustare dimensiune font */
+    font-size: 1.2rem; /* Ajustare dimensiune font */
   }
   .hero-section .text-content {
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
 
   /* Split Screen Mobile Sections (2.1, 2.2, 3.1, 3.2, 4.1, 4.2) */
@@ -643,10 +643,10 @@ header nav a:hover {
   }
 
   .full-width-bg .text-title {
-      font-size: 1.5rem;
+      font-size: 1.2rem;
   }
   .full-width-bg .text-content {
-      font-size: 1rem;
+      font-size: 0.9rem;
   }
 
   /* Video Thumbnail Mobile */
@@ -706,15 +706,15 @@ header nav a:hover {
     gap: 1.5rem;
   }
   .contact-info-split .social-links a {
-    font-size: 2.5rem; /* Ajustare dimensiune iconițe social media pe mobil */
+    font-size: 4rem; /* Ajustare dimensiune iconițe social media pe mobil */
   }
   .contact-info-split .social-links p {
-    font-size: 0.8rem;
+    font-size: 1rem;
   }
 
   /* Specific pentru iconița WhatsApp */
   .contact-info-split .details-side-contact-info p #whatsapp-link-mobile i { /* Calea exactă pentru iconița WhatsApp */
-    font-size: 2rem; /* Măriți dimensiunea pentru WhatsApp */
+    font-size: 4rem; /* Măriți dimensiunea pentru WhatsApp */
   }
 
   /* Footer Links Mobile */

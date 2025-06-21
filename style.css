@@ -402,7 +402,7 @@ header nav a:hover {
 }
 
 .contact-info-split .details-side-contact-info p {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   margin-bottom: 0.8rem;
   color: white;
   display: flex;
@@ -434,7 +434,7 @@ header nav a:hover {
 
 .contact-info-split .social-links a {
   color: white;
-  font-size: 5rem;
+  font-size: 4rem;
   text-decoration: none;
   transition: color 0.3s ease;
 }

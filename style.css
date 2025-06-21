@@ -152,19 +152,26 @@ header nav a:hover {
 
     /* Asigură-te că overlay-ul de text este deasupra noului video de fundal mobil */
     .hero-section .overlay.bottom-left {
-        z-index: 1;
-        pointer-events: none;
+        z-index: 1; /* Asigură-te că este peste video-ul mobil (z-index: 0) */
+        pointer-events: none; /* Permite click-urilor să treacă prin text la elementele de dedesubt (dacă ar fi cazul) */
+
+        /* Stilurile pentru lățime și poziție */
         position: absolute;
         bottom: 2rem;
-        left: 2rem;         /* Păstrează asta */
-        right: 2rem;        /* Păstrează asta */
-        max-width: calc(100% - 4rem); /* Păstrează asta */
-        text-align: center;
-        padding: 1.5rem;    /* ADAUGĂ ASTA de la celălalt bloc, dacă vrei padding */
+        left: 2rem;
+        right: 2rem; /* Important pentru a extinde lățimea */
+        max-width: calc(100% - 4rem); /* Important pentru a extinde lățimea */
+        text-align: center; /* Opțional: Centrare text pe mobil */
+        padding: 1.5rem;    /* Adaugă acest padding dacă vrei spațiu în interiorul overlay-ului */
+        transform: none;    /* Anulează orice transformare veche care ar strâmta elementul */
+    }
 
-        /* Asigură-te că nu ai transform: translateX (-50%) aici, deoarece left/right sunt deja setate */
-        /* Dacă ai avut transform: translateX(-50%); anterior, asigură-te că este șters! */
-        transform: none; /* Adaugă acest rând pentru a anula transform-ul moștenit */
+    /* Stiluri pentru Titlu și Conținut specifice mobilului */
+    .hero-section .text-title {
+        font-size: 1.3rem; /* Ajustare dimensiune font, preluat de la vechiul bloc */
+    }
+    .hero-section .text-content {
+        font-size: 1rem; /* Ajustare dimensiune font, preluat de la vechiul bloc */
     }
 
     /* Reguli existente pentru mobile-only și desktop-only în media query */
@@ -176,7 +183,6 @@ header nav a:hover {
         display: none;
     }
 }
-
 
 /* Stiluri pentru Titlu și Conținut */
 .text-title {

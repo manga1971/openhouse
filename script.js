@@ -17,7 +17,8 @@ fetch("content.json")
     // Helper function to set YouTube video source for iframe
     function setVideoIframeSrc(elementId, videoUrl, controls = 0) {
       const videoId = getYouTubeVideoId(videoUrl);
-      document.getElementById(elementId).src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&mute=1&controls=${controls}&playlist=${videoId}&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3`;
+      // Corectare URL și adăugare playsinline=1 pentru compatibilitate mobilă
+      document.getElementById(elementId).src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&mute=1&controls=${controls}&playlist=${videoId}&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&playsinline=1`;
     }
 
     // Function to separate text into title and content spans/paragraphs
@@ -85,6 +86,7 @@ fetch("content.json")
     document.getElementById("whatsapp-link").href = `https://wa.me/${data.contactInfo.phone.replace(/\s/g, '').replace('+', '')}`;
     document.getElementById("contact-info-email").href = `mailto:${data.contactInfo.email}`; // Make email active link
     document.getElementById("contact-info-email").innerText = data.contactInfo.email;
+    document.getElementById("social-linkedin-desktop").href = data.contactInfo.social["linkedin.com"]; // Added for desktop
     document.getElementById("social-youtube").href = data.contactInfo.social.youtube;
     document.getElementById("social-instagram").href = data.contactInfo.social.instagram;
     document.getElementById("social-tiktok").href = data.contactInfo.social.tiktok;
@@ -94,6 +96,7 @@ fetch("content.json")
     document.getElementById("whatsapp-link-mobile").href = `https://wa.me/${data.contactInfo.phone.replace(/\s/g, '').replace('+', '')}`;
     document.getElementById("contact-info-email-mobile").href = `mailto:${data.contactInfo.email}`; // Make email active link
     document.getElementById("contact-info-email-mobile").innerText = data.contactInfo.email;
+    document.getElementById("social-linkedin-mobile").href = data.contactInfo.social["linkedin.com"]; // Preia corect linkul de LinkedIn
     document.getElementById("social-youtube-mobile").href = data.contactInfo.social.youtube;
     document.getElementById("social-instagram-mobile").href = data.contactInfo.social.instagram;
     document.getElementById("social-tiktok-mobile").href = data.contactInfo.social.tiktok;

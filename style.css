@@ -154,6 +154,16 @@ header nav a:hover {
     .hero-section .overlay.bottom-left {
         z-index: 1; /* Asigură-te că este peste video-ul mobil (z-index: 0) */
         pointer-events: none; /* Permite click-urilor să treacă prin text la elementele de dedesubt (dacă ar fi cazul) */
+
+        /* --- ÎNCEPUTUL MODIFICĂRILOR AICI --- */
+        position: absolute; /* Asigură-te că este poziționat absolut, chiar dacă moștenește */
+        bottom: 2rem;       /* Păstrează distanța de jos */
+        left: 2rem;         /* Păstrează distanța de la stânga */
+        right: 2rem;        /* NOU: Adaugă distanța de la dreapta. Asta ajută la lățime. */
+        max-width: calc(100% - 4rem); /* NOU: Setează lățimea maximă. */
+                                     /* Asta va face textul să ocupe toată lățimea ecranului minus 2rem pe stânga și 2rem pe dreapta */
+        text-align: center;         /* NOU: Centrează textul pentru un aspect mai plăcut pe mobil */
+        /* --- SFÂRȘITUL MODIFICĂRILOR AICI --- */
     }
 
     /* Reguli existente pentru mobile-only și desktop-only în media query */

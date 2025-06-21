@@ -152,18 +152,19 @@ header nav a:hover {
 
     /* Asigură-te că overlay-ul de text este deasupra noului video de fundal mobil */
     .hero-section .overlay.bottom-left {
-        z-index: 1; /* Asigură-te că este peste video-ul mobil (z-index: 0) */
-        pointer-events: none; /* Permite click-urilor să treacă prin text la elementele de dedesubt (dacă ar fi cazul) */
+        z-index: 1;
+        pointer-events: none;
+        position: absolute;
+        bottom: 2rem;
+        left: 2rem;         /* Păstrează asta */
+        right: 2rem;        /* Păstrează asta */
+        max-width: calc(100% - 4rem); /* Păstrează asta */
+        text-align: center;
+        padding: 1.5rem;    /* ADAUGĂ ASTA de la celălalt bloc, dacă vrei padding */
 
-        /* --- ÎNCEPUTUL MODIFICĂRILOR AICI --- */
-        position: absolute; /* Asigură-te că este poziționat absolut, chiar dacă moștenește */
-        bottom: 2rem;       /* Păstrează distanța de jos */
-        left: 2rem;         /* Păstrează distanța de la stânga */
-        right: 2rem;        /* NOU: Adaugă distanța de la dreapta. Asta ajută la lățime. */
-        max-width: calc(100% - 4rem); /* NOU: Setează lățimea maximă. */
-                                     /* Asta va face textul să ocupe toată lățimea ecranului minus 2rem pe stânga și 2rem pe dreapta */
-        text-align: center;         /* NOU: Centrează textul pentru un aspect mai plăcut pe mobil */
-        /* --- SFÂRȘITUL MODIFICĂRILOR AICI --- */
+        /* Asigură-te că nu ai transform: translateX (-50%) aici, deoarece left/right sunt deja setate */
+        /* Dacă ai avut transform: translateX(-50%); anterior, asigură-te că este șters! */
+        transform: none; /* Adaugă acest rând pentru a anula transform-ul moștenit */
     }
 
     /* Reguli existente pentru mobile-only și desktop-only în media query */

@@ -17,7 +17,7 @@ fetch("content.json")
     // Helper function to set YouTube video source for iframe
     function setVideoIframeSrc(elementId, videoUrl, controls = 0) {
       const videoId = getYouTubeVideoId(videoUrl);
-      // Corectare URL și adăugare playsinline=1 pentru compatibilitate mobilă
+      // CORECȚIE CRITICĂ AICI: S-a folosit formatul corect de embed YouTube
       document.getElementById(elementId).src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&mute=1&controls=${controls}&playlist=${videoId}&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&playsinline=1`;
     }
 
@@ -109,7 +109,7 @@ fetch("content.json")
 
     function openVideoModal(videoUrl) {
         const videoId = getYouTubeVideoId(videoUrl);
-        // Using controls=1 as requested for modal video
+        // CORECȚIE CRITICĂ AICI: S-a folosit formatul corect de embed YouTube
         modalVideoIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3`;
         videoModal.style.display = "flex";
     }
@@ -138,6 +138,7 @@ fetch("content.json")
     // Handle thumbnail loading
     function setThumbnailSrc(imgElementId, videoUrl) {
         const videoId = getYouTubeVideoId(videoUrl);
+        // CORECȚIE CRITICĂ AICI: S-a folosit formatul corect de thumbnail YouTube
         document.getElementById(imgElementId).src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
     }
     setThumbnailSrc("video-vp-thumbnail", data.section2.right_content.video);

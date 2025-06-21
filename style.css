@@ -401,12 +401,13 @@ header nav a:hover {
   backdrop-filter: blur(2px);
 }
 
-/* Modificat: Adăugat un stil general pentru rândurile de contact/social media */
-.contact-info-split .details-side-contact-info p.contact-line {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 0.8rem; /* Maintain spacing */
+.contact-info-split .details-side-contact-info p {
+  font-size: 1rem;
+  margin-bottom: 0.8rem;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .contact-info-split .email-red a {
@@ -419,35 +420,38 @@ header nav a:hover {
     text-decoration: underline;
 }
 
-/* Modificat: Adăugat flex-wrap și justify-content pentru social links */
 .contact-info-split .social-links {
   margin-top: 1.5rem;
   display: flex;
-  flex-wrap: wrap; /* Added to allow wrapping for more icons */
-  justify-content: center; /* Center items for better appearance */
   gap: 2.5rem;
 }
 
-/* Adăugat stil general pentru elementele sociale */
-.contact-info-split .social-links .social-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 1rem; /* Spacing between social items */
+.contact-info-split .social-links > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.contact-info-split .social-links .social-item a {
+.contact-info-split .social-links a.linkedin {
+  color: #0e76a8; /* albastru LinkedIn */
+}
+
+.contact-info-split .social-links a.linkedin:hover {
+  color: white;
+}
+
+.contact-info-split .social-links a {
   color: white;
   font-size: 3rem;
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
-.contact-info-split .social-links .social-item a:hover {
+.contact-info-split .social-links a:hover {
   color: #e74c3c;
 }
 
-.contact-info-split .social-links .social-item p {
+.contact-info-split .social-links p {
   font-size: 0.9rem;
   margin-top: 5px;
   color: white;
@@ -537,11 +541,11 @@ header nav a:hover {
 @media (max-width: 768px) {
   /* Utility classes for desktop/mobile visibility */
   .desktop-only {
-      display: none !important; /* Force hide desktop on mobile */
+      display: none;
   }
 
   .mobile-only {
-      display: flex !important; /* Force show mobile on mobile */
+      display: flex; /* Or whatever the default display is for the section */
   }
 
   /* Header Mobile */
@@ -616,7 +620,7 @@ header nav a:hover {
     font-size: 1.3rem; /* Ajustare dimensiune font */
   }
   .hero-section .text-content {
-    font-size: 1.0rem; /* Adjusted for readability */
+    font-size: 1rem;
   }
 
   /* Split Screen Mobile Sections (2.1, 2.2, 3.1, 3.2, 4.1, 4.2) */
@@ -650,7 +654,7 @@ header nav a:hover {
       font-size: 1.3rem;
   }
   .full-width-bg .text-content {
-      font-size: 1.0rem; /* Adjusted for readability */
+      font-size: 1rem;
   }
 
   /* Video Thumbnail Mobile */
@@ -659,47 +663,38 @@ header nav a:hover {
       padding-bottom: 50%; /* Adjust for mobile if needed */
   }
 
-  /* Contact Form Mobile (3.2) - Acum folosim .contact-form-split pentru ambele */
-  .contact-form-split { /* Acum se aplică și pe mobil */
-    flex-direction: column; /* Asigură că jumătățile sunt pe verticală pe mobil */
-    padding: 1.5rem; /* Reintroducem padding general pentru secțiune */
-    height: auto; /* Permite conținutului să dicteze înălțimea */
-    min-height: 80vh; /* Minimum height for snap-scroll feel */
-  }
-
-  .contact-form-split .background-left-form,
-  .contact-form-split .background-right-form {
-    flex: none; /* Nu mai ocupă jumătate, ci se adaptează */
-    width: 100%; /* Ocupă toată lățimea */
-    height: auto; /* Înălțime auto pentru conținut */
-    min-height: 50vh; /* Asigură o înălțime vizibilă pentru fundal */
-  }
-
-  .contact-form-split .background-left-form .overlay.bottom-left,
-  .contact-form-split .content-wrapper-form {
-    position: relative; /* Eliminăm absolute positioning dacă interferează */
-    bottom: auto;
-    left: auto;
-    transform: none;
-    max-width: 100%;
-    width: 100%; /* Ocupă toată lățimea disponibilă în container */
+  /* Contact Form Mobile (3.2) */
+  @media (max-width: 768px) {
+  .contact-form-split {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     padding: 1.5rem;
-    box-sizing: border-box;
-    align-items: center; /* Centrează conținutul formularului pe verticală */
-    justify-content: center; /* Centrează conținutul formularului pe orizontală */
   }
 
-  .contact-form-split .form-side-contact-form {
-    max-width: 100%; /* Permite formularului să ocupe toată lățimea disponibilă */
+  .form-side-contact-form {
+    max-width: 100%;
     width: 100%;
-    padding: 1.5rem; /* Ajustare padding pentru mobil */
+    padding: 1.5rem;
   }
 
-  .contact-form-split input,
-  .contact-form-split textarea,
-  .contact-form-split .outline-button {
-    width: 100%; /* Asigură lățime completă */
-    box-sizing: border-box;
+  .background-left-form,
+  .background-right-form {
+    display: none; /* ascundem background-urile split pe mobil */
+  }
+}
+
+  }
+  .content-wrapper-form-mobile .form-side-contact-form {
+      background-color: rgba(128, 128, 128, 0.1);
+      border-radius: 8px;
+      backdrop-filter: blur(2px);
+      padding: 2rem;
+      max-width: 100%; /* Permite formularului să ocupe toată lățimea */
+      /* Adăugat/confirmat pentru centrare buton */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
   }
 
   /* Contact Info Mobile (4.2) */
@@ -722,47 +717,36 @@ header nav a:hover {
       max-width: 100%;
   }
 
-  /* Specific pentru iconița WhatsApp pe mobil */
-  .contact-info-split .details-side-contact-info p .whatsapp-icon-mobile i {
-    font-size: 3.5rem; /* Ajustare dimensiune pentru WhatsApp */
-    color: #25D366; /* Culoare specifică WhatsApp */
+  .contact-info-split .social-links {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
   }
 
-  /* Modificat: Stiluri pentru noile iconițe sociale pe mobil */
-  .contact-info-split .social-links.mobile-social-grid {
-    flex-direction: column; /* Asigură că link-urile sunt pe rânduri separate */
-    align-items: center; /* Centrează orizontal */
-    gap: 1rem; /* Spațiu între rânduri */
+  .contact-info-split .social-links a {
+    font-size: 4rem; /* Ajustare dimensiune iconițe social media pe mobil */
   }
 
-  .contact-info-split .social-links .social-item {
-      display: flex;
-      flex-direction: row; /* Iconița și textul pe același rând */
-      align-items: center;
-      gap: 15px; /* Spațiu între iconiță și text */
-      margin-bottom: 0.5rem; /* Spațiu între fiecare rând social */
+  .contact-info-split .social-links p {
+    font-size: 1rem;
   }
 
-  .contact-info-split .social-links .social-item a {
-    font-size: 2.5rem; /* Dimensiune iconițe sociale pe mobil */
+  /* Specific pentru iconița WhatsApp */
+  .contact-info-split .details-side-contact-info p #whatsapp-link-mobile i { /* Calea exactă pentru iconița WhatsApp */
+    font-size: 6rem; /* Măriți dimensiunea pentru WhatsApp */
   }
-
-  .contact-info-split .social-links .social-item p {
-    font-size: 1.1rem; /* Dimensiune text social pe mobil */
-    margin-top: 0; /* Elimină margin-top suplimentar */
-  }
-
 
   /* Footer Links Mobile */
-  .footer-links {
-    flex-direction: row; /* Am modificat la row pentru a le pune pe un singur rând */
-    justify-content: center; /* Centrare orizontală */
-    gap: 1.5rem; /* Spațiu între link-uri */
-    padding: 0.8rem;
-    position: relative;
-    bottom: auto;
-    left: auto;
-    transform: none;
-    flex-wrap: wrap; /* Permite wrap pe linii noi dacă spațiul este prea mic */
-  }
+.footer-links {
+  flex-direction: row; /* Am modificat la row pentru a le pune pe un singur rând */
+  justify-content: center; /* Centrare orizontală */
+  gap: 1.5rem; /* Spațiu între link-uri */
+  padding: 0.8rem;
+  position: relative;
+  bottom: auto;
+  left: auto;
+  transform: none;
+  flex-wrap: wrap; /* Permite wrap pe linii noi dacă spațiul este prea mic */
 }
+} /* Aceasta este acolada finală corectă pentru @media */

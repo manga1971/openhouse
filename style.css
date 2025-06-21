@@ -115,14 +115,14 @@ header nav a:hover {
     font-weight: 600; /* Titlul va fi bold */
     font-size: 1.8rem; /* Dimensiune inițială, ajustabilă */
     margin-bottom: 0.5rem;
-    color: white;
+    color: red;
     line-height: 1.4;
 }
 
 .text-content {
     font-family: 'Open Sans', sans-serif;
     font-weight: 400; /* Conținutul va fi normal */
-    font-size: 1.1rem; /* Dimensiune inițială, ajustabilă */
+    font-size: 1.2rem; /* Dimensiune inițială, ajustabilă */
     color: white;
     line-height: 1.6;
 }
@@ -609,10 +609,10 @@ header nav a:hover {
     text-align: center; /* Centrare text pe mobil */
   }
   .hero-section .text-title {
-    font-size: 1.2rem; /* Ajustare dimensiune font */
+    font-size: 1.3rem; /* Ajustare dimensiune font */
   }
   .hero-section .text-content {
-    font-size: 0.9rem;
+    font-size: 1rem;
   }
 
   /* Split Screen Mobile Sections (2.1, 2.2, 3.1, 3.2, 4.1, 4.2) */
@@ -643,10 +643,10 @@ header nav a:hover {
   }
 
   .full-width-bg .text-title {
-      font-size: 1.2rem;
+      font-size: 1.3rem;
   }
   .full-width-bg .text-content {
-      font-size: 0.9rem;
+      font-size: 1rem;
   }
 
   /* Video Thumbnail Mobile */

@@ -108,6 +108,64 @@ header nav a:hover {
     display: none;
 }
 
+/* --- Noi reguli pentru video-urile de fundal --- */
+
+/* Ascunde video-ul mobil implicit pe desktop (sau pe ecrane mai mari) */
+.mobile-bg-video,
+.mobile-bg-gif {
+    display: none;
+}
+
+/* Asigură-te că iframe-ul YouTube este vizibil pe desktop */
+.hero-section iframe#hero-video { /* Selectăm specific iframe-ul cu ID-ul hero-video */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0; /* Ar trebui să fie sub conținutul principal (overlay-ul de text) */
+    object-fit: cover;
+    display: block; /* Asigură-te că este vizibil pe desktop */
+}
+
+/* --- Reguli pentru mobil (în media query) --- */
+@media (max-width: 768px) {
+    /* Aceste reguli vor anula cele de mai sus pentru ecrane mici */
+
+    /* Ascunde iframe-ul YouTube pe mobil */
+    .hero-section iframe#hero-video {
+        display: none;
+    }
+
+    /* Afișează și stilizează video-ul MP4/GIF pe mobil */
+    .mobile-bg-video,
+    .mobile-bg-gif {
+        display: block; /* Afișează video-ul MP4/GIF */
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Acoperă toată suprafața */
+        z-index: 0; /* Asigură-te că este sub overlay-ul de text */
+    }
+
+    /* Asigură-te că overlay-ul de text este deasupra noului video de fundal mobil */
+    .hero-section .overlay.bottom-left {
+        z-index: 1; /* Asigură-te că este peste video-ul mobil (z-index: 0) */
+        pointer-events: none; /* Permite click-urilor să treacă prin text la elementele de dedesubt (dacă ar fi cazul) */
+    }
+
+    /* Reguli existente pentru mobile-only și desktop-only în media query */
+    .mobile-only {
+        display: block; /* Sau flex, grid, etc., în funcție de ce ai nevoie */
+    }
+
+    .desktop-only {
+        display: none;
+    }
+}
+
 
 /* Stiluri pentru Titlu și Conținut */
 .text-title {

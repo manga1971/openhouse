@@ -1,7 +1,7 @@
 {
   "hero": {
     "title": "Un nou început pentru tine?\nCând vinzi sau cumperi o proprietate, ai nevoie de îndrumare pentru a lua decizia corectă.",
-    "videoBackground": "https://www.youtube.com/embed/vNscPtijCe4?si=t8X407aBTCrIaI5E&controls=0"
+    "videoBackground": "https://www.youtube.com/watch?v=video_ID_here"
   },
   "section2": {
     "left_content": {
@@ -12,7 +12,7 @@
     },
     "right_content": {
       "image": "uploads/foto2.jpg",
-      "video": "https://www.youtube.com/embed/vNscPtijCe4?si=au9N4gsMkyoNaajf"
+      "video": "https://www.youtube.com/watch?v=video_ID_here"
     },
     "mobile_2_1": {
       "title": "Soluții complete. Rezultate reale.\nConstruim strategii personalizate pentru achiziții, vânzări și închirieri.",
@@ -21,7 +21,7 @@
     },
     "mobile_2_2": {
       "image": "uploads/foto2.jpg",
-      "video": "https://www.youtube.com/embed/vNscPtijCe4?si=au9N4gsMkyoNaajf"
+      "video": "https://www.youtube.com/watch?v=video_ID_here"
     }
   },
   "section3": {
@@ -63,7 +63,7 @@
     "email": "intravilan@gmail.com",
     "social": {
       "linkedin.com": "https://www.linkedin.com/in/ghita-mihai-adrian-ba182016/",
-      "youtube": "https://www.youtube.com",
+      "youtube": "https://www.youtube.com/channel/your_channel_id",
       "instagram": "https://www.instagram.com/mihaighita71/",
       "tiktok": "https://www.tiktok.com/@openhousero"
     }

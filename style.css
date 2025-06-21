@@ -673,22 +673,7 @@ header nav a:hover {
     flex-direction: column; /* Asigură că jumătățile sunt pe verticală pe mobil */
   }
 
-  /* Hero Section Mobile */
-  .hero-section .overlay.bottom-left {
-    position: absolute; /* Rămâne absolut, dar se adaptează */
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    max-width: 90%;
-    padding: 1.5rem;
-    text-align: center; /* Centrare text pe mobil */
-  }
-  .hero-section .text-title {
-    font-size: 1.3rem; /* Ajustare dimensiune font */
-  }
-  .hero-section .text-content {
-    font-size: 1rem;
-  }
+  
 
   /* Split Screen Mobile Sections (2.1, 2.2, 3.1, 3.2, 4.1, 4.2) */
   .split-screen-mobile {

@@ -20,8 +20,8 @@
     </div>
     <nav id="main-nav">
       <a href="#snap-scroll-1">Acasă</a>
-      <a href="#snap-scroll-2-1-mobile">Ce facem</a>
-      <a href="#snap-scroll-4-1-mobile">Despre noi</a>
+      <a href="#snap-scroll-2-desktop">Ce facem</a>
+      <a href="#snap-scroll-4-desktop">Despre noi</a>
       <a href="#snap-scroll-3-desktop">Contact</a>
     </nav>
   </header>
@@ -74,7 +74,8 @@
     </div>
   </section>
 
-  <section id="snap-scroll-3-desktop" class="snap-scroll contact-form-split"> <div class="background-left-form" id="snap3-left-bg">
+  <section id="snap-scroll-3-desktop" class="snap-scroll contact-form-split desktop-only">
+    <div class="background-left-form" id="snap3-left-bg">
         <div class="overlay bottom-left">
             <h3 class="text-title" id="snap3-left-title"></h3>
             <p class="text-content" id="snap3-left-content"></p>
@@ -82,6 +83,34 @@
     </div>
     <div class="background-right-form" id="snap3-right-bg">
         <div class="content-wrapper-form">
+            <div class="form-side-contact-form">
+                <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+                    <input type="hidden" name="form-name" value="contact" />
+                    <p class="hidden-field">
+                        <label>Don’t fill this out if you’re human: <input name="bot-field" /></label>
+                    </p>
+                    <input type="text" name="name" placeholder="Numele tău" required />
+                    <input type="email" name="email" placeholder="Emailul tău" required />
+                    <textarea name="message" placeholder="Mesajul tău" required></textarea>
+                    <button type="submit" class="outline-button">Trimite</button>
+                </form>
+            </div>
+        </div>
+    </div>
+  </section>
+
+  <section id="snap-scroll-3-1-mobile" class="snap-scroll split-screen-mobile mobile-only">
+    <div class="full-width-bg" id="snap3-1-bg-mobile">
+        <div class="overlay bottom">
+            <h3 class="text-title" id="snap3-1-title-mobile"></h3>
+            <p class="text-content" id="snap3-1-content-mobile"></p>
+        </div>
+    </div>
+  </section>
+
+  <section id="snap-scroll-3-2-mobile" class="snap-scroll split-screen-mobile mobile-only">
+    <div class="full-width-bg" id="snap3-2-bg-mobile">
+        <div class="content-wrapper-form-mobile">
             <div class="form-side-contact-form">
                 <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
                     <input type="hidden" name="form-name" value="contact" />
@@ -108,22 +137,18 @@
     <div class="background-right" id="snap4-right-bg">
         <div class="content-wrapper-info">
             <div class="details-side-contact-info">
-                <p class="contact-line"> <span id="contact-info-phone"></span> <a href="#" id="whatsapp-link" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a></p>
-                <p class="email-red contact-line"> <a href="#" id="contact-info-email"></a></p>
+                <p> <span id="contact-info-phone"></span> <a href="#" id="whatsapp-link" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a></p>
+                <p class="email-red"> <a href="#" id="contact-info-email"></a></p>
                 <div class="social-links">
-                    <div class="social-item">
-                        <a id="social-linkedin-desktop" href="#" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                        <p>Linkedin</p>
-                    </div>
-                    <div class="social-item">
+                    <div>
                         <a id="social-youtube" href="#" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
                         <p>youtube</p>
                     </div>
-                    <div class="social-item">
+                    <div>
                         <a id="social-instagram" href="#" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                         <p>instagram</p>
                     </div>
-                    <div class="social-item">
+                    <div>
                         <a id="social-tiktok" href="#" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
                         <p>tiktok</p>
                     </div>
@@ -146,24 +171,20 @@
     <div class="full-width-bg" id="snap4-2-bg-mobile">
         <div class="content-wrapper-info-mobile">
             <div class="details-side-contact-info">
-                <p class="contact-line"> <span id="contact-info-phone-mobile"></span> <a href="#" id="whatsapp-link-mobile" target="_blank" aria-label="WhatsApp" class="whatsapp-icon-mobile"><i class="fab fa-whatsapp"></i></a></p>
-                <p class="email-red contact-line"> <a href="#" id="contact-info-email-mobile"></a></p>
-                <div class="social-links mobile-social-grid">
-                    <div class="social-item">
-                        <a id="social-linkedin-mobile" href="https://www.linkedin.com/in/ghita-mihai-adrian/" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                        <p>Linkedin</p>
-                    </div>
-                    <div class="social-item">
+                <p> <span id="contact-info-phone-mobile"></span> <a href="#" id="whatsapp-link-mobile" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a></p>
+                <p class="email-red"> <a href="#" id="contact-info-email-mobile"></a></p>
+                <div class="social-links">
+                    <div>
                         <a id="social-youtube-mobile" href="#" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-                        <p>Youtube</p>
+                        <p>youtube</p>
                     </div>
-                    <div class="social-item">
+                    <div>
                         <a id="social-instagram-mobile" href="#" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <p>Instagram</p>
+                        <p>instagram</p>
                     </div>
-                    <div class="social-item">
+                    <div>
                         <a id="social-tiktok-mobile" href="#" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
-                        <p>Tiktok</p>
+                        <p>tiktok</p>
                     </div>
                 </div>
             </div>

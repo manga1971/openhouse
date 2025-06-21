@@ -402,7 +402,7 @@ header nav a:hover {
 }
 
 .contact-info-split .details-side-contact-info p {
-  font-size: 1.1rem;
+  font-size: 1rem;
   margin-bottom: 0.8rem;
   color: white;
   display: flex;
@@ -434,7 +434,7 @@ header nav a:hover {
 
 .contact-info-split .social-links a {
   color: white;
-  font-size: 4rem;
+  font-size: 3rem;
   text-decoration: none;
   transition: color 0.3s ease;
 }
@@ -444,7 +444,7 @@ header nav a:hover {
 }
 
 .contact-info-split .social-links p {
-  font-size: 1rem;
+  font-size: 0.9rem;
   margin-top: 5px;
   color: white;
   text-align: center;
@@ -465,7 +465,7 @@ header nav a:hover {
 .footer-links a {
   color: white;
   text-decoration: none;
-  font-size: 1rem;
+  font-size: 0.9rem;
   transition: color 0.3s ease;
   white-space: nowrap; /* Keep on one line for desktop */
 }
@@ -714,7 +714,7 @@ header nav a:hover {
 
   /* Specific pentru iconița WhatsApp */
   .contact-info-split .details-side-contact-info p #whatsapp-link-mobile i { /* Calea exactă pentru iconița WhatsApp */
-    font-size: 4rem; /* Măriți dimensiunea pentru WhatsApp */
+    font-size: 6rem; /* Măriți dimensiunea pentru WhatsApp */
   }
 
   /* Footer Links Mobile */

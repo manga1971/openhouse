@@ -1,7 +1,7 @@
 {
   "hero": {
     "title": "Un nou început pentru tine?\nCând vinzi sau cumperi o proprietate, ai nevoie de îndrumare pentru a lua decizia corectă.",
-    "videoBackground": "https://www.youtube.com/embed/vNscPtijCe4?si=t8X407aBTCrIaI5E&controls=0"
+    "videoBackground": "https://www.youtube.com/embed/vNscPtijCe4"
   },
   "section2": {
     "left_content": {
@@ -21,7 +21,7 @@
     },
     "mobile_2_2": {
       "image": "uploads/foto2.jpg",
-      "video": "https://www.youtube.com/embed/vNscPtijCe4?si=au9N4gsMkyoNaajf"
+      "video": "https://www.youtube.com/embed/vNscPtijCe4"
     }
   },
   "section3": {

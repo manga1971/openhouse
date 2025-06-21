@@ -17,7 +17,7 @@ fetch("content.json")
     // Helper function to set YouTube video source for iframe
     function setVideoIframeSrc(elementId, videoUrl, controls = 0) {
       const videoId = getYouTubeVideoId(videoUrl);
-      document.getElementById(elementId).src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&mute=1&controls=${controls}&playlist=${videoId}&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3`;
+     document.getElementById(elementId).src = `[https://www.youtube.com/embed/](https://www.youtube.com/embed/){videoId}?autoplay=1&amp;loop=1&amp;mute=1&amp;controls=controls&playlist={videoId}&amp;modestbranding=1&amp;rel=0&amp;showinfo=0&amp;iv_load_policy=3`;
     }
 
     // Function to separate text into title and content spans/paragraphs

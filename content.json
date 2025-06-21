@@ -1,7 +1,7 @@
 {
   "hero": {
     "title": "Un nou început pentru tine?\nCând vinzi sau cumperi o proprietate, ai nevoie de îndrumare pentru a lua decizia corectă.",
-    "videoBackground": "https://www.youtube.com/embed/vNscPtijCe4"
+    "videoBackground": "vNscPtijCe4"
   },
   "section2": {
     "left_content": {
@@ -12,7 +12,7 @@
     },
     "right_content": {
       "image": "uploads/foto2.jpg",
-      "video": "https://www.youtube.com/embed/vNscPtijCe4"
+      "video": "vNscPtijCe4"
     },
     "mobile_2_1": {
       "title": "Soluții complete. Rezultate reale.\nConstruim strategii personalizate pentru achiziții, vânzări și închirieri.",
@@ -21,7 +21,7 @@
     },
     "mobile_2_2": {
       "image": "uploads/foto2.jpg",
-      "video": "https://www.youtube.com/embed/vNscPtijCe4"
+      "video": "vNscPtijCe4"
     }
   },
   "section3": {

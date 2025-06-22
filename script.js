@@ -107,7 +107,7 @@ function setThumbnailSrc(imgElementId, videoUrl) {
     function openVideoModal(videoUrl) {
         const videoId = getYouTubeVideoId(videoUrl);
         // Using controls=1 as requested for modal video
-        modalVideoIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3`;
+        modalVideoIframe.src = `https://www.youtube.com/embed/{videoId}?autoplay=1&controls=1&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3`;
         videoModal.style.display = "flex";
     }
 

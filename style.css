@@ -188,7 +188,7 @@ header nav a:hover {
 .text-title {
     font-family: 'Open Sans', sans-serif;
     font-weight: 600; /* Titlul va fi bold */
-    font-size: 1.8rem; /* Dimensiune inițială, ajustabilă */
+    font-size: 1.5rem; /* Dimensiune inițială, ajustabilă */
     margin-bottom: 0.5rem;
     color: red;
     line-height: 1.4;
@@ -197,7 +197,7 @@ header nav a:hover {
 .text-content {
     font-family: 'Open Sans', sans-serif;
     font-weight: 400; /* Conținutul va fi normal */
-    font-size: 1.2rem; /* Dimensiune inițială, ajustabilă */
+    font-size: 1rem; /* Dimensiune inițială, ajustabilă */
     color: white;
     line-height: 1.6;
 }

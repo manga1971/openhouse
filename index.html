@@ -105,30 +105,31 @@
   </section>
 
   <!-- SNAP 3 MOBILE -->
-  <section id="snap-scroll-3-1-mobile" class="snap-scroll split-screen-mobile mobile-only">
-    <div class="full-width-bg" id="snap3-1-bg-mobile">
-      <div class="overlay bottom-left">
-        <h3 class="text-title" id="snap3-1-title-mobile"></h3>
-        <p class="text-content" id="snap3-1-content-mobile"></p>
-      </div>
+  <section class="snap-scroll contact-form-split" id="contact-form">
+  <!-- Jumătatea stângă: text + poză -->
+  <div class="background-left-form" style="background-image: url('imagini/contact-left.jpg');">
+    <div class="overlay bottom-left">
+      <h2 class="text-title">„Fiecare decizie bună începe cu o conversație sinceră.”</h2>
+      <p class="text-content">Suntem aici să te ascultăm, să înțelegem ce ai nevoie și să construim împreună drumul spre acel acasă care ți se potrivește.</p>
     </div>
-  </section>
+  </div>
 
-  <section id="snap-scroll-3-2-mobile" class="snap-scroll split-screen-mobile mobile-only">
-    <div class="full-width-bg" id="snap3-2-bg-mobile">
-      <div class="content-wrapper-form">
-        <div class="form-side-contact-form">
-          <form name="contact-mobile" method="POST" data-netlify="true" netlify-honeypot="bot-field">
-            <input type="hidden" name="form-name" value="contact-mobile" />
-            <input type="text" name="name" placeholder="Numele tău" required />
-            <input type="email" name="email" placeholder="Emailul tău" required />
-            <textarea name="message" placeholder="Mesajul tău" required></textarea>
-            <button type="submit" class="outline-button">Trimite</button>
-          </form>
-        </div>
+  <!-- Jumătatea dreaptă: formular de contact -->
+  <div class="background-right-form" style="background-image: url('imagini/contact-right.jpg');">
+    <div class="content-wrapper-form">
+      <div class="form-side-contact-form">
+        <form action="#" method="post">
+          <input type="text" name="name" placeholder="Numele tău" required>
+          <input type="email" name="email" placeholder="Emailul tău" required>
+          <textarea name="message" placeholder="Mesajul tău" rows="4" required></textarea>
+          <input type="text" name="honeypot" class="hidden-field" autocomplete="off">
+          <button type="submit" class="outline-button">Trimite</button>
+        </form>
       </div>
     </div>
-  </section>
+  </div>
+</section>
+
 
   <!-- SNAP 4 DESKTOP -->
   <section id="snap-scroll-4-desktop" class="snap-scroll contact-info-split desktop-only">
@@ -155,31 +156,46 @@
   </section>
 
   <!-- SNAP 4 MOBILE -->
-  <section id="snap-scroll-4-1-mobile" class="snap-scroll split-screen-mobile mobile-only">
-    <div class="full-width-bg" id="snap4-1-bg-mobile">
-      <div class="overlay bottom-left">
-        <h3 class="text-title" id="snap4-1-title-mobile"></h3>
-        <p class="text-content" id="snap4-1-content-mobile"></p>
-      </div>
+  <section class="snap-scroll contact-info-split" id="contact-info">
+  <!-- Jumătatea stângă: text + poză -->
+  <div class="background-left" style="background-image: url('imagini/social-left.jpg');">
+    <div class="overlay bottom-left">
+      <h2 class="text-title">Hai să ne cunoaștem:</h2>
+      <p class="text-content">Pentru o colaborare bazată pe încredere, claritate și rezultate.</p>
     </div>
-  </section>
+  </div>
 
-  <section id="snap-scroll-4-2-mobile" class="snap-scroll split-screen-mobile mobile-only">
-    <div class="full-width-bg" id="snap4-2-bg-mobile">
-      <div class="content-wrapper-info">
-        <div class="details-side-contact-info">
-          <p><span id="contact-info-phone"></span> <a href="#" id="whatsapp-link" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a></p>
-          <p class="email-red"><a href="#" id="contact-info-email"></a></p>
-          <div class="social-links">
-            <div><a href="https://www.linkedin.com/in/ghita-mihai-adrian/" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a><p>LinkedIn</p></div>
-            <div><a id="social-youtube" href="#" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a><p>youtube</p></div>
-            <div><a id="social-instagram" href="#" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a><p>instagram</p></div>
-            <div><a id="social-tiktok" href="#" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a><p>tiktok</p></div>
+  <!-- Jumătatea dreaptă: date de contact + social media -->
+  <div class="background-right" style="background-image: url('imagini/social-right.jpg');">
+    <div class="content-wrapper-info">
+      <div class="details-side-contact-info">
+        <p><i class="fas fa-phone-alt"></i> +40 726 340 034</p>
+        <p class="email-red"><i class="fas fa-envelope"></i> <a href="mailto:intravilan@gmail.com">intravilan@gmail.com</a></p>
+        <p><i class="fas fa-map-marker-alt"></i> București / România</p>
+
+        <div class="social-links">
+          <div>
+            <a href="https://youtube.com/@OpenHouse" target="_blank"><i class="fab fa-youtube"></i></a>
+            <p>YouTube</p>
+          </div>
+          <div>
+            <a href="https://instagram.com/OpenHouse" target="_blank"><i class="fab fa-instagram"></i></a>
+            <p>Instagram</p>
+          </div>
+          <div>
+            <a href="https://tiktok.com/@OpenHouse" target="_blank"><i class="fab fa-tiktok"></i></a>
+            <p>TikTok</p>
+          </div>
+          <div>
+            <a id="whatsapp-link" href="https://wa.me/40726340034" target="_blank"><i class="fab fa-whatsapp"></i></a>
+            <p>WhatsApp</p>
           </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
+
 
   <div class="footer-links">
     <a href="confidentialitate.html">Confidențialitate</a>

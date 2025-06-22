@@ -725,68 +725,92 @@ header nav a:hover {
       padding-bottom: 50%; /* Adjust for mobile if needed */
   }
 
-  /* Contact Form Mobile (3.2) */
-  .content-wrapper-form-mobile {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      width: 100%;
-      height: 100%;
-      align-items: center; /* Centrare verticală pe mobil */
-      justify-content: center;
-      padding: 1.5rem;
-      box-sizing: border-box;
-  }
-  .content-wrapper-form-mobile .form-side-contact-form {
-      background-color: rgba(128, 128, 128, 0.1);
-      border-radius: 8px;
-      backdrop-filter: blur(2px);
-      padding: 2rem;
-      max-width: 100%; /* Permite formularului să ocupe toată lățimea */
-      /* Adăugat/confirmat pentru centrare buton */
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-  }
+  /* Override pentru secțiunea unificată de Formular de Contact (acum versiunea desktop responsive) */
+.contact-form-split {
+    flex-direction: column; /* Stivuiește părțile stânga și dreapta pe verticală */
+    padding: 0; /* Elimină padding-ul secțiunii */
+}
 
-  /* Contact Info Mobile (4.2) */
-  .content-wrapper-info-mobile {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      width: 100%;
-      height: 100%;
-      align-items: center; /* Centrare verticală pe mobil */
-      justify-content: center;
-      padding: 1.5rem;
-      box-sizing: border-box;
-  }
-  .content-wrapper-info-mobile .details-side-contact-info {
-      background-color: rgba(128, 128, 128, 0.1);
-      border-radius: 8px;
-      backdrop-filter: blur(2px);
-      padding: 2rem;
-      max-width: 100%;
-  }
-
-  .contact-info-split .social-links {
-    flex-direction: row;
-    flex-wrap: wrap;
+.contact-form-split .background-left-form,
+.contact-form-split .background-right-form {
+    flex: none; /* Nu mai împarte spațiul egal */
+    width: 100%; /* Ocupă lățimea completă */
+    height: 50vh; /* Fiecare parte ocupă jumătate din înălțimea viewport-ului */
+    /* Centrează conținutul pe verticală și orizontală în aceste fundaluri pe mobil */
+    align-items: center;
     justify-content: center;
-    gap: 1.5rem;
-  }
-  .contact-info-split .social-links a {
-    font-size: 4rem; /* Ajustare dimensiune iconițe social media pe mobil */
-  }
-  .contact-info-split .social-links p {
-    font-size: 1rem;
-  }
+}
 
-  /* Specific pentru iconița WhatsApp */
-  .contact-info-split .details-side-contact-info p #whatsapp-link-mobile i { /* Calea exactă pentru iconița WhatsApp */
-    font-size: 6rem; /* Măriți dimensiunea pentru WhatsApp */
-  }
+.contact-form-split .background-left-form .overlay.bottom-left {
+    position: relative; /* Revine la poziționare relativă */
+    bottom: auto;
+    left: auto;
+    max-width: 90%; /* Ajustează lățimea maximă pentru mobil */
+    text-align: center; /* Centrează textul */
+}
 
+.contact-form-split .content-wrapper-form {
+    padding: 1rem; /* Ajustează padding-ul pentru mobil */
+    align-items: center; /* Centrează conținutul pe verticală */
+    justify-content: center; /* Centrează conținutul pe orizontală */
+}
+
+.contact-form-split .form-side-contact-form {
+    max-width: 90%; /* Permite formularului să ocupe mai multă lățime pe mobil */
+    padding: 1.5rem; /* Ajustează padding-ul formularului pe mobil */
+}
+
+/* Override pentru secțiunea unificată de Informații de Contact (acum versiunea desktop responsive) */
+.contact-info-split {
+    flex-direction: column; /* Stivuiește părțile stânga și dreapta pe verticală */
+    padding: 0; /* Elimină padding-ul secțiunii */
+}
+
+.contact-info-split .background-left,
+.contact-info-split .background-right {
+    flex: none; /* Nu mai împarte spațiul egal */
+    width: 100%; /* Ocupă lățimea completă */
+    height: 50vh; /* Fiecare parte ocupă jumătate din înălțimea viewport-ului */
+    /* Centrează conținutul pe verticală și orizontală în aceste fundaluri pe mobil */
+    align-items: center;
+    justify-content: center;
+}
+
+.contact-info-split .background-left .overlay.bottom-left {
+    position: relative; /* Revine la poziționare relativă */
+    bottom: auto;
+    left: auto;
+    max-width: 90%; /* Ajustează lățimea maximă pentru mobil */
+    text-align: center; /* Centrează textul */
+}
+
+.contact-info-split .content-wrapper-info {
+    padding: 1rem; /* Ajustează padding-ul pentru mobil */
+    align-items: center; /* Centrează conținutul pe verticală */
+    justify-content: center; /* Centrează conținutul pe orizontală */
+}
+
+.contact-info-split .details-side-contact-info {
+    max-width: 90%; /* Permite mai multă lățime pe mobil */
+    padding: 1.5rem; /* Ajustează padding-ul informațiilor de contact pe mobil */
+}
+
+.contact-info-split .social-links {
+    flex-direction: row; /* Păstrează iconițele sociale pe un singur rând */
+    flex-wrap: wrap; /* Permite înfășurarea pe rânduri noi */
+    justify-content: center; /* Centrează iconițele */
+    gap: 1rem; /* Ajustează spațiul dintre iconițe */
+}
+
+.contact-info-split .social-links a {
+    font-size: 2.5rem; /* Mărime puțin mai mică pentru iconițele sociale pe mobil */
+}
+
+/* Specific pentru iconița WhatsApp pe mobil (dacă folosește același ID ca pe desktop) */
+.contact-info-split .details-side-contact-info p #whatsapp-link i {
+    font-size: 2.5rem; /* Asigură consistența cu celelalte iconițe sociale */
+}
+  
   /* Footer Links Mobile */
 .footer-links {
   flex-direction: row; /* Am modificat la row pentru a le pune pe un singur rând */

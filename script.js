@@ -25,7 +25,7 @@ function setVideoIframeSrc(elementId, videoUrl, controls = 0) {
 function setThumbnailSrc(imgElementId, videoUrl) {
     const videoId = getYouTubeVideoId(videoUrl);
     // CORECTAT: URL-ul pentru thumbnail
-    document.getElementById(imgElementId).src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+    document.getElementById(imgElementId).src = `https://img.youtube.com/vi/{videoId}/hqdefault.jpg`;
 }
 
     // Function to separate text into title and content spans/paragraphs

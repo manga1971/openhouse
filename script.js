@@ -15,10 +15,18 @@ fetch("content.json")
     }
 
     // Helper function to set YouTube video source for iframe
-    function setVideoIframeSrc(elementId, videoUrl, controls = 0) {
-      const videoId = getYouTubeVideoId(videoUrl);
-     document.getElementById(elementId).src = `https://www.youtube.com/embed/$${videoId}?autoplay=1&loop=1&mute=1&controls=${controls}&playlist=${videoId}&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3`;
-    }
+function setVideoIframeSrc(elementId, videoUrl, controls = 0) {
+    const videoId = getYouTubeVideoId(videoUrl);
+    // CORECTAT: URL-ul pentru YouTube
+    document.getElementById(elementId).src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&mute=1&controls=${controls}&playlist=${videoId}&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3`;
+}
+
+// Handle thumbnail loading
+function setThumbnailSrc(imgElementId, videoUrl) {
+    const videoId = getYouTubeVideoId(videoUrl);
+    // CORECTAT: URL-ul pentru thumbnail
+    document.getElementById(imgElementId).src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+}
 
     // Function to separate text into title and content spans/paragraphs
     function formatTextForDisplay(text) {

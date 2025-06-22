@@ -77,8 +77,7 @@ fetch("content.json")
 
     document.getElementById("snap4-left-bg").style.backgroundImage = `url(${data.contactInfo.left_content.image})`;
     document.getElementById("snap4-right-bg").style.backgroundImage = `url(${data.contactInfo.right_content.image})`;
-    document.getElementById("snap4-1-bg-mobile").style.backgroundImage = `url(${data.contactInfo.mobile_4_1.image})`;
-    document.getElementById("snap4-2-bg-mobile").style.backgroundImage = `url(${data.contactInfo.mobile_4_2.image})`;
+    
 
     // Contact Info (phone, email, social) - Desktop
     document.getElementById("contact-info-phone").innerText = data.contactInfo.phone;
@@ -89,14 +88,7 @@ fetch("content.json")
     document.getElementById("social-instagram").href = data.contactInfo.social.instagram;
     document.getElementById("social-tiktok").href = data.contactInfo.social.tiktok;
 
-    // Contact Info (phone, email, social) - Mobile
-    document.getElementById("contact-info-phone-mobile").innerText = data.contactInfo.phone;
-    document.getElementById("whatsapp-link-mobile").href = `https://wa.me/${data.contactInfo.phone.replace(/\s/g, '').replace('+', '')}`;
-    document.getElementById("contact-info-email-mobile").href = `mailto:${data.contactInfo.email}`; // Make email active link
-    document.getElementById("contact-info-email-mobile").innerText = data.contactInfo.email;
-    document.getElementById("social-youtube-mobile").href = data.contactInfo.social.youtube;
-    document.getElementById("social-instagram-mobile").href = data.contactInfo.social.instagram;
-    document.getElementById("social-tiktok-mobile").href = data.contactInfo.social.tiktok;
+    
 
 
     // Video Modal Logic for "video VP"

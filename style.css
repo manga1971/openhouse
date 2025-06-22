@@ -603,7 +603,17 @@ header nav a:hover {
     text-decoration: none;
 }
 
+/* Stil pentru iconița WhatsApp (desktop și mobil unificat) */
+.contact-info-split .details-side-contact-info p #whatsapp-link i.fab.fa-whatsapp {
+    color: #25D366; /* Verde WhatsApp modern */
+    font-size: 3rem; /* O mărime modernă, ajustabilă. Asigură consistența cu alte iconițe sociale. */
+    vertical-align: middle; /* Aliniază cu textul adiacent */
+}
 
+/* Asigură o mărime de bază consistentă pentru toate iconițele sociale */
+.social-links a i {
+    font-size: 3rem; /* Mărimea implicită pentru toate iconițele sociale */
+}
 /* Media Queries pentru Responsive Design */
 @media (max-width: 768px) {
   /* Utility classes for desktop/mobile visibility */

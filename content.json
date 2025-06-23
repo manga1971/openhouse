@@ -32,14 +32,6 @@
     },
     "right_content": {
       "image": "uploads/foto4.jpg"
-    },
-    "mobile_3_1": {
-      "title": "Un nou început începe cu o decizie corectă,\nO decizie corectă se poate lua în baza experienței. Noi avem. Din 1998.",
-      "content": "Da",
-      "image": "uploads/foto3.jpg"
-    },
-    "mobile_3_2": {
-      "image": "uploads/foto4.jpg"
     }
   },
   "contactInfo": {
@@ -51,19 +43,11 @@
     "right_content": {
       "image": "uploads/foto6.jpg"
     },
-    "mobile_4_1": {
-      "title": "Te invitam la o discuție sinceră despre imobiliare.\nPoate fi la o cafea reală sau la una virtuală.",
-      "content": "Este decizia ta. Poate fi una corectă.",
-      "image": "uploads/foto5.jpg"
-    },
-    "mobile_4_2": {
-      "image": "uploads/foto6.jpg"
-    },
     "phone": "+40726340034",
     "email": "intravilan@gmail.com",
     "social": {
       "linkedin.com": "https://www.linkedin.com/in/ghita-mihai-adrian-ba182016/",
-      "youtube": "https://www.youtube.com",
+      "youtube": "https://www.youtube.com/watch?v=youtube_video_id_here",
       "instagram": "https://www.instagram.com/mihaighita71/",
       "tiktok": "https://www.tiktok.com/@openhousero"
     }

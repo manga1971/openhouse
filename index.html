@@ -3,166 +3,139 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OpenHouse.ro</title>
+  <title>OpenHouse</title>
   <link rel="stylesheet" href="style.css" />
-  <script src="https://kit.fontawesome.com/a2f0f6cfd6.js" crossorigin="anonymous"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-
-  <!-- HEADER -->
   <header>
-    <img src="logo.svg" alt="OpenHouse Logo" class="logo" />
-    <nav id="main-nav">
-      <a href="#snap1">Acasă</a>
-      <a href="#snap2">Servicii</a>
-      <a href="#snap3">Contact</a>
-    </nav>
-    <div class="menu-icon" id="menu-toggle">
-      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+    <img src="uploads/buton 2.png" alt="OpenHouse Logo" class="logo" />
+    <div class="menu-icon" id="menu-icon">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
     </div>
+    <nav id="main-nav">
+      <a href="#snap-scroll-1">Acasă</a>
+      <a href="#snap-scroll-2-desktop">Ce facem</a>
+      <a href="#snap-scroll-4-desktop">Despre noi</a>
+      <a href="#snap-scroll-3-desktop">Contact</a>
+    </nav>
   </header>
 
-  <!-- SNAP 1: HERO VIDEO -->
-  <section id="snap1" class="snap-scroll hero-section">
-    <iframe id="hero-video" src="https://www.youtube.com/embed/zjuIp5QFDjg?autoplay=1&mute=1&loop=1&playlist=zjuIp5QFDjg" frameborder="0" allowfullscreen></iframe>
-    <video id="hero-mobile-video" autoplay muted loop playsinline>
-      <source src="mobile-video.mp4" type="video/mp4" />
+  <section id="snap-scroll-1" class="snap-scroll hero-section">
+    <iframe id="hero-video" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    <video id="hero-mobile-video" class="mobile-bg-video" autoplay loop muted playsinline>
+      <source src="uploads/hero-mobile-video.mp4" type="video/mp4">
+      Your browser does not support the video tag.
     </video>
     <div class="overlay bottom-left">
-      <h1 class="text-title">Ce este Acasă pentru tine?</h1>
-      <p class="text-content">Deschidem ușa către decizii bune. Vânzări, cumpărări sau investiții – începem cu o conversație sinceră.</p>
-      <a href="#snap2" class="outline-button">Află mai mult</a>
+      <h1 class="text-title" id="hero-title"></h1>
+      <p class="text-content" id="hero-content"></p>
     </div>
   </section>
 
-  <!-- SNAP 2.1: SERVICII (desktop) -->
-  <section id="snap2" class="snap-scroll split-screen desktop-only">
-    <div class="split-left" style="background-image: url('imagini/servicii1.jpg')">
+  <section id="snap-scroll-2-desktop" class="snap-scroll split-screen desktop-only">
+    <div class="split-left" id="snap2-left-bg">
       <div class="overlay bottom-left">
-        <h2>Soluții integrate</h2>
-        <p>De la consultanță strategică și evaluări la reconversii imobiliare.</p>
+        <h2 class="text-title" id="snap2-left-title"></h2>
+        <p class="text-content" id="snap2-left-content"></p>
+        <a id="snap2-left-link" class="outline-button">Poveste de succes</a>
       </div>
     </div>
-    <div class="split-right" style="background-image: url('imagini/servicii2.jpg')">
-      <div class="overlay bottom-left">
-        <h2>Rezultate personalizate</h2>
-        <p>Te susținem în fiecare etapă cu experiență și dedicare.</p>
+    <div class="split-right" id="snap2-right-bg">
+      <div class="video-thumbnail-container">
+        <img src="uploads/video_placeholder.jpg" alt="Video Placeholder" class="video-thumbnail" id="video-vp-thumbnail">
+        <div class="play-button" id="play-video-vp">
+          <i class="fas fa-play"></i>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- SNAP 2.1 + 2.2: SERVICII (mobile) -->
-  <section class="snap-scroll split-screen-mobile mobile-only">
-    <div class="full-width-bg" style="background-image: url('imagini/servicii1.jpg')">
+  <section id="snap-scroll-2-1-mobile" class="snap-scroll split-screen-mobile mobile-only">
+    <div class="full-width-bg" id="snap2-1-bg-mobile">
       <div class="overlay bottom">
-        <h2>Soluții integrate</h2>
-        <p>Consultanță, evaluare, reconversii.</p>
-      </div>
-    </div>
-  </section>
-  <section class="snap-scroll split-screen-mobile mobile-only">
-    <div class="full-width-bg" style="background-image: url('imagini/servicii2.jpg')">
-      <div class="overlay bottom">
-        <h2>Rezultate personalizate</h2>
-        <p>Achiziții, vânzări, strategie, susținere completă.</p>
+        <h2 class="text-title" id="snap2-1-title-mobile"></h2>
+        <p class="text-content" id="snap2-1-content-mobile"></p>
       </div>
     </div>
   </section>
 
-  <!-- SNAP 3.1: FORMULAR + TEXT (desktop) -->
-  <section id="snap3" class="snap-scroll contact-form-split desktop-only">
-    <div class="background-left-form" style="background-image: url('imagini/contact1.jpg')">
+  <section id="snap-scroll-2-2-mobile" class="snap-scroll split-screen-mobile mobile-only">
+    <div class="full-width-bg" id="snap2-2-bg-mobile">
+      <div class="video-thumbnail-container">
+        <img src="uploads/video_placeholder.jpg" alt="Video Placeholder" class="video-thumbnail" id="video-vp-thumbnail-mobile">
+        <div class="play-button" id="play-video-vp-mobile">
+          <i class="fas fa-play"></i>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="snap-scroll-3-desktop" class="snap-scroll contact-form-split">
+    <div class="background-left-form" id="snap3-left-bg">
       <div class="overlay bottom-left">
-        <h2>Hai să vorbim</h2>
-        <p>Fiecare decizie bună începe cu o conversație sinceră.</p>
+        <h3 class="text-title" id="snap3-left-title"></h3>
+        <p class="text-content" id="snap3-left-content"></p>
       </div>
     </div>
-    <div class="content-wrapper-form">
-      <form action="submit.php" method="post">
-        <input type="text" name="nume" placeholder="Numele tău" required />
-        <input type="email" name="email" placeholder="Emailul tău" required />
-        <textarea name="mesaj" rows="4" placeholder="Mesajul tău"></textarea>
-        <input type="text" name="website" class="hidden-field" />
-        <button type="submit" class="outline-button">Trimite</button>
-      </form>
+    <div class="background-right-form" id="snap3-right-bg">
+      <div class="content-wrapper-form">
+        <div class="form-side-contact-form">
+          <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+            <input type="hidden" name="form-name" value="contact" />
+            <p class="hidden-field">
+              <label>Don’t fill this out if you’re human: <input name="bot-field" /></label>
+            </p>
+            <input type="text" name="name" placeholder="Numele tău" required />
+            <input type="email" name="email" placeholder="Emailul tău" required />
+            <textarea name="message" placeholder="Mesajul tău" required></textarea>
+            <button type="submit" class="outline-button">Trimite</button>
+          </form>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- SNAP 3.1: TEXT (mobile) -->
-  <section class="snap-scroll contact-form-split mobile-only">
-    <div class="background-left-form" style="background-image: url('imagini/contact1.jpg')">
+  <section id="snap-scroll-4-desktop" class="snap-scroll contact-info-split">
+    <div class="background-left" id="snap4-left-bg">
       <div class="overlay bottom-left">
-        <h2>Hai să vorbim</h2>
-        <p>Fiecare decizie bună începe cu o conversație sinceră.</p>
+        <h3 class="text-title" id="snap4-left-title"></h3>
+        <p class="text-content" id="snap4-left-content"></p>
+      </div>
+    </div>
+    <div class="background-right" id="snap4-right-bg">
+      <div class="content-wrapper-info">
+        <div class="details-side-contact-info">
+          <p><span id="contact-info-phone"></span> <a href="#" id="whatsapp-link" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a></p>
+          <p class="email-red"><a href="#" id="contact-info-email"></a></p>
+          <div class="social-links">
+            <div><a href="https://www.linkedin.com/in/ghita-mihai-adrian/" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a><p>LinkedIn</p></div>
+            <div><a id="social-youtube" href="#" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a><p>youtube</p></div>
+            <div><a id="social-instagram" href="#" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a><p>instagram</p></div>
+            <div><a id="social-tiktok" href="#" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a><p>tiktok</p></div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- SNAP 3.2: FORMULAR (mobile) -->
-  <section class="snap-scroll contact-form-split mobile-only">
-    <div class="content-wrapper-form">
-      <form action="submit.php" method="post">
-        <input type="text" name="nume" placeholder="Numele tău" required />
-        <input type="email" name="email" placeholder="Emailul tău" required />
-        <textarea name="mesaj" rows="4" placeholder="Mesajul tău"></textarea>
-        <input type="text" name="website" class="hidden-field" />
-        <button type="submit" class="outline-button">Trimite</button>
-      </form>
-    </div>
-  </section>
+  <div class="footer-links">
+    <a href="confidentialitate.html">Confidențialitate</a>
+    <a href="termeni-conditii.html">Termeni și condiții</a>
+  </div>
 
-  <!-- SNAP 4.1: INFORMAȚII + SOCIAL (desktop) -->
-  <section class="snap-scroll contact-info-split desktop-only">
-    <div class="background-left" style="background-image: url('imagini/contact2.jpg')">
-      <div class="overlay bottom-left">
-        <h2>Date de contact</h2>
-        <p>Suntem aici pentru a construi un drum împreună.</p>
-      </div>
+  <div id="videoModal" class="modal">
+    <div class="modal-content">
+      <span class="close-button">×</span>
+      <iframe id="modal-video-iframe" width="100%" height="100%" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
-    <div class="content-wrapper-info">
-      <p><i class="fas fa-phone-alt"></i> +40 726 340 034</p>
-      <p><i class="fas fa-envelope"></i> <a href="mailto:intravilan@gmail.com">intravilan@gmail.com</a></p>
-      <p><i class="fas fa-map-marker-alt"></i> București / România</p>
-      <div class="social-links">
-        <div><a href="#"><i class="fab fa-youtube"></i></a><p>YouTube</p></div>
-        <div><a href="#"><i class="fab fa-instagram"></i></a><p>Instagram</p></div>
-        <div><a href="#"><i class="fab fa-tiktok"></i></a><p>TikTok</p></div>
-      </div>
-    </div>
-  </section>
+  </div>
 
-  <!-- SNAP 4.1: TEXT (mobile) -->
-  <section class="snap-scroll contact-info-split mobile-only">
-    <div class="background-left" style="background-image: url('imagini/contact2.jpg')">
-      <div class="overlay bottom-left">
-        <h2>Date de contact</h2>
-        <p>Suntem aici pentru a construi un drum împreună.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- SNAP 4.2: INFORMAȚII + SOCIAL (mobile) -->
-  <section class="snap-scroll contact-info-split mobile-only">
-    <div class="content-wrapper-info">
-      <p><i class="fas fa-phone-alt"></i> +40 726 340 034</p>
-      <p><i class="fas fa-envelope"></i> <a href="mailto:intravilan@gmail.com">intravilan@gmail.com</a></p>
-      <p><i class="fas fa-map-marker-alt"></i> București / România</p>
-      <div class="social-links">
-        <div><a href="#"><i class="fab fa-youtube"></i></a><p>YouTube</p></div>
-        <div><a href="#"><i class="fab fa-instagram"></i></a><p>Instagram</p></div>
-        <div><a href="#"><i class="fab fa-tiktok"></i></a><p>TikTok</p></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer class="footer-links">
-    <a href="#">Politica de confidențialitate</a>
-    <a href="#">Termeni și condiții</a>
-    <a href="#">Cookies</a>
-  </footer>
-
-  <!-- SCRIPT -->
   <script src="script.js"></script>
 </body>
 </html>

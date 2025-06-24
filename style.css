@@ -543,23 +543,23 @@ header nav a:hover {
 }
 
 /*────────────────────────────────────────────────────────────────────────────*/
-/* Media Queries for Responsive Design (Mobile First Overrides)               */
+/* Media Queries for Responsive Design (Mobile First Overrides)              */
 @media (max-width: 768px) {
   /* Utility Classes */
   .desktop-only {
     display: none;
   }
   .mobile-only {
-    display: flex; /* Or block, based on specific element needs */
+    display: flex; /* Sau block, în funcție de element, dar flex este bun pentru majoritatea containerelor */
   }
 
   /* Hero Section Video Override */
   #hero-video {
-    display: none; /* Hide YouTube iframe on mobile */
+    display: none; /* Ascunde YouTube iframe pe mobil */
   }
   #hero-mobile-video,
   .mobile-bg-gif {
-    display: block; /* Show mobile video */
+    display: block; /* Arată video mobil */
     position: absolute;
     inset: 0;
     width: 100%;
@@ -568,20 +568,20 @@ header nav a:hover {
     z-index: 0;
   }
 
-  /* Overlay for Hero Section on Mobile */
+  /* Overlay pentru Secțiunea Hero pe Mobil */
   .hero-section .overlay.bottom-left {
-    position: absolute;
+    position: absolute; /* Rămâne absolut, dar cu ajustări */
     bottom: 2rem;
     left: 2rem;
-    right: 2rem; /* Extend to full width minus padding */
-    max-width: calc(100% - 4rem);
+    right: 2rem; /* Se extinde pe toată lățimea minus padding */
+    max-width: calc(100% - 4rem); /* Ajustează lățimea maximă */
     padding: 1.5rem;
-    text-align: center; /* Center text on mobile */
+    text-align: center; /* Centrează textul pe mobil */
     z-index: 1;
-    transform: none; /* Remove any previous transforms */
+    transform: none; /* Elimină orice transformări anterioare */
   }
 
-  /* Text Sizes for Mobile */
+  /* Dimensiuni Text pentru Mobil */
   .text-title {
     font-size: 1.3rem;
   }
@@ -589,30 +589,30 @@ header nav a:hover {
     font-size: 1rem;
   }
 
-  /* Header on Mobile */
+  /* Header pe Mobil */
   header {
     padding: 0.8rem 1rem;
-    background-color: rgba(255, 255, 255, 0.05); /* More transparent header on mobile */
-    backdrop-filter: blur(10px); /* More blur on mobile */
+    background-color: rgba(255, 255, 255, 0.05); /* Header mai transparent pe mobil */
+    backdrop-filter: blur(10px); /* Mai mult blur pe mobil */
     justify-content: space-between;
   }
 
   header nav {
-    display: none; /* Hidden by default */
+    display: none; /* Ascuns implicit */
     flex-direction: column;
     position: absolute;
-    top: 60px; /* Below header */
+    top: 60px; /* Sub header */
     left: 0;
     width: 100%;
     background-color: var(--mobile-nav-bg);
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     padding: 1rem 0;
-    z-index: 499; /* Below header, above content */
+    z-index: 499; /* Sub header, deasupra conținutului */
     align-items: center;
   }
 
   header nav.active {
-    display: flex; /* Show when active */
+    display: flex; /* Arată când este activ */
   }
 
   header nav a {
@@ -628,112 +628,93 @@ header nav a:hover {
   }
 
   .menu-icon {
-    display: block; /* Show hamburger icon */
+    display: block; /* Arată iconița hamburger */
   }
 
-  /* Snap-scroll Sections on Mobile */
+  /* Secțiuni Snap-scroll pe Mobil */
   .snap-scroll {
     padding: 1.5rem;
     height: 100vh;
-    min-height: 80vh; /* Slightly smaller minimum height */
-    flex-direction: column; /* Stack elements vertically */
+    min-height: 80vh; /* Înălțime minimă ușor mai mică */
+    flex-direction: column; /* Stivuiește elementele vertical */
+    /* Proprietățile de background sunt acum mutate pe .full-width-bg, .full-width-form, .full-width-info */
   }
 
-  /* Section 2 (Mobile Specific Sections) */
-  .split-screen-mobile {
-    padding: 0; /* Full background images for mobile sections */
-  }
-
-  .full-width-bg {
+  /* IMPORTANT: Stiluri pentru noile secțiuni mobile full-width */
+  .full-width-bg,
+  .full-width-form, /* NOU / MODIFICAT */
+  .full-width-info {   /* NOU / MODIFICAT */
     position: relative;
     width: 100%;
-    height: 100%;
+    height: 100vh; /* Acum acestea ocupă 100% din viewport height */
     background-size: cover;
     background-position: center;
     display: flex;
-    align-items: flex-end;
-    justify-content: center;
-  }
-
-  .full-width-bg .overlay.bottom {
-    position: absolute;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    padding: 1.5rem;
-    text-align: center;
+    flex-direction: column; /* Conținutul se aliniază vertical */
+    align-items: center; /* Centrează orizontal conținutul */
+    justify-content: center; /* Centrează vertical conținutul */
+    padding: 1.5rem; /* Padding la nivelul secțiunii */
     box-sizing: border-box;
+    scroll-snap-align: start; /* Permite snap-ul pentru aceste sub-secțiuni */
   }
 
-  /* Video Thumbnail on Mobile */
+  /* Video Thumbnail pe Mobil (într-un container full-width-bg) */
   #snap2-2-bg-mobile .video-thumbnail-container {
     width: 90%;
     padding-bottom: 50%;
   }
 
-  /* Section 3 & 4 (Responsive Split Sections on Mobile) */
+  /* Secțiunile 3 și 4 (responsive split sections pe mobil) */
   .contact-form-split,
   .contact-info-split {
-    flex-direction: column; /* Stack halves vertically */
-    padding: 0; /* Remove section padding to allow halves to fill */
+    flex-direction: column; /* Stivuiește jumătățile vertical */
+    padding: 0; /* Elimină padding-ul secțiunii pentru a permite jumătăților să ocupe tot spațiul */
+    /* height: auto; -- Eliminăm height: 100vh de aici, îl mutăm pe .full-width-form/.info */
   }
 
-  .contact-form-split .background-left-form,
-  .contact-form-split .background-right-form,
-  .contact-info-split .background-left,
-  .contact-info-split .background-right {
-    flex: none; /* Do not flex; control size manually */
-    width: 100%;
-    height: 50vh; /* Each half becomes a snap-scroll */
-    scroll-snap-align: start; /* Enable snap for each half */
-    align-items: center; /* Center content vertically */
-    justify-content: center; /* Center content horizontally */
-  }
+  /* Părțile individuale ale secțiunilor split (acum sunt gestionate de .full-width-form/info) */
+  /* Vechiul .contact-form-split .background-left-form, etc. devine irelevant ca dimensiune directă */
 
-  .contact-form-split .background-left-form .overlay.bottom-left,
-  .contact-info-split .background-left .overlay.bottom-left {
-    position: relative; /* Override absolute positioning */
-    bottom: auto;
-    left: auto;
-    max-width: 90%; /* Adjust width for mobile */
-    text-align: center;
-    transform: none;
-  }
 
   .contact-form-split .content-wrapper-form,
   .contact-info-split .content-wrapper-info {
-    padding: 1rem; /* Adjust padding for wrappers */
+    padding: 1rem; /* Ajustează padding pentru wrappere */
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 100%;
+    height: 100%; /* Ocupă spațiul disponibil în parent */
+    display: flex; /* Asigură că elementele interne sunt flexibile */
+    flex-direction: column;
+    box-sizing: border-box;
   }
 
   .form-side-contact-form,
   .details-side-contact-info {
-    max-width: 90%; /* Allow wider form/details on mobile */
+    max-width: 90%; /* Permite formularului/detaliilor să fie mai late pe mobil */
+    width: 100%; /* Ocupă lățimea maximă permisă */
     padding: 1.5rem;
+    box-sizing: border-box;
+    /* Asigură-te că background-color și backdrop-filter sunt aplicate conform var(--overlay-bg) */
   }
 
-  /* Social Links on Mobile */
+  /* Link-uri Sociale pe Mobil */
   .contact-info-split .social-links {
-    flex-direction: row; /* Keep on one row */
-    flex-wrap: wrap; /* Allow wrapping if space is tight */
+    flex-direction: row; /* Păstrează pe un singur rând */
+    flex-wrap: wrap; /* Permite încadrarea dacă spațiul este strâns */
     justify-content: center;
-    gap: 1rem; /* Smaller gap for mobile */
+    gap: 1rem; /* Spațiu mai mic pentru mobil */
   }
 
   .contact-info-split .social-links a {
-    font-size: 2.5rem; /* Slightly smaller icons on mobile */
+    font-size: 2.5rem; /* Iconițe ușor mai mici pe mobil */
   }
 
-  /* Footer Links on Mobile */
+  /* Link-uri Footer pe Mobil */
   .footer-links {
-    flex-direction: row; /* Keep links in a row */
+    flex-direction: row; /* Păstrează link-urile pe un rând */
     justify-content: center;
     gap: 1.5rem;
     padding: 0.8rem;
-    flex-wrap: wrap; /* Allow wrapping */
+    flex-wrap: wrap; /* Permite încadrarea */
   }
 }

@@ -89,7 +89,7 @@
             position: relative;
             margin: auto;
             padding: 0;
-            width: 92%; /* Latime pentru mobil */
+            width: 90%; /* Latime pentru mobil */
             max-width: 800px; /* Latime maxima pentru desktop */
             border-radius: 0.75rem;
             overflow: hidden;
@@ -168,7 +168,7 @@
         <div class="flex items-center justify-start">
             <!-- Logo SVG cu culori dinamice prin JS -->
             <!-- Latimea a fost marita si viewBox ajustat pentru a incapea tot textul "Open House" -->
-            <svg id="logo-openhouse" width="200" height="40" viewBox="0 0 200 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="transition-colors duration-500">
+            <svg id="logo-openhouse" width="210" height="40" viewBox="0 0 210 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="transition-colors duration-500">
                 <text x="0" y="30" font-family="Inter, sans-serif" font-size="30" font-weight="bold">Open House</text>
             </svg>
         </div>
@@ -248,6 +248,20 @@
     </footer>
 
     <script>
+        // Functie pentru a determina calea de baza pentru resurse pe GitHub Pages
+        function getBasePath() {
+            // Obtine pathname-ul curent (ex: /openhouse/ sau /)
+            const path = window.location.pathname;
+            // Daca pathname-ul contine numele depozitului, returneaza-l (ex: /openhouse)
+            if (path.includes('/openhouse/')) {
+                return '/openhouse';
+            }
+            // Altfel, inseamna ca suntem in root (sau pe un domeniu custom)
+            return '';
+        }
+
+        const basePath = getBasePath();
+
         // Obiect JavaScript pentru a simula content.json
         // Contine toate textele, URL-urile de video/imagini si ID-urile YouTube
         // Userul poate edita aceste campuri pentru a controla continutul
@@ -256,9 +270,9 @@
                 snap1: {
                     title: "Un nou început pentru tine?",
                     content: "Când vinzi sau cumperi o proprietate, ai nevoie de îndrumare ca să iei o decizie bună. O decizie bună se bazează pe experiență — a ta sau a agentului tău.\nNoi o avem. Din 1998.",
-                    // Calea a fost ajustata pentru a include explicit numele depozitului "openhouse"
-                    mp4Url: `/openhouse/uploads/V1.mp4`,
-                    imageUrl: `/openhouse/uploads/foto1.jpg`, // Exemplu de cale locala pentru imagine
+                    // Calea a fost ajustata pentru a include calea de baza determinata dinamic
+                    mp4Url: `${basePath}/uploads/V1.mp4`,
+                    imageUrl: `${basePath}/uploads/foto1.jpg`, // Exemplu de cale locala pentru imagine
                     youtubeId: "" // Nu se foloseste pentru mobile snap1
                 },
                 snap2: {
@@ -266,8 +280,8 @@
                     content: "Construim strategii adaptate dorințelor tale – investiții, achiziții, vânzări.",
                     linkText: "Imobiliare. Cu sens.",
                     linkYoutubeId: "vNscPtijCe4",
-                    mp4Url: `/openhouse/uploads/V2.mp4`,
-                    imageUrl: `/openhouse/uploads/foto2.jpg`,
+                    mp4Url: `${basePath}/uploads/V2.mp4`,
+                    imageUrl: `${basePath}/uploads/foto2.jpg`,
                     youtubeId: ""
                 },
                 snap3: {
@@ -275,8 +289,8 @@
                     content: "Un nou început nu așteaptă — începe cu o decizie inspirată și continuă cu noi. E timpul tău. Succesul tău. Confortul tău.",
                     linkText: "O poveste de succes.",
                     linkYoutubeId: "vNscPtijCe4",
-                    mp4Url: `/openhouse/uploads/V3.mp4`,
-                    imageUrl: `/openhouse/uploads/foto3.jpg`,
+                    mp4Url: `${basePath}/uploads/V3.mp4`,
+                    imageUrl: `${basePath}/uploads/foto3.jpg`,
                     youtubeId: ""
                 },
                 snap4: {
@@ -293,8 +307,8 @@
                             instagram: "https://www.instagram.com/instagram" // Placeholder Instagram
                         }
                     },
-                    mp4Url: `/openhouse/uploads/V4.mp4`,
-                    imageUrl: `/openhouse/uploads/foto4.jpg`,
+                    mp4Url: `${basePath}/uploads/V4.mp4`,
+                    imageUrl: `${basePath}/uploads/foto4.jpg`,
                     youtubeId: ""
                 }
             },
@@ -313,8 +327,8 @@
                     content: "Construim strategii adaptate dorințelor tale – investiții, achiziții, vânzări. Pe desktop, am putea adăuga mai multe detalii despre abordarea noastră personalizată și rezultatele excepționale pe care le-am obținut pentru clienții noștri.",
                     linkText: "Imobiliare. Cu sens.",
                     linkYoutubeId: "vNscPtijCe4",
-                    mp4Url: `/openhouse/uploads/V2.mp4`,
-                    imageUrl: `/openhouse/uploads/foto2.jpg`,
+                    mp4Url: `${basePath}/uploads/V2.mp4`,
+                    imageUrl: `${basePath}/uploads/foto2.jpg`,
                     youtubeId: ""
                 },
                 snap3: {
@@ -322,8 +336,8 @@
                     content: "Un nou început nu așteaptă — începe cu o decizie inspirată și continuă cu noi. E timpul tău. Succesul tău. Confortul tău. Ne mândrim cu valorile noastre fundamentale care ghidează fiecare interacțiune și fiecare tranzacție, asigurându-vă un parteneriat de încredere.",
                     linkText: "O poveste de succes.",
                     linkYoutubeId: "vNscPtijCe4",
-                    mp4Url: `/openhouse/uploads/V3.mp4`,
-                    imageUrl: `/openhouse/uploads/foto3.jpg`,
+                    mp4Url: `${basePath}/uploads/V3.mp4`,
+                    imageUrl: `${basePath}/uploads/foto3.jpg`,
                     youtubeId: ""
                 },
                 snap4: {
@@ -340,8 +354,8 @@
                             instagram: "https://www.instagram.com/instagram"
                         }
                     },
-                    mp4Url: `/openhouse/uploads/V4.mp4`,
-                    imageUrl: `/openhouse/uploads/foto4.jpg`,
+                    mp4Url: `${basePath}/uploads/V4.mp4`,
+                    imageUrl: `${basePath}/uploads/foto4.jpg`,
                     youtubeId: ""
                 }
             }

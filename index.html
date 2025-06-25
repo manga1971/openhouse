@@ -450,12 +450,29 @@
                     video.muted = true;
                     video.playsInline = true; // Important pentru mobil
                     video.preload = "auto";
+                    // Adauga un handler de erori pentru video
+                    video.onerror = (e) => {
+                        console.error(`Eroare la incarcarea video-ului: ${video.src}`, e);
+                        // Optional: fallback la imagine daca video-ul nu se incarca
+                        if (contentData.imageUrl && contentData.imageUrl !== '') {
+                            const img = document.createElement('img');
+                            img.src = contentData.imageUrl;
+                            img.className = 'background-element';
+                            img.alt = 'Imagine de fundal fallback';
+                            bgContainer.appendChild(img);
+                            setTimeout(() => img.classList.add('active'), 50);
+                        }
+                    };
                     elementToAppend = video;
                 } else if (contentData.imageUrl && contentData.imageUrl !== '') {
                     const img = document.createElement('img');
                     img.src = contentData.imageUrl;
                     img.className = 'background-element';
                     img.alt = 'Imagine de fundal';
+                    // Adauga un handler de erori pentru imagine
+                    img.onerror = (e) => {
+                        console.error(`Eroare la incarcarea imaginii: ${img.src}`, e);
+                    };
                     elementToAppend = img;
                 } else if (contentData.youtubeId && contentData.youtubeId !== '') {
                     // Aceasta este pentru cazurile in care userul vrea YT si pe mobil sau alte snap-uri

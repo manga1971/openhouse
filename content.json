@@ -1,13 +1,11 @@
 {
   "hero": {
-    "title": "Un nou început pentru tine?\nCând vinzi sau cumperi o proprietate, ai nevoie de îndrumare ca să iei o decizie bună.
-    O decizie bună se bazează pe experiență. Noi o avem. Din 1998.",
+    "title": "Un nou început pentru tine?\nCând vinzi sau cumperi o proprietate, ai nevoie de îndrumare pentru a lua decizia corectă.",
     "videoBackground": "vNscPtijCe4"
   },
   "section2": {
     "left_content": {
-      "title": "Soluții create pentru tine. Rezultate reale. Plus valoare.\nConstruim strategii adaptate dorințelor tale.
-      Investiții, achiziții, vânzări. Imobiliare. Cu sens.",
+      "title": "Soluții complete. Rezultate reale.\nConstruim strategii personalizate pentru achiziții, vânzări și închirieri.",
       "content": "Partenerul tău de încredere pentru orice tranzactie imobiliara.",
       "image": "uploads/foto1.jpg",
       "link": "#snap-scroll-4-desktop"
@@ -17,8 +15,7 @@
       "video": "vNscPtijCe4"
     },
     "mobile_2_1": {
-      "title": "Soluții create pentru tine. Rezultate reale. Plus valoare.\nConstruim strategii adaptate dorințelor tale.
-      Investiții, achiziții, vânzări. Imobiliare. Cu sens.",
+      "title": "Soluții complete. Rezultate reale.\nConstruim strategii personalizate pentru achiziții, vânzări și închirieri.",
       "content": "Partenerul tău de încredere pentru orice tranzactie imobiliara.",
       "image": "uploads/foto1.jpg"
     },
@@ -29,12 +26,19 @@
   },
   "section3": {
     "left_content": {
-      "title": "Integritate. Claritate. Expertiză. Rezultate.\nUn nou început nu așteaptă - începe cu o decizie inspirată și continuă cu noi. 
-Contactează-ne acum. E timpul tău. Succesul tău. Confortul tău.",
+      "title": "Un nou început începe cu o decizie corectă,\nO decizie corectă se poate lua în baza experienței. Noi avem. Din 1998.",
       "content": "Da",
       "image": "uploads/foto3.jpg"
     },
     "right_content": {
+      "image": "uploads/foto4.jpg"
+    },
+    "mobile_3_1": {
+      "title": "Un nou început începe cu o decizie corectă,\nO decizie corectă se poate lua în baza experienței. Noi avem. Din 1998.",
+      "content": "Da",
+      "image": "uploads/foto3.jpg"
+    },
+    "mobile_3_2": {
       "image": "uploads/foto4.jpg"
     }
   },
@@ -47,11 +51,19 @@ Contactează-ne acum. E timpul tău. Succesul tău. Confortul tău.",
     "right_content": {
       "image": "uploads/foto6.jpg"
     },
+    "mobile_4_1": {
+      "title": "Te invitam la o discuție sinceră despre imobiliare.\nPoate fi la o cafea reală sau la una virtuală.",
+      "content": "Este decizia ta. Poate fi una corectă.",
+      "image": "uploads/foto5.jpg"
+    },
+    "mobile_4_2": {
+      "image": "uploads/foto6.jpg"
+    },
     "phone": "+40726340034",
     "email": "intravilan@gmail.com",
     "social": {
       "linkedin.com": "https://www.linkedin.com/in/ghita-mihai-adrian-ba182016/",
-      "youtube": "https://www.youtube.com/watch?v=youtube_video_id_here",
+      "youtube": "https://www.youtube.com",
       "instagram": "https://www.instagram.com/mihaighita71/",
       "tiktok": "https://www.tiktok.com/@openhousero"
     }

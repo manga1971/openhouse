@@ -1,141 +1,152 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OpenHouse</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intravilan - Imobiliare</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
-  <header>
-    <img src="uploads/buton 2.png" alt="OpenHouse Logo" class="logo" />
-    <div class="menu-icon" id="menu-icon">
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-    </div>
-    <nav id="main-nav">
-      <a href="#snap-scroll-1">Acasă</a>
-      <a href="#snap-scroll-2-desktop">Ce facem</a>
-      <a href="#snap-scroll-4-desktop">Despre noi</a>
-      <a href="#snap-scroll-3-desktop">Contact</a>
-    </nav>
-  </header>
 
-  <section id="snap-scroll-1" class="snap-scroll hero-section">
-    <iframe id="hero-video" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-    <video id="hero-mobile-video" class="mobile-bg-video" autoplay loop muted playsinline>
-      <source src="uploads/hero-mobile-video.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
-    <div class="overlay bottom-left">
-      <h1 class="text-title" id="hero-title"></h1>
-      <p class="text-content" id="hero-content"></p>
-    </div>
-  </section>
+    <header>
+        <img src="uploads/logo.png" alt="Intravilan Logo" class="logo">
+        <nav>
+            <a href="#hero-section">Acasa</a>
+            <a href="#section2-desktop">Servicii</a>
+            <a href="#contact-section-desktop">Contact</a>
+        </nav>
+        </header>
 
-  <section id="snap-scroll-2-desktop" class="snap-scroll split-screen desktop-only">
-    <div class="split-left" id="snap2-left-bg">
-      <div class="overlay bottom-left">
-        <h2 class="text-title" id="snap2-left-title"></h2>
-        <p class="text-content" id="snap2-left-content"></p>
-        <a id="snap2-left-link" class="outline-button">Poveste de succes</a>
-      </div>
-    </div>
-    <div class="split-right" id="snap2-right-bg">
-      <div class="video-thumbnail-container">
-        <img src="uploads/video_placeholder.jpg" alt="Video Placeholder" class="video-thumbnail" id="video-vp-thumbnail">
-        <div class="play-button" id="play-video-vp">
-          <i class="fas fa-play"></i>
+    <div id="videoModal" class="modal">
+        <span class="close-button">&times;</span>
+        <div class="modal-content">
+            <iframe id="modal-video-iframe" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         </div>
-      </div>
     </div>
-  </section>
 
-  <section id="snap-scroll-2-1-mobile" class="snap-scroll split-screen-mobile mobile-only">
-    <div class="full-width-bg" id="snap2-1-bg-mobile">
-      <div class="overlay bottom">
-        <h2 class="text-title" id="snap2-1-title-mobile"></h2>
-        <p class="text-content" id="snap2-1-content-mobile"></p>
-      </div>
-    </div>
-  </section>
+    <section id="hero-section" class="snap-scroll hero-section">
+        <iframe id="hero-video" class="desktop-only" src="" frameborder="0" allow="autoplay; loop; muted; playsinline" allowfullscreen></iframe>
+        <video id="hero-mobile-video-player" class="mobile-only" autoplay loop muted playsinline src=""></video>
 
-  <section id="snap-scroll-2-2-mobile" class="snap-scroll split-screen-mobile mobile-only">
-    <div class="full-width-bg" id="snap2-2-bg-mobile">
-      <div class="video-thumbnail-container">
-        <img src="uploads/video_placeholder.jpg" alt="Video Placeholder" class="video-thumbnail" id="video-vp-thumbnail-mobile">
-        <div class="play-button" id="play-video-vp-mobile">
-          <i class="fas fa-play"></i>
+        <div class="overlay bottom-left">
+            <h1 id="hero-title" class="text-title"></h1>
+            <p id="hero-content" class="text-content"></p>
+            </div>
+    </section>
+
+    <section id="section2-desktop" class="snap-scroll split-screen desktop-only">
+        <div id="snap2-left-bg" class="split-left">
+            <div class="overlay bottom-left">
+                <h2 id="snap2-left-title" class="text-title"></h2>
+                <p id="snap2-left-content" class="text-content"></p>
+                <a id="snap2-left-link" href="#" class="outline-button">Detalii</a>
+            </div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="snap-scroll-3-desktop" class="snap-scroll contact-form-split">
-    <div class="background-left-form" id="snap3-left-bg">
-      <div class="overlay bottom-left">
-        <h3 class="text-title" id="snap3-left-title"></h3>
-        <p class="text-content" id="snap3-left-content"></p>
-      </div>
-    </div>
-    <div class="background-right-form" id="snap3-right-bg">
-      <div class="content-wrapper-form">
-        <div class="form-side-contact-form">
-          <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
-            <input type="hidden" name="form-name" value="contact" />
-            <p class="hidden-field">
-              <label>Don’t fill this out if you’re human: <input name="bot-field" /></label>
-            </p>
-            <input type="text" name="name" placeholder="Numele tău" required />
-            <input type="email" name="email" placeholder="Emailul tău" required />
-            <textarea name="message" placeholder="Mesajul tău" required></textarea>
-            <button type="submit" class="outline-button">Trimite</button>
-          </form>
+        <div id="snap2-right-bg" class="split-right">
+            <div id="video-vp-thumbnail" class="video-thumbnail-container">
+                <img class="video-thumbnail" src="" alt="Video Thumbnail">
+                <i class="fas fa-play play-button"></i>
+            </div>
         </div>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <section id="snap-scroll-4-desktop" class="snap-scroll contact-info-split">
-    <div class="background-left" id="snap4-left-bg">
-      <div class="overlay bottom-left">
-        <h3 class="text-title" id="snap4-left-title"></h3>
-        <p class="text-content" id="snap4-left-content"></p>
-      </div>
-    </div>
-    <div class="background-right" id="snap4-right-bg">
-      <div class="content-wrapper-info">
-        <div class="details-side-contact-info">
-          <p><span id="contact-info-phone"></span> <a href="#" id="whatsapp-link" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a></p>
-          <p class="email-red"><a href="#" id="contact-info-email"></a></p>
-          <div class="social-links">
-            <div><a href="https://www.linkedin.com/in/ghita-mihai-adrian/" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a><p>LinkedIn</p></div>
-            <div><a id="social-youtube" href="#" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a><p>youtube</p></div>
-            <div><a id="social-instagram" href="#" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a><p>instagram</p></div>
-            <div><a id="social-tiktok" href="#" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a><p>tiktok</p></div>
-          </div>
+    <section id="contact-section-desktop" class="snap-scroll contact-form-split desktop-only">
+        <div id="snap3-left-bg" class="background-left-form">
+            <div class="content-wrapper-form">
+                <div class="overlay">
+                    <h2 id="snap3-left-title" class="text-title"></h2>
+                    <p id="snap3-left-content" class="text-content"></p>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  </section>
+        <div id="snap4-left-bg" class="background-right-form">
+            <div class="content-wrapper-info">
+                <div class="details-side-contact-info">
+                    <h2 id="snap4-left-title" class="text-title"></h2>
+                    <p id="snap4-left-content" class="text-content"></p>
+                    <p>
+                        <i class="fas fa-phone"></i> <span id="contact-info-phone"></span>
+                    </p>
+                    <p class="email-red">
+                        <i class="fas fa-envelope"></i> <a id="contact-info-email" href=""></a>
+                    </p>
+                    <div class="social-links">
+                        <div><a id="social-linkedin" href="#" target="_blank"><i class="fab fa-linkedin"></i></a><p>LinkedIn</p></div>
+                        <div><a id="social-youtube" href="#" target="_blank"><i class="fab fa-youtube"></i></a><p>YouTube</p></div>
+                        <div><a id="social-instagram" href="#" target="_blank"><i class="fab fa-instagram"></i></a><p>Instagram</p></div>
+                        <div><a id="social-tiktok" href="#" target="_blank"><i class="fab fa-tiktok"></i></a><p>TikTok</p></div>
+                    </div>
+                     <p>
+                        <a id="whatsapp-link" href="#" target="_blank">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  <div class="footer-links">
-    <a href="confidentialitate.html">Confidențialitate</a>
-    <a href="termeni-conditii.html">Termeni și condiții</a>
-  </div>
+    <section id="snap2-mobile" class="snap-scroll full-width-bg mobile-only">
+        <div id="snap2-mobile-bg" class="full-width-bg">
+             <div class="overlay bottom">
+                <h2 id="snap2-mobile-title" class="text-title"></h2>
+                <p id="snap2-mobile-content" class="text-content"></p>
+            </div>
+        </div>
+    </section>
 
-  <div id="videoModal" class="modal">
-    <div class="modal-content">
-      <span class="close-button">×</span>
-      <iframe id="modal-video-iframe" width="100%" height="100%" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-    </div>
-  </div>
+    <section id="snap3-mobile" class="snap-scroll full-width-bg mobile-only">
+        <div id="snap3-mobile-bg" class="full-width-bg">
+            <div id="video-vp-thumbnail-mobile" class="video-thumbnail-container">
+                <img class="video-thumbnail" src="" alt="Video Thumbnail">
+                <i class="fas fa-play play-button"></i>
+            </div>
+        </div>
+    </section>
 
-  <script src="script.js"></script>
+    <section id="snap4-mobile" class="snap-scroll full-width-bg mobile-only">
+        <div id="snap4-mobile-bg" class="full-width-bg">
+             <div class="overlay bottom">
+                <h2 id="snap4-mobile-title" class="text-title"></h2>
+                <p id="snap4-mobile-content" class="text-content"></p>
+            </div>
+        </div>
+    </section>
+
+    <section id="snap5-mobile" class="snap-scroll full-width-bg mobile-only">
+        <div id="snap5-mobile-bg" class="full-width-bg">
+             <div class="details-side-contact-info">
+                    <h2 id="snap5-mobile-title" class="text-title"></h2>
+                    <p id="snap5-mobile-content" class="text-content"></p>
+                    <p>
+                        <i class="fas fa-phone"></i> <span id="contact-info-phone-mobile"></span>
+                    </p>
+                    <p class="email-red">
+                        <i class="fas fa-envelope"></i> <a id="contact-info-email-mobile" href=""></a>
+                    </p>
+                    <div class="social-links">
+                        <div><a id="social-linkedin-mobile" href="#" target="_blank"><i class="fab fa-linkedin"></i></a><p>LinkedIn</p></div>
+                        <div><a id="social-youtube-mobile" href="#" target="_blank"><i class="fab fa-youtube"></i></a><p>YouTube</p></div>
+                        <div><a id="social-instagram-mobile" href="#" target="_blank"><i class="fab fa-instagram"></i></a><p>Instagram</p></div>
+                        <div><a id="social-tiktok-mobile" href="#" target="_blank"><i class="fab fa-tiktok"></i></a><p>TikTok</p></div>
+                    </div>
+                     <p>
+                        <a id="whatsapp-link-mobile" href="#" target="_blank">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </a>
+                    </p>
+                </div>
+        </div>
+    </section>
+
+    <footer class="footer-links">
+        <a href="#">Termeni și Condiții</a>
+        <a href="#">Politica de Confidențialitate</a>
+        <a href="#">Cookies</a>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>

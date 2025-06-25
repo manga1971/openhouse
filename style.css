@@ -1,23 +1,23 @@
 /*────────────────────────────────────────────────────────────────────────────*/
-/* Import Google Fonts                                                        */
+/* Import Google Fonts                                                          */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Open+Sans:wght@300;400;600;700&display=swap');
 
 /*────────────────────────────────────────────────────────────────────────────*/
-/* Global CSS Variables                                                       */
+/* Global CSS Variables                                                         */
 :root {
   --primary-color: #e74c3c; /* Red */
   --text-color: white;
   --bg-color: #333; /* Dark gray for body background */
-  --header-bg: rgba(255, 255, 255, 0.2); /* Semi-transparent white for header */
+  --header-bg: transparent; /* Changed for total transparency */
   --overlay-bg: rgba(128, 128, 128, 0.1); /* Light transparent gray for text overlays */
   --input-border: rgba(255, 255, 255, 0.3);
   --input-bg: rgba(255, 255, 255, 0.1);
-  --mobile-nav-bg: rgba(0, 0, 0, 0.9); /* Darker background for mobile navigation */
+  --mobile-nav-bg: transparent; /* Changed for total transparency (no hamburger) */
   --social-whatsapp-color: #25D366; /* Specific WhatsApp green */
 }
 
 /*────────────────────────────────────────────────────────────────────────────*/
-/* Base Styles & Reset                                                        */
+/* Base Styles & Reset                                                          */
 html {
   scroll-behavior: smooth;
 }
@@ -28,27 +28,27 @@ body {
   font-weight: 400;
   color: var(--text-color);
   background-color: var(--bg-color);
-  scroll-snap-type: y proximity; /* Allows optional snap points */
+  scroll-snap-type: y proximity;
   overflow-y: scroll;
-  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
   line-height: 1.6;
 }
 
 /*────────────────────────────────────────────────────────────────────────────*/
-/* Header - Desktop & Mobile                                                  */
+/* Header - Desktop & Mobile                                                    */
 header {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   padding: 1rem 2rem;
-  background-color: var(--header-bg);
-  backdrop-filter: blur(5px);
+  background-color: var(--header-bg); /* Uses transparent variable */
+  backdrop-filter: none; /* No blur for total transparency */
   display: flex;
   justify-content: space-between;
   align-items: center;
-  z-index: 500; /* Ensures header is above most content */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 500;
+  box-shadow: none; /* No shadow for total transparency */
 }
 
 header .logo {
@@ -59,7 +59,7 @@ header .logo {
 header nav {
   display: flex;
   justify-content: center;
-  flex-grow: 1; /* Allows nav to take available space */
+  flex-grow: 1;
 }
 
 header nav a {
@@ -76,42 +76,16 @@ header nav a:hover {
 }
 
 /*────────────────────────────────────────────────────────────────────────────*/
-/* Hamburger Menu - Mobile Specific                                           */
-.menu-icon {
-  display: none; /* Hidden by default on desktop */
-  cursor: pointer;
-  padding: 10px;
-  z-index: 1001; /* Above header nav when active */
-}
-
-.menu-icon .bar {
-  width: 25px;
-  height: 3px;
-  background-color: white;
-  margin: 5px 0;
-  transition: 0.4s;
-}
-
-.menu-icon.active .bar:nth-child(1) {
-  transform: rotate(-45deg) translate(-5px, 5px);
-}
-
-.menu-icon.active .bar:nth-child(2) {
-  opacity: 0;
-}
-
-.menu-icon.active .bar:nth-child(3) {
-  transform: rotate(45deg) translate(-5px, -5px);
-}
+/* Removed Hamburger Menu CSS - See original provided CSS for commented out section */
 
 /*────────────────────────────────────────────────────────────────────────────*/
-/* Hero Section Video Backgrounds                                             */
+/* Hero Section Video Backgrounds                                               */
 #hero-video { /* Desktop YouTube iframe */
   position: absolute;
-  inset: 0; /* top, right, bottom, left to 0 */
+  inset: 0;
   width: 100%;
   height: 100%;
-  z-index: 0; /* Behind text overlay */
+  z-index: 0;
   object-fit: cover;
   display: block;
 }
@@ -122,10 +96,10 @@ header nav a:hover {
 }
 
 /*────────────────────────────────────────────────────────────────────────────*/
-/* Text Styles - Titles & Content                                             */
+/* Text Styles - Titles & Content                                               */
 .text-title {
   font-family: 'Open Sans', sans-serif;
-  font-weight: 600; /* Bold title */
+  font-weight: 600;
   font-size: 1.5rem;
   color: var(--primary-color);
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
@@ -135,47 +109,47 @@ header nav a:hover {
 
 .text-content {
   font-family: 'Open Sans', sans-serif;
-  font-weight: 400; /* Normal content text */
+  font-weight: 400;
   font-size: 1rem;
   color: var(--text-color);
   line-height: 1.6;
 }
 
 /*────────────────────────────────────────────────────────────────────────────*/
-/* Overlay for Text & Forms                                                   */
+/* Overlay for Text & Forms                                                     */
 .overlay {
   position: relative;
   background-color: var(--overlay-bg);
   padding: 2rem;
   border-radius: 8px;
   backdrop-filter: blur(2px);
-  z-index: 1; /* Ensures overlay is above background */
+  z-index: 1;
 }
 
-.overlay.bottom-left { /* Common overlay position */
+.overlay.bottom-left {
   position: absolute;
   bottom: 2rem;
   left: 2rem;
-  max-width: 50%; /* Default width for desktop overlays */
+  max-width: 50%;
   text-align: left;
 }
 
 /*────────────────────────────────────────────────────────────────────────────*/
-/* Snap-Scroll Sections General Styles                                        */
+/* Snap-Scroll Sections General Styles                                          */
 .snap-scroll {
   height: 100vh;
-  min-height: 500px; /* Minimum height for sections */
+  min-height: 500px;
   display: flex;
   align-items: center;
   justify-content: center;
   scroll-snap-align: start;
   overflow: hidden;
   padding: 2rem;
-  box-sizing: border-box; /* Includes padding in element's total width/height */
+  box-sizing: border-box;
 }
 
 /*────────────────────────────────────────────────────────────────────────────*/
-/* Outline Button Style                                                       */
+/* Outline Button Style                                                         */
 .outline-button {
   background-color: transparent;
   color: var(--primary-color);
@@ -197,18 +171,18 @@ header nav a:hover {
 }
 
 /*────────────────────────────────────────────────────────────────────────────*/
-/* Honeypot Anti-Spam Field                                                   */
+/* Honeypot Anti-Spam Field                                                     */
 .hidden-field {
-  display: none; /* Hide visually */
+  display: none;
   position: absolute;
-  left: -9999px; /* Move far off-screen */
-  visibility: hidden; /* Ensure it's not accessible */
+  left: -9999px;
+  visibility: hidden;
 }
 
 /*────────────────────────────────────────────────────────────────────────────*/
-/* Utility Classes for Responsiveness                                         */
+/* Utility Classes for Responsiveness                                           */
 .desktop-only {
-  display: flex; /* Or whatever default display is needed for the element */
+  display: flex;
 }
 
 .mobile-only {
@@ -216,7 +190,7 @@ header nav a:hover {
 }
 
 /*────────────────────────────────────────────────────────────────────────────*/
-/* Section 1: Hero Section Specifics                                          */
+/* Section 1: Hero Section Specifics                                            */
 .hero-section {
   position: relative;
   color: var(--text-color);
@@ -226,35 +200,35 @@ header nav a:hover {
 }
 
 /*────────────────────────────────────────────────────────────────────────────*/
-/* Section 2: Split Screen Layout (Desktop)                                   */
+/* Section 2: Split Screen Layout (Desktop)                                     */
 .split-screen {
   flex-direction: row;
   justify-content: space-between;
-  align-items: stretch; /* Stretch to fill height */
-  padding: 0; /* Allow split halves to take full space */
+  align-items: stretch;
+  padding: 0;
 }
 
 .split-left,
 .split-right {
-  flex: 1; /* Each takes half space */
+  flex: 1;
   position: relative;
   height: 100%;
   background-size: cover;
   background-position: center;
   display: flex;
-  align-items: flex-end; /* Align content to bottom */
-  justify-content: flex-start; /* Align content to left */
+  align-items: flex-end;
+  justify-content: flex-start;
 }
 
 /*────────────────────────────────────────────────────────────────────────────*/
-/* Video Thumbnail & Play Button                                              */
+/* Video Thumbnail & Play Button                                                */
 .video-thumbnail-container {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 80%; /* Size of the video window */
-  padding-bottom: 45%; /* 16:9 Aspect Ratio (9/16 * 100) */
+  width: 80%;
+  padding-bottom: 45%;
   background-color: black;
   border-radius: 8px;
   overflow: hidden;
@@ -286,9 +260,9 @@ header nav a:hover {
 }
 
 /*────────────────────────────────────────────────────────────────────────────*/
-/* Section 3: Contact Form Split (Desktop & Responsive Mobile)                */
+/* Section 3: Contact Form Split (Desktop & Responsive Mobile)                  */
 .contact-form-split {
-  flex-direction: row; /* Default desktop layout */
+  flex-direction: row;
   justify-content: space-between;
   align-items: stretch;
   padding: 0;
@@ -322,8 +296,8 @@ header nav a:hover {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end; /* Aligns content to the bottom */
-  align-items: center; /* Centers the form horizontally */
+  justify-content: flex-end;
+  align-items: center;
   width: 100%;
   max-width: 400px;
   background-color: var(--overlay-bg);
@@ -363,13 +337,13 @@ header nav a:hover {
 }
 
 /*────────────────────────────────────────────────────────────────────────────*/
-/* Section 4: Contact Info Split (Desktop & Responsive Mobile)                */
+/* Section 4: Contact Info Split (Desktop & Responsive Mobile)                  */
 .contact-info-split {
-  flex-direction: row; /* Default desktop layout */
+  flex-direction: row;
   justify-content: space-between;
   align-items: stretch;
   padding: 0;
-  background-color: #222; /* Slightly darker background */
+  background-color: #222;
 }
 
 .contact-info-split .background-left,
@@ -400,8 +374,8 @@ header nav a:hover {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end; /* Aligns content to the bottom */
-  align-items: center; /* Centers content horizontally */
+  justify-content: flex-end;
+  align-items: center;
   padding: 2rem;
   width: 100%;
   max-width: 400px;
@@ -462,17 +436,17 @@ header nav a:hover {
 /* Specific WhatsApp icon color */
 .contact-info-split .details-side-contact-info p #whatsapp-link i.fab.fa-whatsapp {
   color: var(--social-whatsapp-color);
-  font-size: 3rem; /* Consistent with other social icons */
+  font-size: 3rem;
   vertical-align: middle;
 }
 
 /*────────────────────────────────────────────────────────────────────────────*/
-/* Footer Links                                                               */
+/* Footer Links                                                                 */
 .footer-links {
   width: 100%;
   text-align: center;
   padding: 1rem;
-  background-color: #222; /* Same as contact info background */
+  background-color: #222;
   display: flex;
   justify-content: center;
   gap: 2rem;
@@ -484,7 +458,7 @@ header nav a:hover {
   text-decoration: none;
   font-size: 0.9rem;
   transition: color 0.3s ease;
-  white-space: nowrap; /* Prevent wrapping on desktop */
+  white-space: nowrap;
 }
 
 .footer-links a:hover {
@@ -492,11 +466,11 @@ header nav a:hover {
 }
 
 /*────────────────────────────────────────────────────────────────────────────*/
-/* Video Modal Styling                                                        */
+/* Video Modal Styling                                                          */
 .modal {
-  display: none; /* Hidden by default */
+  display: none;
   position: fixed;
-  z-index: 2000; /* Highest z-index to be on top */
+  z-index: 2000;
   inset: 0;
   overflow: auto;
   background-color: rgba(0, 0, 0, 0.8);
@@ -512,7 +486,7 @@ header nav a:hover {
   width: 90%;
   max-width: 1000px;
   height: 0;
-  padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+  padding-bottom: 56.25%;
   position: relative;
   border-radius: 8px;
   overflow: hidden;
@@ -533,7 +507,7 @@ header nav a:hover {
   font-size: 35px;
   font-weight: bold;
   cursor: pointer;
-  z-index: 2001; /* Above iframe */
+  z-index: 2001;
 }
 
 .close-button:hover,
@@ -543,7 +517,7 @@ header nav a:hover {
 }
 
 /*────────────────────────────────────────────────────────────────────────────*/
-/* Media Queries for Responsive Design (Mobile First Overrides)               */
+/* Media Queries for Responsive Design (Mobile First Overrides)                 */
 @media (max-width: 768px) {
   /* Utility Classes */
   .desktop-only {
@@ -570,15 +544,15 @@ header nav a:hover {
 
   /* Overlay for Hero Section on Mobile */
   .hero-section .overlay.bottom-left {
-    position: absolute;
+    position: absolute; /* Kept absolute to be on top of background */
     bottom: 2rem;
     left: 2rem;
-    right: 2rem; /* Extend to full width minus padding */
+    right: 2rem;
     max-width: calc(100% - 4rem);
     padding: 1.5rem;
-    text-align: center; /* Center text on mobile */
+    text-align: center;
     z-index: 1;
-    transform: none; /* Remove any previous transforms */
+    transform: none;
   }
 
   /* Text Sizes for Mobile */
@@ -589,59 +563,47 @@ header nav a:hover {
     font-size: 1rem;
   }
 
-  /* Header on Mobile */
+  /* Header on Mobile - Adjusted for no hamburger menu and total transparency */
   header {
     padding: 0.8rem 1rem;
-    background-color: rgba(255, 255, 255, 0.05); /* More transparent header on mobile */
-    backdrop-filter: blur(10px); /* More blur on mobile */
-    justify-content: space-between;
+    background-color: transparent; /* Total transparency */
+    backdrop-filter: none; /* No blur */
+    justify-content: center; /* Center the logo and nav if it's simpler now */
   }
 
   header nav {
-    display: none; /* Hidden by default */
-    flex-direction: column;
-    position: absolute;
-    top: 60px; /* Below header */
-    left: 0;
-    width: 100%;
-    background-color: var(--mobile-nav-bg);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    padding: 1rem 0;
-    z-index: 499; /* Below header, above content */
+    display: flex; /* Always visible */
+    flex-direction: row; /* Keep nav items in a row */
+    position: static; /* No absolute positioning */
+    top: auto;
+    left: auto;
+    width: auto; /* Auto width */
+    background-color: transparent; /* Transparent background */
+    box-shadow: none; /* No shadow */
+    padding: 0; /* No extra padding */
+    z-index: auto;
     align-items: center;
   }
 
-  header nav.active {
-    display: flex; /* Show when active */
-  }
-
   header nav a {
-    width: 100%;
-    padding: 0.8rem 1.5rem;
-    margin: 0;
-    text-align: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0; /* No extra padding */
+    margin: 0 0.5rem; /* Adjusted margin between links */
+    border-bottom: none; /* No border */
   }
 
-  header nav a:last-child {
-    border-bottom: none;
-  }
-
-  .menu-icon {
-    display: block; /* Show hamburger icon */
-  }
+  /* Removed .menu-icon specific display: block; as it's being removed globally */
 
   /* Snap-scroll Sections on Mobile */
   .snap-scroll {
     padding: 1.5rem;
     height: 100vh;
-    min-height: 80vh; /* Slightly smaller minimum height */
-    flex-direction: column; /* Stack elements vertically */
+    min-height: 80vh;
+    flex-direction: column;
   }
 
   /* Section 2 (Mobile Specific Sections) */
-  .split-screen-mobile {
-    padding: 0; /* Full background images for mobile sections */
+  .split-screen-mobile { /* Ensure this class is applied to mobile-specific sections in HTML if different from .snap-scroll */
+    padding: 0;
   }
 
   .full-width-bg {
@@ -675,35 +637,35 @@ header nav a:hover {
   /* Section 3 & 4 (Responsive Split Sections on Mobile) */
   .contact-form-split,
   .contact-info-split {
-    flex-direction: column; /* Stack halves vertically */
-    padding: 0; /* Remove section padding to allow halves to fill */
+    flex-direction: column;
+    padding: 0;
   }
 
   .contact-form-split .background-left-form,
   .contact-form-split .background-right-form,
   .contact-info-split .background-left,
   .contact-info-split .background-right {
-    flex: none; /* Do not flex; control size manually */
+    flex: none;
     width: 100%;
-    height: 50vh; /* Each half becomes a snap-scroll */
-    scroll-snap-align: start; /* Enable snap for each half */
-    align-items: center; /* Center content vertically */
-    justify-content: center; /* Center content horizontally */
+    height: 50vh;
+    scroll-snap-align: start;
+    align-items: center;
+    justify-content: center;
   }
 
   .contact-form-split .background-left-form .overlay.bottom-left,
   .contact-info-split .background-left .overlay.bottom-left {
-    position: relative; /* Override absolute positioning */
+    position: relative;
     bottom: auto;
     left: auto;
-    max-width: 90%; /* Adjust width for mobile */
+    max-width: 90%;
     text-align: center;
     transform: none;
   }
 
   .contact-form-split .content-wrapper-form,
   .contact-info-split .content-wrapper-info {
-    padding: 1rem; /* Adjust padding for wrappers */
+    padding: 1rem;
     align-items: center;
     justify-content: center;
     width: 100%;
@@ -712,28 +674,28 @@ header nav a:hover {
 
   .form-side-contact-form,
   .details-side-contact-info {
-    max-width: 90%; /* Allow wider form/details on mobile */
+    max-width: 90%;
     padding: 1.5rem;
   }
 
   /* Social Links on Mobile */
   .contact-info-split .social-links {
-    flex-direction: row; /* Keep on one row */
-    flex-wrap: wrap; /* Allow wrapping if space is tight */
+    flex-direction: row;
+    flex-wrap: wrap;
     justify-content: center;
-    gap: 1rem; /* Smaller gap for mobile */
+    gap: 1rem;
   }
 
   .contact-info-split .social-links a {
-    font-size: 2.5rem; /* Slightly smaller icons on mobile */
+    font-size: 2.5rem;
   }
 
   /* Footer Links on Mobile */
   .footer-links {
-    flex-direction: row; /* Keep links in a row */
+    flex-direction: row;
     justify-content: center;
     gap: 1.5rem;
     padding: 0.8rem;
-    flex-wrap: wrap; /* Allow wrapping */
+    flex-wrap: wrap;
   }
 }

@@ -49,6 +49,26 @@
             opacity: 1;
         }
 
+        /* Asigura ca video-ul se intinde pe tot spatiul */
+        video.background-element {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Stil pentru containerul de fundal in cazul imaginilor sau unde nu e video */
+        .background-container {
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
         .youtube-iframe {
             position: absolute;
             top: 50%;
@@ -623,14 +643,26 @@
 
                         // Gestioneaza player-ele YouTube din fundal
                         Object.values(players).forEach(player => {
-                            if (player.pauseVideo) player.pauseVideo();
+                            // Inainte de a da play, verifica daca play-ul este permis
+                            const playPromise = player.playVideo();
+                            if (playPromise !== undefined) {
+                                playPromise.then(_ => {
+                                    // Autoplay a pornit cu succes
+                                    console.log('Video YouTube a pornit automat.');
+                                }).catch(error => {
+                                    // Autoplay a fost blocat
+                                    console.warn('Autoplay YouTube blocat. Eroare:', error);
+                                    // Aici poti adauga un fallback, ex: afisarea unui buton "Play"
+                                });
+                            }
                         });
-
-                        const playerDivId = `youtube-bg-player-${index + 1}`;
-                        if (players[playerDivId] && players[playerDivId].playVideo) {
-                            currentPlayingPlayer = players[playerDivId];
-                            currentPlayingPlayer.playVideo();
-                        }
+                    }
+                } else {
+                    // Sectiunea nu este vizibila, pune video-ul pe pauza
+                    const index = Array.from(snapSections).indexOf(entry.target);
+                    const playerDivId = `youtube-bg-player-${index + 1}`;
+                    if (players[playerDivId] && players[playerDivId].pauseVideo) {
+                        players[playerDivId].pauseVideo();
                     }
                 }
             });

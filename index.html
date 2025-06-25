@@ -604,7 +604,7 @@
             const snap4LinkedinLink = document.getElementById('snap4-linkedin-link');
             const snap4YoutubeLink = document.getElementById('snap4-youtube-link');
             const snap4TiktokLink = document.getElementById('snap4-tiktok-link');
-            const snap4InstagramLink = document.getElementById('snap4-instagram-link');
+            const snap4InstagramLink = document = document.getElementById('snap4-instagram-link');
 
             snap4Phone.textContent = `Quick answer: ${snap4Data.contact.phone}` || '';
             snap4Phone.style.display = snap4Data.contact.phone ? 'block' : 'none';
@@ -642,20 +642,27 @@
                         logoElement.style.color = logoColors[index];
 
                         // Gestioneaza player-ele YouTube din fundal
-                        Object.values(players).forEach(player => {
-                            // Inainte de a da play, verifica daca play-ul este permis
-                            const playPromise = player.playVideo();
-                            if (playPromise !== undefined) {
-                                playPromise.then(_ => {
-                                    // Autoplay a pornit cu succes
-                                    console.log('Video YouTube a pornit automat.');
-                                }).catch(error => {
-                                    // Autoplay a fost blocat
-                                    console.warn('Autoplay YouTube blocat. Eroare:', error);
-                                    // Aici poti adauga un fallback, ex: afisarea unui buton "Play"
-                                });
-                            }
-                        });
+                        const playerDivId = `youtube-bg-player-${index + 1}`;
+                        if (players[playerDivId] && players[playerDivId].playVideo) {
+                             const playPromise = players[playerDivId].playVideo();
+                             if (playPromise !== undefined) {
+                                 playPromise.then(_ => {
+                                     console.log(`Video YouTube pentru sectiunea ${index + 1} a pornit automat.`);
+                                 }).catch(error => {
+                                     console.warn(`Autoplay YouTube blocat pentru sectiunea ${index + 1}. Eroare:`, error);
+                                     // Daca autoplay e blocat, putem afisa un poster sau o imagine statica
+                                     const bgContainer = entry.target.querySelector('.background-container');
+                                     const img = document.createElement('img');
+                                     const currentContentSource = isMobileDevice() ? pageContent.mobile : pageContent.desktop;
+                                     const snapKey = `snap${index + 1}`;
+                                     img.src = currentContentSource[snapKey].imageUrl || `https://placehold.co/1920x1080/000000/FFFFFF?text=Video+blocat`;
+                                     img.className = 'background-element fade-in active';
+                                     img.alt = 'Video blocat';
+                                     bgContainer.innerHTML = ''; // Curata div-ul player-ului
+                                     bgContainer.appendChild(img);
+                                 });
+                             }
+                         }
                     }
                 } else {
                     // Sectiunea nu este vizibila, pune video-ul pe pauza

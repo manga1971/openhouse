@@ -2,22 +2,17 @@
   "hero": {
     "title": "Un nou început pentru tine?\nCând vinzi sau cumperi o proprietate, ai nevoie de îndrumare pentru a lua decizia corectă.",
     "videoBackground": "vNscPtijCe4"
+    // If you explicitly want a *different* MP4 or static image for mobile hero,
+    // you would add fields like these:
+    // "mobileVideo": "uploads/V1.mp4",
+    // "mobileImage": "uploads/foto1.jpg"
   },
   "section2": {
     "left_content": {
       "title": "Soluții complete. Rezultate reale.\nConstruim strategii personalizate pentru achiziții, vânzări și închirieri.",
-      "content": "Partenerul tău de încredere pentru orice tranzactie imobiliara.",
+      "content": "Partenerul tău de încredere pentru orice tranzacție imobiliară.",
       "image": "uploads/foto1.jpg",
       "link": "#snap-scroll-4-desktop"
-    },
-    "right_content": {
-      "image": "uploads/foto2.jpg",
-      "video": "vNscPtijCe4"
-    },
-    "mobile_2_1": {
-      "title": "Soluții complete. Rezultate reale.\nConstruim strategii personalizate pentru achiziții, vânzări și închirieri.",
-      "content": "Partenerul tău de încredere pentru orice tranzactie imobiliara.",
-      "image": "uploads/foto1.jpg"
     },
     "mobile_2_2": {
       "image": "uploads/foto2.jpg",
@@ -27,11 +22,8 @@
   "section3": {
     "left_content": {
       "title": "Un nou început începe cu o decizie corectă,\nO decizie corectă se poate lua în baza experienței. Noi avem. Din 1998.",
-      "content": "Da",
+      "content": "Suntem alături de tine la fiecare pas. Descoperă expertiza noastră.",
       "image": "uploads/foto3.jpg"
-    },
-    "right_content": {
-      "image": "uploads/foto4.jpg"
     }
   },
   "contactInfo": {
@@ -47,7 +39,7 @@
     "email": "intravilan@gmail.com",
     "social": {
       "linkedin.com": "https://www.linkedin.com/in/ghita-mihai-adrian-ba182016/",
-      "youtube": "https://www.youtube.com/watch?v=youtube_video_id_here",
+      "youtube": "https://www.youtube.com/@YourYouTubeChannel",
       "instagram": "https://www.instagram.com/mihaighita71/",
       "tiktok": "https://www.tiktok.com/@openhousero"
     }

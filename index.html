@@ -249,15 +249,17 @@
 
     <script>
         // Functie pentru a determina calea de baza pentru resurse pe GitHub Pages
+        // Aceasta functie va construi calea corecta inclusiv numele depozitului
         function getBasePath() {
-            // Obtine pathname-ul curent (ex: /openhouse/ sau /)
-            const path = window.location.pathname;
-            // Daca pathname-ul contine numele depozitului, returneaza-l (ex: /openhouse)
-            if (path.includes('/openhouse/')) {
-                return '/openhouse';
+            const pathname = window.location.pathname;
+            // Ex: pentru https://manga1971.github.io/openhouse/
+            // pathname va fi "/openhouse/"
+            // Vom extrage "/openhouse"
+            const repoName = '/openhouse'; // Numele depozitului tau
+            if (pathname.startsWith(repoName)) {
+                return repoName;
             }
-            // Altfel, inseamna ca suntem in root (sau pe un domeniu custom)
-            return '';
+            return ''; // Daca nu este in subfolder (ex: domeniu custom)
         }
 
         const basePath = getBasePath();

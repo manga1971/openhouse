@@ -1,11 +1,13 @@
 {
   "hero": {
-    "title": "Un nou început pentru tine?\nCând vinzi sau cumperi o proprietate, ai nevoie de îndrumare pentru a lua decizia corectă.",
+    "title": "Un nou început pentru tine?\nCând vinzi sau cumperi o proprietate, ai nevoie de îndrumare ca să iei o decizie bună.
+    O decizie bună se bazează pe experiență. Noi o avem. Din 1998.",
     "videoBackground": "vNscPtijCe4"
   },
   "section2": {
     "left_content": {
-      "title": "Soluții complete. Rezultate reale.\nConstruim strategii personalizate pentru achiziții, vânzări și închirieri.",
+      "title": "Soluții create pentru tine. Rezultate reale. Plus valoare.\nConstruim strategii adaptate dorințelor tale.
+      Investiții, achiziții, vânzări. Imobiliare. Cu sens.",
       "content": "Partenerul tău de încredere pentru orice tranzactie imobiliara.",
       "image": "uploads/foto1.jpg",
       "link": "#snap-scroll-4-desktop"
@@ -15,7 +17,8 @@
       "video": "vNscPtijCe4"
     },
     "mobile_2_1": {
-      "title": "Soluții complete. Rezultate reale.\nConstruim strategii personalizate pentru achiziții, vânzări și închirieri.",
+      "title": "Soluții create pentru tine. Rezultate reale. Plus valoare.\nConstruim strategii adaptate dorințelor tale.
+      Investiții, achiziții, vânzări. Imobiliare. Cu sens.",
       "content": "Partenerul tău de încredere pentru orice tranzactie imobiliara.",
       "image": "uploads/foto1.jpg"
     },
@@ -26,7 +29,8 @@
   },
   "section3": {
     "left_content": {
-      "title": "Un nou început începe cu o decizie corectă,\nO decizie corectă se poate lua în baza experienței. Noi avem. Din 1998.",
+      "title": "Integritate. Claritate. Expertiză. Rezultate.\nUn nou început nu așteaptă - începe cu o decizie inspirată și continuă cu noi. 
+Contactează-ne acum. E timpul tău. Succesul tău. Confortul tău.",
       "content": "Da",
       "image": "uploads/foto3.jpg"
     },

@@ -167,7 +167,7 @@
     <header class="fixed top-0 left-0 w-full p-4 z-[9999] bg-transparent">
         <div class="flex items-center justify-start">
             <!-- Logo SVG cu culori dinamice prin JS -->
-            <svg id="logo-openhouse" width="150" height="40" viewBox="0 0 150 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="transition-colors duration-500">
+            <svg id="logo-openhouse" width="180" height="40" viewBox="0 0 180 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="transition-colors duration-500">
                 <text x="0" y="30" font-family="Inter, sans-serif" font-size="30" font-weight="bold">Open House</text>
             </svg>
         </div>
@@ -255,8 +255,9 @@
                 snap1: {
                     title: "Un nou început pentru tine?",
                     content: "Când vinzi sau cumperi o proprietate, ai nevoie de îndrumare ca să iei o decizie bună. O decizie bună se bazează pe experiență — a ta sau a agentului tău.\nNoi o avem. Din 1998.",
-                    mp4Url: "uploads/V1.mp4", // Actualizat: Calea catre MP4 local V1
-                    imageUrl: "https://placehold.co/1920x1080/fdba74/FFFFFF?text=Foto1", // Placeholder Foto1
+                    // Am adaugat '__app_id' pentru a construi calea absoluta, necesara pentru GitHub Pages
+                    mp4Url: `/${typeof __app_id !== 'undefined' ? __app_id : 'openhouse'}/uploads/V1.mp4`,
+                    imageUrl: `/${typeof __app_id !== 'undefined' ? __app_id : 'openhouse'}/uploads/foto1.jpg`, // Exemplu de cale locala pentru imagine
                     youtubeId: "" // Nu se foloseste pentru mobile snap1
                 },
                 snap2: {
@@ -264,8 +265,8 @@
                     content: "Construim strategii adaptate dorințelor tale – investiții, achiziții, vânzări.",
                     linkText: "Imobiliare. Cu sens.",
                     linkYoutubeId: "vNscPtijCe4",
-                    mp4Url: "uploads/V2.mp4", // Actualizat: Calea catre MP4 local V2
-                    imageUrl: "https://placehold.co/1920x1080/fcd34d/FFFFFF?text=Foto2", // Placeholder Foto2
+                    mp4Url: `/${typeof __app_id !== 'undefined' ? __app_id : 'openhouse'}/uploads/V2.mp4`,
+                    imageUrl: `/${typeof __app_id !== 'undefined' ? __app_id : 'openhouse'}/uploads/foto2.jpg`,
                     youtubeId: ""
                 },
                 snap3: {
@@ -273,8 +274,8 @@
                     content: "Un nou început nu așteaptă — începe cu o decizie inspirată și continuă cu noi. E timpul tău. Succesul tău. Confortul tău.",
                     linkText: "O poveste de succes.",
                     linkYoutubeId: "vNscPtijCe4",
-                    mp4Url: "uploads/V3.mp4", // Actualizat: Calea catre MP4 local V3
-                    imageUrl: "https://placehold.co/1920x1080/86efac/FFFFFF?text=Foto3", // Placeholder Foto3
+                    mp4Url: `/${typeof __app_id !== 'undefined' ? __app_id : 'openhouse'}/uploads/V3.mp4`,
+                    imageUrl: `/${typeof __app_id !== 'undefined' ? __app_id : 'openhouse'}/uploads/foto3.jpg`,
                     youtubeId: ""
                 },
                 snap4: {
@@ -291,8 +292,8 @@
                             instagram: "https://www.instagram.com/instagram" // Placeholder Instagram
                         }
                     },
-                    mp4Url: "uploads/V4.mp4", // Actualizat: Calea catre MP4 local V4
-                    imageUrl: "https://placehold.co/1920x1080/a78bfa/FFFFFF?text=Foto4", // Placeholder Foto4
+                    mp4Url: `/${typeof __app_id !== 'undefined' ? __app_id : 'openhouse'}/uploads/V4.mp4`,
+                    imageUrl: `/${typeof __app_id !== 'undefined' ? __app_id : 'openhouse'}/uploads/foto4.jpg`,
                     youtubeId: ""
                 }
             },
@@ -311,8 +312,8 @@
                     content: "Construim strategii adaptate dorințelor tale – investiții, achiziții, vânzări. Pe desktop, am putea adăuga mai multe detalii despre abordarea noastră personalizată și rezultatele excepționale pe care le-am obținut pentru clienții noștri.",
                     linkText: "Imobiliare. Cu sens.",
                     linkYoutubeId: "vNscPtijCe4",
-                    mp4Url: "uploads/V2.mp4", // Actualizat: Calea catre MP4 local V2
-                    imageUrl: "https://placehold.co/1920x1080/fcd34d/FFFFFF?text=Foto2_Desktop",
+                    mp4Url: `/${typeof __app_id !== 'undefined' ? __app_id : 'openhouse'}/uploads/V2.mp4`,
+                    imageUrl: `/${typeof __app_id !== 'undefined' ? __app_id : 'openhouse'}/uploads/foto2.jpg`,
                     youtubeId: ""
                 },
                 snap3: {
@@ -320,8 +321,8 @@
                     content: "Un nou început nu așteaptă — începe cu o decizie inspirată și continuă cu noi. E timpul tău. Succesul tău. Confortul tău. Ne mândrim cu valorile noastre fundamentale care ghidează fiecare interacțiune și fiecare tranzacție, asigurându-vă un parteneriat de încredere.",
                     linkText: "O poveste de succes.",
                     linkYoutubeId: "vNscPtijCe4",
-                    mp4Url: "uploads/V3.mp4", // Actualizat: Calea catre MP4 local V3
-                    imageUrl: "https://placehold.co/1920x1080/86efac/FFFFFF?text=Foto3_Desktop",
+                    mp4Url: `/${typeof __app_id !== 'undefined' ? __app_id : 'openhouse'}/uploads/V3.mp4`,
+                    imageUrl: `/${typeof __app_id !== 'undefined' ? __app_id : 'openhouse'}/uploads/foto3.jpg`,
                     youtubeId: ""
                 },
                 snap4: {
@@ -338,8 +339,8 @@
                             instagram: "https://www.instagram.com/instagram"
                         }
                     },
-                    mp4Url: "uploads/V4.mp4", // Actualizat: Calea catre MP4 local V4
-                    imageUrl: "https://placehold.co/1920x1080/a78bfa/FFFFFF?text=Foto4_Desktop",
+                    mp4Url: `/${typeof __app_id !== 'undefined' ? __app_id : 'openhouse'}/uploads/V4.mp4`,
+                    imageUrl: `/${typeof __app_id !== 'undefined' ? __app_id : 'openhouse'}/uploads/foto4.jpg`,
                     youtubeId: ""
                 }
             }

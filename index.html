@@ -252,17 +252,19 @@
         // Aceasta functie va construi calea corecta inclusiv numele depozitului
         function getBasePath() {
             const pathname = window.location.pathname;
-            // Ex: pentru https://manga1971.github.io/openhouse/
-            // pathname va fi "/openhouse/"
-            // Vom extrage "/openhouse"
-            const repoName = '/openhouse'; // Numele depozitului tau
-            if (pathname.startsWith(repoName)) {
-                return repoName;
+            const repoName = 'openhouse'; // Numele exact al depozitului tau GitHub
+            const index = pathname.indexOf('/' + repoName);
+
+            if (index !== -1) {
+                // Returneaza '/openhouse'
+                return pathname.substring(index, index + repoName.length + 1);
             }
-            return ''; // Daca nu este in subfolder (ex: domeniu custom)
+            // Fallback pentru dezvoltare locala sau domenii custom unde repoName nu e in path
+            return '';
         }
 
         const basePath = getBasePath();
+        console.log('Base Path determined:', basePath); // Debugging: afiseaza calea de baza determinata
 
         // Obiect JavaScript pentru a simula content.json
         // Contine toate textele, URL-urile de video/imagini si ID-urile YouTube
@@ -392,10 +394,12 @@
                     youtubeIdToUse = pageContent.desktop.snap1.youtubeId;
                 } else if (isDesktop && content.youtubeId) {
                     youtubeIdToUse = content.youtubeId;
-                } else if (!isDesktop && content.youtubeId) {
-                    // Daca mobilul are YouTube ID specificat in content.json
+                } else if (!isMobileDevice() && content.youtubeId) { // Check if desktop and has youtube ID
+                    youtubeIdToUse = content.youtubeId;
+                } else if (isMobileDevice() && content.youtubeId) { // Check if mobile and has youtube ID
                     youtubeIdToUse = content.youtubeId;
                 }
+
 
                 if (youtubeIdToUse) {
                     const playerDivId = `youtube-bg-player-${index + 1}`;
@@ -448,10 +452,12 @@
                     const playerDivId = `youtube-bg-player-1`; // Reutilizam ID-ul pentru a porni player-ul YT API
                     if (players[playerDivId] && players[playerDivId].playVideo) {
                         // Playerul exista deja si poate fi controlat
+                        console.log('Controlam player-ul YouTube existent pentru desktop snap1');
                         return; // Nu recream player-ul, il vom controla mai jos cu IntersectionObserver
                     } else {
                         // Playerul nu a fost inca initializat de API, il lasam pe API sa se ocupe
-                        // Aceasta ramura ar trebui sa se intample doar la prima incarcare a paginii
+                        console.log('Player YouTube pentru desktop snap1 va fi initializat de API');
+                        // Nu facem new YT.Player aici direct, lasam API-ul sa o faca
                         return;
                     }
                 }
@@ -480,6 +486,7 @@
                         }
                     };
                     elementToAppend = video;
+                    console.log('Tentativa de incarcare video:', video.src); // Debugging
                 } else if (contentData.imageUrl && contentData.imageUrl !== '') {
                     const img = document.createElement('img');
                     img.src = contentData.imageUrl;
@@ -490,14 +497,17 @@
                         console.error(`Eroare la incarcarea imaginii: ${img.src}`, e);
                     };
                     elementToAppend = img;
+                    console.log('Tentativa de incarcare imagine:', img.src); // Debugging
                 } else if (contentData.youtubeId && contentData.youtubeId !== '') {
                     // Aceasta este pentru cazurile in care userul vrea YT si pe mobil sau alte snap-uri
                     currentYoutubeId = contentData.youtubeId;
                     const playerDivId = `youtube-bg-player-${sectionElement.id.replace('snap-scroll-', '')}`;
                     if (players[playerDivId] && players[playerDivId].playVideo) {
+                        console.log('Controlam player-ul YouTube existent pentru fundal non-snap1');
                         return; // Playerul exista deja, nu il recream
                     } else {
                         // Playerul nu a fost inca initializat de API
+                        console.log('Player YouTube pentru fundal non-snap1 va fi initializat de API');
                         const playerDiv = document.createElement('div');
                         playerDiv.id = playerDivId;
                         playerDiv.className = 'youtube-iframe background-element';

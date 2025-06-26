@@ -63,14 +63,7 @@
             opacity: 1;
         }
 
-        /* Asigura ca video-ul se intinde pe tot spatiul */
-        video.background-element {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* Stil pentru containerul de fundal in cazul imaginilor sau unde nu e video */
+        /* Stil pentru containerul de fundal in cazul imaginilor */
         .background-container {
             background-size: cover;
             background-position: center center;
@@ -81,16 +74,6 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-        }
-
-        .youtube-iframe {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100vw;
-            height: 100vh;
-            transform: translate(-50%, -50%);
-            pointer-events: none; /* Dezactiveaza interactiunile cu playerul YouTube */
         }
 
         /* Stil pentru overlay-ul translucent al textului */
@@ -132,7 +115,7 @@
             position: relative;
             margin: auto;
             padding: 0;
-            width: 94%; /* Latime pentru mobil */
+            width: 90%; /* Latime pentru mobil */
             max-width: 800px; /* Latime maxima pentru desktop */
             border-radius: 0.75rem;
             overflow: hidden;
@@ -211,7 +194,7 @@
     <header class="fixed top-0 left-0 w-full p-4 z-[9999] bg-transparent">
         <div class="flex items-center justify-start">
             <!-- Logo SVG cu culori dinamice prin JS -->
-            <!-- Latimea a fost marita si viewBox ajustat pentru a incapea tot textul "Open House" -->
+            <!-- Latimea a fost marita si viewBox ajustat pentru a incapa tot textul "Open House" -->
             <svg id="logo-openhouse" width="210" height="40" viewBox="0 0 210 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="transition-colors duration-500">
                 <text x="0" y="30" font-family="Inter, sans-serif" font-size="30" font-weight="bold">Open House</text>
             </svg>
@@ -310,30 +293,28 @@
         console.log('Base Path determined:', basePath); // Debugging: afiseaza calea de baza determinata
 
         // Obiect JavaScript pentru a simula content.json
-        // Contine toate textele si URL-urile video MP4
+        // Contine toate textele si URL-urile imaginilor de fundal
         const pageContent = {
             mobile: {
                 snap1: {
                     title: "Un nou început pentru tine?",
                     content: "Când vinzi sau cumperi o proprietate, ai nevoie de îndrumare ca să iei o decizie bună. O decizie bună se bazează pe experiență — a ta sau a agentului tău.\nNoi o avem. Din 1998.",
-                    mp4Url: `${basePath}/uploads/V1.mp4`,
-                    youtubeId: "" // Doar pentru link-uri, nu fundal
+                    imageUrl: `${basePath}/uploads/foto1.jpg`, // Utilizam imagine in loc de video
+                    linkYoutubeId: "vNscPtijCe4" // Doar pentru link-uri, nu fundal
                 },
                 snap2: {
                     title: "Soluții create pentru tine. Rezultate reale. Plus valoare.",
                     content: "Construim strategii adaptate dorințelor tale – investiții, achiziții, vânzări.",
                     linkText: "Imobiliare. Cu sens.",
                     linkYoutubeId: "vNscPtijCe4",
-                    mp4Url: `${basePath}/uploads/V2.mp4`,
-                    youtubeId: ""
+                    imageUrl: `${basePath}/uploads/foto2.jpg`, // Utilizam imagine in loc de video
                 },
                 snap3: {
                     title: "Integritate. Claritate. Expertiză. Rezultate.",
                     content: "Un nou început nu așteaptă — începe cu o decizie inspirată și continuă cu noi. E timpul tău. Succesul tău. Confortul tău.",
                     linkText: "O poveste de succes.",
                     linkYoutubeId: "vNscPtijCe4",
-                    mp4Url: `${basePath}/uploads/V3.mp4`,
-                    youtubeId: ""
+                    imageUrl: `${basePath}/uploads/foto3.jpg`, // Utilizam imagine in loc de video
                 },
                 snap4: {
                     title: "",
@@ -349,32 +330,29 @@
                             instagram: "https://www.instagram.com/instagram"
                         }
                     },
-                    mp4Url: `${basePath}/uploads/V4.mp4`,
-                    youtubeId: ""
+                    imageUrl: `${basePath}/uploads/foto4.jpg`, // Utilizam imagine in loc de video
                 }
             },
             desktop: {
                 snap1: {
                     title: "Un nou început pentru tine?",
                     content: "Când vinzi sau cumperi o proprietate, ai nevoie de îndrumare ca să iei o decizie bună. O decizie bună se bazează pe experiență — a ta sau a agentului tău.\nNoi o avem. Din 1998.",
-                    mp4Url: `${basePath}/uploads/V1.mp4`, // Acum folosim MP4 și pe desktop snap1
-                    youtubeId: "" // Nu se mai folosește YouTube pentru fundal
+                    imageUrl: `${basePath}/uploads/foto1.jpg`, // Utilizam imagine in loc de video pe desktop snap1
+                    linkYoutubeId: "vNscPtijCe4" // Doar pentru link-uri, nu fundal
                 },
                 snap2: {
                     title: "Soluții create pentru tine. Rezultate reale. Plus valoare.",
                     content: "Construim strategii adaptate dorințelor tale – investiții, achiziții, vânzări. Pe desktop, am putea adăuga mai multe detalii despre abordarea noastră personalizată și rezultatele excepționale pe care le-am obținut pentru clienții noștri.",
                     linkText: "Imobiliare. Cu sens.",
                     linkYoutubeId: "vNscPtijCe4",
-                    mp4Url: `${basePath}/uploads/V2.mp4`,
-                    youtubeId: ""
+                    imageUrl: `${basePath}/uploads/foto2.jpg`,
                 },
                 snap3: {
                     title: "Integritate. Claritate. Expertiză. Rezultate.",
                     content: "Un nou început nu așteaptă — începe cu o decizie inspirată și continuă cu noi. E timpul tău. Succesul tău. Confortul tău. Ne mândrim cu valorile noastre fundamentale care ghidează fiecare interacțiune și fiecare tranzacție, asigurându-vă un parteneriat de încredere.",
                     linkText: "O poveste de succes.",
                     linkYoutubeId: "vNscPtijCe4",
-                    mp4Url: `${basePath}/uploads/V3.mp4`,
-                    youtubeId: ""
+                    imageUrl: `${basePath}/uploads/foto3.jpg`,
                 },
                 snap4: {
                     title: "",
@@ -390,8 +368,7 @@
                             instagram: "https://www.instagram.com/instagram"
                         }
                     },
-                    mp4Url: `${basePath}/uploads/V4.mp4`,
-                    youtubeId: ""
+                    imageUrl: `${basePath}/uploads/foto4.jpg`,
                 }
             }
         };
@@ -421,8 +398,6 @@
 
         // Functia globala chemata de YouTube Iframe API cand e gata
         window.onYouTubeIframeAPIReady = function() {
-            // Nu mai cream playeri YouTube pentru fundal aici.
-            // Doar asiguram ca YT.Player este disponibil pentru modal.
             console.log('YouTube Iframe API ready.');
         };
 
@@ -438,40 +413,29 @@
 
             bgContainer.innerHTML = ''; // Curata fundalul existent inainte de a adauga noul
 
-            if (contentData.mp4Url && contentData.mp4Url !== '') {
-                const video = document.createElement('video');
-                video.src = contentData.mp4Url;
-                video.className = 'background-element';
-                video.autoplay = true;
-                video.loop = true;
-                video.muted = true;
-                video.playsInline = true;
-                video.preload = "auto";
-                video.setAttribute('aria-label', `Video de fundal pentru secțiunea ${sectionElement.id.replace('snap-scroll-', '')}`);
+            if (contentData.imageUrl && contentData.imageUrl !== '') {
+                const img = document.createElement('img');
+                img.src = contentData.imageUrl;
+                img.className = 'background-element'; // Clasa comuna pentru elementele de fundal
+                img.alt = `Fundal pentru secțiunea ${sectionElement.id.replace('snap-scroll-', '')}`;
+                img.loading = "lazy"; // Lazy loading pentru imagini
 
-                // Adauga un handler de erori pentru video
-                video.onerror = (e) => {
-                    console.error(`Eroare la incarcarea video-ului: ${video.src}`, e);
-                    // Fallback la mesaj text daca video-ul nu se incarca
-                    bgContainer.innerHTML = '<div class="background-element flex items-center justify-center text-gray-500 text-center p-4">Video de fundal nu poate fi incarcat.</div>';
+                // Adauga un handler de erori pentru imagine
+                img.onerror = (e) => {
+                    console.error(`Eroare la incarcarea imaginii: ${img.src}`, e);
+                    // Fallback la mesaj text daca imaginea nu se incarca
+                    bgContainer.innerHTML = '<div class="background-element flex items-center justify-center text-gray-500 text-center p-4">Fundal imagine nu poate fi incarcat.</div>';
                 };
 
-                bgContainer.appendChild(video);
-                console.log('Tentativa de incarcare video MP4:', video.src); // Debugging
-
-                // Incearca sa porneasca video-ul si prinde erorile de autoplay
-                video.play().catch(e => {
-                    console.warn(`Autoplay video blocat pentru ${video.src}. Eroare:`, e);
-                    // Fallback la mesaj text daca autoplay e blocat
-                    bgContainer.innerHTML = '<div class="background-element flex items-center justify-center text-gray-500 text-center p-4">Video de fundal nu poate fi redat automat.</div>';
-                });
+                bgContainer.appendChild(img);
+                console.log('Tentativa de incarcare imagine:', img.src); // Debugging
 
                 // Adauga clasa pentru efectul de fade-in
-                setTimeout(() => video.classList.add('active'), 50);
+                setTimeout(() => img.classList.add('active'), 50);
 
             } else {
-                // Daca nu exista MP4, afisam un mesaj generic
-                console.warn(`Nu exista URL MP4 definit pentru ${sectionElement.id}.`);
+                // Daca nu exista URL pentru imagine, afisam un mesaj generic
+                console.warn(`Nu exista URL imagine definit pentru ${sectionElement.id}.`);
                 bgContainer.innerHTML = '<div class="background-element flex items-center justify-center text-gray-500 text-center p-4">Fundal indisponibil.</div>';
             }
         }
@@ -554,7 +518,7 @@
         const snapSections = document.querySelectorAll('.snap-section');
         const mainContent = document.getElementById('main-content');
 
-        // Observer pentru schimbarea culorii logo-ului si controlul video-urilor de fundal
+        // Observer pentru schimbarea culorii logo-ului
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {

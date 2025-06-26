@@ -52,16 +52,11 @@
             object-fit: cover; /* Mentine raportul de aspect si acopera zona */
             z-index: -1; /* Plaseaza in spatele continutului */
             /* Stil temporar pentru diagnosticare - ACUM ACTIVE IMPLICIT */
-            border: 2px solid red; 
-            opacity: 1; /* Eliminam fade-in pentru diagnoza */
-            transition: none; /* Eliminam tranzitia pentru diagnoza */
+            border: 2px solid red !important; /* Adaugat !important */
+            opacity: 1 !important; /* Asiguram vizibilitatea pentru diagnoza */
+            transition: none !important; /* Eliminam tranzitia pentru diagnoza */
         }
-
-        /* Eliminam clasele fade-in pentru diagnoza */
-        /* .background-element.fade-in { opacity: 0; transition: opacity 0.5s ease-in-out; } */
-        /* .background-element.fade-in.active { opacity: 1; } */
-
-
+        
         /* Stil pentru containerul de fundal in cazul imaginilor */
         .background-container {
             background-size: cover;
@@ -74,13 +69,13 @@
             height: 100%;
             z-index: -1;
             /* Stil temporar pentru diagnosticare - VIZIBIL PE PROD */
-            border: 2px dashed blue; 
+            border: 2px dashed blue !important; /* Adaugat !important */
         }
 
         /* Stil pentru overlay-ul translucent al textului */
         .text-overlay {
-            background-color: rgba(64, 64, 64, 0.4); /* Gri foarte transparent */
-            backdrop-filter: blur(2px); /* Un efect subtil de blur */
+            background-color: rgba(64, 64, 64, 0.0) !important; /* Temporar complet transparent */
+            backdrop-filter: none !important; /* Eliminam blurul temporar */
             padding: 1.5rem;
             border-radius: 0.75rem; /* Colțuri rotunjite */
             text-align: center;
@@ -426,7 +421,8 @@
             if (contentData.imageUrl && contentData.imageUrl !== '') {
                 const img = document.createElement('img');
                 img.src = contentData.imageUrl;
-                img.className = 'background-element fade-in'; // Clasa comuna pentru elementele de fundal
+                // Am mutat `fade-in` pentru a permite CSS-ului sa o controleze
+                img.className = 'background-element'; 
                 img.alt = `Fundal pentru secțiunea ${sectionElement.id.replace('snap-scroll-', '')}`;
                 img.loading = "lazy"; // Lazy loading pentru imagini
 
@@ -440,9 +436,15 @@
                 bgContainer.appendChild(img);
                 console.log(`Tentativa de incarcare imagine: ${img.src}`); // Debugging
                 console.log(`Element imagine adaugat la ${sectionElement.id}. Dimensiuni bgContainer: ${bgContainer.offsetWidth}x${bgContainer.offsetHeight}`); // Debugging
-
-                // Adauga clasa pentru efectul de fade-in (desi e dezactivat temporar in CSS)
-                setTimeout(() => img.classList.add('active'), 50);
+                
+                // Adauga clasa 'active' imediat pentru a forta vizibilitatea
+                // si aplica clasa 'fade-in' pentru tranzitie
+                setTimeout(() => {
+                    img.classList.add('fade-in'); // Adaugam clasa de tranzitie
+                    img.classList.add('active'); // Declansam tranzitia la opacitate 1
+                    console.log(`Clase adaugate imaginii: ${img.className}`);
+                    console.log(`Opacitate calculata a imaginii: ${window.getComputedStyle(img).opacity}`);
+                }, 50);
 
             } else {
                 // Daca nu exista URL pentru imagine, afisam un mesaj generic

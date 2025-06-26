@@ -30,7 +30,7 @@
             scroll-snap-type: y mandatory; /* Activeaza scroll-snap pe axa Y */
             -webkit-overflow-scrolling: touch; /* Pentru un scroll mai fluid pe iOS */
             height: 100vh; /* Asigura ca body are inaltimea intregii ferestre */
-            background-color: black !important; /* TEST: Fundal body negru absolut */
+            background-color: black; 
         }
 
         .snap-section {
@@ -40,16 +40,11 @@
             align-items: flex-end; /* Modificat: Pozitioneaza continutul la baza sectiunii */
             justify-content: center;
             position: relative;
-            /* overflow: hidden; */ /* TEST: Oprit temporar overflow pentru diagnoza */
+            overflow: hidden; /* Ascunde ce depaseste pentru elementele de fundal */
             padding-bottom: 4rem; /* Adauga spatiu in partea de jos */
-            z-index: 1; /* TEST: Asiguram z-index deasupra background-ului */
-            background-color: rgba(0, 255, 0, 0.1) !important; /* TEST: Fundal transparent verde pentru secțiuni */
+            z-index: 0; /* Resetam la valoarea initiala */
         }
-        /* Culori de fundal temporare pentru sectiuni pentru diagnosticare */
-        #snap-scroll-1 { background-color: rgba(255, 0, 0, 0.1) !important; } /* Roșu */
-        #snap-scroll-2 { background-color: rgba(0, 0, 255, 0.1) !important; } /* Albastru */
-        #snap-scroll-3 { background-color: rgba(255, 255, 0, 0.1) !important; } /* Galben */
-        #snap-scroll-4 { background-color: rgba(0, 255, 255, 0.1) !important; } /* Cyan */
+        /* Culori de fundal temporare pentru sectiuni - ELIMINATE */
 
 
         .background-element {
@@ -60,9 +55,12 @@
             height: 100%;
             object-fit: cover; /* Mentine raportul de aspect si acopera zona */
             z-index: -1; /* Plaseaza in spatele continutului */
-            /* TEST: Stiluri temporare pentru diagnosticare. Scoatem bordurile si opacitatea de aici. */
-            opacity: 1 !important; /* Asiguram vizibilitatea pentru diagnoza */
-            transition: none !important; /* Eliminam tranzitia pentru diagnoza */
+            opacity: 0; /* Opacitate initiala pentru fade-in */
+            transition: opacity 0.5s ease-in-out; /* Tranzitie pentru fade-in */
+        }
+
+        .background-element.active {
+            opacity: 1; /* Opacitate finala pentru fade-in */
         }
         
         /* Stil pentru containerul de fundal in cazul imaginilor */
@@ -76,13 +74,22 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            /* TEST: Stil temporar pentru diagnosticare. Scoatem bordurile. */
+        }
+
+        .youtube-iframe {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100vw;
+            height: 100vh;
+            transform: translate(-50%, -50%);
+            pointer-events: none; /* Dezactiveaza interactiunile cu playerul YouTube */
         }
 
         /* Stil pentru overlay-ul translucent al textului */
         .text-overlay {
-            /* background-color: rgba(64, 64, 64, 0.0) !important; */ /* TEST: Temporar complet transparent */
-            /* backdrop-filter: none !important; */ /* TEST: Eliminam blurul temporar */
+            background-color: rgba(64, 64, 64, 0.4); /* Gri foarte transparent */
+            backdrop-filter: blur(2px); /* Un efect subtil de blur */
             padding: 1.5rem;
             border-radius: 0.75rem; /* Colțuri rotunjite */
             text-align: center;
@@ -90,9 +97,7 @@
             box-sizing: border-box; /* Include padding si border in latimea totala */
             /* Animatii subtile pentru overlay */
             transition: all 0.5s ease-in-out;
-            z-index: 2; /* TEST: Asiguram ca overlay-ul e deasupra */
-            background-color: rgba(64, 64, 64, 0.4); /* Re-activam background-ul original */
-            backdrop-filter: blur(2px); /* Re-activam blurul original */
+            z-index: 2; /* Asiguram ca overlay-ul e deasupra */
         }
 
         /* Efect hover pe overlay */
@@ -299,13 +304,14 @@
         console.log('Base Path determined:', basePath); // Debugging: afiseaza calea de baza determinata
 
         // Obiect JavaScript pentru a simula content.json
-        // Contine toate textele si URL-urile imaginilor de fundal
+        // Contine toate textele, URL-urile video MP4 si imagini de fundal, si ID-urile YouTube
         const pageContent = {
             mobile: {
                 snap1: {
                     title: "Un nou început pentru tine?",
                     content: "Când vinzi sau cumperi o proprietate, ai nevoie de îndrumare ca să iei o decizie bună. O decizie bună se bazează pe experiență — a ta sau a agentului tău.\nNoi o avem. Din 1998.",
-                    imageUrl: `${basePath}/uploads/foto1.jpg`, // Utilizam imagine in loc de video
+                    mp4Url: `${basePath}/uploads/V1.mp4`, // Prioritar MP4
+                    imageUrl: `${basePath}/uploads/foto1.jpg`, // Fallback imagine
                     linkYoutubeId: "vNscPtijCe4" // Doar pentru link-uri, nu fundal
                 },
                 snap2: {
@@ -313,51 +319,15 @@
                     content: "Construim strategii adaptate dorințelor tale – investiții, achiziții, vânzări.",
                     linkText: "Imobiliare. Cu sens.",
                     linkYoutubeId: "vNscPtijCe4",
-                    imageUrl: `${basePath}/uploads/foto2.jpg`, // Utilizam imagine in loc de video
+                    mp4Url: `${basePath}/uploads/V2.mp4`,
+                    imageUrl: `${basePath}/uploads/foto2.jpg`,
                 },
                 snap3: {
                     title: "Integritate. Claritate. Expertiză. Rezultate.",
                     content: "Un nou început nu așteaptă — începe cu o decizie inspirată și continuă cu noi. E timpul tău. Succesul tău. Confortul tău.",
                     linkText: "O poveste de succes.",
                     linkYoutubeId: "vNscPtijCe4",
-                    imageUrl: `${basePath}/uploads/foto3.jpg`, // Utilizam imagine in loc de video
-                },
-                snap4: {
-                    title: "",
-                    content: "",
-                    contact: {
-                        phone: "+40726340034",
-                        whatsapp: "https://wa.me/40726340034",
-                        email: "intravilan@gmail.com",
-                        social: {
-                            linkedin: "https://www.linkedin.com/company/google",
-                            youtube: "https://www.youtube.com/user/youtube",
-                            tiktok: "https://www.tiktok.com/@tiktok",
-                            instagram: "https://www.instagram.com/instagram"
-                        }
-                    },
-                    imageUrl: `${basePath}/uploads/foto4.jpg`, // Utilizam imagine in loc de video
-                }
-            },
-            desktop: {
-                snap1: {
-                    title: "Un nou început pentru tine?",
-                    content: "Când vinzi sau cumperi o proprietate, ai nevoie de îndrumare ca să iei o decizie bună. O decizie bună se bazează pe experiență — a ta sau a agentului tău.\nNoi o avem. Din 1998.",
-                    imageUrl: `${basePath}/uploads/foto1.jpg`, // Utilizam imagine in loc de video pe desktop snap1
-                    linkYoutubeId: "vNscPtijCe4" // Doar pentru link-uri, nu fundal
-                },
-                snap2: {
-                    title: "Soluții create pentru tine. Rezultate reale. Plus valoare.",
-                    content: "Construim strategii adaptate dorințelor tale – investiții, achiziții, vânzări. Pe desktop, am putea adăuga mai multe detalii despre abordarea noastră personalizată și rezultatele excepționale pe care le-am obținut pentru clienții noștri.",
-                    linkText: "Imobiliare. Cu sens.",
-                    linkYoutubeId: "vNscPtijCe4",
-                    imageUrl: `${basePath}/uploads/foto2.jpg`,
-                },
-                snap3: {
-                    title: "Integritate. Claritate. Expertiză. Rezultate.",
-                    content: "Un nou început nu așteaptă — începe cu o decizie inspirată și continuă cu noi. E timpul tău. Succesul tău. Confortul tău. Ne mândrim cu valorile noastre fundamentale care ghidează fiecare interacțiune și fiecare tranzacție, asigurându-vă un parteneriat de încredere.",
-                    linkText: "O poveste de succes.",
-                    linkYoutubeId: "vNscPtijCe4",
+                    mp4Url: `${basePath}/uploads/V3.mp4`,
                     imageUrl: `${basePath}/uploads/foto3.jpg`,
                 },
                 snap4: {
@@ -374,18 +344,69 @@
                             instagram: "https://www.instagram.com/instagram"
                         }
                     },
+                    mp4Url: `${basePath}/uploads/V4.mp4`,
+                    imageUrl: `${basePath}/uploads/foto4.jpg`,
+                }
+            },
+            desktop: {
+                snap1: {
+                    title: "Un nou început pentru tine?",
+                    content: "Când vinzi sau cumperi o proprietate, ai nevoie de îndrumare ca să iei o decizie bună. O decizie bună se bazează pe experiență — a ta sau a agentului tău.\nNoi o avem. Din 1998.",
+                    youtubeId: "vNscPtijCe4", // Doar pe desktop snap1 folosim YT ca fundal
+                    imageUrl: `${basePath}/uploads/foto1.jpg`, // Fallback pentru YT, daca e nevoie
+                    mp4Url: "" // Nu folosim MP4 aici
+                },
+                snap2: {
+                    title: "Soluții create pentru tine. Rezultate reale. Plus valoare.",
+                    content: "Construim strategii adaptate dorințelor tale – investiții, achiziții, vânzări. Pe desktop, am putea adăuga mai multe detalii despre abordarea noastră personalizată și rezultatele excepționale pe care le-am obținut pentru clienții noștri.",
+                    linkText: "Imobiliare. Cu sens.",
+                    linkYoutubeId: "vNscPtijCe4",
+                    mp4Url: `${basePath}/uploads/V2.mp4`,
+                    imageUrl: `${basePath}/uploads/foto2.jpg`,
+                },
+                snap3: {
+                    title: "Integritate. Claritate. Expertiză. Rezultate.",
+                    content: "Un nou început nu așteaptă — începe cu o decizie inspirată și continuă cu noi. E timpul tău. Succesul tău. Confortul tău. Ne mândrim cu valorile noastre fundamentale care ghidează fiecare interacțiune și fiecare tranzacție, asigurându-vă un parteneriat de încredere.",
+                    linkText: "O poveste de succes.",
+                    linkYoutubeId: "vNscPtijCe4",
+                    mp4Url: `${basePath}/uploads/V3.mp4`,
+                    imageUrl: `${basePath}/uploads/foto3.jpg`,
+                },
+                snap4: {
+                    title: "",
+                    content: "",
+                    contact: {
+                        phone: "+40726340034",
+                        whatsapp: "https://wa.me/40726340034",
+                        email: "intravilan@gmail.com",
+                        social: {
+                            linkedin: "https://www.linkedin.com/company/google",
+                            youtube: "https://www.youtube.com/user/youtube",
+                            tiktok: "https://www.tiktok.com/@tiktok",
+                            instagram: "https://www.instagram.com/instagram"
+                        }
+                    },
+                    mp4Url: `${basePath}/uploads/V4.mp4`,
                     imageUrl: `${basePath}/uploads/foto4.jpg`,
                 }
             }
         };
 
+        // Obiect global pentru a stoca instanțele player-elor YouTube de fundal
+        let backgroundYoutubePlayers = {};
+
         // Functie pentru a detecta daca este un dispozitiv mobil
         const isMobileDevice = () => window.innerWidth < 768;
 
-        // Functie pentru a incarca scriptul YouTube Iframe API (doar pentru modal)
+        // Functie pentru a incarca scriptul YouTube Iframe API (necesar pentru modal si YT de fundal)
         function loadYouTubeAPI() {
             if (typeof YT !== 'undefined' && YT.Player) {
-                console.log('YouTube API is already loaded for modal.');
+                console.log('YouTube API is already loaded.');
+                // Dacă API-ul e deja încărcat, putem apela funcția globală onYouTubeIframeAPIReady manual
+                // pentru a inițializa playerii de fundal dacă nu au fost deja.
+                if (window.onYouTubeIframeAPIReady) {
+                    window.onYouTubeIframeAPIReady();
+                }
                 return;
             }
 
@@ -394,72 +415,183 @@
             const firstScriptTag = document.getElementsByTagName('script')[0];
             firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-            // Fallback: Daca API-ul YouTube nu se incarca, modalul nu va functiona pentru link-uri video
+            // Fallback: Daca API-ul YouTube nu se incarca intr-un timp rezonabil
             setTimeout(() => {
                 if (typeof YT === 'undefined' || typeof YT.Player === 'undefined') {
-                    console.warn('YouTube API failed to load for modal. Video links might not work.');
+                    console.warn('YouTube API failed to load. Some video functionalities might be affected.');
+                    // Aici ai putea adăuga logica de fallback pentru toate video-urile YT,
+                    // de ex., să le înlocuiești cu imagini.
                 }
             }, 5000);
         }
 
         // Functia globala chemata de YouTube Iframe API cand e gata
         window.onYouTubeIframeAPIReady = function() {
-            console.log('YouTube Iframe API ready.');
+            console.log('YouTube Iframe API ready. Initializing background players.');
+            // Inițializarea playerilor YouTube de fundal.
+            // Această logică se mută aici pentru a se asigura că YT este definit.
+            document.querySelectorAll('.snap-section').forEach((section, index) => {
+                const isDesktop = !isMobileDevice();
+                const snapKey = `snap${index + 1}`;
+                const content = isDesktop ? pageContent.desktop[snapKey] : pageContent.mobile[snapKey];
+                
+                // Doar pentru desktop snap1, folosim YouTube ca fundal
+                if (isDesktop && section.id === 'snap-scroll-1' && content.youtubeId) {
+                    const playerDivId = `youtube-bg-player-${section.id}`;
+                    let playerDiv = document.getElementById(playerDivId);
+
+                    if (!playerDiv) {
+                        playerDiv = document.createElement('div');
+                        playerDiv.id = playerDivId;
+                        playerDiv.className = 'youtube-iframe background-element';
+                        section.querySelector('.background-container').appendChild(playerDiv);
+                    }
+
+                    if (!backgroundYoutubePlayers[playerDivId]) { // Evita recrearea playerului
+                        backgroundYoutubePlayers[playerDivId] = new YT.Player(playerDivId, {
+                            videoId: content.youtubeId,
+                            playerVars: {
+                                autoplay: 0, // Controlat de IntersectionObserver
+                                controls: 0,
+                                loop: 1,
+                                mute: 1, // Obligatoriu pentru autoplay pe majoritatea browserelor
+                                playlist: content.youtubeId, // Pentru a rula in bucla
+                                rel: 0, // Nu arata videoclipuri asemanatoare
+                                showinfo: 0, // Nu arata titlul video-ului
+                                modestbranding: 1 // Mai putine branding YouTube
+                            },
+                            events: {
+                                'onReady': (event) => {
+                                    event.target.setPlaybackQuality('hd1080');
+                                    // Adauga clasa active cand playerul e gata
+                                    setTimeout(() => playerDiv.classList.add('active'), 50);
+                                },
+                                'onStateChange': (event) => {
+                                    if (event.data === YT.PlayerState.ENDED) {
+                                        event.target.seekTo(0); // Reporneste video de la inceput
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            });
         };
 
         // Functia pentru a actualiza fundalul unei sectiuni
         function updateBackground(sectionElement, contentData) {
             const bgContainer = sectionElement.querySelector('.background-container');
+            
+            // Curata intotdeauna containerul pentru a evita dublarea la resize/re-populare
+            bgContainer.innerHTML = ''; 
 
-            // Preveni dublarea fundalului: daca exista deja un element de fundal, nu facem nimic
-            // Acum, in loc sa returnam, stergem elementele existente pentru a forta recrearea
-            // Acest lucru este util pentru debug, dar poate fi optimizat mai tarziu
-            if (bgContainer.querySelector('.background-element')) {
-                 bgContainer.innerHTML = ''; // Curata pentru a forta recrearea elementului img
-                 console.log(`Fundal existent pentru ${sectionElement.id}. Re-creeam pentru diagnoza.`);
+            let elementToAppend = null;
+            const isDesktop = !isMobileDevice();
+
+            // Logica speciala pentru desktop snap1 (YouTube)
+            if (isDesktop && sectionElement.id === 'snap-scroll-1' && contentData.youtubeId) {
+                const playerDivId = `youtube-bg-player-${sectionElement.id}`;
+                // Dacă playerul YT a fost deja creat de onYouTubeIframeAPIReady, nu îl recreăm.
+                // Ne asigurăm doar că elementul div existent este la locul lui.
+                let existingPlayerDiv = document.getElementById(playerDivId);
+                if (existingPlayerDiv) {
+                    bgContainer.appendChild(existingPlayerDiv);
+                    setTimeout(() => existingPlayerDiv.classList.add('active'), 50); // Asiguram vizibilitatea
+                    console.log(`Player YouTube existent re-atasat pentru ${sectionElement.id}.`);
+                    return; // Nu facem nimic altceva pentru acest caz
+                } else {
+                    // Dacă API-ul încă nu l-a inițializat, lăsăm onYouTubeIframeAPIReady să o facă.
+                    // Adăugăm un placeholder div care va fi populat de YT API.
+                    const playerDiv = document.createElement('div');
+                    playerDiv.id = playerDivId;
+                    playerDiv.className = 'youtube-iframe background-element'; // Va avea `opacity: 0` inițial
+                    bgContainer.appendChild(playerDiv);
+                    console.log(`Placeholder YouTube adăugat pentru ${sectionElement.id}. Va fi inițializat de YT API.`);
+                    // Nu apelam setTimeout().active aici, playerul YT va adauga `active` cand e gata
+                    return;
+                }
             }
+            
+            // Logica pentru MP4 (prioritar)
+            if (contentData.mp4Url && contentData.mp4Url !== '') {
+                const video = document.createElement('video');
+                video.src = contentData.mp4Url;
+                video.className = 'background-element'; 
+                video.autoplay = true;
+                video.loop = true;
+                video.muted = true;
+                video.playsInline = true;
+                video.preload = "auto";
+                video.setAttribute('aria-label', `Video de fundal pentru secțiunea ${sectionElement.id.replace('snap-scroll-', '')}`);
 
-            // Asiguram ca bgContainer are dimensiuni, in caz ca erau 0
-            bgContainer.style.width = '100%';
-            bgContainer.style.height = '100%';
-            bgContainer.style.position = 'absolute';
-            bgContainer.style.top = '0';
-            bgContainer.style.left = '0';
-            bgContainer.style.zIndex = '-1'; // Asiguram ca este in spate
-
-
-            if (contentData.imageUrl && contentData.imageUrl !== '') {
+                video.onerror = (e) => {
+                    console.error(`Eroare la incarcarea video-ului MP4: ${video.src}`, e);
+                    // Fallback la imagine daca video-ul MP4 nu se poate incarca
+                    if (contentData.imageUrl && contentData.imageUrl !== '') {
+                        const img = document.createElement('img');
+                        img.src = contentData.imageUrl;
+                        img.className = 'background-element active'; // Active imediat
+                        img.alt = `Fundal static (fallback video) pentru ${sectionElement.id}`;
+                        img.loading = "lazy";
+                        bgContainer.innerHTML = ''; // Curata elementul video
+                        bgContainer.appendChild(img);
+                        console.log(`Fallback la imagine pentru ${sectionElement.id} din cauza erorii MP4.`);
+                    } else {
+                        bgContainer.innerHTML = '<div class="background-element flex items-center justify-center text-gray-500 text-center p-4">Fundal video indisponibil.</div>';
+                    }
+                };
+                
+                elementToAppend = video;
+                console.log(`Tentativa de incarcare video MP4: ${video.src} pentru ${sectionElement.id}.`);
+                
+            } else if (contentData.imageUrl && contentData.imageUrl !== '') {
+                // Logica pentru imagine (fallback)
                 const img = document.createElement('img');
                 img.src = contentData.imageUrl;
-                // Am mutat `fade-in` pentru a permite CSS-ului sa o controleze
                 img.className = 'background-element'; 
                 img.alt = `Fundal pentru secțiunea ${sectionElement.id.replace('snap-scroll-', '')}`;
-                img.loading = "lazy"; // Lazy loading pentru imagini
+                img.loading = "lazy";
 
-                // Adauga un handler de erori pentru imagine
                 img.onerror = (e) => {
                     console.error(`Eroare la incarcarea imaginii: ${img.src}`, e);
-                    // Fallback la mesaj text daca imaginea nu se incarca
-                    bgContainer.innerHTML = '<div class="background-element flex items-center justify-center text-gray-500 text-center p-4" style="border: 2px dashed orange;">Fundal imagine nu poate fi incarcat.</div>';
+                    bgContainer.innerHTML = '<div class="background-element flex items-center justify-center text-gray-500 text-center p-4">Fundal imagine indisponibil.</div>';
                 };
-
-                bgContainer.appendChild(img);
-                console.log(`Tentativa de incarcare imagine: ${img.src}`); // Debugging
-                console.log(`Element imagine adaugat la ${sectionElement.id}. Dimensiuni bgContainer: ${bgContainer.offsetWidth}x${bgContainer.offsetHeight}`); // Debugging
-                
-                // Adauga clasa 'active' imediat pentru a forta vizibilitatea
-                // si aplica clasa 'fade-in' pentru tranzitie
-                setTimeout(() => {
-                    img.classList.add('fade-in'); // Adaugam clasa de tranzitie
-                    img.classList.add('active'); // Declansam tranzitia la opacitate 1
-                    console.log(`Clase adaugate imaginii: ${img.className}`);
-                    console.log(`Opacitate calculata a imaginii: ${window.getComputedStyle(img).opacity}`);
-                }, 50);
-
+                elementToAppend = img;
+                console.log(`Tentativa de incarcare imagine: ${img.src} pentru ${sectionElement.id}.`);
             } else {
-                // Daca nu exista URL pentru imagine, afisam un mesaj generic
-                console.warn(`Nu exista URL imagine definit pentru ${sectionElement.id}.`);
-                bgContainer.innerHTML = '<div class="background-element flex items-center justify-center text-gray-500 text-center p-4" style="border: 2px dashed orange;">Fundal indisponibil.</div>';
+                // Nici MP4, nici imagine, nici YT specific pentru desktop snap1
+                console.warn(`Nu exista media de fundal definita pentru ${sectionElement.id}.`);
+                bgContainer.innerHTML = '<div class="background-element flex items-center justify-center text-gray-500 text-center p-4">Fundal indisponibil.</div>';
+            }
+
+            if (elementToAppend) {
+                bgContainer.appendChild(elementToAppend);
+
+                // Incearca sa porneasca video-ul si prinde erorile de autoplay (doar pentru video)
+                if (elementToAppend.tagName === 'VIDEO') {
+                    elementToAppend.play().catch(e => {
+                        console.warn(`Autoplay video MP4 blocat pentru ${elementToAppend.src}. Eroare:`, e);
+                        // Fallback la imagine daca autoplay e blocat
+                        if (contentData.imageUrl && contentData.imageUrl !== '') {
+                            const img = document.createElement('img');
+                            img.src = contentData.imageUrl;
+                            img.className = 'background-element active'; // Active imediat
+                            img.alt = `Fundal static (video blocat) pentru ${sectionElement.id}`;
+                            img.loading = "lazy";
+                            bgContainer.innerHTML = ''; // Curata elementul video blocat
+                            bgContainer.appendChild(img);
+                            console.log(`Fallback la imagine pentru ${sectionElement.id} din cauza autoplay blocat.`);
+                        } else {
+                            bgContainer.innerHTML = '<div class="background-element flex items-center justify-center text-gray-500 text-center p-4">Video nu poate fi redat automat.</div>';
+                        }
+                    });
+                }
+                
+                // Aplica clasa 'active' pentru a declansa fade-in, pentru toate elementele non-YT background.
+                // Pentru YT background, 'active' este adaugata in onReady al playerului.
+                if (!(isDesktop && sectionElement.id === 'snap-scroll-1' && contentData.youtubeId)) {
+                    setTimeout(() => elementToAppend.classList.add('active'), 50);
+                }
             }
         }
 
@@ -541,7 +673,7 @@
         const snapSections = document.querySelectorAll('.snap-section');
         const mainContent = document.getElementById('main-content');
 
-        // Observer pentru schimbarea culorii logo-ului
+        // Observer pentru schimbarea culorii logo-ului si controlul video-urilor de fundal
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -549,6 +681,52 @@
                     if (index !== -1) {
                         // Schimba culoarea logo-ului
                         logoElement.style.color = logoColors[index];
+
+                        const isDesktop = !isMobileDevice();
+                        const snapKey = `snap${index + 1}`;
+                        const content = isDesktop ? pageContent.desktop[snapKey] : pageContent.mobile[snapKey];
+
+                        // Gestioneaza player-ele YouTube din fundal (doar pentru desktop snap1)
+                        if (isDesktop && entry.target.id === 'snap-scroll-1' && content.youtubeId) {
+                             const playerDivId = `youtube-bg-player-${entry.target.id}`;
+                             const player = backgroundYoutubePlayers[playerDivId];
+                             if (player && player.playVideo) {
+                                 const playPromise = player.playVideo();
+                                 if (playPromise !== undefined) {
+                                     playPromise.then(_ => {
+                                         console.log(`Video YouTube pentru sectiunea ${index + 1} a pornit automat.`);
+                                     }).catch(error => {
+                                         console.warn(`Autoplay YouTube blocat pentru sectiunea ${index + 1}. Eroare:`, error);
+                                         // Fallback la imagine daca autoplay e blocat
+                                         const bgContainer = entry.target.querySelector('.background-container');
+                                         if (content.imageUrl) {
+                                            const img = document.createElement('img');
+                                            img.src = content.imageUrl;
+                                            img.className = 'background-element active';
+                                            img.alt = 'Video blocat';
+                                            bgContainer.innerHTML = ''; 
+                                            bgContainer.appendChild(img);
+                                            console.log(`Fallback la imagine pentru ${entry.target.id} din cauza autoplay YT blocat.`);
+                                         }
+                                     });
+                                 }
+                             }
+                         }
+                    }
+                } else {
+                    // Sectiunea nu este vizibila, pune video-ul pe pauza
+                    const index = Array.from(snapSections).indexOf(entry.target);
+                    const isDesktop = !isMobileDevice();
+                    const snapKey = `snap${index + 1}`;
+                    const content = isDesktop ? pageContent.desktop[snapKey] : pageContent.mobile[snapKey];
+
+                    // Opreste playerul YouTube de fundal (doar pentru desktop snap1)
+                    if (isDesktop && entry.target.id === 'snap-scroll-1' && content.youtubeId) {
+                         const playerDivId = `youtube-bg-player-${entry.target.id}`;
+                         const player = backgroundYoutubePlayers[playerDivId];
+                         if (player && player.pauseVideo) {
+                             player.pauseVideo();
+                         }
                     }
                 }
             });
@@ -620,7 +798,7 @@
         // Populeaza continutul la incarcarea paginii si incarca API-ul YouTube
         window.addEventListener('load', () => {
             populateContent();
-            loadYouTubeAPI(); // Incarca API-ul YouTube (doar pentru modal)
+            loadYouTubeAPI(); // Incarca API-ul YouTube
         });
     </script>
 </body>

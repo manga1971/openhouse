@@ -30,6 +30,7 @@
             scroll-snap-type: y mandatory; /* Activeaza scroll-snap pe axa Y */
             -webkit-overflow-scrolling: touch; /* Pentru un scroll mai fluid pe iOS */
             height: 100vh; /* Asigura ca body are inaltimea intregii ferestre */
+            background-color: black !important; /* TEST: Fundal body negru absolut */
         }
 
         .snap-section {
@@ -39,9 +40,17 @@
             align-items: flex-end; /* Modificat: Pozitioneaza continutul la baza sectiunii */
             justify-content: center;
             position: relative;
-            overflow: hidden; /* Ascunde ce depaseste pentru elementele de fundal */
+            /* overflow: hidden; */ /* TEST: Oprit temporar overflow pentru diagnoza */
             padding-bottom: 4rem; /* Adauga spatiu in partea de jos */
+            z-index: 1; /* TEST: Asiguram z-index deasupra background-ului */
+            background-color: rgba(0, 255, 0, 0.1) !important; /* TEST: Fundal transparent verde pentru secțiuni */
         }
+        /* Culori de fundal temporare pentru sectiuni pentru diagnosticare */
+        #snap-scroll-1 { background-color: rgba(255, 0, 0, 0.1) !important; } /* Roșu */
+        #snap-scroll-2 { background-color: rgba(0, 0, 255, 0.1) !important; } /* Albastru */
+        #snap-scroll-3 { background-color: rgba(255, 255, 0, 0.1) !important; } /* Galben */
+        #snap-scroll-4 { background-color: rgba(0, 255, 255, 0.1) !important; } /* Cyan */
+
 
         .background-element {
             position: absolute;
@@ -51,8 +60,7 @@
             height: 100%;
             object-fit: cover; /* Mentine raportul de aspect si acopera zona */
             z-index: -1; /* Plaseaza in spatele continutului */
-            /* Stil temporar pentru diagnosticare - ACUM ACTIVE IMPLICIT */
-            border: 2px solid red !important; /* Adaugat !important */
+            /* TEST: Stiluri temporare pentru diagnosticare. Scoatem bordurile si opacitatea de aici. */
             opacity: 1 !important; /* Asiguram vizibilitatea pentru diagnoza */
             transition: none !important; /* Eliminam tranzitia pentru diagnoza */
         }
@@ -68,14 +76,13 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            /* Stil temporar pentru diagnosticare - VIZIBIL PE PROD */
-            border: 2px dashed blue !important; /* Adaugat !important */
+            /* TEST: Stil temporar pentru diagnosticare. Scoatem bordurile. */
         }
 
         /* Stil pentru overlay-ul translucent al textului */
         .text-overlay {
-            background-color: rgba(64, 64, 64, 0.0) !important; /* Temporar complet transparent */
-            backdrop-filter: none !important; /* Eliminam blurul temporar */
+            /* background-color: rgba(64, 64, 64, 0.0) !important; */ /* TEST: Temporar complet transparent */
+            /* backdrop-filter: none !important; */ /* TEST: Eliminam blurul temporar */
             padding: 1.5rem;
             border-radius: 0.75rem; /* Colțuri rotunjite */
             text-align: center;
@@ -83,6 +90,9 @@
             box-sizing: border-box; /* Include padding si border in latimea totala */
             /* Animatii subtile pentru overlay */
             transition: all 0.5s ease-in-out;
+            z-index: 2; /* TEST: Asiguram ca overlay-ul e deasupra */
+            background-color: rgba(64, 64, 64, 0.4); /* Re-activam background-ul original */
+            backdrop-filter: blur(2px); /* Re-activam blurul original */
         }
 
         /* Efect hover pe overlay */

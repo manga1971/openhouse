@@ -51,18 +51,16 @@
             height: 100%;
             object-fit: cover; /* Mentine raportul de aspect si acopera zona */
             z-index: -1; /* Plaseaza in spatele continutului */
-            /* Stil temporar pentru diagnosticare - VIZIBIL PE PROD */
+            /* Stil temporar pentru diagnosticare - ACUM ACTIVE IMPLICIT */
             border: 2px solid red; 
+            opacity: 1; /* Eliminam fade-in pentru diagnoza */
+            transition: none; /* Eliminam tranzitia pentru diagnoza */
         }
 
-        .background-element.fade-in {
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-        }
+        /* Eliminam clasele fade-in pentru diagnoza */
+        /* .background-element.fade-in { opacity: 0; transition: opacity 0.5s ease-in-out; } */
+        /* .background-element.fade-in.active { opacity: 1; } */
 
-        .background-element.fade-in.active {
-            opacity: 1;
-        }
 
         /* Stil pentru containerul de fundal in cazul imaginilor */
         .background-container {
@@ -197,7 +195,7 @@
     <header class="fixed top-0 left-0 w-full p-4 z-[9999] bg-transparent">
         <div class="flex items-center justify-start">
             <!-- Logo SVG cu culori dinamice prin JS -->
-            <!-- Latimea a fost marita si viewBox ajustat pentru a incapea tot textul "Open House" -->
+            <!-- Latimea a fost marita si viewBox ajustat pentru a incapa tot textul "Open House" -->
             <svg id="logo-openhouse" width="210" height="40" viewBox="0 0 210 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="transition-colors duration-500">
                 <text x="0" y="30" font-family="Inter, sans-serif" font-size="30" font-weight="bold">Open House</text>
             </svg>
@@ -409,12 +407,21 @@
             const bgContainer = sectionElement.querySelector('.background-container');
 
             // Preveni dublarea fundalului: daca exista deja un element de fundal, nu facem nimic
+            // Acum, in loc sa returnam, stergem elementele existente pentru a forta recrearea
+            // Acest lucru este util pentru debug, dar poate fi optimizat mai tarziu
             if (bgContainer.querySelector('.background-element')) {
-                // console.log(`Fundal existent pentru ${sectionElement.id}. Nu recream.`); // Debugging
-                return;
+                 bgContainer.innerHTML = ''; // Curata pentru a forta recrearea elementului img
+                 console.log(`Fundal existent pentru ${sectionElement.id}. Re-creeam pentru diagnoza.`);
             }
 
-            bgContainer.innerHTML = ''; // Curata fundalul existent inainte de a adauga noul
+            // Asiguram ca bgContainer are dimensiuni, in caz ca erau 0
+            bgContainer.style.width = '100%';
+            bgContainer.style.height = '100%';
+            bgContainer.style.position = 'absolute';
+            bgContainer.style.top = '0';
+            bgContainer.style.left = '0';
+            bgContainer.style.zIndex = '-1'; // Asiguram ca este in spate
+
 
             if (contentData.imageUrl && contentData.imageUrl !== '') {
                 const img = document.createElement('img');
@@ -431,9 +438,10 @@
                 };
 
                 bgContainer.appendChild(img);
-                console.log('Tentativa de incarcare imagine:', img.src); // Debugging
+                console.log(`Tentativa de incarcare imagine: ${img.src}`); // Debugging
+                console.log(`Element imagine adaugat la ${sectionElement.id}. Dimensiuni bgContainer: ${bgContainer.offsetWidth}x${bgContainer.offsetHeight}`); // Debugging
 
-                // Adauga clasa pentru efectul de fade-in
+                // Adauga clasa pentru efectul de fade-in (desi e dezactivat temporar in CSS)
                 setTimeout(() => img.classList.add('active'), 50);
 
             } else {

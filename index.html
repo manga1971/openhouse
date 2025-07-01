@@ -647,7 +647,7 @@
             const snap4TiktokLink = document.getElementById('snap4-tiktok-link');
             const snap4InstagramLink = document.getElementById('snap4-instagram-link');
 
-            snap4Phone.textContent = `Quick answer: ${snap4Data.contact.phone}` || '';
+            snap4Phone.textContent = `: ${snap4Data.contact.phone}` || '';
             snap4Phone.style.display = snap4Data.contact.phone ? 'block' : 'none';
             snap4WhatsappLink.href = snap4Data.contact.whatsapp || '#';
             snap4WhatsappLink.parentElement.style.display = snap4Data.contact.whatsapp ? 'flex' : 'none';

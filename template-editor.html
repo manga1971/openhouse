@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Editor Șablon – AudioForm</title>
+
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#1e40af" />
+
+  <link rel="preconnect" href="https://cdn.tailwindcss.com">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased min-h-screen flex flex-col
+             dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
+  
+  <header class="p-4 bg-white shadow-md dark:bg-gray-800 sticky top-0 z-40">
+    <a href="templates.html" class="flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200" aria-label="Înapoi la Șabloane">
+      <i class="fas fa-arrow-left mr-2"></i>
+      <h1 id="page-title" class="text-lg font-semibold text-center text-gray-900 dark:text-gray-50 flex-grow">Editor Șablon Nou</h1>
+    </a>
+  </header>
+
+  <main class="flex-grow max-w-3xl mx-auto p-6 space-y-6">
+    <div id="plugin-slot-template-editor-top" class="w-full">
+      </div>
+
+    <div id="feedback-message" data-testid="feedback-message-display" class="mt-4 text-sm text-center hidden p-3 rounded-lg"></div>
+
+    <section class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" data-testid="template-name-section">
+      <h2 class="sr-only">Nume Șablon</h2>
+      <label for="template-name-input" class="block font-semibold mb-2 text-gray-700 dark:text-gray-200">Nume Șablon
+        <span class="text-red-500">*</span>
+        <p class="text-sm text-gray-500 dark:text-gray-400 font-normal mt-1">Acesta va apărea în lista de șabloane rapide.</p>
+      </label>
+      <input id="template-name-input" type="text" placeholder="Ex: Inspecție motor" 
+             class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                    dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100" 
+             aria-required="true" data-testid="template-name-input" />
+    </section>
+
+    <section class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" data-testid="template-fields-section">
+      <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Câmpuri Șablon</h2>
+      <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Definește câmpurile pe care AI-ul le va căuta și completa din înregistrarea vocală.</p>
+
+      <div id="fields-container" data-testid="fields-container" class="space-y-4">
+        </div>
+      
+      <button id="add-field-btn" data-testid="add-field-button" class="mt-4 bg-blue-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-blue-700 transition duration-200 ease-in-out transform hover:scale-105"
+              aria-label="Adaugă un nou câmp la șablon">
+        <i class="fas fa-plus mr-1"></i> Adaugă câmp
+      </button>
+    </section>
+
+    <section class="pt-4 border-t border-gray-200 dark:border-gray-700" data-testid="save-section">
+      <button id="save-template-btn" data-testid="save-template-button" class="bg-green-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-700 transition duration-200 ease-in-out transform hover:scale-105"
+              aria-label="Salvează modificările șablonului">
+        <i class="fas fa-save mr-1"></i> Salvează șablon
+      </button>
+      <button id="cancel-template-btn" data-testid="cancel-template-button" class="ml-4 text-gray-600 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors duration-200 px-4 py-2 rounded-lg"
+              aria-label="Anulează modificările și revino la lista de șabloane">
+        Anulează
+      </button>
+    </section>
+
+    <div id="plugin-slot-template-editor-bottom" class="w-full mt-6">
+      </div>
+  </main>
+
+  <script>
+    // Determine if debug mode is active globally
+    const isDebugMode = location.search.includes('debug=true');
+
+    // Helper for secure logging
+    const secureLog = (message, ...args) => {
+      if (isDebugMode) {
+        console.log(`[DEBUG] ${message}`, ...args);
+      }
+    };
+
+    // Show/Hide Feedback Message - Centralized utility function (reused from other pages)
+    const feedbackMessageEl = document.getElementById('feedback-message');
+    function showFeedback(message, type = 'success') {
+        feedbackMessageEl.textContent = message;
+        feedbackMessageEl.classList.remove('hidden', 'text-green-600', 'text-red-600', 'text-yellow-600', 'text-blue-600',
+                                            'bg-green-50', 'bg-red-50', 'bg-yellow-50', 'bg-blue-50',
+                                            'border-green-200', 'border-red-200', 'border-yellow-200', 'border-blue-200',
+                                            'dark:text-green-400', 'dark:text-red-400', 'dark:text-yellow-400', 'dark:text-blue-400',
+                                            'dark:bg-green-900', 'dark:bg-red-900', 'dark:bg-yellow-900', 'dark:bg-blue-900',
+                                            'dark:border-green-700', 'dark:border-red-700', 'dark:border-yellow-700', 'dark:border-blue-700');
+        if (type === 'success') {
+            feedbackMessageEl.classList.add('text-green-600', 'bg-green-50', 'border-green-200', 'dark:text-green-400', 'dark:bg-green-900', 'dark:border-green-700');
+        } else if (type === 'error') {
+            feedbackMessageEl.classList.add('text-red-600', 'bg-red-50', 'border-red-200', 'dark:text-red-400', 'dark:bg-red-900', 'dark:border-red-700');
+        } else if (type === 'warning') {
+            feedbackMessageEl.classList.add('text-yellow-600', 'bg-yellow-50', 'border-yellow-200', 'dark:text-yellow-400', 'dark:bg-yellow-900', 'dark:border-yellow-700');
+        } else if (type === 'info') {
+            feedbackMessageEl.classList.add('text-blue-600', 'bg-blue-50', 'border-blue-200', 'dark:text-blue-400', 'dark:bg-blue-900', 'dark:border-blue-700');
+        }
+        feedbackMessageEl.classList.remove('hidden');
+        // Hide after 5 seconds
+        setTimeout(() => {
+            feedbackMessageEl.classList.add('hidden');
+        }, 5000);
+    }
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // [2] Dark Mode Autodetect + Coherent Toggling (reused from other pages)
+      const applyDarkMode = () => {
+        const darkPref = localStorage.getItem('pref_darkmode');
+        document.documentElement.classList.toggle('dark', darkPref === 'true' || (darkPref === null && window.matchMedia('(prefers-color-scheme: dark)').matches));
+      };
+      applyDarkMode();
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyDarkMode);
+
+
+      // === PWA - Register Service Worker ===
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => secureLog('PWA ServiceWorker registered:', registration))
+            .catch(error => console.error('PWA ServiceWorker registration failed:', error)); 
+        });
+      }
+
+      // === DOM Elements ===
+      const pageTitle = document.getElementById('page-title');
+      const templateNameInput = document.getElementById('template-name-input'); // Renamed from 'template-name'
+      const fieldsContainer = document.getElementById('fields-container'); // Renamed from 'container'
+      const addFieldBtn = document.getElementById('add-field-btn'); // Renamed from 'add-field'
+      const saveTemplateBtn = document.getElementById('save-template-btn'); // Renamed from 'save-template'
+      const cancelTemplateBtn = document.getElementById('cancel-template-btn'); // New Cancel button
+
+      // Template state
+      let currentTemplate = {
+        id: null, // Will be 'audioFormTemplate_TIMESTAMP' or existing ID
+        name: '',
+        fields: [],
+        lastModified: null,
+      };
+
+      // === Field Management Functions ===
+      function renderFields() {
+        fieldsContainer.innerHTML = ''; // Clear current fields
+        currentTemplate.fields.forEach((field, index) => {
+          const wrapper = document.createElement('div');
+          // Added styling for field wrapper and better alignment
+          wrapper.className = 'flex flex-col sm:flex-row items-center gap-2 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg shadow-sm';
+          wrapper.setAttribute('data-field-index', index); // For easy reference
+
+          wrapper.innerHTML = `
+            <div class="flex-1 w-full">
+              <label for="field-label-${index}" class="sr-only">Nume câmp</label>
+              <input type="text" id="field-label-${index}" placeholder="Nume câmp (ex: Tip motor)" value="${field.label}" 
+                     class="w-full p-2 border border-gray-300 rounded-lg dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500" 
+                     data-field-prop="label" aria-label="Nume câmp ${index + 1}" data-testid="field-label-${index}" />
+            </div>
+            <div class="w-full sm:w-auto">
+              <label for="field-type-${index}" class="sr-only">Tip câmp</label>
+              <select id="field-type-${index}" 
+                      class="w-full p-2 border border-gray-300 rounded-lg dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      data-field-prop="type" aria-label="Tip câmp ${index + 1}" data-testid="field-type-${index}">
+                <option value="text" ${field.type === 'text' ? 'selected' : ''}>Text scurt</option>
+                <option value="number" ${field.type === 'number' ? 'selected' : ''}>Număr</option>
+                <option value="boolean" ${field.type === 'boolean' ? 'selected' : ''}>Da/Nu (bifă)</option>
+                <option value="textarea" ${field.type === 'textarea' ? 'selected' : ''}>Text lung</option>
+                <option value="date" ${field.type === 'date' ? 'selected' : ''}>Dată</option>
+                </select>
+            </div>
+            <button class="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-500 p-2 rounded-full hover:bg-red-50 dark:hover:bg-gray-600 transition-colors duration-150" 
+                    onclick="window.removeField(${index})" aria-label="Șterge câmpul ${index + 1}" data-testid="remove-field-button-${index}">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          `;
+          fieldsContainer.appendChild(wrapper);
+
+          // Add event listeners using data-field-prop for clarity
+          const labelInput = wrapper.querySelector(`[data-field-prop="label"]`);
+          const typeSelect = wrapper.querySelector(`[data-field-prop="type"]`);
+
+          labelInput.addEventListener('input', (e) => {
+            currentTemplate.fields[index].label = e.target.value;
+            // Trigger auto-save or preview update if needed
+          });
+          typeSelect.addEventListener('change', (e) => {
+            currentTemplate.fields[index].type = e.target.value;
+            // Trigger auto-save or preview update if needed
+          });
+        });
+        // Update save button state based on fields count
+        updateSaveButtonState();
+      }
+
+      // Make removeField global for onclick in innerHTML
+      window.removeField = (indexToRemove) => {
+        secureLog(`Attempting to remove field at index: ${indexToRemove}`);
+        // Use filter to create a new array, avoiding direct splice for cleaner state management
+        currentTemplate.fields = currentTemplate.fields.filter((_, index) => index !== indexToRemove);
+        renderFields(); // Re-render the updated list
+        showFeedback('Câmp șters.', 'info');
+        updateSaveButtonState();
+      };
+
+      // Function to add a new field
+      addFieldBtn.addEventListener('click', () => {
+        secureLog('Adding new field.');
+        currentTemplate.fields.push({ label: '', type: 'text' });
+        renderFields(); // Re-render to show the new field
+        // Scroll to bottom to show new field (optional)
+        fieldsContainer.scrollTop = fieldsContainer.scrollHeight;
+        showFeedback('Câmp nou adăugat.', 'info');
+      });
+
+      // Update save button state based on conditions
+      function updateSaveButtonState() {
+        const isValidName = templateNameInput.value.trim().length > 0;
+        const hasFields = currentTemplate.fields.length > 0;
+        const areAllFieldsValid = currentTemplate.fields.every(f => f.label.trim().length > 0);
+
+        saveTemplateBtn.disabled = !(isValidName && hasFields && areAllFieldsValid);
+        if (saveTemplateBtn.disabled) {
+            saveTemplateBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+            saveTemplateBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+      }
+
+
+      // === Save Template Logic ===
+      saveTemplateBtn.addEventListener('click', () => {
+        const name = templateNameInput.value.trim();
+        if (!name) {
+          showFeedback('Numele șablonului este obligatoriu!', 'error');
+          templateNameInput.focus();
+          secureLog('Save failed: Template name is empty.');
+          return;
+        }
+        if (currentTemplate.fields.length === 0) {
+            showFeedback('Șablonul trebuie să aibă cel puțin un câmp!', 'error');
+            secureLog('Save failed: No fields defined.');
+            return;
+        }
+        if (!currentTemplate.fields.every(f => f.label.trim().length > 0)) {
+            showFeedback('Toate câmpurile trebuie să aibă un nume!', 'error');
+            secureLog('Save failed: Some fields are unnamed.');
+            return;
+        }
+
+        // Generate ID for new template, or use existing for editing
+        if (!currentTemplate.id) {
+          currentTemplate.id = 'audioFormTemplate_' + Date.now();
+        }
+        currentTemplate.name = name;
+        currentTemplate.lastModified = new Date().toISOString(); // ISO string for consistent date comparison
+
+        try {
+          localStorage.setItem(currentTemplate.id, JSON.stringify(currentTemplate));
+          showFeedback('Șablon salvat cu succes!', 'success');
+          secureLog(`Template saved: ${currentTemplate.name} (${currentTemplate.id})`);
+          
+          // Redirect back to templates list after a short delay for feedback
+          document.body.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+          setTimeout(() => {
+            location.href = 'templates.html';
+          }, 300);
+
+        } catch (e) {
+          console.error('Eroare la salvarea șablonului în localStorage:', e);
+          showFeedback('Eroare la salvarea șablonului. Încearcă din nou.', 'error');
+        }
+      });
+
+      // Cancel button action
+      cancelTemplateBtn.addEventListener('click', () => {
+        secureLog('Template editing cancelled. Redirecting to templates list.');
+        document.body.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+        setTimeout(() => {
+          location.href = 'templates.html'; // Go back to templates list
+        }, 300);
+      });
+
+      // === Initial Load: Check for existing template data ===
+      const savedTemplateData = sessionStorage.getItem('templateEditorData');
+      if (savedTemplateData) {
+        try {
+          const data = JSON.parse(savedTemplateData);
+          currentTemplate.id = data.id || null;
+          currentTemplate.name = data.name || '';
+          currentTemplate.fields = data.fields || [];
+          currentTemplate.lastModified = data.lastModified || null;
+          
+          templateNameInput.value = currentTemplate.name;
+          renderFields(); // Populate fields from loaded data
+          pageTitle.textContent = 'Editează Șablon'; // Change title for editing mode
+          secureLog(`Editing existing template: ${currentTemplate.name} (${currentTemplate.id || 'new'})`);
+
+        } catch (e) {
+          console.error('Eroare la încărcarea datelor șablonului din sessionStorage:', e);
+          showFeedback('Eroare la încărcarea șablonului pentru editare.', 'error');
+          // Reset to a new template if loading fails
+          currentTemplate = { id: null, name: '', fields: [], lastModified: null };
+          secureLog('Resetting to new template due to load error.');
+        } finally {
+          sessionStorage.removeItem('templateEditorData'); // Clear session storage after loading
+        }
+      } else {
+        // Start with one empty field for new templates
+        currentTemplate.fields.push({ label: '', type: 'text' });
+        renderFields();
+        secureLog('Starting new template creation.');
+      }
+      
+      // Update save button state initially and on name input
+      templateNameInput.addEventListener('input', updateSaveButtonState);
+      updateSaveButtonState(); // Initial check
+
+      // === Plugin slot handlers ===
+      const pluginSlotTemplateEditorTop = document.getElementById('plugin-slot-template-editor-top');
+      const pluginSlotTemplateEditorBottom = document.getElementById('plugin-slot-template-editor-bottom');
+
+      if (window.AudioFormPlugin) {
+        if (typeof window.AudioFormPlugin.renderTemplateEditorTop === 'function') {
+          pluginSlotTemplateEditorTop.appendChild(window.AudioFormPlugin.renderTemplateEditorTop());
+          secureLog('Plugin rendered in template editor top slot.');
+        }
+        if (typeof window.AudioFormPlugin.renderTemplateEditorBottom === 'function') {
+          pluginSlotTemplateEditorBottom.appendChild(window.AudioFormPlugin.renderTemplateEditorBottom());
+          secureLog('Plugin rendered in template editor bottom slot.');
+        }
+      }
+      
+      // === Debug Mode Integration ===
+      if (isDebugMode) {
+        console.log('🧪 DEBUG MODE ACTIVAT pentru Template Editor Page');
+        // Add a button/area to dump currentTemplate state for debugging
+        const debugDumpBtn = document.createElement('button');
+        debugDumpBtn.textContent = 'Dump Template State (Debug)';
+        debugDumpBtn.className = 'mt-4 bg-gray-200 text-gray-800 px-3 py-1 rounded text-sm hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600';
+        debugDumpBtn.addEventListener('click', () => {
+          console.log('[DEBUG] Current Template State:', currentTemplate);
+          alert('Template state logged to console (F12).');
+        });
+        saveTemplateBtn.parentNode.insertBefore(debugDumpBtn, saveTemplateBtn.nextSibling);
+      }
+    });
+  </script>
+</body>
+</html>

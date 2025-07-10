@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rapoarte – AudioForm</title>
+
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#1e40af" />
+
+  <link rel="preconnect" href="https://cdn.tailwindcss.com">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased min-h-screen flex flex-col justify-between
+             dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
+  
+  <header class="p-4 bg-white shadow-md dark:bg-gray-800 sticky top-0 z-40">
+    <a href="dashboard.html" class="flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200" aria-label="Înapoi la Dashboard">
+      <i class="fas fa-arrow-left mr-2"></i>
+      <h1 class="text-lg font-semibold text-center text-gray-900 dark:text-gray-50 flex-grow">Rapoartele Mele</h1>
+    </a>
+  </header>
+
+  <main class="flex-grow px-4 py-6 space-y-6 max-w-5xl mx-auto w-full">
+    <div id="plugin-slot-reports-top" class="w-full">
+      </div>
+
+    <section class="bg-white dark:bg-gray-800 shadow rounded-lg p-4 space-y-4" data-testid="filters-search-section">
+      <div class="relative">
+        <label for="search-input" class="sr-only">Căutare rapoarte</label>
+        <input type="text" id="search-input" data-testid="search-input" placeholder="Caută după VIN, client, model, cuvinte cheie..."
+          class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400 dark:focus:ring-blue-400"
+          aria-label="Câmp de căutare pentru rapoarte" />
+        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-400"></i>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div>
+          <label for="status-filter" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Status:</label>
+          <select id="status-filter" data-testid="status-filter" class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+            <option value="all">Toate</option>
+            <option value="finalized">Finalizate</option>
+            <option value="draft">Draft</option>
+            </select>
+        </div>
+        <div>
+          <label for="template-filter" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Șablon:</label>
+          <select id="template-filter" data-testid="template-filter" class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+            <option value="all">Toate</option>
+            </select>
+        </div>
+        <div>
+          <label for="date-filter" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Perioadă:</label>
+          <select id="date-filter" data-testid="date-filter" class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+            <option value="all">Oricând</option>
+            <option value="today">Azi</option>
+            <option value="week">Ultima săptămână</option>
+            <option value="month">Ultima lună</option>
+            <option value="custom">Personalizat</option> </select>
+        </div>
+        <div>
+          <label for="sort-select" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Sortare după:</label>
+          <select id="sort-select" data-testid="sort-select" class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+            <option value="date-desc">Data (Nou-Vechi)</option>
+            <option value="date-asc">Data (Vechi-Nou)</option>
+            <option value="name">Nume șablon</option>
+            <option value="duration">Durată înregistrare</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section data-testid="reports-list-section">
+      <h2 class="sr-only">Lista rapoartelor</h2>
+      <div id="reports-list" class="space-y-4">
+        </div>
+      <div id="no-reports-message" data-testid="no-reports-message" class="hidden bg-white dark:bg-gray-800 p-6 rounded-lg shadow text-center text-gray-600 dark:text-gray-300">
+        <i class="fas fa-file-alt text-4xl mb-3"></i>
+        <p class="text-lg font-semibold">Nu ai încă niciun raport.</p>
+        <p class="mt-2 text-sm">Începe o nouă înregistrare din <a href="dashboard.html" class="text-blue-600 hover:underline">Dashboard</a>!</p>
+      </div>
+    </section>
+
+    <div id="feedback-message" data-testid="feedback-message-display" class="mt-4 text-sm text-center hidden p-3 rounded-lg"></div>
+
+    <div id="plugin-slot-reports-bottom" class="mt-6 w-full">
+      </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Determine if debug mode is active globally
+      const isDebugMode = location.search.includes('debug=true');
+
+      // Helper for secure logging
+      const secureLog = (message, ...args) => {
+        if (isDebugMode) {
+          console.log(`[DEBUG] ${message}`, ...args);
+        }
+      };
+
+      // === Global Dark Mode Autodetect & Apply ===
+      const applyDarkMode = () => {
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      };
+      applyDarkMode();
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyDarkMode);
+
+      // === PWA - Register Service Worker ===
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => secureLog('PWA ServiceWorker registered:', registration))
+            .catch(error => console.error('PWA ServiceWorker registration failed:', error)); // Always log critical errors
+        });
+      }
+
+      // === DOM Elements ===
+      const reportsList = document.getElementById('reports-list');
+      const searchInput = document.getElementById('search-input');
+      const statusFilter = document.getElementById('status-filter');
+      const templateFilter = document.getElementById('template-filter');
+      const dateFilter = document.getElementById('date-filter');
+      const sortSelect = document.getElementById('sort-select');
+      const noReportsMessage = document.getElementById('no-reports-message');
+      const feedbackMessageEl = document.getElementById('feedback-message'); // From dashboard/edit page logic
+
+      let allReports = [];
+      // Example static templates (in a real app, these would come from a backend/database)
+      const staticTemplates = [
+        { id: 'F1', name: 'Fișă Reparație' },
+        { id: 'F2', name: 'Fișă Revizie' },
+        { id: 'F3', name: 'Fișă Diagnostic' },
+        { id: 'F4', name: 'Observații Generale' },
+        { id: 'F5', name: 'Fișă Vopsitorie' },
+        { id: 'F6', name: 'Fișă Suspensie' },
+        { id: 'F7', name: 'Fișă Electrică' },
+        { id: 'F8', name: 'Fișă Caroserie' },
+      ];
+
+
+      // Show/Hide Feedback Message - Centralized utility function
+      function showFeedback(message, type = 'success') {
+          feedbackMessageEl.textContent = message;
+          feedbackMessageEl.classList.remove('hidden', 'text-green-600', 'text-red-600', 'text-yellow-600', 'text-blue-600',
+                                              'bg-green-50', 'bg-red-50', 'bg-yellow-50', 'bg-blue-50',
+                                              'border-green-200', 'border-red-200', 'border-yellow-200', 'border-blue-200',
+                                              'dark:text-green-400', 'dark:text-red-400', 'dark:text-yellow-400', 'dark:text-blue-400',
+                                              'dark:bg-green-900', 'dark:bg-red-900', 'dark:bg-yellow-900', 'dark:bg-blue-900',
+                                              'dark:border-green-700', 'dark:border-red-700', 'dark:border-yellow-700', 'dark:border-blue-700');
+          if (type === 'success') {
+              feedbackMessageEl.classList.add('text-green-600', 'bg-green-50', 'border-green-200', 'dark:text-green-400', 'dark:bg-green-900', 'dark:border-green-700');
+          } else if (type === 'error') {
+              feedbackMessageEl.classList.add('text-red-600', 'bg-red-50', 'border-red-200', 'dark:text-red-400', 'dark:bg-red-900', 'dark:border-red-700');
+          } else if (type === 'warning') {
+              feedbackMessageEl.classList.add('text-yellow-600', 'bg-yellow-50', 'border-yellow-200', 'dark:text-yellow-400', 'dark:bg-yellow-900', 'dark:border-yellow-700');
+          } else if (type === 'info') {
+              feedbackMessageEl.classList.add('text-blue-600', 'bg-blue-50', 'border-blue-200', 'dark:text-blue-400', 'dark:bg-blue-900', 'dark:border-blue-700');
+          }
+          feedbackMessageEl.classList.remove('hidden');
+          // Hide after 5 seconds
+          setTimeout(() => {
+              feedbackMessageEl.classList.add('hidden');
+          }, 5000);
+      }
+
+
+      // === Load Reports from localStorage ===
+      function loadReportsFromStorage() {
+        allReports = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          // Changed prefix to match 'audioFormDraft_' and new 'audioFormFinalized_'
+          if (key.startsWith('audioFormDraft_') || key.startsWith('audioFormFinalized_')) {
+            try {
+              const report = JSON.parse(localStorage.getItem(key));
+              // Ensure 'status' is correctly set based on key prefix if not explicitly in data
+              if (!report.status) {
+                  report.status = key.startsWith('audioFormDraft_') ? 'draft' : 'finalized';
+              }
+              allReports.push({ id: key, ...report });
+            } catch (e) {
+              console.warn(`[WARNING] Report ${key} could not be parsed:`, e); // Use console.warn for non-critical issues
+              secureLog(`Failed to parse report: ${key}`, e);
+            }
+          }
+        }
+        secureLog(`Loaded ${allReports.length} reports from localStorage.`);
+      }
+
+      // === Populate Template Filter (Dynamic based on available templates) ===
+      function populateTemplateFilter() {
+        // Collect unique template IDs from loaded reports and static templates
+        const uniqueTemplateIds = new Set();
+        allReports.forEach(r => {
+            if (r.template && r.template.id) {
+                uniqueTemplateIds.add(r.template.id);
+            }
+        });
+        staticTemplates.forEach(t => uniqueTemplateIds.add(t.id)); // Ensure all predefined templates are options
+
+        // Sort template IDs for consistent display
+        const sortedTemplateIds = Array.from(uniqueTemplateIds).sort((a, b) => {
+            const nameA = staticTemplates.find(t => t.id === a)?.name || a;
+            const nameB = staticTemplates.find(t => t.id === b)?.name || b;
+            return nameA.localeCompare(nameB);
+        });
+
+        templateFilter.innerHTML = '<option value="all">Toate</option>'; // Reset
+        sortedTemplateIds.forEach(id => {
+            const templateName = staticTemplates.find(t => t.id === id)?.name || `Șablon necunoscut (${id})`;
+            const option = document.createElement('option');
+            option.value = id;
+            option.textContent = templateName;
+            templateFilter.appendChild(option);
+        });
+        secureLog('Template filter populated.');
+      }
+
+
+      // === Render Reports List ===
+      function renderReports() {
+        const query = searchInput.value.toLowerCase().trim();
+        const status = statusFilter.value;
+        const template = templateFilter.value;
+        const date = dateFilter.value;
+        const sort = sortSelect.value;
+
+        let filtered = [...allReports];
+
+        // Apply Filters
+        if (status !== 'all') {
+            filtered = filtered.filter(r => r.status === status);
+        }
+        if (template !== 'all') {
+            filtered = filtered.filter(r => r.template?.id === template);
+        }
+        if (query) {
+            filtered = filtered.filter(r => {
+                // Include report ID in search string for direct ID lookup
+                const searchString = `${r.transcription || ''} ${r.template?.name || ''} ${r.client || ''} ${r.model || ''} ${r.id || ''}`.toLowerCase();
+                return searchString.includes(query);
+            });
+        }
+        // Date Filter
+        const now = Date.now();
+        filtered = filtered.filter(r => {
+            if (!r.timestamp) return true; // Include reports without a timestamp
+            const ts = new Date(r.timestamp).getTime();
+            if (date === 'today') return new Date(ts).toDateString() === new Date().toDateString();
+            if (date === 'week') return (now - ts) <= 7 * 24 * 60 * 60 * 1000;
+            if (date === 'month') return (now - ts) <= 30 * 24 * 60 * 60 * 1000;
+            // For 'custom' filter, would need a date range input
+            return true;
+        });
+
+        // Apply Sorting
+        if (sort === 'date-desc') filtered.sort((a, b) => (new Date(b.timestamp || 0)) - (new Date(a.timestamp || 0)));
+        if (sort === 'date-asc') filtered.sort((a, b) => (new Date(a.timestamp || 0)) - (new Date(b.timestamp || 0)));
+        if (sort === 'name') filtered.sort((a, b) => (a.template?.name || '').localeCompare(b.template?.name || ''));
+        if (sort === 'duration') filtered.sort((a, b) => (b.duration || 0) - (a.duration || 0));
+
+        reportsList.innerHTML = ''; // Clear current list
+        if (!filtered.length) {
+          noReportsMessage.classList.remove('hidden');
+          secureLog('No reports match the current filters.');
+          return;
+        } else {
+          noReportsMessage.classList.add('hidden');
+        }
+
+        // Generate Report Cards
+        for (const report of filtered) {
+          const div = document.createElement('div');
+          div.className = 'bg-white dark:bg-gray-800 rounded-lg p-4 shadow flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-transform duration-200 ease-in-out transform hover:-translate-y-1 hover:shadow-lg';
+          
+          let statusColorClass = '';
+          let statusText = '';
+          if (report.status === 'finalized') {
+              statusColorClass = 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+              statusText = 'Finalizat';
+          } else if (report.status === 'draft') {
+              statusColorClass = 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-200';
+              statusText = 'Draft';
+          } else { // Fallback for unknown status
+              statusColorClass = 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200';
+              statusText = 'Necunoscut';
+          }
+
+          const dateStr = report.timestamp ? new Date(report.timestamp).toLocaleString() : 'Data necunoscută';
+          const durStr = formatTime(report.duration || 0);
+          const templateName = report.template?.name || 'Fără șablon';
+
+          // Extract key details from transcription (simplified for wireframe)
+          const transcriptionSummary = report.transcription ? report.transcription.split(/[.!?]/)[0] + (report.transcription.split(/[.!?]/)[0].length < report.transcription.length ? '...' : '') : 'Fără descriere';
+          const clientDisplay = report.client || (transcriptionSummary.includes('Client') ? transcriptionSummary.match(/Client:\s*(\w+\s*\w+)/)?.[1] || 'Necunoscut' : '—');
+          const modelDisplay = report.model || (transcriptionSummary.includes('Vehicul') ? transcriptionSummary.match(/Vehicul:\s*(\w+\s*\w+)/)?.[1] || 'Necunoscut' : '—');
+          
+          // Enhanced HTML structure for each report card
+          div.innerHTML = `
+            <div class="flex-1 space-y-1">
+              <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100" data-testid="report-card-title">${templateName}</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400">
+                <span class="mr-2"><i class="fas fa-calendar-alt"></i> ${dateStr}</span>
+                <span>• <i class="fas fa-clock"></i> Durată: ${durStr}</span>
+              </p>
+              <p class="text-sm mt-1 text-gray-600 dark:text-gray-300">
+                <span class="font-medium">Client:</span> ${clientDisplay} • 
+                <span class="font-medium">Vehicul:</span> ${modelDisplay}
+              </p>
+              <p class="text-sm text-gray-600 dark:text-gray-300">
+                <span class="font-medium">Detalii:</span> ${transcriptionSummary}
+              </p>
+              <span class="inline-block mt-2 px-3 py-1 text-xs font-medium rounded-full ${statusColorClass}" data-testid="report-status-badge">
+                ${statusText}
+              </span>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-2 mt-4 sm:mt-0">
+              <button class="action-btn text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700" 
+                      onclick="viewReport('${report.id}')" aria-label="Vizualizează raportul ${templateName}" data-testid="view-report-button">
+                <i class="fas fa-eye text-lg"></i><span class="sr-only">Vizualizează</span>
+              </button>
+              ${report.status === 'draft' ? 
+                `<button class="action-btn text-yellow-500 hover:text-yellow-600 dark:text-yellow-400 dark:hover:text-yellow-300 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700" 
+                         onclick="editReport('${report.id}')" aria-label="Editează raportul ${templateName}" data-testid="edit-report-button">
+                   <i class="fas fa-edit text-lg"></i><span class="sr-only">Editează</span>
+                 </button>` : ''}
+              ${report.status === 'finalized' ? 
+                `<button class="action-btn text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700" 
+                         onclick="downloadReport('${report.id}')" aria-label="Descarcă raportul ${templateName}" data-testid="download-report-button">
+                   <i class="fas fa-download text-lg"></i><span class="sr-only">Descarcă</span>
+                 </button>` : ''}
+              <button class="action-btn text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700" 
+                      onclick="deleteReport('${report.id}', '${templateName}')" aria-label="Șterge raportul ${templateName}" data-testid="delete-report-button">
+                <i class="fas fa-trash text-lg"></i><span class="sr-only">Șterge</span>
+              </button>
+            </div>
+          `;
+          reportsList.appendChild(div);
+        }
+        secureLog(`Rendered ${filtered.length} reports.`);
+      }
+
+      // === Utility Functions ===
+      function formatTime(sec) {
+        const m = String(Math.floor(sec / 60)).padStart(2, '0');
+        const s = String(sec % 60).padStart(2, '0');
+        return `${m}:${s}`;
+      }
+
+      // === Actions (Global Functions for onclick) ===
+      window.editReport = id => {
+        secureLog(`Attempting to edit report with ID: ${id}`);
+        const reportData = localStorage.getItem(id);
+        if (reportData) {
+          try {
+            const parsedReport = JSON.parse(reportData);
+            // Re-store data in sessionStorage as if coming from recording.html
+            sessionStorage.setItem('audioFormTempRecording', JSON.stringify(parsedReport));
+            // Optional: if the edit page needs the original Blob URL from IndexedDB
+            // sessionStorage.setItem('audioFormTempRecordingId', parsedReport.originalRecordingId || ''); 
+
+            document.body.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+            setTimeout(() => {
+              location.href = 'edit.html'; // Redirect to edit page
+            }, 300);
+          } catch (e) {
+            console.error(`Error parsing report data for editing ${id}:`, e);
+            showFeedback('Eroare la editarea raportului. Datele sunt corupte.', 'error');
+          }
+        } else {
+          showFeedback('Raportul nu a fost găsit. Poate a fost șters.', 'warning');
+          secureLog(`Report not found for editing: ${id}`);
+        }
+      };
+
+      window.viewReport = id => {
+        secureLog(`Attempting to view report with ID: ${id}`);
+        const reportData = localStorage.getItem(id);
+        if (reportData) {
+          try {
+            const parsedReport = JSON.parse(reportData);
+            sessionStorage.setItem('audioFormTempRecording', JSON.stringify(parsedReport));
+            // Optionally pass original recording ID/Blob URL for playback in edit.html's view mode
+            // sessionStorage.setItem('audioFormTempRecordingId', parsedReport.originalRecordingId || '');
+
+            document.body.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+            setTimeout(() => {
+              location.href = 'edit.html?readonly=true'; // Redirect to edit page in readonly mode
+            }, 300);
+          } catch (e) {
+            console.error(`Error parsing report data for viewing ${id}:`, e);
+            showFeedback('Eroare la vizualizarea raportului. Datele sunt corupte.', 'error');
+          }
+        } else {
+          showFeedback('Raportul nu a fost găsit. Poate a fost șters.', 'warning');
+          secureLog(`Report not found for viewing: ${id}`);
+        }
+      };
+
+      window.downloadReport = id => {
+          secureLog(`Attempting to download report with ID: ${id}`);
+          const report = allReports.find(r => r.id === id);
+          if (report) {
+              // Simulate PDF generation from transcription
+              const pdfContent = `
+Raport AudioForm - ${report.template?.name || 'Raport'}
+Data: ${report.timestamp ? new Date(report.timestamp).toLocaleString() : 'N/A'}
+Durată înregistrare: ${formatTime(report.duration || 0)}
+
+Client: ${report.client || '—'}
+Vehicul: ${report.model || '—'}
+
+Transcriere:
+${report.transcription || 'Fără transcriere.'}
+
+Status: ${report.status === 'finalized' ? 'Finalizat' : 'Draft'}
+              `;
+              
+              // A simple way to trigger a download for text content.
+              // For real PDF generation, you'd use a library like jsPDF or a backend service.
+              const blob = new Blob([pdfContent], { type: 'text/plain;charset=utf-8' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `${report.template?.name.replace(/\s/g, '_') || 'Report'}_${new Date(report.timestamp).toISOString().slice(0,10)}.txt`;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+              showFeedback('Raportul este descărcat!', 'success');
+              secureLog(`Report ${id} downloaded.`);
+          } else {
+              showFeedback('Raportul nu a putut fi descărcat.', 'error');
+              secureLog(`Report not found for download: ${id}`);
+          }
+      };
+
+      window.deleteReport = (id, templateName) => {
+        secureLog(`Attempting to delete report with ID: ${id} (${templateName})`);
+        if (confirm(`Ești sigur că vrei să ștergi raportul "${templateName}"?`)) {
+          localStorage.removeItem(id);
+          loadReportsFromStorage(); // Reload all reports
+          renderReports(); // Re-render the list
+          showFeedback(`Raportul "${templateName}" a fost șters.`, 'success');
+          secureLog(`Report ${id} deleted.`);
+        }
+      };
+
+      // === Initial Load and Event Listeners ===
+      // Populate template filter options first
+      populateTemplateFilter();
+      loadReportsFromStorage(); // Load all available reports
+      renderReports(); // Render initial list
+
+      // Add event listeners for filters and search
+      [searchInput, statusFilter, templateFilter, dateFilter, sortSelect].forEach(el => {
+        el.addEventListener('input', () => {
+            renderReports(); // Re-render on any filter/search change
+            // Apply animation on filter change to indicate update
+            reportsList.classList.add('opacity-0', 'transition-opacity', 'duration-200');
+            setTimeout(() => {
+                reportsList.classList.remove('opacity-0');
+            }, 100);
+        });
+      });
+
+      // === Plugin slot handlers ===
+      const pluginSlotReportsTop = document.getElementById('plugin-slot-reports-top');
+      const pluginSlotReportsBottom = document.getElementById('plugin-slot-reports-bottom');
+
+      if (window.AudioFormPlugin) {
+        if (typeof window.AudioFormPlugin.renderReportsTop === 'function') {
+          pluginSlotReportsTop.appendChild(window.AudioFormPlugin.renderReportsTop());
+          secureLog('Plugin rendered in reports top slot.');
+        }
+        if (typeof window.AudioFormPlugin.renderReportsBottom === 'function') {
+          pluginSlotReportsBottom.appendChild(window.AudioFormPlugin.renderReportsBottom());
+          secureLog('Plugin rendered in reports bottom slot.');
+        }
+      }
+      
+      // === Debug Mode Integration ===
+      if (isDebugMode) {
+        console.log('🧪 DEBUG MODE ACTIVAT pentru Reports Page');
+      }
+
+      // Check if redirected from edit.html after finalization and show feedback
+      const redirectStatus = urlParams.get('status');
+      if (redirectStatus === 'finalized') {
+          showFeedback('Raportul a fost finalizat cu succes!', 'success');
+          // Clear the status from URL to prevent showing it again on refresh
+          const newUrl = new URL(window.location);
+          newUrl.searchParams.delete('status');
+          window.history.replaceState({}, document.title, newUrl.toString());
+      }
+    });
+  </script>
+</body>
+</html>

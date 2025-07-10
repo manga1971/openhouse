@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Editare Raport – AudioForm</title>
+
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#1e40af" />
+
+  <link rel="preconnect" href="https://cdn.tailwindcss.com">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Keyframes for simple bounce animation on AI icon */
+    @keyframes bounce {
+      0%, 100% { transform: translateY(-25%); animation-timing-function: cubic-bezier(0.8, 0, 1, 1); }
+      50% { transform: translateY(0); animation-timing-function: cubic-bezier(0, 0, 0.2, 1); }
+    }
+    .animate-bounce-custom {
+      animation: bounce 1s infinite;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 antialiased min-h-screen flex flex-col
+             dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
+  
+  <header class="p-4 bg-white shadow-md dark:bg-gray-800 sticky top-0 z-40">
+    <a href="dashboard.html" class="flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200" aria-label="Înapoi la Dashboard">
+      <i class="fas fa-arrow-left mr-2"></i>
+      <h1 class="text-lg font-semibold text-center text-gray-900 dark:text-gray-50 flex-grow">Editare Raport</h1>
+    </a>
+  </header>
+
+  <main class="flex-grow px-4 py-6 space-y-6 max-w-3xl mx-auto w-full text-center">
+    <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mt-2">
+      <div id="form-progress-bar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%" data-testid="form-progress-bar"></div>
+    </div>
+    <p class="text-sm text-gray-500 dark:text-gray-400 text-right mt-1" id="form-progress-label" data-testid="form-progress-label">Completare: 0%</p>
+
+    <div id="plugin-slot-edit-top" class="w-full">
+      </div>
+
+    <section id="record-info" data-testid="record-info-section" class="bg-white dark:bg-gray-800 shadow rounded-lg p-4 text-left space-y-1">
+      <h2 class="text-base font-medium text-gray-700 dark:text-gray-200">Detalii Înregistrare:</h2>
+      <p id="template-title" data-testid="template-title-display" class="text-lg font-semibold text-blue-700 dark:text-blue-400">Încărcare...</p>
+      <p id="recording-duration" data-testid="recording-duration-display" class="text-sm text-gray-500 dark:text-gray-400">Durata: --</p>
+      <p id="recording-timestamp" data-testid="recording-timestamp-display" class="text-xs text-gray-400 dark:text-gray-500 hidden">Înregistrat la: --</p>
+      <div id="recorded-audio-preview-container" data-testid="recorded-audio-preview-container" class="hidden mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+        <p class="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Înregistrarea ta:</p>
+        <audio id="recorded-audio-player" data-testid="recorded-audio-player" controls class="w-full"></audio>
+      </div>
+    </section>
+
+    <section class="bg-white dark:bg-gray-800 shadow rounded-lg p-4 space-y-4 text-left">
+      <h2 class="text-base font-medium text-gray-700 dark:text-gray-200 mb-2">Text Transcris (editabil):</h2>
+      
+      <div id="processing-feedback" data-testid="processing-feedback" class="flex flex-col items-center justify-center py-8 bg-gray-50 dark:bg-gray-700 rounded-md">
+        <i class="fas fa-robot text-4xl text-blue-600 dark:text-blue-400 animate-bounce-custom"></i>
+        <p class="mt-3 text-lg font-medium text-gray-700 dark:text-gray-200">AI-ul analizează înregistrarea...</p>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Aceasta poate dura câteva secunde.</p>
+      </div>
+
+      <textarea id="transcription-text" data-testid="transcription-textarea" class="w-full h-48 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 resize-y hidden"
+        placeholder="Textul va apărea aici după procesare..." aria-label="Text transcris editabil"></textarea>
+      
+      <div class="flex justify-between items-center mt-1">
+        <p class="text-xs text-gray-400 italic dark:text-gray-400">Text generat automat. Editează înainte de a salva raportul.</p>
+        <button id="undo-button" data-testid="undo-button" class="text-sm text-blue-600 hover:underline dark:text-blue-400 hidden ml-2">
+          <i class="fas fa-undo mr-1"></i> Anulează
+        </button>
+      </div>
+
+      <div class="flex items-center justify-between mt-4">
+        <h3 class="text-base font-medium text-gray-700 dark:text-gray-200">Previzualizare Raport PDF</h3>
+        <span id="status-preview" data-testid="status-preview-badge" class="text-xs font-medium text-yellow-700 bg-yellow-100 px-2 py-0.5 rounded-full dark:text-yellow-200 dark:bg-yellow-900">În lucru</span>
+      </div>
+
+      <div id="pdf-preview-container" data-testid="pdf-preview-container" class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600 h-64 overflow-y-auto text-sm text-gray-700 dark:text-gray-200 relative">
+        <div id="pdf-content" data-testid="pdf-content-display" class="text-left space-y-2">
+          <p class="font-bold text-gray-900 dark:text-gray-100">Fișă Tehnică Autovehicul</p>
+          <p>Client: <span class="font-medium text-gray-800 dark:text-gray-100">[Nume Client]</span></p>
+          <p>Vehicul: <span class="font-medium text-gray-800 dark:text-gray-100">[Model Vehicul]</span></p>
+          <p>Problemă raportată: <span class="font-medium text-gray-800 dark:text-gray-100">[Text transcris pentru problemă]</span></p>
+          <p>Observații: <span class="font-medium text-gray-800 dark:text-gray-100">[Text transcris pentru observații]</span></p>
+          <p class="text-xs text-gray-500 italic mt-2">Acest text este un placeholder. Câmpurile reale vor fi completate de AI.</p>
+        </div>
+        <div id="missing-fields-overlay" data-testid="missing-fields-overlay" class="absolute inset-0 bg-red-100 dark:bg-red-900 bg-opacity-70 dark:bg-opacity-70 text-red-800 dark:text-red-200 flex flex-col items-center justify-center text-center p-4 rounded-lg hidden">
+          <i class="fas fa-exclamation-circle text-3xl mb-2"></i>
+          <p class="text-lg font-semibold">Câmpuri incomplete!</p>
+          <ul id="incomplete-fields-list" class="mt-2 list-disc list-inside text-sm font-normal">
+              </ul>
+          <button id="overlay-close-btn" data-testid="overlay-close-button" class="mt-4 bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded-full text-sm transition" aria-label="Închide alerta de câmpuri incomplete">Închide</button>
+        </div>
+      </div>
+      <button id="check-completeness-btn" data-testid="check-completeness-button" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-full shadow transition focus:outline-none focus:ring-2 focus:ring-blue-400"
+              aria-label="Verifică completitudinea raportului">
+        <i class="fas fa-check-circle mr-2"></i> Verifică Completitudinea
+      </button>
+    </section>
+
+    <section class="flex flex-col sm:flex-row justify-center gap-4 mt-6">
+      <button id="redo-recording" data-testid="redo-recording-button" class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-full shadow-md text-base font-medium transition duration-200 ease-in-out transform hover:scale-105 dark:bg-red-700 dark:hover:bg-red-600"
+              aria-label="Refă raportul din înregistrarea vocală">
+        <i class="fas fa-redo mr-2"></i> Refă Raport
+      </button>
+      <button id="continue-recording" data-testid="continue-recording-button" class="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-full shadow-md text-base font-medium transition duration-200 ease-in-out transform hover:scale-105 dark:bg-yellow-700 dark:hover:bg-yellow-600"
+              aria-label="Continuă înregistrarea vocală">
+        <i class="fas fa-microphone-alt mr-2"></i> Continuă Înregistrarea
+      </button>
+      <button id="save-draft" data-testid="save-draft-button" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-full shadow-md text-base font-medium transition duration-200 ease-in-out transform hover:scale-105 dark:bg-gray-700 dark:hover:bg-gray-600"
+              aria-label="Salvează raportul ca draft">
+        <i class="fas fa-save mr-2"></i> Salvează Draft
+      </button>
+      <button id="finalize-report" data-testid="finalize-report-button" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-full shadow-md text-base font-medium transition duration-200 ease-in-out transform hover:scale-105"
+              aria-label="Finalizează și generează raportul">
+        <i class="fas fa-file-export mr-2"></i> Finalizează Raport
+      </button>
+    </section>
+
+    <div id="feedback-message" data-testid="feedback-message-display" class="mt-4 text-sm text-center text-green-600 dark:text-green-400 hidden p-3 rounded-lg bg-green-50 dark:bg-green-900 border border-green-200 dark:border-green-700"></div>
+
+    <div id="plugin-slot-edit-bottom" class="mt-6 w-full">
+      </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => { // Added async for potential IndexedDB retrieval
+      // Determine if debug mode is active globally
+      const isDebugMode = location.search.includes('debug=true');
+
+      // Helper for secure logging
+      const secureLog = (message, ...args) => {
+        if (isDebugMode) {
+          console.log(`[DEBUG] ${message}`, ...args);
+        }
+      };
+
+      // === Global Dark Mode Autodetect & Apply ===
+      const applyDarkMode = () => {
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      };
+      applyDarkMode();
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyDarkMode);
+
+      // === PWA - Register Service Worker ===
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => secureLog('PWA ServiceWorker registered:', registration))
+            .catch(error => console.error('PWA ServiceWorker registration failed:', error)); // Always log critical errors
+        });
+      }
+
+      // === DOM Elements ===
+      const templateTitleEl = document.getElementById('template-title');
+      const recordingDurationEl = document.getElementById('recording-duration');
+      const recordingTimestampEl = document.getElementById('recording-timestamp');
+      const transcriptionTextarea = document.getElementById('transcription-text');
+      const pdfContentEl = document.getElementById('pdf-content');
+      const missingFieldsOverlay = document.getElementById('missing-fields-overlay');
+      const incompleteFieldsList = document.getElementById('incomplete-fields-list');
+      const processingFeedback = document.getElementById('processing-feedback');
+      const feedbackMessageEl = document.getElementById('feedback-message');
+      const overlayCloseBtn = document.getElementById('overlay-close-btn');
+      const checkCompletenessBtn = document.getElementById('check-completeness-btn');
+      const refactorBtn = document.getElementById('redo-recording');
+      const continueRecordingBtn = document.getElementById('continue-recording');
+      const saveDraftBtn = document.getElementById('save-draft');
+      const finalizeReportBtn = document.getElementById('finalize-report');
+      const formProgressBar = document.getElementById('form-progress-bar');
+      const formProgressLabel = document.getElementById('form-progress-label');
+      const statusPreviewBadge = document.getElementById('status-preview');
+      const undoButton = document.getElementById('undo-button');
+      const recordedAudioPlayer = document.getElementById('recorded-audio-player');
+      const recordedAudioPreviewContainer = document.getElementById('recorded-audio-preview-container');
+
+
+      // === Preluare date înregistrare din sessionStorage ===
+      const storedRecordingData = sessionStorage.getItem('audioFormTempRecording');
+      const storedAudioBlobUrl = sessionStorage.getItem('audioFormBlobUrl'); // New: Get Blob URL
+      const storedRecordingId = sessionStorage.getItem('audioFormTempRecordingId'); // New: Get IndexedDB ID
+
+      let recordingData = null;
+
+      // Variabilă pentru funcționalitatea Undo
+      let undoStack = []; // Pentru a stoca stări anterioare ale textarea
+      const MAX_UNDO_STATES = 10; // Număr maxim de stări undo de reținut
+
+      // === IndexedDB setup for persistent audio retrieval ===
+      const DB_NAME = 'AudioFormDB';
+      const STORE_NAME = 'audioRecordings';
+      let db;
+
+      const openIndexedDB = () => {
+          return new Promise((resolve, reject) => {
+              const request = indexedDB.open(DB_NAME, 1);
+
+              request.onupgradeneeded = (event) => {
+                  const db = event.target.result;
+                  if (!db.objectStoreNames.contains(STORE_NAME)) {
+                      db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+                  }
+              };
+
+              request.onsuccess = (event) => {
+                  db = event.target.result;
+                  secureLog('IndexedDB opened successfully.');
+                  resolve(db);
+              };
+
+              request.onerror = (event) => {
+                  console.error('IndexedDB error:', event.target.error); // Always log critical errors
+                  reject(event.target.error);
+              };
+          });
+      };
+
+      const getAudioBlobFromIndexedDB = async (id) => {
+          if (!db) {
+              secureLog('IndexedDB not initialized. Cannot retrieve audio blob.');
+              return null;
+          }
+          try {
+              const transaction = db.transaction([STORE_NAME], 'readonly');
+              const store = transaction.objectStore(STORE_NAME);
+              const request = store.get(id);
+              return new Promise((resolve) => {
+                  request.onsuccess = (event) => {
+                      const record = event.target.result;
+                      if (record && record.blob) {
+                          secureLog('Audio Blob retrieved from IndexedDB:', id);
+                          resolve(record.blob);
+                      } else {
+                          secureLog('No audio blob found in IndexedDB for ID:', id);
+                          resolve(null);
+                      }
+                  };
+                  request.onerror = (event) => {
+                      console.error('Error retrieving Blob from IndexedDB:', event.target.error);
+                      resolve(null);
+                  };
+              });
+          } catch (e) {
+              console.error('IndexedDB retrieval transaction failed:', e);
+              return null;
+          }
+      };
+
+      // Initialize IndexedDB on page load
+      if ('indexedDB' in window) {
+          await openIndexedDB().catch(e => secureLog('Failed to open IndexedDB:', e));
+      } else {
+          secureLog('IndexedDB not supported in this browser.');
+      }
+
+
+      if (storedRecordingData) {
+        try {
+          recordingData = JSON.parse(storedRecordingData);
+          
+          templateTitleEl.textContent = `Șablon: ${recordingData.template ? recordingData.template.name : 'Nespecificat'}`;
+          recordingDurationEl.textContent = `Durata: ${formatTime(recordingData.duration)}`;
+          if (recordingData.timestamp) {
+              recordingTimestampEl.textContent = `Înregistrat la: ${new Date(recordingData.timestamp).toLocaleString()}`;
+              if (isDebugMode) recordingTimestampEl.classList.remove('hidden'); // Only show in debug mode
+          }
+          secureLog('Recording data loaded:', recordingData);
+
+          // New: Load and display recorded audio
+          if (storedAudioBlobUrl) {
+              recordedAudioPlayer.src = storedAudioBlobUrl;
+              recordedAudioPreviewContainer.classList.remove('hidden');
+              recordedAudioPlayer.load(); // Ensure the audio is loaded
+              secureLog('Audio Blob URL loaded from sessionStorage.');
+          } else if (storedRecordingId) { // Try IndexedDB if ID is present
+              const audioBlob = await getAudioBlobFromIndexedDB(storedRecordingId);
+              if (audioBlob) {
+                  const audioUrl = URL.createObjectURL(audioBlob);
+                  recordedAudioPlayer.src = audioUrl;
+                  recordedAudioPreviewContainer.classList.remove('hidden');
+                  recordedAudioPlayer.load();
+                  secureLog('Audio Blob loaded from IndexedDB.');
+              }
+          }
+
+
+          // Simulează procesarea AI (transcrierea)
+          // Timeout pentru a simula o procesare reală (întârziere)
+          simulateAIProcessing(recordingData.duration).then(transcription => {
+            processingFeedback.classList.add('hidden'); // Ascunde animația de procesare
+            transcriptionTextarea.value = transcription;
+            transcriptionTextarea.classList.remove('hidden'); // Afișează textarea
+            updatePdfPreview(transcription); // Actualizează previzualizarea PDF
+            updateProgressStatus(); // Inițializează progresul
+            pushUndoState(transcription); // Salvează starea inițială pentru undo
+            secureLog('AI processing complete. Transcription displayed.');
+          }).catch(e => {
+            console.error('Eroare la simularea procesării AI:', e); // Always log critical errors
+            processingFeedback.classList.add('hidden');
+            transcriptionTextarea.classList.remove('hidden');
+            transcriptionTextarea.value = 'Eroare la procesarea înregistrării. Vă rugăm să verificați consola.';
+            showFeedback('Eroare la procesarea înregistrării.', 'error');
+          });
+
+          // Opțional: Curăță datele temporare din sessionStorage după preluare, dacă nu mai e nevoie.
+          // sessionStorage.removeItem('audioFormTempRecording'); 
+
+        } catch (e) {
+          console.error('Eroare la citirea sau parsarea datelor înregistrării din sessionStorage:', e); // Always log critical errors
+          templateTitleEl.textContent = 'Eroare la încărcare';
+          recordingDurationEl.textContent = 'Durata: N/A';
+          transcriptionTextarea.value = ''; // Golim text area în caz de eroare
+          processingFeedback.classList.add('hidden');
+          transcriptionTextarea.classList.remove('hidden');
+          showFeedback('Nu s-au putut încărca datele înregistrării. Vă rugăm să reîncercați.', 'error');
+        }
+      } else {
+        templateTitleEl.textContent = 'Nicio înregistrare găsită.';
+        recordingDurationEl.textContent = 'Durata: N/A';
+        transcriptionTextarea.value = 'Nu s-au găsit date temporare de înregistrare. Vă rugăm să începeți o înregistrare nouă din Dashboard.';
+        processingFeedback.classList.add('hidden');
+        transcriptionTextarea.classList.remove('hidden');
+        showFeedback('Nicio înregistrare temporară găsită. Vă rugăm să începeți o nouă înregistrare.', 'warning');
+        secureLog('No temporary recording data found in sessionStorage.');
+      }
+
+      // Helper pentru formatarea timpului
+      function formatTime(sec) {
+        const m = String(Math.floor(sec / 60)).padStart(2, '0');
+        const s = String(sec % 60).padStart(2, '0');
+        return `${m}:${s}`;
+      }
+
+      // Simulează procesarea AI și transcrierea
+      function simulateAIProcessing(duration) {
+          return new Promise(resolve => {
+              const processingTime = Math.min(Math.max(duration * 50, 1000), 5000); // Min 1s, Max 5s delay
+              setTimeout(() => {
+                  const sampleText = `Aceasta este o transcriere simulată pentru o înregistrare de ${formatTime(duration)}. Vehiculul este un Volkswagen Golf din 2016, cu un rulaj de 142.000 de kilometri. Clientul a raportat un zgomot la frânele față. Am identificat coduri de eroare P0420 și P0301. Recomandăm schimbarea plăcuțelor de frână și a senzorului de oxigen. Nu am observat alte probleme majore la o inspecție vizuală rapidă.`;
+                  resolve(sampleText);
+              }, processingTime);
+          });
+      }
+
+      // Actualizează previzualizarea PDF pe baza textului transcris
+      function updatePdfPreview(transcription) {
+          let clientName = transcription.includes('Clientul a raportat') ? 'John Doe' : '[Nume Client]' + (isDebugMode ? ' (Necunoscut)' : '');
+          let vehicleInfo = transcription.includes('Volkswagen Golf') ? 'VW Golf 2016' : '[Model Vehicul]' + (isDebugMode ? ' (Necunoscut)' : '');
+          let reportedProblem = transcription.includes('zgomot la frânele față') ? 'Zgomot la frânele față' : '[Problemă Semnalată]' + (isDebugMode ? ' (Nesemnalizat)' : '');
+          let recommendations = transcription.includes('schimbarea plăcuțelor') ? 'Schimbare plăcuțe, senzor O2' : '[Acțiuni Recomandate]' + (isDebugMode ? ' (Nerecomandat)' : '');
+
+          pdfContentEl.innerHTML = `
+            <p class="font-bold text-gray-900 dark:text-gray-100 mb-2">Fișă Tehnică Autovehicul</p>
+            <p>Client: <span class="font-medium text-gray-800 dark:text-gray-100">${clientName}</span></p>
+            <p>Vehicul: <span class="font-medium text-gray-800 dark:text-gray-100">${vehicleInfo}</span></p>
+            <p>Problemă raportată: <span class="font-medium text-gray-800 dark:text-gray-100">${reportedProblem}</span></p>
+            <p>Acțiuni recomandate: <span class="font-medium text-gray-800 dark:text-gray-100">${recommendations}</span></p>
+            <p class="text-xs text-gray-500 italic mt-4">Previzualizarea va fi actualizată pe măsură ce editați.</p>
+          `;
+      }
+
+      // Actualizează previzualizarea PDF la fiecare tastare în textarea
+      transcriptionTextarea.addEventListener('input', () => {
+          updatePdfPreview(transcriptionTextarea.value);
+          updateProgressStatus(); // Actualizează progresul la fiecare input
+          // Afișează butonul undo după prima modificare
+          if (undoStack[undoStack.length - 1] !== transcriptionTextarea.value) {
+            undoButton.classList.remove('hidden');
+          }
+      });
+      // Salvează starea curentă înainte de a modifica textul
+      transcriptionTextarea.addEventListener('keydown', (event) => {
+        // Salvează starea doar dacă conținutul se schimbă
+        // Excludem tastele de navigare sau modificările care nu schimbă textul (Ctrl, Alt, Shift, săgeți)
+        if (!event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey &&
+            !['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
+            if (undoStack[undoStack.length - 1] !== transcriptionTextarea.value) {
+                pushUndoState(transcriptionTextarea.value);
+            }
+        }
+      });
+      transcriptionTextarea.addEventListener('paste', () => {
+        // Asigură că starea e salvată înainte de paste
+        setTimeout(() => pushUndoState(transcriptionTextarea.value), 0);
+      });
+
+
+      // Show/Hide Feedback Message
+      function showFeedback(message, type = 'success') {
+          feedbackMessageEl.textContent = message;
+          feedbackMessageEl.classList.remove('hidden', 'text-green-600', 'text-red-600', 'text-yellow-600', 'text-blue-600',
+                                              'bg-green-50', 'bg-red-50', 'bg-yellow-50', 'bg-blue-50',
+                                              'border-green-200', 'border-red-200', 'border-yellow-200', 'border-blue-200',
+                                              'dark:text-green-400', 'dark:text-red-400', 'dark:text-yellow-400', 'dark:text-blue-400',
+                                              'dark:bg-green-900', 'dark:bg-red-900', 'dark:bg-yellow-900', 'dark:bg-blue-900',
+                                              'dark:border-green-700', 'dark:border-red-700', 'dark:border-yellow-700', 'dark:border-blue-700');
+          if (type === 'success') {
+              feedbackMessageEl.classList.add('text-green-600', 'bg-green-50', 'border-green-200', 'dark:text-green-400', 'dark:bg-green-900', 'dark:border-green-700');
+          } else if (type === 'error') {
+              feedbackMessageEl.classList.add('text-red-600', 'bg-red-50', 'border-red-200', 'dark:text-red-400', 'dark:bg-red-900', 'dark:border-red-700');
+          } else if (type === 'warning') {
+              feedbackMessageEl.classList.add('text-yellow-600', 'bg-yellow-50', 'border-yellow-200', 'dark:text-yellow-400', 'dark:bg-yellow-900', 'dark:border-yellow-700');
+          } else if (type === 'info') {
+              feedbackMessageEl.classList.add('text-blue-600', 'bg-blue-50', 'border-blue-200', 'dark:text-blue-400', 'dark:bg-blue-900', 'dark:border-blue-700');
+          }
+          feedbackMessageEl.classList.remove('hidden');
+          // Hide after 5 seconds
+          setTimeout(() => {
+              feedbackMessageEl.classList.add('hidden');
+          }, 5000);
+      }
+
+
+      // === [A] Progres pe secțiuni + global ===
+      function updateProgressStatus() {
+        const text = transcriptionTextarea.value;
+        const fields = ["Volkswagen", "Clientul a raportat", "frâne", "recomandăm"]; // Criterii de completitudine
+        let completedCount = 0;
+        
+        fields.forEach(field => {
+            if (text.toLowerCase().includes(field.toLowerCase())) { // Case-insensitive check
+                completedCount++;
+            }
+        });
+
+        const percent = Math.round((completedCount / fields.length) * 100);
+        formProgressBar.style.width = `${percent}%`;
+        formProgressLabel.textContent = `Completare: ${percent}%`;
+
+        statusPreviewBadge.textContent = percent === 100 ? '✔︎ Complet' : percent >= 50 ? '✎ În lucru' : '⚠︎ Incomplet';
+        statusPreviewBadge.className = `text-xs font-medium px-2 py-0.5 rounded-full ` +
+          (percent === 100 ? 'text-green-800 bg-green-100 dark:text-green-200 dark:bg-green-900' :
+           percent >= 50 ? 'text-yellow-700 bg-yellow-100 dark:text-yellow-200 dark:bg-yellow-900' :
+           'text-red-800 bg-red-100 dark:text-red-200 dark:bg-red-900');
+        
+        secureLog(`Progress updated: ${percent}%, Status: ${statusPreviewBadge.textContent}`);
+      }
+
+
+      // === [B] Auto-save incremental ===
+      let autoSaveTimeout = null; // Folosim timeout, nu interval, pentru a salva după o perioadă de inactivitate
+      const AUTO_SAVE_DELAY = 5000; // 5 secunde de la ultima tastare
+
+      const triggerAutoSave = () => {
+        clearTimeout(autoSaveTimeout);
+        autoSaveTimeout = setTimeout(() => {
+          saveDraftLocally(transcriptionTextarea.value, recordingData); // Salvăm draft-ul
+          showFeedback('Salvat automat ca draft!', 'info');
+          secureLog('Auto-save triggered.');
+        }, AUTO_SAVE_DELAY);
+      };
+
+      transcriptionTextarea.addEventListener('input', () => {
+        triggerAutoSave();
+        updateProgressStatus(); // Actualizează progresul la fiecare input
+        // Afișează butonul undo după prima modificare
+        if (undoStack[undoStack.length - 1] !== transcriptionTextarea.value) {
+            undoButton.classList.remove('hidden');
+        } else if (undoStack.length <= 1) { // Hide if only initial state is left
+            undoButton.classList.add('hidden');
+        }
+      });
+
+
+      // === [C] Undo last change ===
+      // Salvează starea curentă în stack
+      function pushUndoState(content) {
+          // Asigură-te că nu adaugi stări duplicate consecutive
+          if (undoStack.length === 0 || undoStack[undoStack.length - 1] !== content) {
+              if (undoStack.length >= MAX_UNDO_STATES) {
+                  undoStack.shift(); // Elimină cea mai veche stare
+              }
+              undoStack.push(content);
+              secureLog(`Undo state pushed. Stack size: ${undoStack.length}`);
+          }
+          if (undoStack.length > 1) { // Afișează butonul Undo dacă există mai mult de o stare
+              undoButton.classList.remove('hidden');
+          } else {
+              undoButton.classList.add('hidden');
+          }
+      }
+
+      undoButton.addEventListener('click', () => {
+          if (undoStack.length > 1) { // Ne asigurăm că există o stare anterioară
+              undoStack.pop(); // Elimină starea curentă (care ar fi transcrierea actuală)
+              const previousContent = undoStack[undoStack.length - 1]; // Preluăm starea anterioară
+              transcriptionTextarea.value = previousContent;
+              updatePdfPreview(previousContent);
+              updateProgressStatus();
+              showFeedback('Modificare anulată.', 'info'); // Changed to info, undo is not an error
+              secureLog('Undo performed.');
+              if (undoStack.length <= 1) { // Ascunde butonul dacă s-a revenit la starea inițială
+                  undoButton.classList.add('hidden');
+              }
+          } else {
+              secureLog('No more undo states available.');
+              undoButton.classList.add('hidden'); // Ascunde butonul dacă nu mai sunt stări
+              showFeedback('Nu mai sunt modificări de anulat.', 'info');
+          }
+      });
+
+      // === [D] Mod readonly pentru previzualizare / finalizare ===
+      const urlParams = new URLSearchParams(location.search);
+      if (urlParams.get('readonly') === 'true') {
+        transcriptionTextarea.setAttribute('readonly', true);
+        transcriptionTextarea.classList.add('bg-gray-100', 'dark:bg-gray-800', 'cursor-not-allowed');
+        saveDraftBtn.disabled = true;
+        finalizeReportBtn.disabled = true;
+        checkCompletenessBtn.disabled = true; // Dezactivăm și verificarea
+        refactorBtn.disabled = true; // Dezactivăm și refacerea
+        continueRecordingBtn.disabled = true; // Dezactivăm și continuarea
+
+        // Ascundem butonul de undo în modul readonly
+        undoButton.classList.add('hidden');
+
+        showFeedback('Mod vizualizare activat: raportul este doar pentru citire.', 'info');
+        secureLog('Readonly mode activated.');
+      }
+
+
+      // === Verifică Completitudinea (simulat) ===
+      checkCompletenessBtn.addEventListener('click', () => {
+          const currentTranscription = transcriptionTextarea.value;
+          const missingFields = [];
+
+          // Simulează verificarea câmpurilor pe baza cuvintelor cheie
+          if (!currentTranscription.toLowerCase().includes('volkswagen') && !currentTranscription.toLowerCase().includes('vw golf')) {
+              missingFields.push('Model Vehicul');
+          }
+          if (!currentTranscription.toLowerCase().includes('clientul a raportat')) {
+              missingFields.push('Nume Client');
+          }
+          if (!currentTranscription.toLowerCase().includes('frâne') && !currentTranscription.toLowerCase().includes('vibrații')) {
+              missingFields.push('Problemă Semnalată');
+          }
+          if (!currentTranscription.toLowerCase().includes('recomandăm') && !currentTranscription.toLowerCase().includes('schimbarea plăcuțelor')) {
+              missingFields.push('Acțiuni Recomandate');
+          }
+          
+          if (missingFields.length === 0) {
+              missingFieldsOverlay.classList.add('hidden');
+              showFeedback('Raportul pare complet!', 'success');
+              secureLog('Report completeness check: All fields seem complete.');
+          } else {
+              incompleteFieldsList.innerHTML = ''; // Clear previous list
+              missingFields.forEach(field => {
+                  const li = document.createElement('li');
+                  li.textContent = field;
+                  incompleteFieldsList.appendChild(li);
+              });
+              missingFieldsOverlay.classList.remove('hidden');
+              showFeedback('Există câmpuri incomplete în raport!', 'warning');
+              secureLog('Report completeness check: Incomplete fields detected.', missingFields);
+          }
+          updateProgressStatus(); // Recalculează progresul după verificare
+      });
+
+      overlayCloseBtn.addEventListener('click', () => {
+          missingFieldsOverlay.classList.add('hidden');
+      });
+
+
+      // === Butoane de acțiune ===
+      refactorBtn.addEventListener('click', () => {
+        secureLog('🔄 Refacere raport initiated. Cleaning sessionStorage and redirecting to recording page.');
+        sessionStorage.removeItem('audioFormTempRecording'); // Curăță înregistrarea temporară
+        sessionStorage.removeItem('audioFormBlobUrl'); // Remove the Blob URL as well
+        sessionStorage.removeItem('audioFormTempRecordingId'); // Remove IndexedDB ID
+        
+        // Optional: Aici am putea stoca ID-ul șablonului într-un mod securizat pentru a-l reîncărca direct în recording.html
+        document.body.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+        setTimeout(() => {
+          window.location.href = 'recording.html'; // Revenim la pagina de înregistrare
+        }, 300);
+      });
+
+      continueRecordingBtn.addEventListener('click', () => {
+        const currentTranscription = transcriptionTextarea.value;
+        const updatedData = recordingData || {}; // Folosim datele existente
+        updatedData.transcription = currentTranscription; // Salvăm transcrierea curentă
+
+        try {
+          // Salvăm în SessionStorage starea curentă pentru a putea fi preluată de recording.html
+          sessionStorage.setItem('audioFormTempRecording', JSON.stringify(updatedData));
+          secureLog('🎙️ Current transcription saved for continuation. Redirecting to recording page.');
+          
+          // Clear temporary audio data (Blob URL/ID) as a new recording will be made
+          sessionStorage.removeItem('audioFormBlobUrl');
+          sessionStorage.removeItem('audioFormTempRecordingId');
+
+          document.body.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+          setTimeout(() => {
+            // Redirecționăm la recording.html cu un mod special pentru "continuă"
+            // Ar trebui să generăm un nou token aici dacă securitatea o impune
+            window.location.href = 'recording.html?mode=continue'; 
+          }, 300);
+        } catch (e) {
+          console.error('Eroare la pregătirea continuării înregistrării:', e); // Always log critical errors
+          showFeedback('Eroare la pregătirea continuării înregistrării.', 'error');
+        }
+      });
+
+      saveDraftBtn.addEventListener('click', () => {
+        saveDraftLocally(transcriptionTextarea.value, recordingData);
+      });
+
+      // Functie separata pentru salvarea draft-ului (apelata si de auto-save)
+      function saveDraftLocally(transcriptionContent, currentRecordingData) {
+        const currentReportData = currentRecordingData || {};
+        currentReportData.transcription = transcriptionContent;
+        currentReportData.status = 'draft';
+        currentReportData.lastEdited = new Date().toISOString();
+        
+        try {
+            // Salvăm în localStorage, specific pentru draft-uri, cu un ID unic
+            const draftId = `audioFormDraft_${currentReportData.template?.id || 'unknown'}_${Date.now()}`;
+            localStorage.setItem(draftId, JSON.stringify(currentReportData));
+            showFeedback('Raportul a fost salvat ca draft!', 'success');
+            secureLog('💾 Report saved as draft:', currentReportData);
+        } catch (e) {
+            console.error('Eroare la salvarea draft-ului în localStorage:', e); // Always log critical errors
+            showFeedback('Eroare la salvarea raportului ca draft.', 'error');
+        }
+      }
+
+
+      finalizeReportBtn.addEventListener('click', () => {
+        const currentTranscription = transcriptionTextarea.value;
+
+        // Re-use the completeness check logic
+        const fields = ["Volkswagen", "Clientul a raportat", "frâne", "recomandăm"];
+        const requiredFieldsFound = fields.every(field => currentTranscription.toLowerCase().includes(field.toLowerCase()));
+
+        if (!requiredFieldsFound) { 
+            showFeedback('Vă rugăm să verificați completitudinea raportului înainte de a-l finaliza.', 'warning');
+            checkCompletenessBtn.click(); // Trigger the check and show the overlay
+            return;
+        }
+        
+        // Logic to simulate final PDF generation and API call
+        const finalReportData = recordingData || {};
+        finalReportData.transcription = currentTranscription;
+        finalReportData.status = 'finalized';
+        finalReportData.finalizedAt = new Date().toISOString();
+
+        secureLog('🎉 Finalizing report:', finalReportData);
+        showFeedback('Finalizare raport în curs...', 'info'); // Info, not immediate success
+
+        // In production, this would make an API call to the backend for finalization and PDF generation
+        // Simulate a delay for processing
+        setTimeout(() => {
+            // Clear temporary recording data after successful finalization
+            sessionStorage.removeItem('audioFormTempRecording');
+            sessionStorage.removeItem('audioFormBlobUrl');
+            sessionStorage.removeItem('audioFormTempRecordingId');
+            
+            document.body.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+            setTimeout(() => {
+                window.location.href = 'reports.html?status=finalized'; // Redirect to reports page
+            }, 300);
+        }, 1500); // Simulate API call/PDF generation time
+      });
+
+      // === Plugin slot handlers ===
+      const pluginSlotEditTop = document.getElementById('plugin-slot-edit-top');
+      const pluginSlotEditBottom = document.getElementById('plugin-slot-edit-bottom');
+
+      if (window.AudioFormPlugin) {
+        if (typeof window.AudioFormPlugin.renderEditTop === 'function') {
+          pluginSlotEditTop.appendChild(window.AudioFormPlugin.renderEditTop());
+          secureLog('Plugin rendered in edit top slot.');
+        }
+        if (typeof window.AudioFormPlugin.renderEditBottom === 'function') {
+          pluginSlotEditBottom.appendChild(window.AudioFormPlugin.renderEditBottom());
+          secureLog('Plugin rendered in edit bottom slot.');
+        }
+      }
+      
+      // === Debug Mode Integration ===
+      if (isDebugMode) {
+        console.log('🧪 DEBUG MODE ACTIVAT pentru Edit Page'); // Always log this for debug mode activation
+        recordingTimestampEl.classList.remove('hidden'); // Ensure timestamp is visible in debug mode
+      }
+    });
+  </script>
+</body>
+</html>

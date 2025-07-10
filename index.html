@@ -1,805 +1,343 @@
 <!DOCTYPE html>
-<html lang="ro" class="scroll-smooth">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Meta tags for SEO and Social Sharing -->
-    <meta name="description" content="Agenție imobiliară cu experiență din 1998. Strategii personalizate pentru vânzare, achiziții și investiții.">
-    <meta name="keywords" content="imobiliare, agent imobiliar, case vile de vânzare, terenuri de vanzare,apartamente de vanzare, investiții, Open House">
-    <meta name="author" content="Open House Imobiliare">
-    <meta property="og:title" content="Open House - Imobiliare cu sens" />
-    <meta property="og:description" content="Tranzactii imobiliare de succes. Experiență. Rezultate. Real estate." />
-    <!-- Replace with your actual image for social sharing, relative to base path -->
-    <meta property="og:image" content="/openhouse/uploads/og-image.jpg" /> 
-    <meta property="og:url" content="https://manga1971.github.io/openhouse/" />
-    <meta name="twitter:card" content="summary_large_image">
-    <title>Open House - Imobiliare cu sens</title>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard – AudioForm</title>
 
-    <!-- Preload for font -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"></noscript>
-    
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Custom CSS pentru a completa Tailwind */
-        body {
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            overflow-y: scroll; /* Permite scroll-ul pe Y */
-            scroll-snap-type: y mandatory; /* Activeaza scroll-snap pe axa Y */
-            -webkit-overflow-scrolling: touch; /* Pentru un scroll mai fluid pe iOS */
-            height: 100vh; /* Asigura ca body are inaltimea intregii ferestre */
-            background-color: black; 
-        }
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#1e40af" /> 
 
-        .snap-section {
-            height: 100vh; /* Fiecare sectiune ocupa intreaga inaltime a ferestrei */
-            scroll-snap-align: start; /* Aliniaza sectiunea la inceputul ferestrei */
-            display: flex;
-            align-items: flex-end; /* Modificat: Pozitioneaza continutul la baza sectiunii */
-            justify-content: center;
-            position: relative;
-            overflow: hidden; /* Ascunde ce depaseste pentru elementele de fundal */
-            padding-bottom: 4rem; /* Adauga spatiu in partea de jos */
-            z-index: 0; /* Resetam la valoarea initiala */
-        }
-        /* Culori de fundal temporare pentru sectiuni - ELIMINATE */
+  <link rel="preconnect" href="https://cdn.tailwindcss.com">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
 
+  <script src="https://cdn.tailwindcss.com"></script>
 
-        .background-element {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Mentine raportul de aspect si acopera zona */
-            z-index: -1; /* Plaseaza in spatele continutului */
-            opacity: 0; /* Opacitate initiala pentru fade-in */
-            transition: opacity 0.5s ease-in-out; /* Tranzitie pentru fade-in */
-        }
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
 
-        .background-element.active {
-            opacity: 1; /* Opacitate finala pentru fade-in */
-        }
-        
-        /* Stil pentru containerul de fundal in cazul imaginilor */
-        .background-container {
-            background-size: cover;
-            background-position: center center;
-            background-repeat: no-repeat;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
+  <link rel="stylesheet" href="style.css" />
 
-        .youtube-iframe {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100vw;
-            height: 100vh;
-            transform: translate(-50%, -50%);
-            pointer-events: none; /* Dezactiveaza interactiunile cu playerul YouTube */
-        }
+  </head>
 
-        /* Stil pentru overlay-ul translucent al textului */
-        .text-overlay {
-            background-color: rgba(64, 64, 64, 0.4); /* Gri foarte transparent */
-            backdrop-filter: blur(2px); /* Un efect subtil de blur */
-            padding: 1.5rem;
-            border-radius: 0.75rem; /* Colțuri rotunjite */
-            text-align: center;
-            width: 96%; /* Modificat: Ocupa aproape toata latimea pe mobil */
-            box-sizing: border-box; /* Include padding si border in latimea totala */
-            /* Animatii subtile pentru overlay */
-            transition: all 0.5s ease-in-out;
-            z-index: 2; /* Asiguram ca overlay-ul e deasupra */
-        }
+<body class="bg-gray-50 text-gray-800 antialiased min-h-screen flex flex-col
+             dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
+  
+  <nav class="bg-white shadow-md px-4 py-3 flex items-center justify-between sticky top-0 z-50
+              dark:bg-gray-800 dark:shadow-lg transition-colors duration-300">
+    <h1 class="text-xl font-semibold text-gray-900 dark:text-gray-50">Salut, Mike!</h1>
+    <button
+      id="menu-toggle"
+      class="text-2xl p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150 ease-in-out
+             dark:hover:bg-gray-700 dark:focus:ring-blue-400 dark:text-gray-50"
+      aria-label="Deschide meniul de navigare"
+      aria-expanded="false"
+    >
+      <i class="fas fa-bars"></i>
+    </button>
+  </nav>
 
-        /* Efect hover pe overlay */
-        .text-overlay:hover {
-            transform: scale(1.02); /* Marire usoara */
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2); /* Umbra subtila */
-        }
+  <aside id="main-menu" class="fixed inset-y-0 right-0 w-64 bg-white shadow-lg transform translate-x-full 
+                              transition-transform duration-300 ease-in-out z-40 p-6 flex flex-col items-start space-y-4
+                              dark:bg-gray-800 dark:shadow-xl">
+    <button id="close-menu" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl
+                                   dark:text-gray-400 dark:hover:text-gray-50" aria-label="Închide meniul">
+        <i class="fas fa-times"></i>
+    </button>
+    <a href="#" class="text-blue-600 hover:text-blue-800 text-lg font-medium py-2 w-full text-left" aria-current="page">
+        <i class="fas fa-home mr-3"></i> Acasă
+    </a>
+    <a href="templates.html" class="text-gray-700 hover:text-blue-800 text-lg font-medium py-2 w-full text-left dark:text-gray-200">
+        <i class="fas fa-layer-group mr-3"></i> Șabloane
+    </a>
+    <a href="reports.html" class="text-gray-700 hover:text-blue-800 text-lg font-medium py-2 w-full text-left dark:text-gray-200">
+        <i class="fas fa-file-alt mr-3"></i> Rapoarte
+    </a>
+    <a href="settings.html" class="text-gray-700 hover:text-blue-800 text-lg font-medium py-2 w-full text-left dark:text-gray-200">
+        <i class="fas fa-cog mr-3"></i> Setări
+    </a>
+    <a href="logout.html" class="text-gray-700 hover:text-red-600 text-lg font-medium py-2 w-full text-left mt-auto dark:text-gray-200">
+        <i class="fas fa-sign-out-alt mr-3"></i> Delogare
+    </a>
+  </aside>
 
+  <div id="menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden"></div>
 
-        /* Stil pentru modalul video */
-        .modal {
-            display: none; /* Ascuns implicit */
-            position: fixed;
-            z-index: 100; /* Peste tot altceva */
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.8); /* Fundal semi-transparent */
-            align-items: center;
-            justify-content: center;
-        }
+  <main class="flex-grow px-4 py-5 space-y-6 max-w-4xl mx-auto w-full">
+    <div id="plugin-slot-dashboard-top" class="w-full">
+      </div>
 
-        .modal-content {
-            position: relative;
-            margin: auto;
-            padding: 0;
-            width: 96%; /* Latime pentru mobil */
-            max-width: 800px; /* Latime maxima pentru desktop */
-            border-radius: 0.75rem;
-            overflow: hidden;
-        }
+    <section aria-labelledby="search-heading">
+      <h2 id="search-heading" class="sr-only">Căutare rapoarte</h2>
+      <label for="report-search" class="sr-only">Caută rapoarte după VIN, client, model</label>
+      <div class="relative">
+        <input
+          type="text"
+          id="report-search"
+          placeholder="Caută rapoarte după VIN, client, model..."
+          class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400 dark:focus:ring-blue-400"
+          aria-label="Câmp de căutare pentru rapoarte"
+        />
+        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-400"></i>
+      </div>
+    </section>
 
-        .modal-body {
-            background-color: #000;
-            position: relative;
-            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
-            height: 0;
-            overflow: hidden;
-        }
+    <section class="text-center text-md text-gray-700 italic font-light dark:text-gray-300" aria-label="Motto-ul aplicației">
+      <p>"Fiecare vorbă, un raport complet."</p>
+      <p>"Transformă vocea în documente. Rapid. Precis."</p>
+    </section>
 
-        .modal-body iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
+    <section aria-labelledby="quick-templates-heading">
+      <h2 id="quick-templates-heading" class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-100">Șabloanele tale rapide</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <button class="template-btn bg-white shadow-md rounded-lg p-4 flex flex-col items-center justify-center text-center
+                       hover:bg-blue-50 transition duration-200 ease-in-out transform hover:-translate-y-1 hover:shadow-lg
+                       dark:bg-gray-700 dark:hover:bg-gray-600 dark:shadow-xl dark:text-gray-100"
+                data-template-id="F1" data-template-name="Fișă Reparație" aria-label="Creează Fișă Reparație">
+          <i class="fas fa-wrench text-3xl text-blue-600 dark:text-blue-400 mb-2"></i>
+          <span class="text-sm font-medium text-gray-800 dark:text-gray-100">Reparație</span>
+        </button>
 
-        .close-button {
-            color: #aaa;
-            font-size: 28px;
-            font-weight: bold;
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            z-index: 101;
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
+        <button class="template-btn bg-white shadow-md rounded-lg p-4 flex flex-col items-center justify-center text-center
+                       hover:bg-blue-50 transition duration-200 ease-in-out transform hover:-translate-y-1 hover:shadow-lg
+                       dark:bg-gray-700 dark:hover:bg-gray-600 dark:shadow-xl dark:text-gray-100"
+                data-template-id="F2" data-template-name="Fișă Revizie" aria-label="Creează Fișă Revizie">
+          <i class="fas fa-oil-can text-3xl text-blue-600 dark:text-blue-400 mb-2"></i>
+          <span class="text-sm font-medium text-gray-800 dark:text-gray-100">Revizie</span>
+        </button>
 
-        .close-button:hover,
-        .close-button:focus {
-            color: #fff;
-            text-decoration: none;
-            cursor: pointer;
-        }
+        <button class="template-btn bg-white shadow-md rounded-lg p-4 flex flex-col items-center justify-center text-center
+                       hover:bg-blue-50 transition duration-200 ease-in-out transform hover:-translate-y-1 hover:shadow-lg
+                       dark:bg-gray-700 dark:hover:bg-gray-600 dark:shadow-xl dark:text-gray-100"
+                data-template-id="F3" data-template-name="Fișă Diagnostic" aria-label="Creează Fișă Diagnostic">
+          <i class="fas fa-vial text-3xl text-blue-600 dark:text-blue-400 mb-2"></i>
+          <span class="text-sm font-medium text-gray-800 dark:text-gray-100">Diagnostic</span>
+        </button>
 
-        /* Stil pentru butoanele cu chenar */
-        .framed-button {
-            border: 2px solid #ef4444; /* Rosu */
-            color: #ef4444; /* Rosu */
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.75rem; /* Colțuri rotunjite */
-            display: inline-block;
-            margin-top: 1.5rem;
-            text-decoration: none;
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-        }
+        <button class="template-btn bg-white shadow-md rounded-lg p-4 flex flex-col items-center justify-center text-center
+                       hover:bg-blue-50 transition duration-200 ease-in-out transform hover:-translate-y-1 hover:shadow-lg
+                       dark:bg-gray-700 dark:hover:bg-gray-600 dark:shadow-xl dark:text-gray-100"
+                data-template-id="F4" data-template-name="Observații Generale" aria-label="Creează Observații Generale">
+          <i class="fas fa-sticky-note text-3xl text-blue-600 dark:text-blue-400 mb-2"></i>
+          <span class="text-sm font-medium text-gray-800 dark:text-gray-100">Observații</span>
+        </button>
 
-        .framed-button:hover {
-            background-color: #ef4444; /* Rosu */
-            color: #ffffff; /* Alb */
-            box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4); /* Umbra la hover */
-        }
+        <button class="template-btn bg-white shadow-md rounded-lg p-4 flex flex-col items-center justify-center text-center
+                       hover:bg-blue-50 transition duration-200 ease-in-out transform hover:-translate-y-1 hover:shadow-lg
+                       dark:bg-gray-700 dark:hover:bg-gray-600 dark:shadow-xl dark:text-gray-100"
+                data-template-id="F5" data-template-name="Fișă Vopsitorie" aria-label="Creează Fișă Vopsitorie">
+          <i class="fas fa-paint-roller text-3xl text-blue-600 dark:text-blue-400 mb-2"></i>
+          <span class="text-sm font-medium text-gray-800 dark:text-gray-100">Vopsitorie</span>
+        </button>
 
-        /* Responsive adjustments */
-        @media (min-width: 768px) {
-            .snap-section {
-                padding-bottom: 6rem; /* Mai mult spatiu in jos pe desktop */
-            }
-            .text-overlay {
-                width: 80%; /* Latime mai mare pe desktop */
-            }
-        }
-    </style>
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-</head>
-<body class="bg-gray-900 text-white">
+        <button class="template-btn bg-white shadow-md rounded-lg p-4 flex flex-col items-center justify-center text-center
+                       hover:bg-blue-50 transition duration-200 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
+                data-template-id="F6" data-template-name="Fișă Suspensie" aria-label="Creează Fișă Suspensie">
+          <i class="fas fa-cogs text-3xl text-blue-600 dark:text-blue-400 mb-2"></i>
+          <span class="text-sm font-medium text-gray-800 dark:text-gray-100">Suspensie</span>
+        </button>
 
-    <!-- Header fix si transparent -->
-    <!-- Z-index crescut pentru a asigura ca logo-ul este intotdeauna vizibil -->
-    <header class="fixed top-0 left-0 w-full p-4 z-[9999] bg-transparent">
-        <div class="flex items-center justify-start">
-            <!-- Logo SVG cu culori dinamice prin JS -->
-            <!-- Latimea a fost marita si viewBox ajustat pentru a incapa tot textul "Open House" -->
-            <svg id="logo-openhouse" width="210" height="40" viewBox="0 0 210 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="transition-colors duration-500">
-                <text x="0" y="30" font-family="Inter, sans-serif" font-size="30" font-weight="bold">Open House</text>
-            </svg>
-        </div>
-    </header>
+        <button class="template-btn bg-white shadow-md rounded-lg p-4 flex flex-col items-center justify-center text-center
+                       hover:bg-blue-50 transition duration-200 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
+                data-template-id="F7" data-template-name="Fișă Electrică" aria-label="Creează Fișă Electrică">
+          <i class="fas fa-car-battery text-3xl text-blue-600 dark:text-blue-400 mb-2"></i>
+          <span class="text-sm font-medium text-gray-800 dark:text-gray-100">Electrică</span>
+        </button>
 
-    <!-- Modal pentru player YouTube -->
-    <div id="youtube-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-button" id="close-modal" aria-label="Închide video">&times;</span>
-            <div class="modal-body">
-                <div id="youtube-player"></div>
-            </div>
-        </div>
-    </div>
+        <button class="template-btn bg-white shadow-md rounded-lg p-4 flex flex-col items-center justify-center text-center
+                       hover:bg-blue-50 transition duration-200 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
+                data-template-id="F8" data-template-name="Fișă Caroserie" aria-label="Creează Fișă Caroserie">
+          <i class="fas fa-car-side text-3xl text-blue-600 dark:text-blue-400 mb-2"></i>
+          <span class="text-sm font-medium text-gray-800 dark:text-gray-100">Caroserie</span>
+        </button>
+      </div>
+    </section>
 
-    <!-- Container principal pentru sectiunile snap-scroll -->
-    <main id="main-content" class="scroll-snap-container h-screen overflow-y-scroll" role="main">
-        <!-- Snap-scroll 1 -->
-        <section id="snap-scroll-1" class="snap-section bg-gray-800">
-            <div class="background-container absolute inset-0"></div>
-            <div class="text-overlay p-6 rounded-xl flex flex-col items-center justify-center">
-                <h1 id="snap1-title" class="text-red-500 text-xl md:text-3xl font-bold mb-4"></h1> <!-- Dimensiune font ajustata -->
-                <p id="snap1-content" class="text-white text-base md:text-lg leading-relaxed whitespace-pre-line"></p> <!-- Dimensiune font ajustata -->
-            </div>
-        </section>
+    <section class="mt-6 flex flex-col sm:flex-row justify-center items-center gap-4">
+      <a href="templates.html" class="bg-blue-600 text-white px-6 py-3 rounded-full shadow-md hover:bg-blue-700
+                                      transition duration-200 ease-in-out transform hover:-translate-y-1 hover:shadow-lg flex items-center justify-center w-full sm:w-auto
+                                      dark:bg-blue-700 dark:hover:bg-blue-600">
+        <i class="fas fa-plus mr-2"></i> Creează șablon nou
+      </a>
+      <a href="reports.html" class="flex items-center gap-2 text-blue-600 cursor-pointer hover:underline text-base
+                                      hover:text-blue-800 transition duration-150 ease-in-out px-4 py-2 rounded-md
+                                      dark:text-blue-400 dark:hover:text-blue-300">
+        <i class="fas fa-folder-open text-lg"></i>
+        <span>Istoric Șabloane</span>
+      </a>
+    </section>
 
-        <!-- Snap-scroll 2 -->
-        <section id="snap-scroll-2" class="snap-section bg-gray-700">
-            <div class="background-container absolute inset-0"></div>
-            <div class="text-overlay p-6 rounded-xl flex flex-col items-center justify-center">
-                <h2 id="snap2-title" class="text-red-500 text-xl md:text-3xl font-bold mb-4"></h2> <!-- Dimensiune font ajustata -->
-                <p id="snap2-content" class="text-white text-base md:text-lg leading-relaxed"></p> <!-- Dimensiune font ajustata -->
-                <a href="#" id="snap2-link" class="framed-button mt-6"></a>
-            </div>
-        </section>
+    <section class="mt-6 bg-white p-4 rounded-lg shadow space-y-2
+                    dark:bg-gray-700 dark:shadow-xl dark:text-gray-100" aria-labelledby="subscription-summary-heading">
+      <h3 id="subscription-summary-heading" class="font-semibold text-gray-700 dark:text-gray-100">Utilizare Abonament</h3>
+      <p>🎙️ Minute folosite: <span class="font-medium text-gray-900 dark:text-gray-50">14</span> / 120</p>
+      <p>📄 Rapoarte generate: <span class="font-medium text-gray-900 dark:text-gray-50">7</span> / lună</p>
+      <a href="upgrade-plan.html" class="text-blue-600 hover:underline text-sm block mt-2 dark:text-blue-400">Upgrade plan</a>
+    </section>
 
-        <!-- Snap-scroll 3 -->
-        <section id="snap-scroll-3" class="snap-section bg-gray-600">
-            <div class="background-container absolute inset-0"></div>
-            <div class="text-overlay p-6 rounded-xl flex flex-col items-center justify-center">
-                <h2 id="snap3-title" class="text-red-500 text-xl md:text-3xl font-bold mb-4"></h2> <!-- Dimensiune font ajustata -->
-                <p id="snap3-content" class="text-white text-base md:text-lg leading-relaxed"></p> <!-- Dimensiune font ajustata -->
-                <a href="#" id="snap3-link" class="framed-button mt-6"></a>
-            </div>
-        </section>
+    <section class="mt-4 bg-white p-4 rounded-lg shadow space-y-2
+                    dark:bg-gray-700 dark:shadow-xl dark:text-gray-100" aria-labelledby="notifications-heading">
+      <h3 id="notifications-heading" class="font-semibold text-gray-700 dark:text-gray-100">Notificări</h3>
+      <ul class="list-disc pl-5 text-sm text-gray-600 dark:text-gray-200">
+        <li>✅ Șablonul "Fișă Caroserie" a fost actualizat.</li>
+        <li>🔄 Integrare Dropbox disponibilă.</li>
+      </ul>
+    </section>
 
-        <!-- Snap-scroll 4 (Contact) -->
-        <section id="snap-scroll-4" class="snap-section bg-gray-500">
-            <div class="background-container absolute inset-0"></div>
-            <div class="text-overlay p-6 rounded-xl flex flex-col items-center justify-center space-y-4">
-                <p id="snap4-phone" class="text-red-500 border-2 border-red-500 rounded-xl px-4 py-2 text-lg md:text-xl font-bold"></p> <!-- Dimensiune font ajustata -->
-                <div class="flex items-center space-x-2">
-                    <a href="#" id="snap4-whatsapp-link" target="_blank" rel="noopener noreferrer" class="text-green-500 text-2xl md:text-3xl"><i class="fab fa-whatsapp"></i></a>
-                    <span class="text-white text-lg md:text-xl">Whatsapp</span> <!-- Dimensiune font ajustata -->
-                </div>
-                <p id="snap4-email" class="text-blue-400 border-2 border-white rounded-xl px-4 py-2 text-lg md:text-xl"></p> <!-- Dimensiune font ajustata -->
-                <div class="flex items-center space-x-4 mt-4">
-                    <a href="#" id="snap4-linkedin-link" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-400 text-3xl transition-colors duration-300"><i class="fab fa-linkedin"></i></a>
-                    <span class="text-white text-lg">I</span>
-                    <a href="#" id="snap4-youtube-link" target="_blank" rel="noopener noreferrer" class="text-red-600 hover:text-red-400 text-3xl transition-colors duration-300"><i class="fab fa-youtube"></i></a>
-                    <span class="text-white text-lg">I</span>
-                    <a href="#" id="snap4-tiktok-link" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gray-400 text-3xl transition-colors duration-300"><i class="fab fa-tiktok"></i></a>
-                    <span class="text-white text-lg">I</span>
-                    <a href="#" id="snap4-instagram-link" target="_blank" rel="noopener noreferrer" class="text-pink-500 hover:text-pink-300 text-3xl transition-colors duration-300"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-        </section>
     </main>
 
-    <!-- Footer -->
-    <footer class="w-full py-4 bg-gray-900 text-gray-400 text-center text-sm md:text-base absolute bottom-0 z-40">
-        <div class="flex justify-center space-x-4">
-            <a href="#" class="hover:underline">Confidențialitate</a>
-            <span>I</span>
-            <a href="#" class="hover:underline">Termeni și condiții</a>
-        </div>
-    </footer>
+  <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-inner flex justify-around items-center h-14 sm:hidden z-50
+              dark:bg-gray-800 dark:border-gray-700 dark:shadow-2xl">
+    <a href="#" class="flex flex-col items-center text-blue-600 hover:text-blue-800 text-sm active:text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md p-1
+       dark:text-blue-400 dark:hover:text-blue-300 dark:focus:ring-blue-400"
+       aria-current="page" aria-label="Acasă - Dashboard">
+      <i class="fas fa-home text-lg"></i>
+      <span>Acasă</span>
+    </a>
+    <a href="recording.html" class="flex flex-col items-center text-blue-600 hover:text-blue-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md p-1
+       dark:text-blue-400 dark:hover:text-blue-300 dark:focus:ring-blue-400"
+       aria-label="Creează un Raport Nou">
+      <i class="fas fa-microphone-alt text-lg"></i>
+      <span>Raport</span>
+    </a>
+    <a href="settings.html" class="flex flex-col items-center text-blue-600 hover:text-blue-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md p-1
+       dark:text-blue-400 dark:hover:text-blue-300 dark:focus:ring-blue-400"
+       aria-label="Accesează Setările Contului">
+      <i class="fas fa-user-cog text-lg"></i>
+      <span>Setări</span>
+    </a>
+  </nav>
 
-    <script>
-        // Functie pentru a determina calea de baza pentru resurse pe GitHub Pages
-        function getBasePath() {
-            const pathname = window.location.pathname;
-            const repoName = 'openhouse'; // Numele exact al depozitului tau GitHub
-            const index = pathname.indexOf('/' + repoName);
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
 
-            if (index !== -1) {
-                // Returneaza '/openhouse'
-                return pathname.substring(index, index + repoName.length + 1);
-            }
-            // Fallback pentru dezvoltare locala sau domenii custom unde repoName nu e in path
-            return '';
+      // 1. Autodetect Dark Mode Preference & Apply
+      const applyDarkMode = () => {
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
         }
-
-        const basePath = getBasePath();
-        console.log('Base Path determined:', basePath); // Debugging: afiseaza calea de baza determinata
-
-        // Obiect JavaScript pentru a simula content.json
-        // Contine toate textele, URL-urile video MP4 si imagini de fundal, si ID-urile YouTube
-        const pageContent = {
-            mobile: {
-                snap1: {
-                    title: "Un nou început pentru tine?",
-                    content: "Când vinzi sau cumperi o proprietate, ai nevoie de îndrumare ca să iei o decizie bună. O decizie bună se bazează pe experiență. Experiența noastră — din 1998.",
-                    mp4Url: `${basePath}/uploads/V1.mp4`, // Prioritar MP4
-                    imageUrl: `${basePath}/uploads/foto1.jpg`, // Fallback imagine
-                    linkYoutubeId: "vNscPtijCe4" // Doar pentru link-uri, nu fundal
-                },
-                snap2: {
-                    title: "Investiții, achiziții, vânzări.",
-                    content: "Soluții create pentru tine, perfect adaptate dorințelor tale.",
-                    linkText: "Imobiliare. Cu sens.",
-                    linkYoutubeId: "vNscPtijCe4",
-                    mp4Url: `${basePath}/uploads/V2.mp4`,
-                    imageUrl: `${basePath}/uploads/foto2.jpg`,
-                },
-                snap3: {
-                    title: "Integritate. Expertiză. Rezultate.",
-                    content: "Un nou început nu așteaptă. Începe cu o decizie inspirată și continuă cu noi.",
-                    linkText: "O poveste de succes.",
-                    linkYoutubeId: "vNscPtijCe4",
-                    mp4Url: `${basePath}/uploads/V3.mp4`,
-                    imageUrl: `${basePath}/uploads/foto3.jpg`,
-                },
-                snap4: {
-                    title: "",
-                    content: "",
-                    contact: {
-                        phone: "+40726340034",
-                        whatsapp: "https://wa.me/40726340034",
-                        email: "intravilan@gmail.com",
-                        social: {
-                            linkedin: "https://www.linkedin.com/company/google",
-                            youtube: "https://www.youtube.com/user/youtube",
-                            tiktok: "https://www.tiktok.com/@tiktok",
-                            instagram: "https://www.instagram.com/instagram"
-                        }
-                    },
-                    mp4Url: `${basePath}/uploads/V4.mp4`,
-                    imageUrl: `${basePath}/uploads/foto4.jpg`,
-                }
-            },
-            desktop: {
-                snap1: {
-                    title: "Un nou început pentru tine?",
-                    content: "Când vinzi sau cumperi o proprietate, ai nevoie de îndrumare ca să iei o decizie bună. O decizie bună se bazează pe experiență. Experiența noastră - din 1998.",
-                    youtubeId: "vNscPtijCe4", // Doar pe desktop snap1 folosim YT ca fundal
-                    imageUrl: `${basePath}/uploads/foto1.jpg`, // Fallback pentru YT, daca e nevoie
-                    mp4Url: "" // Nu folosim MP4 aici
-                },
-                snap2: {
-                    title: "Investiții, achiziții, vânzări.",
-                    content: "Soluții create pentru tine, perfect adaptate dorințelor tale.",
-                    linkText: "Imobiliare. Cu sens.",
-                    linkYoutubeId: "vNscPtijCe4",
-                    mp4Url: `${basePath}/uploads/V2.mp4`,
-                    imageUrl: `${basePath}/uploads/foto2.jpg`,
-                },
-                snap3: {
-                    title: "Integritate. Expertiză. Rezultate.",
-                    content: "Un nou început nu așteaptă. Începe cu o decizie inspirată și continuă cu noi.",
-                    linkText: "O poveste de succes.",
-                    linkYoutubeId: "vNscPtijCe4",
-                    mp4Url: `${basePath}/uploads/V3.mp4`,
-                    imageUrl: `${basePath}/uploads/foto3.jpg`,
-                },
-                snap4: {
-                    title: "",
-                    content: "",
-                    contact: {
-                        phone: "+40726340034",
-                        whatsapp: "https://wa.me/40726340034",
-                        email: "intravilan@gmail.com",
-                        social: {
-                            linkedin: "https://www.linkedin.com/company/google",
-                            youtube: "https://www.youtube.com/user/youtube",
-                            tiktok: "https://www.tiktok.com/@tiktok",
-                            instagram: "https://www.instagram.com/instagram"
-                        }
-                    },
-                    mp4Url: `${basePath}/uploads/V4.mp4`,
-                    imageUrl: `${basePath}/uploads/foto4.jpg`,
-                }
-            }
-        };
-
-        // Obiect global pentru a stoca instanțele player-elor YouTube de fundal
-        let backgroundYoutubePlayers = {};
-
-        // Functie pentru a detecta daca este un dispozitiv mobil
-        const isMobileDevice = () => window.innerWidth < 768;
-
-        // Functie pentru a incarca scriptul YouTube Iframe API (necesar pentru modal si YT de fundal)
-        function loadYouTubeAPI() {
-            if (typeof YT !== 'undefined' && YT.Player) {
-                console.log('YouTube API is already loaded.');
-                // Dacă API-ul e deja încărcat, putem apela funcția globală onYouTubeIframeAPIReady manual
-                // pentru a inițializa playerii de fundal dacă nu au fost deja.
-                if (window.onYouTubeIframeAPIReady) {
-                    window.onYouTubeIframeAPIReady();
-                }
-                return;
-            }
-
-            const tag = document.createElement('script');
-            tag.src = "https://www.youtube.com/iframe_api";
-            const firstScriptTag = document.getElementsByTagName('script')[0];
-            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-            // Fallback: Daca API-ul YouTube nu se incarca intr-un timp rezonabil
-            setTimeout(() => {
-                if (typeof YT === 'undefined' || typeof YT.Player === 'undefined') {
-                    console.warn('YouTube API failed to load. Some video functionalities might be affected.');
-                    // Aici ai putea adăuga logica de fallback pentru toate video-urile YT,
-                    // de ex., să le înlocuiești cu imagini.
-                }
-            }, 5000);
-        }
-
-        // Functia globala chemata de YouTube Iframe API cand e gata
-        window.onYouTubeIframeAPIReady = function() {
-            console.log('YouTube Iframe API ready. Initializing background players.');
-            // Inițializarea playerilor YouTube de fundal.
-            // Această logică se mută aici pentru a se asigura că YT este definit.
-            document.querySelectorAll('.snap-section').forEach((section, index) => {
-                const isDesktop = !isMobileDevice();
-                const snapKey = `snap${index + 1}`;
-                const content = isDesktop ? pageContent.desktop[snapKey] : pageContent.mobile[snapKey];
-                
-                // Doar pentru desktop snap1, folosim YouTube ca fundal
-                if (isDesktop && section.id === 'snap-scroll-1' && content.youtubeId) {
-                    const playerDivId = `youtube-bg-player-${section.id}`;
-                    let playerDiv = document.getElementById(playerDivId);
-
-                    if (!playerDiv) {
-                        playerDiv = document.createElement('div');
-                        playerDiv.id = playerDivId;
-                        playerDiv.className = 'youtube-iframe background-element';
-                        section.querySelector('.background-container').appendChild(playerDiv);
-                    }
-
-                    if (!backgroundYoutubePlayers[playerDivId]) { // Evita recrearea playerului
-                        backgroundYoutubePlayers[playerDivId] = new YT.Player(playerDivId, {
-                            videoId: content.youtubeId,
-                            playerVars: {
-                                autoplay: 0, // Controlat de IntersectionObserver
-                                controls: 0,
-                                loop: 1,
-                                mute: 1, // Obligatoriu pentru autoplay pe majoritatea browserelor
-                                playlist: content.youtubeId, // Pentru a rula in bucla
-                                rel: 0, // Nu arata videoclipuri asemanatoare
-                                showinfo: 0, // Nu arata titlul video-ului
-                                modestbranding: 1 // Mai putine branding YouTube
-                            },
-                            events: {
-                                'onReady': (event) => {
-                                    event.target.setPlaybackQuality('hd1080');
-                                    // Adauga clasa active cand playerul e gata
-                                    setTimeout(() => playerDiv.classList.add('active'), 50);
-                                },
-                                'onStateChange': (event) => {
-                                    if (event.data === YT.PlayerState.ENDED) {
-                                        event.target.seekTo(0); // Reporneste video de la inceput
-                                    }
-                                }
-                            }
-                        });
-                    }
-                }
-            });
-        };
-
-        // Functia pentru a actualiza fundalul unei sectiuni
-        function updateBackground(sectionElement, contentData) {
-            const bgContainer = sectionElement.querySelector('.background-container');
-            
-            // Curata intotdeauna containerul pentru a evita dublarea la resize/re-populare
-            bgContainer.innerHTML = ''; 
-
-            let elementToAppend = null;
-            const isDesktop = !isMobileDevice();
-
-            // Logica speciala pentru desktop snap1 (YouTube)
-            if (isDesktop && sectionElement.id === 'snap-scroll-1' && contentData.youtubeId) {
-                const playerDivId = `youtube-bg-player-${sectionElement.id}`;
-                // Dacă playerul YT a fost deja creat de onYouTubeIframeAPIReady, nu îl recreăm.
-                // Ne asigurăm doar că elementul div existent este la locul lui.
-                let existingPlayerDiv = document.getElementById(playerDivId);
-                if (existingPlayerDiv) {
-                    bgContainer.appendChild(existingPlayerDiv);
-                    setTimeout(() => existingPlayerDiv.classList.add('active'), 50); // Asiguram vizibilitatea
-                    console.log(`Player YouTube existent re-atasat pentru ${sectionElement.id}.`);
-                    return; // Nu facem nimic altceva pentru acest caz
-                } else {
-                    // Dacă API-ul încă nu l-a inițializat, lăsăm onYouTubeIframeAPIReady să o facă.
-                    // Adăugăm un placeholder div care va fi populat de YT API.
-                    const playerDiv = document.createElement('div');
-                    playerDiv.id = playerDivId;
-                    playerDiv.className = 'youtube-iframe background-element'; // Va avea `opacity: 0` inițial
-                    bgContainer.appendChild(playerDiv);
-                    console.log(`Placeholder YouTube adăugat pentru ${sectionElement.id}. Va fi inițializat de YT API.`);
-                    // Nu apelam setTimeout().active aici, playerul YT va adauga `active` cand e gata
-                    return;
-                }
-            }
-            
-            // Logica pentru MP4 (prioritar)
-            if (contentData.mp4Url && contentData.mp4Url !== '') {
-                const video = document.createElement('video');
-                video.src = contentData.mp4Url;
-                video.className = 'background-element'; 
-                video.autoplay = true;
-                video.loop = true;
-                video.muted = true;
-                video.playsInline = true;
-                video.preload = "auto";
-                video.setAttribute('aria-label', `Video de fundal pentru secțiunea ${sectionElement.id.replace('snap-scroll-', '')}`);
-
-                video.onerror = (e) => {
-                    console.error(`Eroare la incarcarea video-ului MP4: ${video.src}`, e);
-                    // Fallback la imagine daca video-ul MP4 nu se poate incarca
-                    if (contentData.imageUrl && contentData.imageUrl !== '') {
-                        const img = document.createElement('img');
-                        img.src = contentData.imageUrl;
-                        img.className = 'background-element active'; // Active imediat
-                        img.alt = `Fundal static (fallback video) pentru ${sectionElement.id}`;
-                        img.loading = "lazy";
-                        bgContainer.innerHTML = ''; // Curata elementul video
-                        bgContainer.appendChild(img);
-                        console.log(`Fallback la imagine pentru ${sectionElement.id} din cauza erorii MP4.`);
-                    } else {
-                        bgContainer.innerHTML = '<div class="background-element flex items-center justify-center text-gray-500 text-center p-4">Fundal video indisponibil.</div>';
-                    }
-                };
-                
-                elementToAppend = video;
-                console.log(`Tentativa de incarcare video MP4: ${video.src} pentru ${sectionElement.id}.`);
-                
-            } else if (contentData.imageUrl && contentData.imageUrl !== '') {
-                // Logica pentru imagine (fallback)
-                const img = document.createElement('img');
-                img.src = contentData.imageUrl;
-                img.className = 'background-element'; 
-                img.alt = `Fundal pentru secțiunea ${sectionElement.id.replace('snap-scroll-', '')}`;
-                img.loading = "lazy";
-
-                img.onerror = (e) => {
-                    console.error(`Eroare la incarcarea imaginii: ${img.src}`, e);
-                    bgContainer.innerHTML = '<div class="background-element flex items-center justify-center text-gray-500 text-center p-4">Fundal imagine indisponibil.</div>';
-                };
-                elementToAppend = img;
-                console.log(`Tentativa de incarcare imagine: ${img.src} pentru ${sectionElement.id}.`);
-            } else {
-                // Nici MP4, nici imagine, nici YT specific pentru desktop snap1
-                console.warn(`Nu exista media de fundal definita pentru ${sectionElement.id}.`);
-                bgContainer.innerHTML = '<div class="background-element flex items-center justify-center text-gray-500 text-center p-4">Fundal indisponibil.</div>';
-            }
-
-            if (elementToAppend) {
-                bgContainer.appendChild(elementToAppend);
-
-                // Incearca sa porneasca video-ul si prinde erorile de autoplay (doar pentru video)
-                if (elementToAppend.tagName === 'VIDEO') {
-                    elementToAppend.play().catch(e => {
-                        console.warn(`Autoplay video MP4 blocat pentru ${elementToAppend.src}. Eroare:`, e);
-                        // Fallback la imagine daca autoplay e blocat
-                        if (contentData.imageUrl && contentData.imageUrl !== '') {
-                            const img = document.createElement('img');
-                            img.src = contentData.imageUrl;
-                            img.className = 'background-element active'; // Active imediat
-                            img.alt = `Fundal static (video blocat) pentru ${sectionElement.id}`;
-                            img.loading = "lazy";
-                            bgContainer.innerHTML = ''; // Curata elementul video blocat
-                            bgContainer.appendChild(img);
-                            console.log(`Fallback la imagine pentru ${sectionElement.id} din cauza autoplay blocat.`);
-                        } else {
-                            bgContainer.innerHTML = '<div class="background-element flex items-center justify-center text-gray-500 text-center p-4">Video nu poate fi redat automat.</div>';
-                        }
-                    });
-                }
-                
-                // Aplica clasa 'active' pentru a declansa fade-in, pentru toate elementele non-YT background.
-                // Pentru YT background, 'active' este adaugata in onReady al playerului.
-                if (!(isDesktop && sectionElement.id === 'snap-scroll-1' && contentData.youtubeId)) {
-                    setTimeout(() => elementToAppend.classList.add('active'), 50);
-                }
-            }
-        }
-
-        // Functia pentru a popula continutul text
-        function populateContent() {
-            const currentContentSource = isMobileDevice() ? pageContent.mobile : pageContent.desktop;
-
-            // Snap-scroll 1
-            const snap1Data = currentContentSource.snap1;
-            document.getElementById('snap1-title').textContent = snap1Data.title || '';
-            document.getElementById('snap1-title').style.display = snap1Data.title ? 'block' : 'none';
-            document.getElementById('snap1-content').textContent = snap1Data.content || '';
-            document.getElementById('snap1-content').style.display = snap1Data.content ? 'block' : 'none';
-            updateBackground(document.getElementById('snap-scroll-1'), snap1Data);
-
-            // Snap-scroll 2
-            const snap2Data = currentContentSource.snap2;
-            document.getElementById('snap2-title').textContent = snap2Data.title || '';
-            document.getElementById('snap2-title').style.display = snap2Data.title ? 'block' : 'none';
-            document.getElementById('snap2-content').textContent = snap2Data.content || '';
-            document.getElementById('snap2-content').style.display = snap2Data.content ? 'block' : 'none';
-            const snap2Link = document.getElementById('snap2-link');
-            snap2Link.textContent = snap2Data.linkText || '';
-            snap2Link.style.display = snap2Data.linkText ? 'inline-block' : 'none';
-            snap2Link.onclick = (e) => {
-                e.preventDefault();
-                openYoutubeModal(snap2Data.linkYoutubeId);
-            };
-            updateBackground(document.getElementById('snap-scroll-2'), snap2Data);
-
-            // Snap-scroll 3
-            const snap3Data = currentContentSource.snap3;
-            document.getElementById('snap3-title').textContent = snap3Data.title || '';
-            document.getElementById('snap3-title').style.display = snap3Data.title ? 'block' : 'none';
-            document.getElementById('snap3-content').textContent = snap3Data.content || '';
-            document.getElementById('snap3-content').style.display = snap3Data.content ? 'block' : 'none';
-            const snap3Link = document.getElementById('snap3-link');
-            snap3Link.textContent = snap3Data.linkText || '';
-            snap3Link.style.display = snap3Data.linkText ? 'inline-block' : 'none';
-            snap3Link.onclick = (e) => {
-                e.preventDefault();
-                openYoutubeModal(snap3Data.linkYoutubeId);
-            };
-            updateBackground(document.getElementById('snap-scroll-3'), snap3Data);
-
-            // Snap-scroll 4 (Contact)
-            const snap4Data = currentContentSource.snap4;
-            const snap4Phone = document.getElementById('snap4-phone');
-            const snap4WhatsappLink = document.getElementById('snap4-whatsapp-link');
-            const snap4Email = document.getElementById('snap4-email');
-            const snap4LinkedinLink = document.getElementById('snap4-linkedin-link');
-            const snap4YoutubeLink = document.getElementById('snap4-youtube-link');
-            const snap4TiktokLink = document.getElementById('snap4-tiktok-link');
-            const snap4InstagramLink = document.getElementById('snap4-instagram-link');
-
-            snap4Phone.textContent = ` ${snap4Data.contact.phone}` || '';
-            snap4Phone.style.display = snap4Data.contact.phone ? 'block' : 'none';
-            snap4WhatsappLink.href = snap4Data.contact.whatsapp || '#';
-            snap4WhatsappLink.parentElement.style.display = snap4Data.contact.whatsapp ? 'flex' : 'none';
-            snap4Email.textContent = ` ${snap4Data.contact.email}` || '';
-            snap4Email.style.display = snap4Data.contact.email ? 'block' : 'none';
-
-            snap4LinkedinLink.href = snap4Data.contact.social.linkedin || '#';
-            snap4YoutubeLink.href = snap4Data.contact.social.youtube || '#';
-            snap4TiktokLink.href = snap4Data.contact.social.tiktok || '#';
-            snap4InstagramLink.href = snap4Data.contact.social.instagram || '#';
-
-            // Ascunde intregul bloc de social media daca niciun link nu este prezent
-            const socialLinksContainer = snap4LinkedinLink.parentElement;
-            const hasSocialLinks = Object.values(snap4Data.contact.social).some(link => link !== '');
-            socialLinksContainer.style.display = hasSocialLinks ? 'flex' : 'none';
-
-            updateBackground(document.getElementById('snap-scroll-4'), snap4Data);
-        }
-
-        // Culorile logo-ului pentru fiecare sectiune
-        const logoColors = ['#F97316', '#FACC15', '#22C55E', '#A855F7']; // Portocaliu, Galben, Verde, Mov (Tailwind colors)
-        const logoElement = document.getElementById('logo-openhouse');
-        const snapSections = document.querySelectorAll('.snap-section');
-        const mainContent = document.getElementById('main-content');
-
-        // Observer pentru schimbarea culorii logo-ului si controlul video-urilor de fundal
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const index = Array.from(snapSections).indexOf(entry.target);
-                    if (index !== -1) {
-                        // Schimba culoarea logo-ului
-                        logoElement.style.color = logoColors[index];
-
-                        const isDesktop = !isMobileDevice();
-                        const snapKey = `snap${index + 1}`;
-                        const content = isDesktop ? pageContent.desktop[snapKey] : pageContent.mobile[snapKey];
-
-                        // Gestioneaza player-ele YouTube din fundal (doar pentru desktop snap1)
-                        if (isDesktop && entry.target.id === 'snap-scroll-1' && content.youtubeId) {
-                             const playerDivId = `youtube-bg-player-${entry.target.id}`;
-                             const player = backgroundYoutubePlayers[playerDivId];
-                             if (player && player.playVideo) {
-                                 const playPromise = player.playVideo();
-                                 if (playPromise !== undefined) {
-                                     playPromise.then(_ => {
-                                         console.log(`Video YouTube pentru sectiunea ${index + 1} a pornit automat.`);
-                                     }).catch(error => {
-                                         console.warn(`Autoplay YouTube blocat pentru sectiunea ${index + 1}. Eroare:`, error);
-                                         // Fallback la imagine daca autoplay e blocat
-                                         const bgContainer = entry.target.querySelector('.background-container');
-                                         if (content.imageUrl) {
-                                            const img = document.createElement('img');
-                                            img.src = content.imageUrl;
-                                            img.className = 'background-element active';
-                                            img.alt = 'Video blocat';
-                                            bgContainer.innerHTML = ''; 
-                                            bgContainer.appendChild(img);
-                                            console.log(`Fallback la imagine pentru ${entry.target.id} din cauza autoplay YT blocat.`);
-                                         }
-                                     });
-                                 }
-                             }
-                         }
-                    }
-                } else {
-                    // Sectiunea nu este vizibila, pune video-ul pe pauza
-                    const index = Array.from(snapSections).indexOf(entry.target);
-                    const isDesktop = !isMobileDevice();
-                    const snapKey = `snap${index + 1}`;
-                    const content = isDesktop ? pageContent.desktop[snapKey] : pageContent.mobile[snapKey];
-
-                    // Opreste playerul YouTube de fundal (doar pentru desktop snap1)
-                    if (isDesktop && entry.target.id === 'snap-scroll-1' && content.youtubeId) {
-                         const playerDivId = `youtube-bg-player-${entry.target.id}`;
-                         const player = backgroundYoutubePlayers[playerDivId];
-                         if (player && player.pauseVideo) {
-                             player.pauseVideo();
-                         }
-                    }
-                }
-            });
-        }, {
-            threshold: 0.5 // Declanseaza cand 50% din sectiune este vizibila
-        });
-
-        // Observa fiecare sectiune
-        snapSections.forEach(section => {
-            observer.observe(section);
-        });
-
-        // Initializare modal YouTube (pentru link-uri video)
-        const youtubeModal = document.getElementById('youtube-modal');
-        const closeModalBtn = document.getElementById('close-modal');
-        const youtubePlayerDiv = document.getElementById('youtube-player');
-        let modalYoutubePlayer; // Instanta player-ului pentru modal
-
-        function openYoutubeModal(videoId) {
-            youtubeModal.style.display = 'flex'; // Afiseaza modalul
-
-            // Creeaza sau reincarca playerul YouTube in modal
-            if (typeof YT !== 'undefined' && YT.Player) { // Asigura ca YouTube API este incarcat
-                if (modalYoutubePlayer) {
-                    modalYoutubePlayer.loadVideoById(videoId);
-                } else {
-                    modalYoutubePlayer = new YT.Player('youtube-player', {
-                        videoId: videoId,
-                        playerVars: {
-                            autoplay: 1,
-                            controls: 1,
-                            rel: 0,
-                            showinfo: 0,
-                            modestbranding: 1
-                        }
-                    });
-                }
-            } else {
-                console.warn('YouTube API nu este incarcat. Nu se poate deschide modalul video.');
-                // Optional: poti afisa un mesaj de eroare sau un link direct catre YouTube
-            }
-        }
-
-        function closeYoutubeModal() {
-            youtubeModal.style.display = 'none'; // Ascunde modalul
-            if (modalYoutubePlayer && modalYoutubePlayer.stopVideo) {
-                modalYoutubePlayer.stopVideo(); // Opreste video-ul
-            }
-        }
-
-        closeModalBtn.onclick = closeYoutubeModal;
-        window.onclick = function(event) {
-            if (event.target == youtubeModal) {
-                closeYoutubeModal();
-            }
-        };
-
-        // Debouncing pentru evenimentul de resize
-        let resizeTimeout;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(() => {
-                console.log('Redimensionare finalizata. Re-populam continutul.');
-                populateContent(); // Re-populeaza continutul (si re-actualizeaza fundalurile)
-            }, 250); // Asteapta 250ms dupa ultima redimensionare
-        });
+      };
+      // Apply on load
+      applyDarkMode();
+      // Listen for changes in system preference
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyDarkMode);
+      // Optional: Store user preference in localStorage for explicit override later
+      // if (localStorage.getItem('theme') === 'dark') { document.documentElement.classList.add('dark'); }
 
 
-        // Populeaza continutul la incarcarea paginii si incarca API-ul YouTube
+      // 2. PWA - Register Service Worker (for caching offline)
+      // This part requires a manifest.json and service-worker.js file in the root.
+      if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            populateContent();
-            loadYouTubeAPI(); // Incarca API-ul YouTube
+          navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+              console.log('PWA ServiceWorker registered:', registration);
+            })
+            .catch(error => {
+              console.error('PWA ServiceWorker registration failed:', error);
+            });
         });
-    </script>
+      }
+
+      // 3. Token Securizat pentru Redirecționare (UUIDv4)
+      const templateButtons = document.querySelectorAll('.template-btn');
+      templateButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const templateId = button.dataset.templateId;
+          const templateName = button.dataset.templateName;
+          
+          try {
+            // Generate a secure, temporary UUIDv4 token
+            const token = crypto.randomUUID(); 
+            // Store data in sessionStorage, linked by the token
+            // sessionStorage is more secure for temporary data than localStorage as it's cleared on tab close.
+            sessionStorage.setItem(token, JSON.stringify({ id: templateId, name: templateName }));
+            
+            // Animare pe page transition
+            document.body.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+            
+            // Redirect after animation
+            setTimeout(() => {
+              window.location.href = `recording.html?ref=${token}`;
+            }, 300); // Match this duration with CSS transition
+            
+          } catch (e) {
+            console.error('Eroare la generarea tokenului sau stocarea în SessionStorage:', e);
+            // Fallback: direct URL parameters if sessionStorage fails (less secure but functional)
+            window.location.href = `recording.html?templateId=${templateId}&templateName=${encodeURIComponent(templateName)}`;
+          }
+        });
+      });
+
+      // 4. Gestionarea meniului hamburger (Open/Close)
+      const menuToggle = document.getElementById('menu-toggle');
+      const mainMenu = document.getElementById('main-menu');
+      const closeMenu = document.getElementById('close-menu');
+      const menuOverlay = document.getElementById('menu-overlay');
+
+      const toggleMenu = () => {
+        const isMenuOpen = !mainMenu.classList.contains('translate-x-full'); // Check current state
+        mainMenu.classList.toggle('translate-x-full'); // Toggle class to slide menu
+        menuOverlay.classList.toggle('hidden'); // Toggle overlay visibility
+        menuToggle.setAttribute('aria-expanded', isMenuOpen); // Update aria-expanded based on new state
+        document.body.classList.toggle('overflow-hidden', isMenuOpen); // Prevent scrolling body when menu is open
+      };
+
+      menuToggle.addEventListener('click', toggleMenu);
+      closeMenu.addEventListener('click', toggleMenu);
+      menuOverlay.addEventListener('click', toggleMenu);
+
+      // Close menu on ESC key press
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !mainMenu.classList.contains('translate-x-full')) {
+          toggleMenu();
+        }
+      });
+
+      // 5. Funcționalitate de căutare (client-side placeholder)
+      const searchInput = document.getElementById('report-search');
+      searchInput.addEventListener('input', (event) => {
+        const searchTerm = event.target.value.toLowerCase();
+        // In a real application, this would likely trigger an AJAX request to a backend search API.
+        console.log(`Căutare pentru: "${searchTerm}"`);
+        // Example client-side filtering logic if reports were pre-loaded:
+        // const allReports = document.querySelectorAll('.report-item');
+        // allReports.forEach(report => {
+        //   const reportText = report.textContent.toLowerCase();
+        //   report.style.display = reportText.includes(searchTerm) ? '' : 'none';
+        // });
+      });
+
+      // 6. Testabilitate și Debbuging Integrată
+      if (location.search.includes('debug=true')) {
+        console.log('🧪 DEBUG MODE ACTIVAT');
+        // Activate additional logs or UI elements for testing.
+        // E.g., const debugInfo = document.createElement('div');
+        // debugInfo.textContent = 'DEBUG MODE ACTIVE';
+        // document.body.prepend(debugInfo);
+      }
+
+      // 7. Sloturi dinamice pentru extensii viitoare (plugin-uri)
+      // This assumes a global 'AudioFormPlugin' object would be loaded separately (e.g., from another script)
+      const pluginSlotDashboardTop = document.getElementById('plugin-slot-dashboard-top');
+      if (window.AudioFormPlugin && typeof window.AudioFormPlugin.renderDashboardTop === 'function') {
+        // Render method for a specific slot.
+        pluginSlotDashboardTop.appendChild(window.AudioFormPlugin.renderDashboardTop());
+      }
+      // [hook] plugin-slot-dashboard-bottom - Example for another slot
+      // const pluginSlotDashboardBottom = document.getElementById('plugin-slot-dashboard-bottom');
+      // if (window.AudioFormPlugin && typeof window.AudioFormPlugin.renderDashboardBottom === 'function') {
+      //   pluginSlotDashboardBottom.appendChild(window.AudioFormPlugin.renderDashboardBottom());
+      // }
+    });
+  </script>
 </body>
 </html>

@@ -11,13 +11,9 @@
         body {
             font-family: sans-serif;
         }
-        /* Stil pentru elementul video vizibil de debugging */
-        #input_video.debug-visible {
-            display: block !important;
-            border: 2px solid red; /* Border pentru vizibilitate */
-            width: 640px; /* Aliniat cu canvas */
-            height: 480px; /* Aliniat cu canvas */
-            margin: auto;
+        /* Acum videoElement va fi ascuns by default. Clasa debug-visible va fi ignorata sau stearsa. */
+        #input_video {
+            display: none; /* Ascunde videoElement implicit */
         }
         canvas {
             border: 2px solid #3b82f6; /* Blue border for LiYE theme */
@@ -44,8 +40,8 @@
         <p>Poziționați-vă fața în cadru și priviți direct la cameră. Testul va începe automat când fața este stabilă.</p>
     </div>
 
-    <video id="input_video" autoplay muted playsinline class="debug-visible"></video> 
-    <canvas id="output_canvas" width="640" height="480"></canvas>
+    <video id="input_video" autoplay muted playsinline class="hidden"></video> 
+    <canvas id="output_canvas" width="640" height="480" class="hidden"></canvas>
 
     <p id="blink-counter" class="mt-4 text-xl font-bold text-blue-700">Clipituri: 0</p>
     <p id="status-message" class="mt-2 text-md text-gray-600">Aștept detectarea feței...</p>
@@ -538,45 +534,15 @@
 
         faceMesh.onResults(onResults);
 
-        // Function to initialize and start the camera stream
-        async function initCameraStream() {
-            // Request camera access using standard WebRTC API
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                videoElement.srcObject = stream; // Connect the stream to the video element
-                // The video will autoplay due to attributes, but play() is good for robustness
-                await videoElement.play(); 
-                console.log("✅ Camera a pornit. Flux video vizibil în elementul <video>.");
-                statusMessage.textContent = "Camera activă. Poziționați-vă fața în cadru.";
-                startCameraBtn.classList.add("hidden"); // Hide button once camera starts
-
-                // Now that videoElement is playing, start MediaPipe's Camera utility
-                const camera = new Camera({ 
-                    videoElement: videoElement, 
-                    onFrame: async () => {
-                        await faceMesh.send({ image: videoElement });
-                    },
-                    width: 640,
-                    height: 480
-                });
-                camera.start(); // This starts the MediaPipe internal processing loop
-                console.log("✅ MediaPipe Camera utility a pornit.");
-
-            } catch (err) {
-                console.error("❌ Eroare la accesul camerei:", err);
-                statusMessage.textContent = `Eroare: Camera nu a putut porni. ${err.name}: ${err.message}. Verificați permisiunile sau alte aplicații.`;
-                startCameraBtn.classList.remove("hidden"); // Show button again to retry
-            }
-        }
-
-
+        // This function handles MediaPipe's drawing on the canvas.
+        // It draws the raw video first, then overlays landmarks.
         function onResults(results) {
-            console.log("MediaPipe results:", results); 
+            // console.log("MediaPipe results:", results); // Uncomment for debugging
 
             canvasCtx.save();
             canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
             // Draw the raw video feed from the video element onto the canvas first
-            canvasCtx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height); // <--- Draw video feed to canvas
+            canvasCtx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
 
             if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
                 const landmarks = results.multiFaceLandmarks[0];
@@ -696,62 +662,24 @@
         // =====================================================================================
 
         document.addEventListener("DOMContentLoaded", () => {
-    // 🔔 Afișează status offline dacă e cazul
-    if (!navigator.onLine) {
-        offlineStatus.classList.remove("hidden");
-    }
+            // Inițial ascunde canvasul și elementul video. Doar butonul de start va fi vizibil.
+            videoElement.classList.add("hidden"); 
+            canvasElement.classList.add("hidden");
 
-    // 🔄 Monitorizează reconectarea
-    window.addEventListener('online', () => offlineStatus.classList.add("hidden"));
-    window.addEventListener('offline', () => offlineStatus.classList.remove("hidden"));
+            if (!navigator.onLine) {
+                offlineStatus.classList.remove("hidden");
+            }
+            window.addEventListener('online', () => offlineStatus.classList.add("hidden"));
+            window.addEventListener('offline', () => offlineStatus.classList.remove("hidden"));
 
-    // ✅ Pornește camera și leagă fluxul video la <video>
-    navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
-        videoElement.srcObject = stream;
-        videoElement.play();
-        console.log("✅ Camera a pornit. Flux video vizibil în elementul <video>.");
-        statusMessage.textContent = "Camera activă. Poziționați-vă fața în cadru.";
-        
-        // Acum că videoElement are fluxul, putem inițializa și porni MediaPipe.Camera Utility
-        // Aceasta este partea care a lipsit sau a fost greșit poziționată!
-        const camera = new Camera({ 
-            videoElement: videoElement, 
-            onFrame: async () => {
-                // Această funcție este apelată de CameraUtils pentru fiecare cadru
-                await faceMesh.send({ image: videoElement });
-            },
-            width: 640,
-            height: 480
-        });
+            updateReminderStatusUI(); 
+            setInterval(checkReminder, 60 * 1000); 
+            setTimeout(checkReminder, 1000); 
 
-        // Pornește procesarea MediaPipe
-        camera.start(); 
-        console.log("✅ MediaPipe Camera utility a pornit procesarea.");
+            loadHistory(); 
 
-        // După un mic delay, putem ascunde chenarul roșu și afișa doar canvas-ul procesat
-        // Fă-o după ce ești sigur că MediaPipe procesează și desenează pe canvas
-        setTimeout(() => {
-            // videoElement.classList.add("hidden"); // Ascunde elementul video brut
-            // canvasElement.classList.remove("hidden"); // Asigură că canvasul este vizibil
-        }, 3000); // Așteaptă 3 secunde pentru a vedea dacă procesarea începe
-        
-    }).catch(err => {
-        console.error("❌ Eroare la accesul camerei:", err);
-        statusMessage.textContent = `Eroare: Camera nu a putut porni. ${err.name}: ${err.message}. Verificați permisiunile sau alte aplicații.`;
-        // Afișează din nou butonul de start sau un mesaj de eroare permanent dacă ai un astfel de buton
-    });
-
-    // 🔁 Inițializări existente (Acestea sunt ok unde sunt)
-    updateReminderStatusUI(); 
-    setInterval(checkReminder, 60 * 1000); 
-    setTimeout(checkReminder, 1000); 
-    loadHistory(); 
-});
-
-// Asigură-te că `faceMesh` este declarat la nivel global/începutul scriptului
-// (Nu în interiorul DOMContentLoaded, ci mai sus, la celelalte constante)
-// const faceMesh = new FaceMesh({...}); // Acesta trebuie să fie deja acolo
-            
+            // Listener for the "Pornește Camera" button
+            startCameraBtn.addEventListener('click', initCameraStream);
         });
     </script>
 

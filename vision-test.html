@@ -696,20 +696,30 @@
         // =====================================================================================
 
         document.addEventListener("DOMContentLoaded", () => {
-            if (!navigator.onLine) {
-                offlineStatus.classList.remove("hidden");
-            }
-            window.addEventListener('online', () => offlineStatus.classList.add("hidden"));
-            window.addEventListener('offline', () => offlineStatus.classList.remove("hidden"));
+    // 🔔 Afișează status offline dacă e cazul
+    if (!navigator.onLine) {
+        offlineStatus.classList.remove("hidden");
+    }
 
-            updateReminderStatusUI(); 
-            setInterval(checkReminder, 60 * 1000); 
-            setTimeout(checkReminder, 1000); 
+    // 🔄 Monitorizează reconectarea
+    window.addEventListener('online', () => offlineStatus.classList.add("hidden"));
+    window.addEventListener('offline', () => offlineStatus.classList.remove("hidden"));
 
-            loadHistory(); 
+    // ✅ Pornește camera și leagă fluxul video la <video>
+    navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+        videoElement.srcObject = stream;
+        videoElement.play();
+    }).catch(err => {
+        console.error("Eroare acces cameră:", err);
+        statusMessage.textContent = "Eroare acces cameră: " + err.message;
+    });
 
-            // Listener for the "Pornește Camera" button
-            startCameraBtn.addEventListener('click', initCameraStream);
+    // 🔁 Inițializări existente
+    updateReminderStatusUI(); 
+    setInterval(checkReminder, 60 * 1000); 
+    setTimeout(checkReminder, 1000); 
+    loadHistory(); 
+            
         });
     </script>
 

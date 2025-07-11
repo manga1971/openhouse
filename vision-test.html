@@ -11,6 +11,14 @@
         body {
             font-family: sans-serif;
         }
+        /* Stil pentru elementul video vizibil de debugging */
+        #input_video.debug-visible {
+            display: block !important;
+            border: 2px solid red; /* Border pentru vizibilitate */
+            width: 640px; /* Aliniat cu canvas */
+            height: 480px; /* Aliniat cu canvas */
+            margin: auto;
+        }
         canvas {
             border: 2px solid #3b82f6; /* Blue border for LiYE theme */
             display: block;
@@ -19,14 +27,6 @@
             height: auto;
             border-radius: 8px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-        /* Stil pentru elementul video vizibil de debugging */
-        #input_video.debug-visible {
-            display: block !important;
-            border: 2px solid red;
-            width: 640px; /* Sau lățimea dorită */
-            height: 480px; /* Sau înălțimea dorită */
-            margin: auto;
         }
     </style>
 </head>
@@ -51,6 +51,10 @@
     <p id="status-message" class="mt-2 text-md text-gray-600">Aștept detectarea feței...</p>
     <p id="live-feedback" class="text-sm mt-2 text-gray-500"></p> 
     <p id="offline-status" class="text-sm text-yellow-600 mt-2 hidden">Mod offline activ. Unele funcționalități pot fi limitate.</p> 
+
+    <button id="start-camera-btn" class="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition mt-4">
+        Pornește Camera
+    </button>
 
     <div id="test-ui" class="mt-6 hidden">
         <div class="text-lg font-medium text-gray-700 mb-2">Timp rămas: <span id="time-left">60</span> secunde</div>
@@ -117,6 +121,8 @@
         const statusMessage = document.getElementById("status-message");
         const liveFeedback = document.getElementById("live-feedback"); 
         const offlineStatus = document.getElementById("offline-status"); 
+
+        const startCameraBtn = document.getElementById("start-camera-btn"); // Added reference
 
         const timeLeftEl = document.getElementById("time-left");
         const progressBar = document.getElementById("progress-bar");
@@ -518,14 +524,59 @@
         // =====================================================================================
         // CORE: MediaPipe Integration
         // =====================================================================================
+        // Initialize FaceMesh outside the function, as it's a one-time setup
+        const faceMesh = new FaceMesh({ 
+            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
+        });
+
+        faceMesh.setOptions({
+            maxNumFaces: 1,
+            refineLandmarks: true, 
+            minDetectionConfidence: 0.5,
+            minTrackingConfidence: 0.5
+        });
+
+        faceMesh.onResults(onResults);
+
+        // Function to initialize and start the camera stream
+        async function initCameraStream() {
+            // Request camera access using standard WebRTC API
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                videoElement.srcObject = stream; // Connect the stream to the video element
+                // The video will autoplay due to attributes, but play() is good for robustness
+                await videoElement.play(); 
+                console.log("✅ Camera a pornit. Flux video vizibil în elementul <video>.");
+                statusMessage.textContent = "Camera activă. Poziționați-vă fața în cadru.";
+                startCameraBtn.classList.add("hidden"); // Hide button once camera starts
+
+                // Now that videoElement is playing, start MediaPipe's Camera utility
+                const camera = new Camera({ 
+                    videoElement: videoElement, 
+                    onFrame: async () => {
+                        await faceMesh.send({ image: videoElement });
+                    },
+                    width: 640,
+                    height: 480
+                });
+                camera.start(); // This starts the MediaPipe internal processing loop
+                console.log("✅ MediaPipe Camera utility a pornit.");
+
+            } catch (err) {
+                console.error("❌ Eroare la accesul camerei:", err);
+                statusMessage.textContent = `Eroare: Camera nu a putut porni. ${err.name}: ${err.message}. Verificați permisiunile sau alte aplicații.`;
+                startCameraBtn.classList.remove("hidden"); // Show button again to retry
+            }
+        }
+
+
         function onResults(results) {
-            // Log results to console (for debugging)
             console.log("MediaPipe results:", results); 
 
             canvasCtx.save();
             canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-            // Draw the raw video feed onto the canvas if needed for debugging, otherwise rely on MediaPipe drawing
-            // canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+            // Draw the raw video feed from the video element onto the canvas first
+            canvasCtx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height); // <--- Draw video feed to canvas
 
             if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
                 const landmarks = results.multiFaceLandmarks[0];
@@ -575,10 +626,7 @@
                     const currentLuminosityScore = calculateLuminosityScore(canvasCtx, landmarks, canvasElement.width, canvasElement.height);
                     liveFeedback.textContent = `Clipiri: ${blinkCount}, Luminozitate: ${currentLuminosityScore}`;
 
-                    // MediaPipe drawing on canvas (replaces drawImage above for clean rendering)
-                    // If you want MediaPipe to draw landmarks, you need to call a drawing utility.
-                    // For now, we manually draw the basic landmarks for visual feedback.
-                    
+                    // Draw landmarks ON TOP of the video feed on the canvas
                     canvasCtx.beginPath();
                     canvasCtx.arc(landmarks[LEFT_EYE_TOP].x * canvasElement.width, landmarks[LEFT_EYE_TOP].y * canvasElement.height, 3, 0, 2 * Math.PI);
                     canvasCtx.arc(landmarks[LEFT_EYE_BOTTOM].x * canvasElement.width, landmarks[LEFT_EYE_BOTTOM].y * canvasElement.height, 3, 0, 2 * Math.PI);
@@ -643,42 +691,6 @@
             canvasCtx.restore();
         }
 
-        // Corrected FaceMesh initialization
-        const faceMesh = new FaceMesh({ 
-            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
-        });
-
-        faceMesh.setOptions({
-            maxNumFaces: 1,
-            refineLandmarks: true, 
-            minDetectionConfidence: 0.5,
-            minTrackingConfidence: 0.5
-        });
-
-        faceMesh.onResults(onResults);
-
-        // Corrected Camera initialization
-        const camera = new Camera({ 
-            videoElement: videoElement, 
-            onFrame: async () => {
-                await faceMesh.send({ image: videoElement });
-            },
-            width: 640,
-            height: 480
-        });
-
-        // Use a .then().catch() block to confirm camera start
-        camera.start().then(() => {
-            console.log("✅ Camera a pornit.");
-            // If the raw video is now visible, we can hide the canvas initially
-            // and only draw on it when MediaPipe provides results.
-            // For now, keep canvas visible to see if landmarks are drawn.
-        }).catch((err) => {
-            console.error("❌ Camera NU a pornit:", err);
-            statusMessage.textContent = "Eroare: Camera nu a putut porni. Verificați permisiunile sau alte aplicații care folosesc camera.";
-        });
-
-
         // =====================================================================================
         // Initializations & Event Listeners (on DOMContentLoaded)
         // =====================================================================================
@@ -689,19 +701,15 @@
             }
             window.addEventListener('online', () => offlineStatus.classList.add("hidden"));
             window.addEventListener('offline', () => offlineStatus.classList.remove("hidden"));
-            // ✅ Pornește camera și leagă fluxul video la <video>
-    navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
-        videoElement.srcObject = stream;
-        videoElement.play();
-    }).catch(err => {
-        console.error("Eroare acces cameră:", err);
-        statusMessage.textContent = "Eroare acces cameră: " + err.message;
-    });
+
             updateReminderStatusUI(); 
             setInterval(checkReminder, 60 * 1000); 
             setTimeout(checkReminder, 1000); 
 
             loadHistory(); 
+
+            // Listener for the "Pornește Camera" button
+            startCameraBtn.addEventListener('click', initCameraStream);
         });
     </script>
 

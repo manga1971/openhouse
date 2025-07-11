@@ -689,7 +689,14 @@
             }
             window.addEventListener('online', () => offlineStatus.classList.add("hidden"));
             window.addEventListener('offline', () => offlineStatus.classList.remove("hidden"));
-
+            // ✅ Pornește camera și leagă fluxul video la <video>
+    navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+        videoElement.srcObject = stream;
+        videoElement.play();
+    }).catch(err => {
+        console.error("Eroare acces cameră:", err);
+        statusMessage.textContent = "Eroare acces cameră: " + err.message;
+    });
             updateReminderStatusUI(); 
             setInterval(checkReminder, 60 * 1000); 
             setTimeout(checkReminder, 1000); 

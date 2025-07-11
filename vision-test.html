@@ -709,16 +709,48 @@
     navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
         videoElement.srcObject = stream;
         videoElement.play();
+        console.log("✅ Camera a pornit. Flux video vizibil în elementul <video>.");
+        statusMessage.textContent = "Camera activă. Poziționați-vă fața în cadru.";
+        
+        // Acum că videoElement are fluxul, putem inițializa și porni MediaPipe.Camera Utility
+        // Aceasta este partea care a lipsit sau a fost greșit poziționată!
+        const camera = new Camera({ 
+            videoElement: videoElement, 
+            onFrame: async () => {
+                // Această funcție este apelată de CameraUtils pentru fiecare cadru
+                await faceMesh.send({ image: videoElement });
+            },
+            width: 640,
+            height: 480
+        });
+
+        // Pornește procesarea MediaPipe
+        camera.start(); 
+        console.log("✅ MediaPipe Camera utility a pornit procesarea.");
+
+        // După un mic delay, putem ascunde chenarul roșu și afișa doar canvas-ul procesat
+        // Fă-o după ce ești sigur că MediaPipe procesează și desenează pe canvas
+        setTimeout(() => {
+            // videoElement.classList.add("hidden"); // Ascunde elementul video brut
+            // canvasElement.classList.remove("hidden"); // Asigură că canvasul este vizibil
+        }, 3000); // Așteaptă 3 secunde pentru a vedea dacă procesarea începe
+        
     }).catch(err => {
-        console.error("Eroare acces cameră:", err);
-        statusMessage.textContent = "Eroare acces cameră: " + err.message;
+        console.error("❌ Eroare la accesul camerei:", err);
+        statusMessage.textContent = `Eroare: Camera nu a putut porni. ${err.name}: ${err.message}. Verificați permisiunile sau alte aplicații.`;
+        // Afișează din nou butonul de start sau un mesaj de eroare permanent dacă ai un astfel de buton
     });
 
-    // 🔁 Inițializări existente
-    updateReminderStatusUI(); 
-    setInterval(checkReminder, 60 * 1000); 
-    setTimeout(checkReminder, 1000); 
-    loadHistory(); 
+    // 🔁 Inițializări existente (Acestea sunt ok unde sunt)
+    updateReminderStatusUI(); 
+    setInterval(checkReminder, 60 * 1000); 
+    setTimeout(checkReminder, 1000); 
+    loadHistory(); 
+});
+
+// Asigură-te că `faceMesh` este declarat la nivel global/începutul scriptului
+// (Nu în interiorul DOMContentLoaded, ci mai sus, la celelalte constante)
+// const faceMesh = new FaceMesh({...}); // Acesta trebuie să fie deja acolo
             
         });
     </script>

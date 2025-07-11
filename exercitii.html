@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <title>Exerciții Oculare – VH Vision</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.6s ease; /* Animație fundal */
+    }
+    main {
+      flex-grow: 1;
+      display: flex; /* Pentru centrare verticală în main */
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .exercise-content {
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .dot {
+      width: 24px; /* Marime ajustata */
+      height: 24px; /* Marime ajustata */
+      background-color: #3b82f6; /* Tailwind blue-500 */
+      border-radius: 50%;
+      position: absolute;
+      transform: translate(-50%, -50%); /* Centreaza punctul */
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.6); /* Umbră pentru vizibilitate */
+      transition: transform 1s ease-in-out; /* Animație lina */
+      animation: pulse-shadow 1.5s infinite; /* Animație pulsare */
+    }
+    /* Umbra "3D" sub punct */
+    .dot::after {
+      content: "";
+      position: absolute;
+      width: 24px; /* Aceeași lățime ca punctul */
+      height: 8px;
+      background: rgba(0,0,0,0.15);
+      bottom: -4px; /* Puțin sub punct */
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      filter: blur(2px);
+    }
+    @keyframes pulse-shadow {
+      0% { box-shadow: 0 0 10px rgba(59, 130, 246, 0.4); }
+      50% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.9); }
+      100% { box-shadow: 0 0 10px rgba(59, 130, 246, 0.4); }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 p-4">
+
+<header class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-extrabold text-blue-700">💪 VH Vision – Exerciții Oculare</h1>
+  <a href="dashboard.html" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+    ← Înapoi la Dashboard
+  </a>
+</header>
+
+<main class="flex-grow flex flex-col justify-center items-center">
+  <section class="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl">
+    <h2 id="exercise-title" class="text-xl font-bold mb-4 text-blue-800">Pregătit pentru exerciții?</h2>
+    
+    <p id="exercise-instructions" class="text-gray-700 mb-4 text-center">
+      Acest modul te va ghida prin exerciții simple pentru relaxarea ochilor și a minții.
+    </p>
+
+    <div class="flex items-center justify-center mb-6">
+      <label class="flex items-center gap-2 text-sm text-gray-600">
+        <input type="checkbox" id="autoModeToggle" class="accent-blue-600" />
+        Derulare automată exerciții
+      </label>
+    </div>
+
+    <div id="exercise-timer" class="text-3xl font-bold text-blue-600 mb-6 hidden"></div>
+    <div id="exercise-animation-area" class="relative w-full h-48 bg-gray-100 rounded-lg mb-6 hidden flex justify-center items-center overflow-hidden"></div>
+    <div id="exercise-content-area" class="exercise-content text-center">
+        </div>
+    <div id="exercise-controls" class="mt-6 flex justify-between items-center">
+      <button id="prev-exercise-btn" class="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500 transition hidden">← Înapoi</button>
+      <span id="exercise-step-counter" class="text-gray-600 font-medium"></span>
+      <button id="next-exercise-btn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Începe Exercițiul</button>
+      <button id="finish-exercise-btn" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition hidden">Gata!</button>
+    </div>
+  </section>
+</main>
+
+<audio id="relaxMusic" loop preload="auto">
+  <source src="https://cdn.pixabay.com/download/audio/2023/03/21/audio_19bfe27b50.mp3?filename=calm-piano-143349.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+  const exerciseTitle = document.getElementById('exercise-title');
+  const exerciseInstructions = document.getElementById('exercise-instructions');
+  const exerciseTimer = document.getElementById('exercise-timer');
+  const exerciseAnimationArea = document.getElementById('exercise-animation-area');
+  const exerciseContentArea = document.getElementById('exercise-content-area');
+  const prevExerciseBtn = document.getElementById('prev-exercise-btn');
+  const nextExerciseBtn = document.getElementById('next-exercise-btn');
+  const finishExerciseBtn = document.getElementById('finish-exercise-btn');
+  const exerciseStepCounter = document.getElementById('exercise-step-counter');
+  const autoModeToggle = document.getElementById('autoModeToggle'); // Corectat ID
+  const relaxMusic = document.getElementById('relaxMusic'); // Corectat ID
+
+  let currentExerciseIndex = -1;
+  let timerInterval;
+  let animationFrameId;
+  let dotElement; // Elementul punctului pentru animații
+  let dotAnimationTimeout; // Pentru a controla pauza intre miscarile punctului
+
+  const exercises = [
+    {
+      title: "1. Mișcări Orizontale și Verticale",
+      instructions: "Urmărește punctul cu privirea fără să miști capul. Fă 5 repetări pe fiecare axă.",
+      duration: 15,
+      type: "animation-dot",
+      bg: "bg-blue-50",
+      animationSteps: [
+        {x: 0.1, y: 0.5}, {x: 0.9, y: 0.5}, {x: 0.5, y: 0.5}, // Orizontal
+        {x: 0.5, y: 0.1}, {x: 0.5, y: 0.9}, {x: 0.5, y: 0.5}  // Vertical
+      ],
+      dotStepInterval: 1000 // Timp in ms intre fiecare pas al punctului
+    },
+    {
+      title: "2. Focalizare Aproape/Departe",
+      instructions: "Ține un deget la 15 cm de ochi și focalizează-l. Apoi, privește un obiect la depărtare (cel puțin 6 metri) pentru câteva secunde. Repetă de 5 ori.",
+      duration: 20,
+      type: "text-timer",
+      bg: "bg-green-50"
+    },
+    {
+      title: "3. Clipit Conștient și Palming",
+      instructions: "Clipește lent și complet de 10 ori. Apoi, acoperă ochii cu palmele, fără a aplica presiune, și relaxează-te în întuneric pentru 30 de secunde.",
+      duration: 40,
+      type: "text-timer",
+      bg: "bg-green-50"
+    },
+    {
+      title: "4. Cifre 8 și Cercuri cu Ochii",
+      instructions: "Mișcă-ți ochii în cercuri mari (de 5 ori în sens orar, apoi 5 ori invers orar). Apoi, desenează cu ochii cifra 8 culcată (infinit) de 5 ori în fiecare direcție.",
+      duration: 30,
+      type: "text-timer",
+      bg: "bg-green-50"
+    },
+    {
+      title: "5. Regula 20-20-20",
+      instructions: "Acum, privește la un obiect aflat la aproximativ 6 metri distanță timp de 20 de secunde. Clipește des. Fă asta la fiecare 20 de minute când lucrezi la ecran.",
+      duration: 20,
+      type: "text-timer",
+      bg: "bg-green-50"
+    },
+    {
+      title: "6. Respirație Alternativă pe Nară (Simplificat)",
+      instructions: "Închide o nară cu degetul mare, inspiră profund pe cealaltă. Eliberează degetul, închide nara opusă cu degetul inelar și expiră. Repetă de 5 ori, alternând. Concentrează-te pe respirație.",
+      duration: 45,
+      type: "text-timer",
+      bg: "bg-yellow-50",
+      playMusic: true
+    },
+    {
+      title: "7. Vizualizare Ghidată (Loc Liniștit)",
+      instructions: "Închide ochii. Imaginează-ți un loc preferat, liniștit și frumos. Concentrează-te pe detalii: culori, sunete, mirosuri. Permite-ți să te relaxezi complet. (Durata de 1 minut)",
+      duration: 60,
+      type: "text-timer",
+      bg: "bg-yellow-50",
+      playMusic: true
+    },
+    {
+      title: "8. Scanare Corporală (Scurtă)",
+      instructions: "Închide ochii. Conștientizează-ți respirația. Apoi, scanează-ți corpul de la picioare la cap, observând orice tensiune și relaxând-o conștient pe măsură ce expiri. (Durata de 1 minut)",
+      duration: 60,
+      type: "text-timer",
+      bg: "bg-yellow-50",
+      playMusic: true
+    },
+    {
+      title: "9. Afirmații Pozitive pentru Vedere",
+      instructions: "Repetă mental următoarele afirmații: 'Ochii mei sunt relaxați și văd clar.' 'Mintea mea este calmă, viziunea mea este perfectă.' (5 repetări pentru fiecare)",
+      duration: 25,
+      type: "text-timer",
+      bg: "bg-yellow-50",
+      playMusic: true
+    }
+  ];
+
+function updateUI() {
+  clearInterval(timerInterval);
+  clearTimeout(dotAnimationTimeout); // Oprește și timeout-ul animației punctului
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+    animationFrameId = null;
+  }
+  if (dotElement) {
+    dotElement.remove();
+    dotElement = null;
+  }
+  exerciseTimer.classList.add('hidden');
+  exerciseAnimationArea.classList.add('hidden');
+  exerciseAnimationArea.innerHTML = ''; // Golește zona de animație
+
+  // Fundal dinamic
+  document.body.className = `p-4 text-gray-800 ${exercises[currentExerciseIndex]?.bg || "bg-gray-50"}`;
+
+  if (currentExerciseIndex === -1) {
+    exerciseTitle.textContent = "Pregătit pentru exerciții?";
+    exerciseInstructions.textContent = "Acest modul te va ghida prin exerciții simple pentru relaxarea ochilor și a minții.";
+    exerciseContentArea.innerHTML = ''; // Golește conținutul dinamic
+    
+    // Afișează ultima sesiune dacă există
+    const last = localStorage.getItem("last_exercise_session");
+    if (last) {
+      const msg = document.createElement("p");
+      msg.className = "text-sm text-gray-500 mt-2";
+      msg.innerHTML = `Ultima sesiune: <strong>${last}</strong>`;
+      exerciseContentArea.appendChild(msg);
+    }
+
+    prevExerciseBtn.classList.add('hidden');
+    nextExerciseBtn.textContent = "Începe Exercițiul";
+    finishExerciseBtn.classList.add('hidden');
+    exerciseStepCounter.textContent = "";
+    relaxMusic.pause();
+    relaxMusic.currentTime = 0; // Reset music
+  } else if (currentExerciseIndex < exercises.length) {
+    const ex = exercises[currentExerciseIndex];
+    exerciseTitle.textContent = ex.title;
+    exerciseInstructions.textContent = ex.instructions;
+    exerciseStepCounter.textContent = `Pasul ${currentExerciseIndex + 1} din ${exercises.length}`;
+    exerciseContentArea.innerHTML = ''; // Golește conținutul dinamic pentru exerciții
+    
+    nextExerciseBtn.textContent = "Următorul";
+    prevExerciseBtn.classList.remove('hidden');
+    finishExerciseBtn.classList.add('hidden');
+
+    if (currentExerciseIndex === exercises.length - 1) {
+      nextExerciseBtn.classList.add('hidden');
+      finishExerciseBtn.classList.remove('hidden');
+    } else {
+      nextExerciseBtn.classList.remove('hidden');
+    }
+
+    // Pornire/Oprire muzică pentru exercițiile mentale
+    if (ex.playMusic) {
+      relaxMusic.currentTime = 0;
+      relaxMusic.play().catch(e => console.error("Eroare redare muzică:", e));
+    } else {
+      relaxMusic.pause();
+    }
+
+    // Timer
+    let timeLeft = ex.duration;
+    exerciseTimer.textContent = `Timp: ${timeLeft}s`;
+    exerciseTimer.classList.remove('hidden');
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      exerciseTimer.textContent = `Timp: ${timeLeft}s`;
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        exerciseTimer.textContent = "Timp Expirat!";
+        if (autoModeToggle.checked) {
+          setTimeout(() => {
+            currentExerciseIndex++;
+            updateUI();
+          }, 2000); // Pauză 2 secunde înainte de a trece la următorul
+        }
+      }
+    }, 1000);
+
+    // Tip exercițiu
+    if (ex.type === "animation-dot") {
+      exerciseAnimationArea.classList.remove('hidden');
+      dotElement = document.createElement('div');
+      dotElement.className = 'dot';
+      exerciseAnimationArea.appendChild(dotElement);
+      startDotAnimation(ex.animationSteps, ex.dotStepInterval || 1000); // Folosește intervalul specific exercițiului
+    }
+  } else {
+    // Ecran de final
+    relaxMusic.pause();
+    relaxMusic.currentTime = 0; // Reset music
+    const dateStr = new Date().toLocaleString();
+    localStorage.setItem("last_exercise_session", dateStr); // Salvează data finalizării
+    
+    exerciseTitle.textContent = "Felicitări! Ai terminat exercițiile.";
+    exerciseInstructions.textContent = "Ai finalizat rutina completă. Exercițiile regulate reduc oboseala oculară și îmbunătățesc concentrarea vizuală.";
+    exerciseContentArea.innerHTML = '';
+
+    const summary = document.createElement('p');
+    summary.className = "text-md text-gray-600 mt-2";
+    summary.textContent = autoModeToggle.checked
+      ? "👏 Ai folosit modul automat – foarte eficient!"
+      : "😊 Ai parcurs rutina manual – bravo!";
+    exerciseContentArea.appendChild(summary);
+
+    const restartBtn = document.createElement('button');
+    restartBtn.textContent = "Reîncepe Exercițiile";
+    restartBtn.className = "px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition mt-4";
+    restartBtn.onclick = () => {
+      currentExerciseIndex = -1;
+      updateUI();
+    };
+    exerciseContentArea.appendChild(restartBtn);
+
+    exerciseTimer.classList.add('hidden');
+    exerciseAnimationArea.classList.add('hidden');
+    prevExerciseBtn.classList.remove('hidden'); // Permite revenirea la ultimul exercițiu
+    nextExerciseBtn.classList.add('hidden');
+    finishExerciseBtn.classList.add('hidden');
+    exerciseStepCounter.textContent = "";
+  }
+}
+
+function startDotAnimation(steps, stepInterval) {
+  if (!dotElement) return;
+
+  let index = 0;
+  function animate() {
+    const target = steps[index];
+    // Coordonatele sunt relative la container (0-1), le convertim in procente pentru transform
+    const x = target.x * 100;
+    const y = target.y * 100;
+    dotElement.style.transform = `translate(${x}%, ${y}%) translate(-50%, -50%)`;
+
+    index = (index + 1) % steps.length; // Trecem la urmatorul pas sau revenim la inceput
+
+    dotAnimationTimeout = setTimeout(() => { // Folosim setTimeout pentru a permite tranzitiei CSS sa ruleze
+      animationFrameId = requestAnimationFrame(animate); // Continuam animatia in loop
+    }, stepInterval);
+  }
+  animate();
+}
+
+// Navigare între exerciții
+nextExerciseBtn.addEventListener('click', () => {
+  if (currentExerciseIndex < exercises.length) { // Previne trecerea dincolo de final
+    currentExerciseIndex++;
+    updateUI();
+  }
+});
+
+prevExerciseBtn.addEventListener('click', () => {
+  if (currentExerciseIndex > -1) { // Previne trecerea inainte de inceput
+    currentExerciseIndex--;
+    updateUI();
+  }
+});
+
+finishExerciseBtn.addEventListener('click', () => {
+  currentExerciseIndex = exercises.length; // Trece la ecranul de final
+  updateUI();
+});
+
+// Pornire automată (dacă e bifat) / Afișare ultima sesiune
+document.addEventListener('DOMContentLoaded', () => {
+  updateUI(); // Incarca UI-ul initial si mesajul de ultima sesiune
+});
+</script>
+
+</body>
+</html>

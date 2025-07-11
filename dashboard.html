@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard – VH Vision</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans p-4">
+
+  <header class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-extrabold text-blue-700">📊 VH Vision – Dashboard</h1>
+    <a href="vision-test.html" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+      ← Înapoi la Test
+    </a>
+  </header>
+
+  <section id="stats" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-sm font-medium text-gray-500">Total Teste</h2>
+      <p id="total-tests" class="text-2xl font-bold text-blue-600">0</p>
+    </div>
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-sm font-medium text-gray-500">Media Clipituri</h2>
+      <p id="avg-blinks" class="text-2xl font-bold text-blue-600">–</p>
+    </div>
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-sm font-medium text-gray-500">Ultimul Scor</h2>
+      <p id="last-score" class="text-xl font-semibold text-gray-700">–</p>
+    </div>
+  </section>
+
+  <section class="mb-8">
+    <h2 class="text-lg font-bold mb-2">Grafic Clipituri (ultimele teste)</h2>
+    <div id="graph" class="flex items-end space-x-1 h-40 bg-white p-4 rounded shadow overflow-x-auto"></div>
+  </section>
+
+  <section class="mb-8">
+    <h2 class="text-lg font-bold mb-2">Jurnal Teste</h2>
+    <ul id="history-list" class="space-y-2"></ul>
+  </section>
+
+  <section class="text-center">
+    <button id="clear-history" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition">
+      Șterge Istoricul
+    </button>
+    <button id="export-csv" class="ml-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+      Exportă CSV
+    </button>
+  </section>
+
+  <div id="reminder-banner" class="fixed top-0 left-0 w-full bg-blue-600 text-white p-3 text-center text-lg font-semibold shadow-lg z-50 hidden">
+        E timpul să faci o pauză și să-ți odihnești ochii! 👀
+        <button id="close-reminder" class="ml-4 text-white hover:text-gray-200 focus:outline-none">
+            &times;
+        </button>
+    </div>
+
+    <div class="fixed bottom-4 right-4 z-40">
+        <button id="toggle-reminders-btn" class="px-4 py-2 bg-purple-600 text-white rounded-full shadow-lg hover:bg-purple-700 transition">
+            Memento-uri: <span id="reminder-status">Activ</span>
+        </button>
+    </div>
+
+    <audio id="reminder-sound" preload="auto">
+        <source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_24e030062f.mp3?filename=message-notification-112702.mp3" type="audio/mpeg">
+    </audio>
+
+<script>
+  const totalTestsEl = document.getElementById("total-tests");
+  const avgBlinksEl = document.getElementById("avg-blinks");
+  const lastScoreEl = document.getElementById("last-score");
+  const graphEl = document.getElementById("graph");
+  const historyListEl = document.getElementById("history-list");
+  const clearBtn = document.getElementById("clear-history");
+  const exportCsvBtn = document.getElementById("export-csv"); 
+
+  function loadHistory() {
+    const history = JSON.parse(localStorage.getItem("vh_history") || "[]");
+
+    totalTestsEl.textContent = history.length;
+
+    if (history.length === 0) {
+      avgBlinksEl.textContent = "–";
+      lastScoreEl.textContent = "–";
+      graphEl.innerHTML = "<p class='text-sm text-gray-500'>Nu există date.</p>";
+      historyListEl.innerHTML = "<li class='text-sm text-gray-500 text-center'>Nicio înregistrare găsită.</li>";
+      exportCsvBtn.classList.add("hidden"); 
+      return;
+    } else {
+      exportCsvBtn.classList.remove("hidden"); 
+    }
+
+    const totalBlinks = history.reduce((sum, h) => sum + h.blinks, 0);
+    const avg = (totalBlinks / history.length).toFixed(1);
+    avgBlinksEl.textContent = avg;
+
+    const last = history[history.length - 1]; 
+    lastScoreEl.textContent = `${last.blinks} clipituri – ${getEmoji(last.blinks)}`;
+
+    graphEl.innerHTML = "";
+    const recentHistory = history.slice(-10); 
+    const maxBlinks = Math.max(...recentHistory.map(entry => entry.blinks), 1); 
+
+    recentHistory.forEach((entry) => {
+      const height = (entry.blinks / maxBlinks) * 100; 
+      const bar = document.createElement("div");
+      bar.className = `w-4 rounded-t flex-shrink-0 relative`; 
+      bar.style.height = `${height}%`;
+      let barColorClass = "";
+      if (entry.blinks < 10) {
+          barColorClass = "bg-red-500";
+      } else if (entry.blinks <= 25) {
+          barColorClass = "bg-green-500";
+      } else {
+          barColorClass = "bg-yellow-500";
+      }
+      bar.classList.add(barColorClass);
+
+      bar.title = `${entry.date}\nClipituri: ${entry.blinks}\nFeedback: ${entry.feedback}`;
+
+      const label = document.createElement("span");
+      label.textContent = entry.blinks;
+      label.className = "absolute bottom-full left-1/2 -translate-x-1/2 text-xs font-semibold text-gray-700";
+      bar.appendChild(label);
+
+      graphEl.appendChild(bar);
+    });
+
+    historyListEl.innerHTML = "";
+    history.slice().reverse().forEach((entry) => { 
+      const li = document.createElement("li");
+      li.className = "bg-white p-3 rounded shadow flex flex-col sm:flex-row items-start sm:items-center justify-between"; 
+      li.innerHTML = `
+        <span class="text-sm text-gray-600 mb-1 sm:mb-0">${entry.date}</span>
+        <span class="text-lg font-semibold">${getEmoji(entry.blinks)} ${entry.blinks} clipituri <span class="text-base text-gray-700 ml-2 hidden sm:inline">(${entry.feedback})</span></span>
+        <span class="text-sm text-gray-700 sm:hidden">${entry.feedback}</span>
+      `;
+      historyListEl.appendChild(li);
+    });
+  }
+
+  function getEmoji(blinks) {
+    if (blinks < 10) return "🥱";
+    if (blinks <= 25) return "🙂";
+    return "👀";
+  }
+
+  clearBtn.addEventListener("click", () => {
+    if (confirm("Ești sigur că vrei să ștergi întregul istoric al testelor? Această acțiune este ireversibilă.")) {
+      localStorage.removeItem("vh_history");
+      loadHistory(); 
+      alert("Istoricul a fost șters cu succes.");
+    }
+  });
+
+  exportCsvBtn.addEventListener("click", () => {
+    const history = JSON.parse(localStorage.getItem("vh_history") || "[]");
+    if (history.length === 0) {
+      alert("Nu există date de exportat.");
+      return;
+    }
+
+    const header = "Data,Clipituri,Feedback\n";
+    const rows = history.map(h =>
+      `"${h.date}",${h.blinks},"${h.feedback.replace(/"/g, '""')}"`
+    );
+    const csvContent = header + rows.join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "istoric_clipituri_VH.csv"); 
+    document.body.appendChild(link); 
+    link.click(); 
+    document.body.removeChild(link); 
+    URL.revokeObjectURL(url); 
+  });
+
+  window.addEventListener("DOMContentLoaded", loadHistory);
+
+  // START: Memento-uri Inteligente pentru Relaxare Oculară
+  const REMINDER_INTERVAL_HOURS = 3; 
+  const LAST_REMINDER_KEY = 'vh_last_reminder_timestamp';
+  const REMINDER_PREFERENCE_KEY = 'vh_reminders_enabled';
+
+  const reminderBanner = document.getElementById('reminder-banner');
+  const closeReminderBtn = document.getElementById('close-reminder');
+  const toggleRemindersBtn = document.getElementById('toggle-reminders-btn');
+  const reminderStatusSpan = document.getElementById('reminder-status');
+  const reminderSound = document.getElementById('reminder-sound');
+
+  let remindersEnabled = JSON.parse(localStorage.getItem(REMINDER_PREFERENCE_KEY) || 'true'); 
+
+  function updateReminderStatusUI() {
+      reminderStatusSpan.textContent = remindersEnabled ? 'Activ' : 'Inactiv';
+      toggleRemindersBtn.classList.toggle('bg-purple-600', remindersEnabled);
+      toggleRemindersBtn.classList.toggle('bg-gray-500', !remindersEnabled);
+  }
+
+  function showReminder() {
+      if (document.hidden) { 
+          return;
+      }
+      reminderBanner.classList.remove('hidden');
+      reminderSound.play().catch(e => console.log("Eroare redare sunet memento:", e)); 
+      localStorage.setItem(LAST_REMINDER_KEY, Date.now()); 
+      setTimeout(() => {
+          reminderBanner.classList.add('hidden');
+      }, 8000); 
+  }
+
+  function checkReminder() {
+      if (!remindersEnabled) {
+          return;
+      }
+
+      const lastReminderTimestamp = parseInt(localStorage.getItem(LAST_REMINDER_KEY) || '0');
+      const currentTime = Date.now();
+      const timeSinceLastReminder = currentTime - lastReminderTimestamp;
+      const requiredIntervalMillis = REMINDER_INTERVAL_HOURS * 60 * 60 * 1000;
+
+      if (timeSinceLastReminder >= requiredIntervalMillis) {
+          showReminder();
+      }
+  }
+
+  closeReminderBtn.addEventListener('click', () => {
+      reminderBanner.classList.add('hidden');
+      localStorage.setItem(LAST_REMINDER_KEY, Date.now()); 
+  });
+
+  toggleRemindersBtn.addEventListener('click', () => {
+      remindersEnabled = !remindersEnabled;
+      localStorage.setItem(REMINDER_PREFERENCE_KEY, JSON.stringify(remindersEnabled));
+      updateReminderStatusUI();
+      if (remindersEnabled) {
+          checkReminder(); 
+      }
+  });
+
+  // Functie necesara doar in vision-test.html, dar o las aici pentru consistenta
+  // in cazul in care vrei sa adaugi in viitor o alta interactiune in dashboard care sa reseteze timer-ul
+  function resetReminderTimer() {
+      localStorage.setItem(LAST_REMINDER_KEY, Date.now());
+  }
+
+  updateReminderStatusUI();
+  setInterval(checkReminder, 60 * 1000); 
+  setTimeout(checkReminder, 1000); 
+  // END: Memento-uri Inteligente pentru Relaxare Oculară
+</script>
+
+<style>
+  #graph div {
+    transition: height 0.6s ease, background-color 0.3s ease;
+    align-self: flex-end; 
+  }
+  #graph div:hover {
+    background-color: #2563eb; 
+  }
+
+  #graph::-webkit-scrollbar {
+    height: 6px;
+  }
+  #graph::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+  #graph::-webkit-scrollbar-thumb {
+    background: #3b82f6; 
+    border-radius: 4px;
+  }
+  #graph::-webkit-scrollbar-thumb:hover {
+    background: #2563eb; 
+  }
+
+  #history-list li span:first-child {
+    font-size: 0.9rem;
+    color: #4b5563; 
+  }
+</style>
+
+</body>
+</html>

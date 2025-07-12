@@ -154,9 +154,9 @@
 
     <script>
         // =====================================================================================
-        // UI Elements (Declarații globale)
+        // UI Elements (Declarații globale) - Mutat aici pentru a rezolva ReferenceError
         // =====================================================================================
-        const rawVideoFeed = document.getElementById("raw_video_feed");
+        const rawVideoFeed = document.getElementById("raw_video_feed"); 
         const canvasElement = document.getElementById("output_canvas");
         const canvasCtx = canvasElement.getContext("2d");
         const blinkDisplay = document.getElementById("blink-counter");
@@ -166,7 +166,7 @@
 
         const startCameraBtn = document.getElementById("start-camera-btn"); 
         const durationSelectionContainer = document.getElementById("duration-selection-container"); 
-        const radioButtonsMonitorDuration = document.querySelectorAll('input[name="monitorDuration"]'); // Added for duration selection
+        const radioButtonsMonitorDuration = document.querySelectorAll('input[name="monitorDuration"]'); 
 
         const privacyWarning = document.getElementById("privacy-warning"); 
         const hidePrivacyWarningCheckbox = document.getElementById("hide-privacy-warning"); 
@@ -180,14 +180,20 @@
         const restartBtn = document.getElementById("restart-btn");
         const relaxLink = document.getElementById("relax-link"); 
         const backgroundMusic = document.getElementById("background-music");
-        const startSound = document.getElementById("start-sound"); // Added audio ref
-        const endSound = document.getElementById("end-sound");     // Added audio ref
+        const startSound = document.getElementById("start-sound"); 
+        const endSound = document.getElementById("end-sound");     
         const badgeSuccess = document.getElementById("badge-success"); 
 
         const historySection = document.getElementById("history-section");
         const historyList = document.getElementById("history-list");
         const clearHistoryBtn = document.getElementById("clear-history");
         const exportHistoryBtn = document.getElementById("export-history"); 
+        
+        // Mutat aici declarațiile pentru scoreVisual, scoreBar, scoreEmoji
+        const scoreVisual = document.getElementById("score-visual");
+        const scoreBar = document.getElementById("score-bar");
+        const scoreEmoji = document.getElementById("score-emoji");
+
 
         // MediaPipe Landmark Indices
         const LEFT_EYE_TOP = 159;
@@ -201,7 +207,7 @@
         const EAR_THRESHOLD = 0.015; 
         const BLINK_HOLD_FRAMES = 2; 
         const BLINK_RESET_FRAMES = 5; 
-        const STABLE_THRESHOLD = 30; // Not used in current workflow, but kept for reference
+        const STABLE_THRESHOLD = 30; 
         const MAX_FACE_LOST_FRAMES = 150; 
 
         // Global State Variables
@@ -209,9 +215,9 @@
         let isBlinking = false;
         let framesBelowThreshold = 0;
         let framesAboveThreshold = 0;
-        let testStarted = false; // Indicates if monitoring is active
+        let testStarted = false; 
         let testTimer;
-        let testDuration = 60; // Default, will be updated by radio buttons
+        let testDuration = 60; 
         let currentSecond = 0;
         let faceLostCounter = 0; 
         window.lastProcessedLandmarks = null; 
@@ -380,10 +386,6 @@
 
             saveTestResult(blinkCount, feedback, indiceLumina, blinkScore, luminosityScore); 
             loadHistory(); 
-
-            const scoreVisual = document.getElementById("score-visual");
-            const scoreBar = document.getElementById("score-bar");
-            const scoreEmoji = document.getElementById("score-emoji");
 
             scoreVisual.classList.remove("hidden");
 
@@ -647,13 +649,19 @@
 
         // This function handles MediaPipe's drawing on the canvas and result processing.
         function onResults(results) {
-            // console.log("MediaPipe results:", results); // Uncomment for more detailed debugging
+            console.log("DEBUG: onResults called. results.image:", results.image); // Added debug for results.image
 
             canvasCtx.save();
             canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
             // Draw MediaPipe's processed image (which includes the original feed + landmarks) onto the canvas.
             // This is the correct way to get the processed output from MediaPipe.
-            canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height); // <--- CORRECTED DRAW IMAGE
+            if (results.image) { // Ensure results.image is not null/undefined
+                 canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height); 
+                 console.log("DEBUG: results.image drawn to canvas."); // Confirm drawing
+            } else {
+                 console.warn("WARNING: results.image is not valid, cannot draw to canvas.");
+            }
+           
 
             if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
                 const landmarks = results.multiFaceLandmarks[0];
@@ -661,7 +669,7 @@
                 faceLostCounter = 0; 
 
                 // Logic for blink detection and live feedback during monitoring
-                if (testStarted) { // Changed from if (!testStarted) and stableFaceCounter
+                if (testStarted) { 
                     const earLeft = calculateEyeVerticalDistance(landmarks[LEFT_EYE_TOP], landmarks[LEFT_EYE_BOTTOM]);
                     const earRight = calculateEyeVerticalDistance(landmarks[RIGHT_EYE_TOP], landmarks[RIGHT_EYE_BOTTOM]);
                     const ear = Math.min(earLeft, earRight);

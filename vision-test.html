@@ -603,13 +603,16 @@
         // This function handles MediaPipe's drawing on the canvas and result processing.
         function onResults(results) {
             // console.log("MediaPipe results:", results); // Uncomment for more detailed debugging
+canvasCtx.save();
+canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
-            canvasCtx.save();
-            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-            // Draw the raw video feed from the video element onto the canvas first.
-            // This ensures the canvas always shows the camera feed, even before landmarks are detected.
-             if (videoElement.readyState === videoElement.HAVE_ENOUGH_DATA) { // Check if video has enough data to be drawn
-        canvasCtx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+// ✅ Desenare video pe canvas doar dacă video-ul este gata
+if (videoElement.readyState === videoElement.HAVE_ENOUGH_DATA) {
+    canvasCtx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+} else {
+    console.warn("⚠️ videoElement nu e gata pentru desenare. ReadyState:", videoElement.readyState);
+}
+
         // console.log("DEBUG: Video element drawn to canvas."); // Uncomment for more detail
     } else {
         console.warn("WARNING: videoElement not ready to be drawn to canvas. ReadyState:", videoElement.readyState);

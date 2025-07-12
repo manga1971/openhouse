@@ -198,7 +198,7 @@
         let isBlinking = false;
         let framesBelowThreshold = 0;
         let framesAboveThreshold = 0;
-        let testStarted = false;
+        let testStarted = false; // Renamed from testStarted to monitoringStarted if we fully switch concept
         let testTimer;
         let testDuration = 60; // Default, will be updated by radio buttons
         let currentSecond = 0;
@@ -304,7 +304,7 @@
         // =====================================================================================
 
         function startMonitoring() { // Renamed from startTest
-            testStarted = true;
+            testStarted = true; // Use testStarted as monitoringStarted
             blinkCount = 0;
             currentSecond = 0;
             testDuration = parseInt(document.querySelector('input[name="monitorDuration"]:checked').value); // Get selected duration
@@ -418,8 +418,8 @@
         }
 
         restartBtn.addEventListener("click", () => {
-            testStarted = false;
-            stableFaceCounter = 0; // Still kept for logic in onResults if we bring back "stable face before start"
+            testStarted = false; // Set monitoring to false
+            stableFaceCounter = 0; 
             faceLostCounter = 0; 
             testResult.classList.add("hidden");
             restartBtn.classList.add("hidden");
@@ -427,7 +427,7 @@
             badgeSuccess.classList.add("hidden", "opacity-0"); 
             scoreVisual.classList.add("hidden"); 
             blinkDisplay.textContent = "Clipituri: 0";
-            statusMessage.textContent = "Aștept inițializarea camerei..."; // Initial status
+            statusMessage.textContent = "Aștept inițializarea camerei..."; 
             liveFeedback.textContent = ""; 
             isBlinking = false;
             framesBelowThreshold = 0;
@@ -591,7 +591,7 @@
         // This function obtains the camera stream and initializes MediaPipe's Camera utility.
         async function initCameraAndMediaPipeStream() { // Renamed for clarity
             console.log("DEBUG: initCameraAndMediaPipeStream a fost apelată."); 
-            startCameraBtn.classList.add("hidden"); 
+            startCameraBtn.classList.add("hidden"); // Hide the start button
             durationSelectionContainer.classList.add("hidden"); // Hide duration selection
             statusMessage.textContent = "Se inițializează camera...";
 
@@ -622,7 +622,7 @@
 
             } catch (err) {
                 console.error("❌ Eroare la accesul camerei (catch block):", err); 
-                statusMessage.textContent = `Eroare: Camera nu a putut porni. ${err.name}: ${err.message}. Verificați permisiunile sau alte aplicații care folosesc camera.`;
+                statusMessage.textContent = `Eroare: Camera nu a putut porni. ${err.name}: ${err.message}. Verificați permisiunile sau alte aplicații.`;
                 startCameraBtn.classList.remove("hidden"); // Show button again to retry
                 durationSelectionContainer.classList.remove("hidden"); // Show duration selection again
             }
@@ -672,7 +672,6 @@
                     liveFeedback.textContent = `Clipiri: ${blinkCount}, Luminozitate: ${currentLuminosityScore}`;
 
                     // Draw landmarks ON TOP of the video feed on the canvas
-                    // (These are drawn on top of results.image which already contains the video feed)
                     canvasCtx.beginPath();
                     canvasCtx.arc(landmarks[LEFT_EYE_TOP].x * canvasElement.width, landmarks[LEFT_EYE_TOP].y * canvasElement.height, 3, 0, 2 * Math.PI);
                     canvasCtx.arc(landmarks[LEFT_EYE_BOTTOM].x * canvasElement.width, landmarks[LEFT_EYE_BOTTOM].y * canvasElement.height, 3, 0, 2 * Math.PI);
@@ -719,20 +718,18 @@
                     if (faceLostCounter >= MAX_FACE_LOST_FRAMES) { 
                         clearInterval(testTimer);
                         backgroundMusic.pause();
-                        statusMessage.textContent = "Monitorizare întreruptă. Repoziționați fața pentru reluare."; // Changed message
+                        statusMessage.textContent = "Monitorizare întreruptă. Repoziționați fața pentru reluare."; 
                         testStarted = false;
                         restartBtn.classList.remove("hidden");
                         liveFeedback.textContent = ""; 
                     } else {
                         const secondsRemaining = Math.floor((MAX_FACE_LOST_FRAMES - faceLostCounter) / 30); 
-                        statusMessage.textContent = `Fața pierdută! Reluați poziția pentru a continua monitorizarea. (${secondsRemaining}s)`; // Changed message
+                        statusMessage.textContent = `Fața pierdută! Reluați poziția pentru a continua monitorizarea. (${secondsRemaining}s)`; 
                     }
                 } else { 
                     statusMessage.textContent = "Nicio față detectată. Poziționați-vă în fața camerei.";
-                    // If not in test, and face lost, reset stableFaceCounter as no stability check is needed.
-                    // This is only relevant if we decide to re-introduce a "stable face before start"
                     stableFaceCounter = 0; 
-                    faceLostCounter = 0; // Reset this too outside testStarted for clarity
+                    faceLostCounter = 0; 
                 }
             }
 

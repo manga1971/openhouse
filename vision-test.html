@@ -109,6 +109,12 @@
     <audio id="background-music" loop preload="auto">
         <source src="audio/calm-background-117564.mp3" type="audio/mpeg">
     </audio>
+    <audio id="start-sound" preload="auto">
+        <source src="audio/short-success-sound-glitch-40993.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="end-sound" preload="auto">
+        <source src="audio/completion-sound-148813.mp3" type="audio/mpeg">
+    </audio>
 
     <button id="restart-btn" class="mt-4 hidden px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition">
         Reîncepe Testul
@@ -147,8 +153,10 @@
 
 
     <script>
-        // UI Elements
-        const rawVideoFeed = document.getElementById("raw_video_feed"); // Renamed from videoElement
+        // =====================================================================================
+        // UI Elements (Declarații globale)
+        // =====================================================================================
+        const rawVideoFeed = document.getElementById("raw_video_feed");
         const canvasElement = document.getElementById("output_canvas");
         const canvasCtx = canvasElement.getContext("2d");
         const blinkDisplay = document.getElementById("blink-counter");
@@ -157,7 +165,8 @@
         const offlineStatus = document.getElementById("offline-status"); 
 
         const startCameraBtn = document.getElementById("start-camera-btn"); 
-        const durationSelectionContainer = document.getElementById("duration-selection-container"); // Added
+        const durationSelectionContainer = document.getElementById("duration-selection-container"); 
+        const radioButtonsMonitorDuration = document.querySelectorAll('input[name="monitorDuration"]'); // Added for duration selection
 
         const privacyWarning = document.getElementById("privacy-warning"); 
         const hidePrivacyWarningCheckbox = document.getElementById("hide-privacy-warning"); 
@@ -171,6 +180,8 @@
         const restartBtn = document.getElementById("restart-btn");
         const relaxLink = document.getElementById("relax-link"); 
         const backgroundMusic = document.getElementById("background-music");
+        const startSound = document.getElementById("start-sound"); // Added audio ref
+        const endSound = document.getElementById("end-sound");     // Added audio ref
         const badgeSuccess = document.getElementById("badge-success"); 
 
         const historySection = document.getElementById("history-section");
@@ -198,7 +209,7 @@
         let isBlinking = false;
         let framesBelowThreshold = 0;
         let framesAboveThreshold = 0;
-        let testStarted = false; // Renamed from testStarted to monitoringStarted if we fully switch concept
+        let testStarted = false; // Indicates if monitoring is active
         let testTimer;
         let testDuration = 60; // Default, will be updated by radio buttons
         let currentSecond = 0;
@@ -323,6 +334,8 @@
             statusMessage.textContent = "Monitorizare în desfășurare...";
             backgroundMusic.currentTime = 0;
             backgroundMusic.play();
+            startSound.currentTime = 0; // Reset and play start sound
+            startSound.play().catch(e => console.log("Eroare redare sunet start:", e));
             liveFeedback.textContent = ""; 
 
             testTimer = setInterval(() => {
@@ -341,6 +354,9 @@
             clearInterval(testTimer);
             backgroundMusic.pause();
             backgroundMusic.currentTime = 0; 
+            endSound.currentTime = 0; // Reset and play end sound
+            endSound.play().catch(e => console.log("Eroare redare sunet final:", e));
+            
             testUI.classList.add("hidden");
             testResult.classList.remove("hidden");
             restartBtn.classList.remove("hidden");
@@ -591,7 +607,7 @@
         // This function obtains the camera stream and initializes MediaPipe's Camera utility.
         async function initCameraAndMediaPipeStream() { // Renamed for clarity
             console.log("DEBUG: initCameraAndMediaPipeStream a fost apelată."); 
-            startCameraBtn.classList.add("hidden"); // Hide the start button
+            startCameraBtn.classList.add("hidden"); 
             durationSelectionContainer.classList.add("hidden"); // Hide duration selection
             statusMessage.textContent = "Se inițializează camera...";
 
@@ -622,7 +638,7 @@
 
             } catch (err) {
                 console.error("❌ Eroare la accesul camerei (catch block):", err); 
-                statusMessage.textContent = `Eroare: Camera nu a putut porni. ${err.name}: ${err.message}. Verificați permisiunile sau alte aplicații.`;
+                statusMessage.textContent = `Eroare: Camera nu a putut porni. ${err.name}: ${err.message}. Verificați permisiunile sau alte aplicații care folosesc camera.`;
                 startCameraBtn.classList.remove("hidden"); // Show button again to retry
                 durationSelectionContainer.classList.remove("hidden"); // Show duration selection again
             }

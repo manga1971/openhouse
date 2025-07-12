@@ -608,7 +608,12 @@
             canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
             // Draw the raw video feed from the video element onto the canvas first.
             // This ensures the canvas always shows the camera feed, even before landmarks are detected.
-            canvasCtx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+             if (videoElement.readyState === videoElement.HAVE_ENOUGH_DATA) { // Check if video has enough data to be drawn
+        canvasCtx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+        // console.log("DEBUG: Video element drawn to canvas."); // Uncomment for more detail
+    } else {
+        console.warn("WARNING: videoElement not ready to be drawn to canvas. ReadyState:", videoElement.readyState);
+    }
 
             if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
                 const landmarks = results.multiFaceLandmarks[0];

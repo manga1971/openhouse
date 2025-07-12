@@ -11,31 +11,23 @@
         body {
             font-family: sans-serif;
         }
-        /* Stil pentru elementul video vizibil de debugging (va fi ascuns după pornirea camerei) */
-        #input_video {
-            display: none; /* Ascunde videoElement implicit */
+        /* Stiluri pentru elementele video și canvas, ambele vizibile pentru debugging */
+        #raw_video_feed { /* Renamed from input_video */
+            display: block; /* Va fi vizibil */
+            border: 2px solid red; /* Chenarul roșu */
+            width: 640px; /* Aliniat cu canvas */
+            height: 480px; /* Aliniat cu canvas */
+            margin: auto;
+            margin-bottom: 10px; /* Spațiu între ele */
         }
-        canvas {
+        #output_canvas {
             border: 2px solid #3b82f6; /* Blue border for LiYE theme */
-            display: block;
+            display: block; /* Va fi vizibil */
             margin: auto;
             max-width: 100%;
             height: auto;
             border-radius: 8px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-        /* Stil pentru checkbox-ul personalizat, dacă e nevoie */
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 10px;
-            font-size: 0.875rem; /* text-sm */
-            color: #4b5563; /* text-gray-600 */
-        }
-        .checkbox-container input[type="checkbox"] {
-            margin-right: 8px;
-            accent-color: #3b82f6; /* Culoarea de accent Tailwind blue-500 */
         }
     </style>
 </head>
@@ -61,8 +53,8 @@
         </div>
     </div>
 
-    <video id="input_video" autoplay muted playsinline class="hidden"></video> 
-    <canvas id="output_canvas" width="640" height="480" class="hidden"></canvas>
+    <video id="raw_video_feed" autoplay muted playsinline></video> 
+    <canvas id="output_canvas" width="640" height="480"></canvas>
 
     <p id="blink-counter" class="mt-4 text-xl font-bold text-blue-700">Clipituri: 0</p>
     <p id="status-message" class="mt-2 text-md text-gray-600">Aștept detectarea feței...</p>
@@ -131,7 +123,7 @@
 
     <script>
         // UI Elements
-        const videoElement = document.getElementById("input_video");
+        const rawVideoFeed = document.getElementById("raw_video_feed"); // Renamed from videoElement
         const canvasElement = document.getElementById("output_canvas");
         const canvasCtx = canvasElement.getContext("2d");
         const blinkDisplay = document.getElementById("blink-counter");
@@ -141,10 +133,10 @@
 
         const startCameraBtn = document.getElementById("start-camera-btn"); 
 
-        const privacyWarning = document.getElementById("privacy-warning"); // Added
-        const hidePrivacyWarningCheckbox = document.getElementById("hide-privacy-warning"); // Added
-        const instructionsDiv = document.getElementById("instructions"); // Added
-        const hideInstructionsCheckbox = document.getElementById("hide-instructions"); // Added
+        const privacyWarning = document.getElementById("privacy-warning"); 
+        const hidePrivacyWarningCheckbox = document.getElementById("hide-privacy-warning"); 
+        const instructionsDiv = document.getElementById("instructions"); 
+        const hideInstructionsCheckbox = document.getElementById("hide-instructions"); 
 
         const timeLeftEl = document.getElementById("time-left");
         const progressBar = document.getElementById("progress-bar");
@@ -544,7 +536,7 @@
 
 
         // =====================================================================================
-        // CORE: MediaPipe Integration (Initializare FaceMesh, onResults)
+        // CORE: MediaPipe Integration (FaceMesh, Camera Utility, onResults)
         // =====================================================================================
         // Initialize FaceMesh outside the function, as it's a one-time setup
         const faceMesh = new FaceMesh({ 
@@ -560,10 +552,10 @@
 
         faceMesh.onResults(onResults);
 
-        // This function is responsible for getting the camera stream and starting MediaPipe's Camera utility
-        async function initCameraStream() {
-            console.log("DEBUG: initCameraStream a fost apelată."); 
-            startCameraBtn.classList.add("hidden"); 
+        // This function obtains the camera stream and initializes MediaPipe's Camera utility.
+        async function initCameraAndMediaPipeStream() {
+            console.log("DEBUG: initCameraAndMediaPipeStream a fost apelată."); 
+            startCameraBtn.classList.add("hidden"); // Hide the start button
             statusMessage.textContent = "Se inițializează camera...";
 
             try {
@@ -571,25 +563,22 @@
                 const stream = await navigator.mediaDevices.getUserMedia({ video: true });
                 console.log("DEBUG: Fluxul camerei a fost obținut."); 
                 
-                videoElement.srcObject = stream; 
-                await videoElement.play(); 
-                console.log("✅ Camera a pornit. Flux video vizibil în elementul <video> (chiar dacă este ascuns).");
+                rawVideoFeed.srcObject = stream; // Connect the stream to the raw video element (red box)
+                await rawVideoFeed.play(); // Start playing the raw video
+                console.log("✅ Camera a pornit. Flux video vizibil în raw_video_feed.");
                 statusMessage.textContent = "Camera activă. Poziționați-vă fața în cadru.";
                 
-                canvasElement.classList.remove("hidden"); // Make canvas visible
-                // videoElement.classList.add("hidden"); // Keep video element hidden after stream starts
-
-                // Now that videoElement is playing and hidden, start MediaPipe's Camera utility
-                // This utility will send frames from the (hidden) videoElement to faceMesh
+                // Now that raw_video_feed is playing, initialize and start MediaPipe's Camera utility.
+                // This utility will send frames from the raw_video_feed to faceMesh.
                 const camera = new Camera({ 
-                    videoElement: videoElement, 
+                    videoElement: rawVideoFeed, // MediaPipe's Camera utility takes our raw video feed
                     onFrame: async () => {
-                        await faceMesh.send({ image: videoElement });
+                        await faceMesh.send({ image: rawVideoFeed }); // Send frames from raw video to faceMesh
                     },
                     width: 640,
                     height: 480
                 });
-                camera.start(); 
+                camera.start(); // Start MediaPipe's internal processing loop
                 console.log("✅ MediaPipe Camera utility a pornit procesarea.");
 
             } catch (err) {
@@ -597,130 +586,133 @@
                 statusMessage.textContent = `Eroare: Camera nu a putut porni. ${err.name}: ${err.message}. Verificați permisiunile sau alte aplicații care folosesc camera.`;
                 startCameraBtn.classList.remove("hidden"); // Show button again to retry
             }
-            console.log("DEBUG: initCameraStream a terminat execuția."); 
+            console.log("DEBUG: initCameraAndMediaPipeStream a terminat execuția."); 
         }
 
         // This function handles MediaPipe's drawing on the canvas and result processing.
         function onResults(results) {
-    console.log("✔️ onResults a fost apelat.");
-    canvasCtx.save();
-    canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+            // console.log("MediaPipe results:", results); // Uncomment for more detailed debugging
 
-    // ✅ Desenează fluxul video doar dacă e gata
-    if (videoElement.readyState === videoElement.HAVE_ENOUGH_DATA) {
-        canvasCtx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
-    } else {
-        console.warn("⚠️ videoElement nu e gata pentru desenare. ReadyState:", videoElement.readyState);
-    }
+            canvasCtx.save();
+            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+            // Draw the raw video feed from the raw_video_feed element onto the canvas.
+            // This ensures the canvas always shows the camera feed, even before landmarks are detected.
+            canvasCtx.drawImage(rawVideoFeed, 0, 0, canvasElement.width, canvasElement.height);
 
-    // ✅ Landmark-uri detectate
-    if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
-        console.log("📌 Landmark-uri detectate.");
-        const landmarks = results.multiFaceLandmarks[0];
-        window.lastProcessedLandmarks = landmarks;
-        faceLostCounter = 0;
+            if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
+                const landmarks = results.multiFaceLandmarks[0];
+                window.lastProcessedLandmarks = landmarks; 
+                faceLostCounter = 0; 
 
-        // 🟡 Inițializare automată test
-        if (!testStarted) {
-            if (stableFaceCounter < STABLE_THRESHOLD) {
-                stableFaceCounter++;
-                statusMessage.textContent = `Față detectată. Rămâneți nemișcat pentru a începe testul... (${Math.floor(stableFaceCounter / 30 * 10) / 10}s)`;
+                // Logic for starting the test automatically after stable face detection
+                if (!testStarted) {
+                    if (stableFaceCounter < STABLE_THRESHOLD) {
+                        stableFaceCounter++;
+                        statusMessage.textContent = `Față detectată. Rămâneți nemișcat pentru a începe testul... (${Math.floor(stableFaceCounter / 30 * 10) / 10}s)`; 
+                    }
+                    
+                    if (stableFaceCounter >= STABLE_THRESHOLD && !testStarted) { 
+                           statusMessage.textContent = "Testul începe în curând...";
+                           setTimeout(() => {
+                               if(!testStarted) { 
+                                   startTest();
+                               }
+                           }, 1500);
+                           stableFaceCounter = 0; 
+                    }
+                }
+
+                // Logic for blink detection and live feedback during the test
+                if (testStarted) {
+                    const earLeft = calculateEyeVerticalDistance(landmarks[LEFT_EYE_TOP], landmarks[LEFT_EYE_BOTTOM]);
+                    const earRight = calculateEyeVerticalDistance(landmarks[RIGHT_EYE_TOP], landmarks[RIGHT_EYE_BOTTOM]);
+                    const ear = Math.min(earLeft, earRight);
+
+                    if (ear < EAR_THRESHOLD) {
+                        framesBelowThreshold++;
+                        framesAboveThreshold = 0;
+                    } else {
+                        framesAboveThreshold++;
+                        framesBelowThreshold = 0;
+                    }
+
+                    if (framesBelowThreshold >= BLINK_HOLD_FRAMES && !isBlinking) {
+                        blinkCount++;
+                        blinkDisplay.textContent = `Clipituri: ${blinkCount}`;
+                        isBlinking = true;
+                    }
+
+                    if (framesAboveThreshold >= BLINK_RESET_FRAMES && isBlinking) {
+                        isBlinking = false;
+                    }
+
+                    const currentLuminosityScore = calculateLuminosityScore(canvasCtx, landmarks, canvasElement.width, canvasElement.height);
+                    liveFeedback.textContent = `Clipiri: ${blinkCount}, Luminozitate: ${currentLuminosityScore}`;
+
+                    // Draw landmarks ON TOP of the video feed on the canvas
+                    canvasCtx.beginPath();
+                    canvasCtx.arc(landmarks[LEFT_EYE_TOP].x * canvasElement.width, landmarks[LEFT_EYE_TOP].y * canvasElement.height, 3, 0, 2 * Math.PI);
+                    canvasCtx.arc(landmarks[LEFT_EYE_BOTTOM].x * canvasElement.width, landmarks[LEFT_EYE_BOTTOM].y * canvasElement.height, 3, 0, 2 * Math.PI);
+                    canvasCtx.fillStyle = '#FF4136';
+                    canvasCtx.fill();
+                    canvasCtx.closePath();
+
+                    canvasCtx.beginPath();
+                    canvasCtx.moveTo(landmarks[LEFT_EYE_TOP].x * canvasElement.width, landmarks[LEFT_EYE_TOP].y * canvasElement.height);
+                    canvasCtx.lineTo(landmarks[LEFT_EYE_BOTTOM].x * canvasElement.width, landmarks[LEFT_EYE_BOTTOM].y * canvasElement.height);
+                    canvasCtx.strokeStyle = '#0074D9';
+                    canvasCtx.lineWidth = 2;
+                    canvasCtx.stroke();
+                    canvasCtx.closePath();
+
+                    canvasCtx.beginPath();
+                    canvasCtx.arc(landmarks[RIGHT_EYE_TOP].x * canvasElement.width, landmarks[RIGHT_EYE_TOP].y * canvasElement.height, 3, 0, 2 * Math.PI);
+                    canvasCtx.arc(landmarks[RIGHT_EYE_BOTTOM].x * canvasElement.width, landmarks[RIGHT_EYE_BOTTOM].y * canvasElement.height, 3, 0, 2 * Math.PI);
+                    canvasCtx.fillStyle = '#FF4136';
+                    canvasCtx.fill();
+                    canvasCtx.closePath();
+
+                    canvasCtx.beginPath();
+                    canvasCtx.moveTo(landmarks[RIGHT_EYE_TOP].x * canvasElement.width, landmarks[RIGHT_EYE_TOP].y * canvasElement.height);
+                    canvasCtx.lineTo(landmarks[RIGHT_EYE_BOTTOM].x * canvasElement.width, landmarks[RIGHT_EYE_BOTTOM].y * canvasElement.height);
+                    canvasCtx.strokeStyle = '#0074D9';
+                    canvasCtx.lineWidth = 2;
+                    canvasCtx.stroke();
+                    canvasCtx.closePath();
+
+                    canvasCtx.beginPath();
+                    canvasCtx.arc(landmarks[LEFT_IRIS_CENTER].x * canvasElement.width, landmarks[LEFT_IRIS_CENTER].y * canvasElement.height, 2, 0, 2 * Math.PI);
+                    canvasCtx.arc(landmarks[RIGHT_IRIS_CENTER].x * canvasElement.width, landmarks[RIGHT_IRIS_CENTER].y * canvasElement.height, 2, 0, 2 * Math.PI);
+                    canvasCtx.fillStyle = '#FF851B'; 
+                    canvasCtx.fill();
+                    canvasCtx.closePath();
+                }
+
+            } else { 
+                window.lastProcessedLandmarks = null; 
+                stableFaceCounter = 0; 
+
+                if (testStarted) { 
+                    faceLostCounter++;
+                    if (faceLostCounter >= MAX_FACE_LOST_FRAMES) { 
+                        clearInterval(testTimer);
+                        backgroundMusic.pause();
+                        statusMessage.textContent = "Testul a fost întrerupt. Repoziționați fața pentru reluare.";
+                        testStarted = false;
+                        restartBtn.classList.remove("hidden");
+                        liveFeedback.textContent = ""; 
+                    } else {
+                        const secondsRemaining = Math.floor((MAX_FACE_LOST_FRAMES - faceLostCounter) / 30); 
+                        statusMessage.textContent = `Fața pierdută! Reluați poziția pentru a continua testul. (${secondsRemaining}s)`;
+                    }
+                } else { 
+                    statusMessage.textContent = "Nicio față detectată. Poziționați-vă în fața camerei.";
+                    faceLostCounter = 0; 
+                }
             }
 
-            if (stableFaceCounter >= STABLE_THRESHOLD && !testStarted) {
-                statusMessage.textContent = "Testul începe în curând...";
-                setTimeout(() => {
-                    if (!testStarted) startTest();
-                }, 1500);
-                stableFaceCounter = 0;
-            }
+            canvasCtx.restore();
         }
-
-        // 🔵 Detectare clipit în timpul testului
-        if (testStarted) {
-            const earLeft = calculateEyeVerticalDistance(landmarks[LEFT_EYE_TOP], landmarks[LEFT_EYE_BOTTOM]);
-            const earRight = calculateEyeVerticalDistance(landmarks[RIGHT_EYE_TOP], landmarks[RIGHT_EYE_BOTTOM]);
-            const ear = Math.min(earLeft, earRight);
-
-            if (ear < EAR_THRESHOLD) {
-                framesBelowThreshold++;
-                framesAboveThreshold = 0;
-            } else {
-                framesAboveThreshold++;
-                framesBelowThreshold = 0;
-            }
-
-            if (framesBelowThreshold >= BLINK_HOLD_FRAMES && !isBlinking) {
-                blinkCount++;
-                blinkDisplay.textContent = `Clipituri: ${blinkCount}`;
-                isBlinking = true;
-            }
-
-            if (framesAboveThreshold >= BLINK_RESET_FRAMES && isBlinking) {
-                isBlinking = false;
-            }
-
-            const currentLuminosityScore = calculateLuminosityScore(canvasCtx, landmarks, canvasElement.width, canvasElement.height);
-            liveFeedback.textContent = `Clipiri: ${blinkCount}, Luminozitate: ${currentLuminosityScore}`;
-
-            // 🎯 Desenează pe canvas: ochi & iris
-            const drawCircle = (x, y, r, color) => {
-                canvasCtx.beginPath();
-                canvasCtx.arc(x * canvasElement.width, y * canvasElement.height, r, 0, 2 * Math.PI);
-                canvasCtx.fillStyle = color;
-                canvasCtx.fill();
-                canvasCtx.closePath();
-            };
-
-            const drawLine = (x1, y1, x2, y2, color) => {
-                canvasCtx.beginPath();
-                canvasCtx.moveTo(x1 * canvasElement.width, y1 * canvasElement.height);
-                canvasCtx.lineTo(x2 * canvasElement.width, y2 * canvasElement.height);
-                canvasCtx.strokeStyle = color;
-                canvasCtx.lineWidth = 2;
-                canvasCtx.stroke();
-                canvasCtx.closePath();
-            };
-
-            drawCircle(landmarks[LEFT_EYE_TOP].x, landmarks[LEFT_EYE_TOP].y, 3, '#FF4136');
-            drawCircle(landmarks[LEFT_EYE_BOTTOM].x, landmarks[LEFT_EYE_BOTTOM].y, 3, '#FF4136');
-            drawLine(landmarks[LEFT_EYE_TOP].x, landmarks[LEFT_EYE_TOP].y, landmarks[LEFT_EYE_BOTTOM].x, landmarks[LEFT_EYE_BOTTOM].y, '#0074D9');
-
-            drawCircle(landmarks[RIGHT_EYE_TOP].x, landmarks[RIGHT_EYE_TOP].y, 3, '#FF4136');
-            drawCircle(landmarks[RIGHT_EYE_BOTTOM].x, landmarks[RIGHT_EYE_BOTTOM].y, 3, '#FF4136');
-            drawLine(landmarks[RIGHT_EYE_TOP].x, landmarks[RIGHT_EYE_TOP].y, landmarks[RIGHT_EYE_BOTTOM].x, landmarks[RIGHT_EYE_BOTTOM].y, '#0074D9');
-
-            drawCircle(landmarks[LEFT_IRIS_CENTER].x, landmarks[LEFT_IRIS_CENTER].y, 2, '#FF851B');
-            drawCircle(landmarks[RIGHT_IRIS_CENTER].x, landmarks[RIGHT_IRIS_CENTER].y, 2, '#FF851B');
-        }
-
-    } else {
-        // ❌ Nicio față detectată
-        console.warn("🚫 Nicio față detectată.");
-        window.lastProcessedLandmarks = null;
-        stableFaceCounter = 0;
-
-        if (testStarted) {
-            faceLostCounter++;
-            if (faceLostCounter >= MAX_FACE_LOST_FRAMES) {
-                clearInterval(testTimer);
-                backgroundMusic.pause();
-                statusMessage.textContent = "Testul a fost întrerupt. Repoziționați fața pentru reluare.";
-                testStarted = false;
-                restartBtn.classList.remove("hidden");
-                liveFeedback.textContent = "";
-            } else {
-                const secondsRemaining = Math.floor((MAX_FACE_LOST_FRAMES - faceLostCounter) / 30);
-                statusMessage.textContent = `Fața pierdută! Reluați poziția pentru a continua testul. (${secondsRemaining}s)`;
-            }
-        } else {
-            statusMessage.textContent = "Nicio față detectată. Poziționați-vă în fața camerei.";
-            faceLostCounter = 0;
-        }
-    }
-
-    canvasCtx.restore();
-}
 
         // =====================================================================================
         // Initializations & Event Listeners (on DOMContentLoaded)
@@ -748,10 +740,7 @@
                 instructionsDiv.classList.toggle('hidden', hideInstructionsCheckbox.checked);
             });
 
-            // Inițial ascunde canvasul și elementul video. Doar butonul de start va fi vizibil.
-            videoElement.classList.add("hidden"); 
-            canvasElement.classList.add("hidden");
-
+            // Status offline
             if (!navigator.onLine) {
                 offlineStatus.classList.remove("hidden");
             }
@@ -765,7 +754,7 @@
             loadHistory(); 
 
             // Listener for the "Pornește Camera" button
-            startCameraBtn.addEventListener('click', initCameraStream);
+            startCameraBtn.addEventListener('click', initCameraAndMediaPipeStream); // Renamed function
         });
     </script>
 

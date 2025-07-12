@@ -11,7 +11,7 @@
         body {
             font-family: sans-serif;
         }
-        /* Acum videoElement va fi ascuns by default. Clasa debug-visible va fi ignorata sau stearsa. */
+        /* Stil pentru elementul video vizibil de debugging (va fi ascuns după pornirea camerei) */
         #input_video {
             display: none; /* Ascunde videoElement implicit */
         }
@@ -24,20 +24,41 @@
             border-radius: 8px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
+        /* Stil pentru checkbox-ul personalizat, dacă e nevoie */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+            font-size: 0.875rem; /* text-sm */
+            color: #4b5563; /* text-gray-600 */
+        }
+        .checkbox-container input[type="checkbox"] {
+            margin-right: 8px;
+            accent-color: #3b82f6; /* Culoarea de accent Tailwind blue-500 */
+        }
     </style>
 </head>
 <body class="bg-gray-50 p-4 text-center">
 
     <h1 class="text-3xl font-extrabold mb-4 text-blue-800">Test Clipit 👁️ LiYE Vision</h1>
-    <p class="mb-4 text-gray-700">
-        Această aplicație (**LiYE**) detectează clipitul pentru a monitoriza sănătatea ochilor.
-        <br>
-        **Confidențialitate:** Imaginile captate de cameră sunt procesate **exclusiv pe dispozitivul dumneavoastră** și nu sunt stocate, transmise sau accesate de către dezvoltator.
-    </p>
+    
+    <div id="privacy-warning" class="mb-4 text-gray-700 bg-red-100 border-l-4 border-red-500 p-4" role="alert">
+        <p class="font-bold">**Confidențialitate:**</p>
+        <p>Imaginile captate de cameră sunt procesate **exclusiv pe dispozitivul dumneavoastră** și nu sunt stocate, transmise sau accesate de către dezvoltator.</p>
+        <div class="checkbox-container">
+            <input type="checkbox" id="hide-privacy-warning" class="form-checkbox">
+            <label for="hide-privacy-warning">Nu mai afișa acest mesaj</label>
+        </div>
+    </div>
 
     <div id="instructions" class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4" role="alert">
         <p class="font-bold">Instrucțiuni:</p>
         <p>Poziționați-vă fața în cadru și priviți direct la cameră. Testul va începe automat când fața este stabilă.</p>
+        <div class="checkbox-container">
+            <input type="checkbox" id="hide-instructions" class="form-checkbox">
+            <label for="hide-instructions">Nu mai afișa aceste instrucțiuni</label>
+        </div>
     </div>
 
     <video id="input_video" autoplay muted playsinline class="hidden"></video> 
@@ -118,7 +139,12 @@
         const liveFeedback = document.getElementById("live-feedback"); 
         const offlineStatus = document.getElementById("offline-status"); 
 
-        const startCameraBtn = document.getElementById("start-camera-btn"); // Added reference
+        const startCameraBtn = document.getElementById("start-camera-btn"); 
+
+        const privacyWarning = document.getElementById("privacy-warning"); // Added
+        const hidePrivacyWarningCheckbox = document.getElementById("hide-privacy-warning"); // Added
+        const instructionsDiv = document.getElementById("instructions"); // Added
+        const hideInstructionsCheckbox = document.getElementById("hide-instructions"); // Added
 
         const timeLeftEl = document.getElementById("time-left");
         const progressBar = document.getElementById("progress-bar");
@@ -518,7 +544,7 @@
 
 
         // =====================================================================================
-        // CORE: MediaPipe Integration
+        // CORE: MediaPipe Integration (Initializare FaceMesh, onResults)
         // =====================================================================================
         // Initialize FaceMesh outside the function, as it's a one-time setup
         const faceMesh = new FaceMesh({ 
@@ -534,14 +560,54 @@
 
         faceMesh.onResults(onResults);
 
-        // This function handles MediaPipe's drawing on the canvas.
-        // It draws the raw video first, then overlays landmarks.
+        // This function is responsible for getting the camera stream and starting MediaPipe's Camera utility
+        async function initCameraStream() {
+            console.log("DEBUG: initCameraStream a fost apelată."); 
+            startCameraBtn.classList.add("hidden"); 
+            statusMessage.textContent = "Se inițializează camera...";
+
+            try {
+                console.log("DEBUG: Încercă accesul la camera (getUserMedia)."); 
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                console.log("DEBUG: Fluxul camerei a fost obținut."); 
+                
+                videoElement.srcObject = stream; 
+                await videoElement.play(); 
+                console.log("✅ Camera a pornit. Flux video vizibil în elementul <video> (chiar dacă este ascuns).");
+                statusMessage.textContent = "Camera activă. Poziționați-vă fața în cadru.";
+                
+                canvasElement.classList.remove("hidden"); // Make canvas visible
+                // videoElement.classList.add("hidden"); // Keep video element hidden after stream starts
+
+                // Now that videoElement is playing and hidden, start MediaPipe's Camera utility
+                // This utility will send frames from the (hidden) videoElement to faceMesh
+                const camera = new Camera({ 
+                    videoElement: videoElement, 
+                    onFrame: async () => {
+                        await faceMesh.send({ image: videoElement });
+                    },
+                    width: 640,
+                    height: 480
+                });
+                camera.start(); 
+                console.log("✅ MediaPipe Camera utility a pornit procesarea.");
+
+            } catch (err) {
+                console.error("❌ Eroare la accesul camerei (catch block):", err); 
+                statusMessage.textContent = `Eroare: Camera nu a putut porni. ${err.name}: ${err.message}. Verificați permisiunile sau alte aplicații care folosesc camera.`;
+                startCameraBtn.classList.remove("hidden"); // Show button again to retry
+            }
+            console.log("DEBUG: initCameraStream a terminat execuția."); 
+        }
+
+        // This function handles MediaPipe's drawing on the canvas and result processing.
         function onResults(results) {
-            // console.log("MediaPipe results:", results); // Uncomment for debugging
+            // console.log("MediaPipe results:", results); // Uncomment for more detailed debugging
 
             canvasCtx.save();
             canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-            // Draw the raw video feed from the video element onto the canvas first
+            // Draw the raw video feed from the video element onto the canvas first.
+            // This ensures the canvas always shows the camera feed, even before landmarks are detected.
             canvasCtx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
 
             if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
@@ -549,6 +615,7 @@
                 window.lastProcessedLandmarks = landmarks; 
                 faceLostCounter = 0; 
 
+                // Logic for starting the test automatically after stable face detection
                 if (!testStarted) {
                     if (stableFaceCounter < STABLE_THRESHOLD) {
                         stableFaceCounter++;
@@ -566,6 +633,7 @@
                     }
                 }
 
+                // Logic for blink detection and live feedback during the test
                 if (testStarted) {
                     const earLeft = calculateEyeVerticalDistance(landmarks[LEFT_EYE_TOP], landmarks[LEFT_EYE_BOTTOM]);
                     const earRight = calculateEyeVerticalDistance(landmarks[RIGHT_EYE_TOP], landmarks[RIGHT_EYE_BOTTOM]);
@@ -656,119 +724,33 @@
 
             canvasCtx.restore();
         }
-        
-<script>
-    // UI Elements (const definitions)
-    // ...
-
-    // MediaPipe Landmark Indices (const definitions)
-    // ...
-
-    // Configuration (const definitions)
-    // ...
-
-    // Global State Variables (let definitions)
-    // ...
-
-    // =====================================================================================
-    // CORE: Indice Lumina Calculation Functions
-    // =====================================================================================
-    function calculateEyeVerticalDistance(...) { ... }
-    function calculateBlinkScore(...) { ... }
-    function calculateLuminosityScore(...) { ... }
-    function calculateIndiceLumina(...) { ... }
-    function interpretIndiceLumina(...) { ... }
-
-    // =====================================================================================
-    // CORE: Test Control Functions (startTest, endTest, restartBtn.addEventListener)
-    // =====================================================================================
-    function startTest() { ... }
-    function endTest() { ... }
-    // ... (restul funcțiilor de control al testului) ...
-    
-    // =====================================================================================
-    // PERSISTENCE: History & Export (saveTestResult, loadHistory, clearHistoryBtn.addEventListener, exportHistoryBtn.addEventListener)
-    // =====================================================================================
-    function saveTestResult(...) { ... }
-    function loadHistory() { ... }
-    // ... (restul funcțiilor de persistență) ...
-
-    // =====================================================================================
-    // REMINDERS Module (updateReminderStatusUI, showReminder, checkReminder, etc.)
-    // =====================================================================================
-    function updateReminderStatusUI() { ... }
-    function showReminder() { ... }
-    function checkReminder() { ... }
-    function resetReminderTimer() { ... }
-    // ... (restul funcțiilor de memento) ...
-
-    // =====================================================================================
-    // CORE: MediaPipe Integration (onResults, initCameraStream)
-    // =====================================================================================
-    // Initialize FaceMesh outside the function, as it's a one-time setup
-    const faceMesh = new FaceMesh({ 
-        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
-    });
-
-    faceMesh.setOptions({ ... });
-    faceMesh.onResults(onResults);
-
-    // ACEASTA ESTE NOUA FUNCȚIE initCameraStream, plasată CORECT AICI
-    // (înainte de DOMContentLoaded, dar după FaceMesh setup)
-    async function initCameraStream() {
-        console.log("DEBUG: initCameraStream a fost apelată.");
-        startCameraBtn.classList.add("hidden"); 
-        statusMessage.textContent = "Se inițializează camera...";
-
-        try {
-            console.log("DEBUG: Încercă accesul la camera (getUserMedia).");
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            console.log("DEBUG: Fluxul camerei a fost obținut.");
-            
-            videoElement.srcObject = stream; 
-            await videoElement.play(); 
-            console.log("✅ Camera a pornit. Flux video vizibil în elementul <video>.");
-            statusMessage.textContent = "Camera activă. Poziționați-vă fața în cadru.";
-            
-            canvasElement.classList.remove("hidden"); // Asigură canvasul vizibil
-
-            const camera = new Camera({ 
-                videoElement: videoElement, 
-                onFrame: async () => {
-                    await faceMesh.send({ image: videoElement });
-                },
-                width: 640,
-                height: 480
-            });
-            camera.start(); 
-            console.log("✅ MediaPipe Camera utility a pornit procesarea.");
-
-        } catch (err) {
-            console.error("❌ Eroare la accesul camerei (catch block):", err);
-            statusMessage.textContent = `Eroare: Camera nu a putut porni. ${err.name}: ${err.message}. Verificați permisiunile sau alte aplicații.`;
-            startCameraBtn.classList.remove("hidden"); 
-        }
-        console.log("DEBUG: initCameraStream a terminat execuția.");
-    }
-    
-    // Funcția onResults (trebuie să fie și ea declarată mai sus)
-    function onResults(results) { ... } // Aceasta este deja acolo
-
-    // =====================================================================================
-    // Initializations & Event Listeners (on DOMContentLoaded)
-    // =====================================================================================
-
-    document.addEventListener("DOMContentLoaded", () => {
-        // ... restul codului din DOMContentLoaded ...
-        startCameraBtn.addEventListener('click', initCameraStream);
-    });
-</script>
 
         // =====================================================================================
         // Initializations & Event Listeners (on DOMContentLoaded)
         // =====================================================================================
 
         document.addEventListener("DOMContentLoaded", () => {
+            // Privacy Warning & Instructions Visibility (New Logic)
+            const privacyWarningShown = localStorage.getItem('liye_privacy_warning_hidden');
+            if (privacyWarningShown === 'true') {
+                privacyWarning.classList.add('hidden');
+                hidePrivacyWarningCheckbox.checked = true;
+            }
+            hidePrivacyWarningCheckbox.addEventListener('change', () => {
+                localStorage.setItem('liye_privacy_warning_hidden', hidePrivacyWarningCheckbox.checked);
+                privacyWarning.classList.toggle('hidden', hidePrivacyWarningCheckbox.checked);
+            });
+
+            const instructionsShown = localStorage.getItem('liye_instructions_hidden');
+            if (instructionsShown === 'true') {
+                instructionsDiv.classList.add('hidden');
+                hideInstructionsCheckbox.checked = true;
+            }
+            hideInstructionsCheckbox.addEventListener('change', () => {
+                localStorage.setItem('liye_instructions_hidden', hideInstructionsCheckbox.checked);
+                instructionsDiv.classList.toggle('hidden', hideInstructionsCheckbox.checked);
+            });
+
             // Inițial ascunde canvasul și elementul video. Doar butonul de start va fi vizibil.
             videoElement.classList.add("hidden"); 
             canvasElement.classList.add("hidden");

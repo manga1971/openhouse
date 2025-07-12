@@ -655,6 +655,112 @@
             }
 
             canvasCtx.restore();
+            <script>
+    // UI Elements (const definitions)
+    // ...
+
+    // MediaPipe Landmark Indices (const definitions)
+    // ...
+
+    // Configuration (const definitions)
+    // ...
+
+    // Global State Variables (let definitions)
+    // ...
+
+    // =====================================================================================
+    // CORE: Indice Lumina Calculation Functions
+    // =====================================================================================
+    function calculateEyeVerticalDistance(...) { ... }
+    function calculateBlinkScore(...) { ... }
+    function calculateLuminosityScore(...) { ... }
+    function calculateIndiceLumina(...) { ... }
+    function interpretIndiceLumina(...) { ... }
+
+    // =====================================================================================
+    // CORE: Test Control Functions (startTest, endTest, restartBtn.addEventListener)
+    // =====================================================================================
+    function startTest() { ... }
+    function endTest() { ... }
+    // ... (restul funcțiilor de control al testului) ...
+    
+    // =====================================================================================
+    // PERSISTENCE: History & Export (saveTestResult, loadHistory, clearHistoryBtn.addEventListener, exportHistoryBtn.addEventListener)
+    // =====================================================================================
+    function saveTestResult(...) { ... }
+    function loadHistory() { ... }
+    // ... (restul funcțiilor de persistență) ...
+
+    // =====================================================================================
+    // REMINDERS Module (updateReminderStatusUI, showReminder, checkReminder, etc.)
+    // =====================================================================================
+    function updateReminderStatusUI() { ... }
+    function showReminder() { ... }
+    function checkReminder() { ... }
+    function resetReminderTimer() { ... }
+    // ... (restul funcțiilor de memento) ...
+
+    // =====================================================================================
+    // CORE: MediaPipe Integration (onResults, initCameraStream)
+    // =====================================================================================
+    // Initialize FaceMesh outside the function, as it's a one-time setup
+    const faceMesh = new FaceMesh({ 
+        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
+    });
+
+    faceMesh.setOptions({ ... });
+    faceMesh.onResults(onResults);
+
+    // ACEASTA ESTE NOUA FUNCȚIE initCameraStream, plasată CORECT AICI
+    // (înainte de DOMContentLoaded, dar după FaceMesh setup)
+    async function initCameraStream() {
+        console.log("DEBUG: initCameraStream a fost apelată.");
+        startCameraBtn.classList.add("hidden"); 
+        statusMessage.textContent = "Se inițializează camera...";
+
+        try {
+            console.log("DEBUG: Încercă accesul la camera (getUserMedia).");
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            console.log("DEBUG: Fluxul camerei a fost obținut.");
+            
+            videoElement.srcObject = stream; 
+            await videoElement.play(); 
+            console.log("✅ Camera a pornit. Flux video vizibil în elementul <video>.");
+            statusMessage.textContent = "Camera activă. Poziționați-vă fața în cadru.";
+            
+            canvasElement.classList.remove("hidden"); // Asigură canvasul vizibil
+
+            const camera = new Camera({ 
+                videoElement: videoElement, 
+                onFrame: async () => {
+                    await faceMesh.send({ image: videoElement });
+                },
+                width: 640,
+                height: 480
+            });
+            camera.start(); 
+            console.log("✅ MediaPipe Camera utility a pornit procesarea.");
+
+        } catch (err) {
+            console.error("❌ Eroare la accesul camerei (catch block):", err);
+            statusMessage.textContent = `Eroare: Camera nu a putut porni. ${err.name}: ${err.message}. Verificați permisiunile sau alte aplicații.`;
+            startCameraBtn.classList.remove("hidden"); 
+        }
+        console.log("DEBUG: initCameraStream a terminat execuția.");
+    }
+    
+    // Funcția onResults (trebuie să fie și ea declarată mai sus)
+    function onResults(results) { ... } // Aceasta este deja acolo
+
+    // =====================================================================================
+    // Initializations & Event Listeners (on DOMContentLoaded)
+    // =====================================================================================
+
+    document.addEventListener("DOMContentLoaded", () => {
+        // ... restul codului din DOMContentLoaded ...
+        startCameraBtn.addEventListener('click', initCameraStream);
+    });
+</script>
         }
 
         // =====================================================================================

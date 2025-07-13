@@ -1,15 +1,337 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=vision-test.html">
-    <title>Încărcare aplicație LiYE</title>
-    <script>
-        // JavaScript fallback for older browsers or if meta refresh is blocked
-        window.location.replace("vision-test.html");
-    </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LiYE – Claritate pentru ochi și minte</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+    .slider-text {
+      animation: slideText 20s infinite;
+    }
+    @keyframes slideText {
+      0%   { transform: translateY(0%); }
+      33%  { transform: translateY(-100%); }
+      66%  { transform: translateY(-200%); }
+      100% { transform: translateY(0%); }
+    }
+  </style>
 </head>
-<body>
-    <p>Se încarcă aplicația LiYE... Dacă nu ești redirecționat, click <a href="vision-test.html">aici</a>.</p>
+<body class="bg-gray-50 text-gray-800 font-sans">
+  <!-- START linia 1 -->
+  <!-- Header de sus retractabil -->
+  <header id="topHeader" class="w-full fixed top-0 left-0 z-50 bg-white shadow-md transition-all duration-300">
+    <div class="max-w-md mx-auto flex justify-between items-center px-4 py-2">
+      <span class="text-lg font-bold text-gray-800">LiYE</span>
+      <div class="flex gap-4 text-gray-700">
+        <button title="Recompense" class="hover:text-blue-600">
+          <span class="text-xl">⭐</span> Rewards
+        </button>
+        <button title="AI Chat" class="hover:text-blue-600">
+          <span class="text-xl">😊</span> AI Chat
+        </button>
+        <button title="Cont" class="hover:text-blue-600">
+          <span class="text-xl">👤</span> Account
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Spacer pentru header -->
+  <div class="h-16"></div>
+
+  <!-- Casetă cu text Motto / Goal / Disclaimer -->
+  <div class="relative overflow-hidden h-10 max-w-md mx-auto mb-4">
+    <div class="absolute inset-0 flex flex-col justify-start slider-text transition-transform duration-1000">
+      <div class="h-10 flex items-center justify-center bg-gray-100 rounded text-sm">Motto: strive for progress not perfection</div>
+      <div class="h-10 flex items-center justify-center bg-gray-100 rounded text-sm">Goal: cultivate light in your eyes every day</div>
+      <div class="h-10 flex items-center justify-center bg-gray-100 rounded text-sm">Disclaimer: this is not a medical diagnostic tool</div>
+    </div>
+  </div>
+
+  <!-- Slide-uri (carusel) -->
+  <div class="overflow-x-auto px-2 no-scrollbar">
+    <div class="flex gap-4 w-max pb-2">
+      <!-- Slide 1: Recomandări -->
+      <a href="recomandari.html" class="flex-shrink-0 w-60 h-64 bg-green-200 rounded-lg p-4 shadow-md">
+        <h2 class="text-xl font-semibold mb-2">Recomandări</h2>
+        <p class="text-sm">Primește sugestii adaptate stării tale vizuale.</p>
+      </a>
+      <!-- Slide 2: LiYE Test -->
+      <a href="vision-test.html" class="flex-shrink-0 w-60 h-64 bg-purple-300 rounded-lg p-4 shadow-md">
+        <h2 class="text-xl font-semibold mb-2">LiYE Test</h2>
+        <p class="text-sm">Fă un test rapid pentru a-ți evalua claritatea ochilor.</p>
+      </a>
+      <!-- Slide 3: Rapoarte -->
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LiYE – Home</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .carousel {
+      scroll-snap-type: x mandatory;
+      overflow-x: scroll;
+      display: flex;
+    }
+    .carousel::-webkit-scrollbar {
+      display: none;
+    }
+    .slide {
+      scroll-snap-align: start;
+      flex: 0 0 80%;
+      min-width: 80%;
+      margin-right: 1rem;
+    }
+  </style>
+</head>
+<body class="bg-[#fcfcfc] text-gray-800 font-sans">
+
+  <!-- Header Sus -->
+  <header class="w-full flex justify-between items-center px-4 py-3 bg-white shadow fixed top-0 z-50">
+    <div class="text-lg font-bold text-gray-800">LiYE</div>
+    <div class="flex space-x-4 text-sm">
+      <button class="flex items-center gap-1 text-gray-700"><span>⭐</span> Rewards</button>
+      <button class="flex items-center gap-1 text-gray-700"><span>🤖</span> AI Chat</button>
+      <button class="flex items-center gap-1 text-gray-700"><span>👤</span> Account</button>
+    </div>
+  </header>
+
+  <!-- Motto/Goal/Disclaimer Rotator -->
+  <div class="mt-20 px-4 text-center">
+    <div id="textSlider" class="bg-gray-100 rounded p-2 text-gray-600 text-sm transition-all duration-500">
+      Motto: strive for progress not perfection
+    </div>
+  </div>
+
+  <!-- Slide-uri (Carusel) -->
+  <div class="carousel px-4 mt-6 pb-4">
+    <div class="slide bg-green-300 rounded-lg p-6 text-white shadow-lg">
+      <h2 class="text-xl font-semibold mb-2">Recomandări</h2>
+      <p class="text-sm">Exerciții și sfaturi personalizate pentru ochii tăi.</p>
+    </div>
+    <div class="slide bg-purple-400 rounded-lg p-6 text-white shadow-lg">
+      <h2 class="text-xl font-semibold mb-2">LiYE Test</h2>
+      <p class="text-sm">Take a quick test now and find out how your eyes are doing.</p>
+    </div>
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LiYE – Home</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .carousel {
+      scroll-snap-type: x mandatory;
+      overflow-x: scroll;
+      display: flex;
+    }
+    .carousel::-webkit-scrollbar {
+      display: none;
+    }
+    .slide {
+      scroll-snap-align: start;
+      flex: 0 0 80%;
+      min-width: 80%;
+      margin-right: 1rem;
+    }
+  </style>
+</head>
+<body class="bg-[#fcfcfc] text-gray-800 font-sans">
+
+  <!-- Header Sus -->
+  <header class="w-full flex justify-between items-center px-4 py-3 bg-white shadow fixed top-0 z-50">
+    <div class="text-lg font-bold text-gray-800">LiYE</div>
+    <div class="flex space-x-4 text-sm">
+      <button class="flex items-center gap-1 text-gray-700"><span>⭐</span> Rewards</button>
+      <button class="flex items-center gap-1 text-gray-700"><span>🤖</span> AI Chat</button>
+      <button class="flex items-center gap-1 text-gray-700"><span>👤</span> Account</button>
+    </div>
+  </header>
+
+  <!-- Motto/Goal/Disclaimer Rotator -->
+  <div class="mt-20 px-4 text-center">
+    <div id="textSlider" class="bg-gray-100 rounded p-2 text-gray-600 text-sm transition-all duration-500">
+      Motto: strive for progress not perfection
+    </div>
+  </div>
+
+  <!-- Slide-uri (Carusel) -->
+  <div class="carousel px-4 mt-6 pb-4">
+    <div class="slide bg-green-300 rounded-lg p-6 text-white shadow-lg">
+      <h2 class="text-xl font-semibold mb-2">Recomandări</h2>
+      <p class="text-sm">Exercițiile tale personalizate pentru claritate vizuală și mentală.</p>
+    </div>
+    <div class="slide bg-purple-400 rounded-lg p-6 text-white shadow-lg">
+      <h2 class="text-xl font-semibold mb-2">LiYE Test</h2>
+      <p class="text-sm">Fă un test rapid și află cum se simt ochii tăi.</p>
+    </div>
+    <div class="slide bg-blue-400 rounded-lg p-6 text-white shadow-lg">
+      <h2 class="text-xl font-semibold mb-2">Rapoarte</h2>
+      <p class="text-sm">Vizualizează istoricul testelor și progresul luminii tale interioare.</p>
+    </div>
+    <div class="slide bg-yellow-300 rounded-lg p-6 text-white shadow-lg">
+      <h2 class="text-xl font-semibold mb-2">Resurse</h2>
+      <p class="text-sm">Materiale vizuale, audio și ghiduri pentru bunăstare oculară.</p>
+    </div>
+  </div>
+
+  <!-- Indicator Carusel -->
+  <div class="flex justify-center space-x-2 mt-2">
+    <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+    <span class="w-2 h-2 bg-gray-300 rounded-full"></span>
+    <span class="w-2 h-2 bg-gray-300 rounded-full"></span>
+    <span class="w-2 h-2 bg-gray-300 rounded-full"></span>
+  </div>
+
+  <!-- Disclaimer -->
+  <div class="text-center text-gray-500 text-xs mt-4 px-4">
+    Disclaimer: always consult a healthcare professional…
+  </div>
+
+  <!-- Navbar Jos -->
+  <nav class="fixed bottom-0 left-0 w-full bg-white shadow-inner flex justify-around items-center h-16">
+    <a href="#" class="flex flex-col items-center text-xs text-gray-700 hover:text-blue-600">
+      <span class="text-lg">🏠</span>
+      Home
+    </a>
+    <a href="#" class="flex flex-col items-center text-xs text-gray-700 hover:text-blue-600">
+      <span class="text-lg">✅</span>
+      Recommends
+    </a>
+    <a href="#" class="flex flex-col items-center text-xs text-orange-500 font-semibold">
+      <span class="text-lg">👁️</span>
+      LiYE Test
+    </a>
+    <a href="#" class="flex flex-col items-center text-xs text-gray-700 hover:text-blue-600">
+      <span class="text-lg">📈</span>
+      Reports
+    </a>
+    <a href="#" class="flex flex-col items-center text-xs text-gray-700 hover:text-blue-600">
+      <span class="text-lg">📚</span>
+      Resources
+    </a>
+  </nav>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LiYE – Home</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .carousel {
+      scroll-snap-type: x mandatory;
+      overflow-x: scroll;
+      display: flex;
+    }
+    .carousel::-webkit-scrollbar {
+      display: none;
+    }
+    .slide {
+      scroll-snap-align: start;
+      flex: 0 0 80%;
+      min-width: 80%;
+      margin-right: 1rem;
+    }
+  </style>
+</head>
+<body class="bg-[#fcfcfc] text-gray-800 font-sans">
+
+  <!-- Header Sus -->
+  <header class="w-full flex justify-between items-center px-4 py-3 bg-white shadow fixed top-0 z-50">
+    <div class="text-lg font-bold text-gray-800">LiYE</div>
+    <div class="flex space-x-4 text-sm">
+      <button class="flex items-center gap-1 text-gray-700"><span>⭐</span> Rewards</button>
+      <button class="flex items-center gap-1 text-gray-700"><span>🤖</span> AI Chat</button>
+      <button class="flex items-center gap-1 text-gray-700"><span>👤</span> Account</button>
+    </div>
+  </header>
+
+  <!-- Motto/Goal/Disclaimer Rotator -->
+  <div class="mt-20 px-4 text-center">
+    <div id="textSlider" class="bg-gray-100 rounded p-2 text-gray-600 text-sm transition-all duration-500">
+      Motto: strive for progress not perfection
+    </div>
+  </div>
+
+  <!-- Slide-uri (Carusel) -->
+  <div class="carousel px-4 mt-6 pb-4" id="carousel">
+    <div class="slide bg-green-300 rounded-lg p-6 text-white shadow-lg">
+      <h2 class="text-xl font-semibold mb-2">Recomandări</h2>
+      <p class="text-sm">Exercițiile tale personalizate pentru claritate vizuală și mentală.</p>
+    </div>
+    <div class="slide bg-purple-400 rounded-lg p-6 text-white shadow-lg">
+      <h2 class="text-xl font-semibold mb-2">LiYE Test</h2>
+      <p class="text-sm">Fă un test rapid și află cum se simt ochii tăi.</p>
+    </div>
+    <div class="slide bg-blue-400 rounded-lg p-6 text-white shadow-lg">
+      <h2 class="text-xl font-semibold mb-2">Rapoarte</h2>
+      <p class="text-sm">Vizualizează istoricul testelor și progresul luminii tale interioare.</p>
+    </div>
+    <div class="slide bg-yellow-300 rounded-lg p-6 text-white shadow-lg">
+      <h2 class="text-xl font-semibold mb-2">Resurse</h2>
+      <p class="text-sm">Materiale vizuale, audio și ghiduri pentru bunăstare oculară.</p>
+    </div>
+  </div>
+
+  <!-- Indicator Carusel -->
+  <div class="flex justify-center space-x-2 mt-2">
+    <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+    <span class="w-2 h-2 bg-gray-300 rounded-full"></span>
+    <span class="w-2 h-2 bg-gray-300 rounded-full"></span>
+    <span class="w-2 h-2 bg-gray-300 rounded-full"></span>
+  </div>
+
+  <!-- Disclaimer -->
+  <div class="text-center text-gray-500 text-xs mt-4 px-4">
+    Disclaimer: always consult a healthcare professional…
+  </div>
+
+  <!-- Navbar Jos -->
+  <nav class="fixed bottom-0 left-0 w-full bg-white shadow-inner flex justify-around items-center h-16">
+    <a href="#" class="flex flex-col items-center text-xs text-gray-700 hover:text-blue-600">
+      <span class="text-lg">🏠</span>
+      Home
+    </a>
+    <a href="#" class="flex flex-col items-center text-xs text-gray-700 hover:text-blue-600">
+      <span class="text-lg">✅</span>
+      Recommends
+    </a>
+    <a href="#" class="flex flex-col items-center text-xs text-orange-500 font-semibold">
+      <span class="text-lg">👁️</span>
+      LiYE Test
+    </a>
+    <a href="#" class="flex flex-col items-center text-xs text-gray-700 hover:text-blue-600">
+      <span class="text-lg">📈</span>
+      Reports
+    </a>
+    <a href="#" class="flex flex-col items-center text-xs text-gray-700 hover:text-blue-600">
+      <span class="text-lg">📚</span>
+      Resources
+    </a>
+  </nav>
+
+  <!-- JavaScript pentru animație text slider -->
+  <script>
+    const messages = [
+      "Motto: strive for progress not perfection",
+      "Obiectiv: să îți recapeți lumina din privire",
+      "Disclaimer: aceasta nu este o aplicație medicală",
+    ];
+    let i = 0;
+    setInterval(() => {
+      i = (i + 1) % messages.length;
+      document.getElementById("textSlider").textContent = messages[i];
+    }, 4000);
+  </script>
 </body>
 </html>

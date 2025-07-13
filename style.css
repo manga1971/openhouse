@@ -1,0 +1,78 @@
+/* Custom CSS for LiYE Home Page */
+
+/* Hide scrollbar for carousel */
+.carousel::-webkit-scrollbar {
+    display: none;
+}
+.carousel {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.slide {
+    scroll-snap-align: start;
+    flex: 0 0 calc(80% - 0.5rem); /* Adjust slide width to show next one partially */
+    min-width: calc(80% - 0.5rem);
+    margin-right: 1rem; /* Space between slides */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    position: relative; /* Needed for absolute positioning of date */
+    /* Ensure content is readable on various backgrounds */
+    color: inherit; /* Inherit color from parent by default */
+    text-decoration: none; /* Remove underline from links */
+}
+
+/* Specific styles for the LiYE Test slide to match mockup */
+.slide.liye-test-slide {
+    background-color: #926fe8; /* Deeper purple */
+    color: white; /* Text color for dark background */
+}
+.slide.recommendations-slide {
+    background-color: #b9fbc0; /* Lighter green */
+    color: #374151; /* Dark gray for text on light background */
+}
+.slide.reports-slide {
+    background-color: #8ac0ff; /* Lighter blue */
+    color: #374151; /* Dark gray for text on light background */
+}
+.slide.resources-slide {
+    background-color: #ffe68a; /* Lighter yellow */
+    color: #374151; /* Dark gray for text on light background */
+}
+
+.slide .date {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    font-size: 0.875rem; /* text-sm */
+    color: rgba(255, 255, 255, 0.8); /* Slightly transparent white for date */
+}
+
+/* Navbar active state */
+nav a.nav-item.active {
+    /* Tailwind blue-600 is #2563eb */
+    /* Tailwind orange-500 is #f97316 */
+    /* These specific colors are applied via JS based on ID */
+}
+
+/* Optional: Subtle hover effect for all interactive elements */
+button:hover,
+a:hover {
+    opacity: 0.9;
+    transition: opacity 0.2s ease-in-out;
+}
+
+/* Styling for the swipe hint arrow */
+.carousel-container .absolute.right-0 {
+    display: flex; /* Ensure flex properties are applied */
+    align-items: center; /* Center arrow vertically */
+    justify-content: center; /* Center arrow horizontally */
+    z-index: 10; /* Ensure it's above the carousel but below fixed header/footer */
+}
+
+/* Basic styling for the LiYE logo */
+h1.font-bold.text-gray-800 {
+    font-family: 'Georgia', serif; /* Example stylized font */
+    /* Or you can use a custom font family if loaded */
+    letter-spacing: 0.05em; /* A bit of letter spacing */
+    text-shadow: 0 1px 1px rgba(0,0,0,0.05); /* Subtle shadow */
+}

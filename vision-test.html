@@ -7,9 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    <link rel="icon" href="favicon.ico" />
     <style>
         body {
-            font-family: sans-serif;
+            font-family: sans-serif; /* Tailwind default is sans-serif, align with index.html */
         }
         /* Stiluri pentru elementele video și canvas, ambele vizibile pentru debugging */
         #raw_video_feed { /* Renamed from input_video */
@@ -41,6 +42,10 @@
         .checkbox-container input[type="checkbox"] {
             margin-right: 8px;
             accent-color: #3b82f6; /* Culoarea de accent Tailwind blue-500 */
+        }
+        /* Stil pentru badge de succes (pentru a aplica opacity transition) */
+        #badge-success.hidden {
+            display: none !important;
         }
     </style>
 </head>
@@ -120,9 +125,11 @@
     </button>
     <a href="exercitii.html" id="relax-link" class="mt-4 text-blue-600 underline hidden">🔁 Relaxează-ți ochii acum</a> 
     
+    <a href="index.html" class="block mt-6 text-sm text-gray-500 hover:text-blue-600 underline">← Înapoi la Pagina Principală</a>
+
     <script>
         // =====================================================================================
-        // UI Elements (Declarații globale) - Mutat aici pentru a rezolva ReferenceError
+        // UI Elements (Declarații globale)
         // =====================================================================================
         const rawVideoFeed = document.getElementById("raw_video_feed"); 
         const canvasElement = document.getElementById("output_canvas");
@@ -416,6 +423,10 @@
             // Show duration selection and start button again
             startCameraBtn.classList.remove("hidden");
             durationSelectionContainer.classList.remove("hidden");
+
+            // Re-attach the initial listener for camera initialization
+            startCameraBtn.addEventListener('click', initialCameraClick); // Re-attach the named listener
+            startCameraBtn.textContent = "Pornește Camera"; // Reset button text
         });
 
         // =====================================================================================
@@ -462,8 +473,9 @@
         faceMesh.onResults(onResults);
 
         // This function obtains the camera stream and initializes MediaPipe's Camera utility.
-        async function initCameraAndMediaPipeStream() { 
+        async function initCameraAndMediaPipeStream() { // Renamed for clarity
             console.log("DEBUG: initCameraAndMediaPipeStream a fost apelată."); 
+            // Hide the start button and duration selection temporarily
             startCameraBtn.classList.add("hidden"); 
             durationSelectionContainer.classList.add("hidden"); 
             statusMessage.textContent = "Se inițializează camera...";
@@ -478,6 +490,7 @@
                 console.log("✅ Camera a pornit. Flux video vizibil în raw_video_feed.");
                 statusMessage.textContent = "Camera activă. LiYE te observă..."; 
                 
+                // Now that raw_video_feed is playing, initialize and start MediaPipe's Camera utility.
                 const camera = new Camera({ 
                     videoElement: rawVideoFeed, 
                     onFrame: async () => {
@@ -491,17 +504,14 @@
 
                 // Now the button changes its role from "start camera" to "start monitoring"
                 startCameraBtn.textContent = "Începe Monitorizarea"; 
-                startCameraBtn.classList.remove("hidden"); // Make button visible again
+                startCameraBtn.classList.remove("hidden"); // Make button visible again (for the second click)
                 durationSelectionContainer.classList.remove("hidden"); // Show duration selection again
                 statusMessage.textContent = "Camera gata. Click 'Începe Monitorizarea'."; // Status for user
                 
-                // Add a new listener for the *second* click
-                startCameraBtn.onclick = () => {
-                    startMonitoring(); // Call the monitoring start
-                    startCameraBtn.classList.add("hidden"); // Hide button after this click
-                    durationSelectionContainer.classList.add("hidden"); // Hide duration
-                };
-
+                // Remove the old listener and attach a new one for the second click
+                // This is crucial for the double-click behavior
+                startCameraBtn.removeEventListener('click', initialCameraClick); // Remove the initial listener
+                startCameraBtn.addEventListener('click', startMonitoringClick); // Add the new listener
 
             } catch (err) {
                 console.error("❌ Eroare la accesul camerei (catch block):", err); 
@@ -510,6 +520,18 @@
                 durationSelectionContainer.classList.remove("hidden"); 
             }
             console.log("DEBUG: initCameraAndMediaPipeStream a terminat execuția."); 
+        }
+
+        // Named function for the initial camera click event listener
+        function initialCameraClick() {
+            initCameraAndMediaPipeStream();
+        }
+
+        // Named function for the second click event listener (to start monitoring)
+        function startMonitoringClick() {
+            startMonitoring();
+            // Remove this listener as well after it's served its purpose for this session
+            startCameraBtn.removeEventListener('click', startMonitoringClick); 
         }
 
         // This function handles MediaPipe's drawing on the canvas and result processing.
@@ -521,7 +543,7 @@
             // Draw MediaPipe's processed image (which includes the original feed + landmarks) onto the canvas.
             if (results.image) { 
                  canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height); 
-                //  console.log("DEBUG: results.image drawn to canvas."); // Uncomment for more detail
+                //  console.log("DEBUG: results.image drawn to canvas."); 
             } else {
                  console.warn("WARNING: results.image is not valid, cannot draw to canvas.");
             }
@@ -663,7 +685,7 @@
             // loadHistory(); 
 
             // Initial camera stream setup (first click)
-            startCameraBtn.addEventListener('click', initCameraAndMediaPipeStream); 
+            startCameraBtn.addEventListener('click', initialCameraClick); // Attach the initial listener
         });
     </script>
 

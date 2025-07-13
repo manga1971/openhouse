@@ -347,9 +347,7 @@
             testResult.textContent = `Clipituri: ${blinksPerMinute.toFixed(1)}/min – Indice Lumina: ${indiceLumina} – ${feedback}`; // Adjusted display
 
             saveTestResult(blinkCount, feedback, indiceLumina, blinkScore, luminosityScore); 
-            // Istoricul este acum gestionat în dashboard, așa că loadHistory() este comentat aici.
-            // loadHistory(); 
-
+            
             scoreVisual.classList.remove("hidden");
 
             let barText = "";
@@ -400,7 +398,7 @@
 
         restartBtn.addEventListener("click", () => {
             testStarted = false; // Set monitoring to false
-            // stableFaceCounter = 0; // Not used in current workflow
+            stableFaceCounter = 0; 
             faceLostCounter = 0; 
             testResult.classList.add("hidden");
             restartBtn.classList.add("hidden");
@@ -425,7 +423,6 @@
         // =====================================================================================
         // saveTestResult and loadHistory are now standalone functions needed by endMonitoring
         // The UI elements for history section, clear/export buttons are removed from vision-test.html
-        // The saveTestResult is kept as it's critical for endMonitoring
 
         function saveTestResult(blinks, feedback, indiceLumina, blinkScore, luminosityScore) {
             const entry = {
@@ -442,13 +439,9 @@
             localStorage.setItem("liye_last_test", JSON.stringify(entry)); 
         }
 
-        // loadHistory, clearHistoryBtn, exportHistoryBtn logic completely removed from vision-test.html
-
         // =====================================================================================
         // REMINDERS Module - All logic removed from here (moved to central settings/background service later)
         // =====================================================================================
-        // All reminder related functions, consts, and event listeners are removed from vision-test.html
-        // The HTML elements for reminders were also removed.
 
 
         // =====================================================================================
@@ -509,7 +502,7 @@
 
         // This function handles MediaPipe's drawing on the canvas and result processing.
         function onResults(results) {
-            console.log("DEBUG: onResults called. results.image:", results.image); // Added debug for results.image
+            console.log("DEBUG: onResults called. results.image:", results.image); 
 
             canvasCtx.save();
             canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
@@ -543,7 +536,6 @@
 
                     if (framesBelowThreshold >= BLINK_HOLD_FRAMES && !isBlinking) {
                         blinkCount++;
-                        // blinkDisplay.textContent = `Clipituri: ${blinkCount}`; // Removed blinkDisplay
                         isBlinking = true;
                     }
 
@@ -652,12 +644,10 @@
             window.addEventListener('online', () => offlineStatus.classList.add("hidden"));
             window.addEventListener('offline', () => offlineStatus.classList.remove("hidden"));
 
-            // Memento-uri activate/dezactivate logic (moved from removed UI)
-            // updateReminderStatusUI(); // Removed reminder UI
-            // setInterval(checkReminder, 60 * 1000); // Removed reminder functionality
-            // setTimeout(checkReminder, 1000); // Removed reminder functionality
+            // Memento-uri activate/dezactivate logic (removed from UI, but core logic can be somewhere else)
+            // This part is removed from vision-test.html, as discussed.
 
-            // loadHistory() is now called only from dashboard.html, removed from here
+            // History loading moved to dashboard.html
             // loadHistory(); 
 
             // Listener for the "Pornește Camera" button

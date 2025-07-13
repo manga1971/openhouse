@@ -86,7 +86,7 @@
     </div>
 
     <button id="start-camera-btn" class="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition mt-4">
-        Începe Monitorizarea
+        Pornește Camera
     </button>
 
     <div id="test-ui" class="mt-6 hidden">
@@ -489,7 +489,19 @@
                 camera.start(); 
                 console.log("✅ MediaPipe Camera utility a pornit procesarea.");
 
-                startMonitoring(); // Start the monitoring period immediately after camera init
+                // Now the button changes its role from "start camera" to "start monitoring"
+                startCameraBtn.textContent = "Începe Monitorizarea"; 
+                startCameraBtn.classList.remove("hidden"); // Make button visible again
+                durationSelectionContainer.classList.remove("hidden"); // Show duration selection again
+                statusMessage.textContent = "Camera gata. Click 'Începe Monitorizarea'."; // Status for user
+                
+                // Add a new listener for the *second* click
+                startCameraBtn.onclick = () => {
+                    startMonitoring(); // Call the monitoring start
+                    startCameraBtn.classList.add("hidden"); // Hide button after this click
+                    durationSelectionContainer.classList.add("hidden"); // Hide duration
+                };
+
 
             } catch (err) {
                 console.error("❌ Eroare la accesul camerei (catch block):", err); 
@@ -502,14 +514,14 @@
 
         // This function handles MediaPipe's drawing on the canvas and result processing.
         function onResults(results) {
-            console.log("DEBUG: onResults called. results.image:", results.image); 
+            // console.log("DEBUG: onResults called. results.image:", results.image); 
 
             canvasCtx.save();
             canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
             // Draw MediaPipe's processed image (which includes the original feed + landmarks) onto the canvas.
             if (results.image) { 
                  canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height); 
-                 console.log("DEBUG: results.image drawn to canvas."); 
+                //  console.log("DEBUG: results.image drawn to canvas."); // Uncomment for more detail
             } else {
                  console.warn("WARNING: results.image is not valid, cannot draw to canvas.");
             }
@@ -650,7 +662,7 @@
             // History loading moved to dashboard.html
             // loadHistory(); 
 
-            // Listener for the "Pornește Camera" button
+            // Initial camera stream setup (first click)
             startCameraBtn.addEventListener('click', initCameraAndMediaPipeStream); 
         });
     </script>

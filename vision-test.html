@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="ro">
+<html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Test Clipit – LiYE Vision</title>
+    <title>Blink Test – LiYE Vision</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
@@ -10,40 +10,38 @@
     <link rel="icon" href="favicon.ico" />
     <style>
         body {
-            font-family: sans-serif; /* Tailwind default is sans-serif, align with index.html */
+            font-family: sans-serif;
         }
-        /* Stiluri pentru elementele video și canvas, ambele vizibile pentru debugging */
-        #raw_video_feed { /* Renamed from input_video */
-            display: block; /* Va fi vizibil */
-            border: 2px solid red; /* Chenarul roșu */
-            width: 640px; /* Aliniat cu canvas */
-            height: 480px; /* Aliniat cu canvas */
+        /* Styles for video and canvas elements, both visible for debugging */
+        #raw_video_feed {
+            display: block;
+            border: 2px solid red;
+            width: 640px;
+            height: 480px;
             margin: auto;
-            margin-bottom: 10px; /* Spațiu între ele */
+            margin-bottom: 10px;
         }
         #output_canvas {
-            border: 2px solid #3b82f6; /* Blue border for LiYE theme */
-            display: block; /* Va fi vizibil */
+            border: 2px solid #3b82f6; /* Light Blue border for LiYE theme */
+            display: block;
             margin: auto;
             max-width: 100%;
             height: auto;
             border-radius: 8px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
-        /* Stil pentru checkbox-ul personalizat, dacă e nevoie */
         .checkbox-container {
             display: flex;
             align-items: center;
             justify-content: center;
             margin-top: 10px;
-            font-size: 0.875rem; /* text-sm */
-            color: #4b5563; /* text-gray-600 */
+            font-size: 0.875rem;
+            color: #4b5563;
         }
         .checkbox-container input[type="checkbox"] {
             margin-right: 8px;
-            accent-color: #3b82f6; /* Culoarea de accent Tailwind blue-500 */
+            accent-color: #3b82f6;
         }
-        /* Stil pentru badge de succes (pentru a aplica opacity transition) */
         #badge-success.hidden {
             display: none !important;
         }
@@ -51,61 +49,57 @@
 </head>
 <body class="bg-gray-50 p-4 text-center">
 
-    <h1 class="text-3xl font-extrabold mb-4 text-blue-800">Test Clipit 👁️ LiYE Vision</h1>
+    <h1 class="text-3xl font-extrabold mb-4 text-blue-800">Blink Test 👁️ LiYE Vision</h1>
     
     <div id="privacy-warning" class="mb-4 text-gray-700 bg-red-100 border-l-4 border-red-500 p-4" role="alert">
-        <p class="font-bold">**Confidențialitate:**</p>
-        <p>Imaginile captate de cameră sunt procesate **exclusiv pe dispozitivul dumneavoastră** și nu sunt stocate, transmise sau accesate de către dezvoltator.</p>
+        <p class="font-bold">**Privacy:**</p>
+        <p>Camera images are processed **exclusively on your device** and are not stored, transmitted, or accessed by the developer.</p>
         <div class="checkbox-container">
             <input type="checkbox" id="hide-privacy-warning" class="form-checkbox">
-            <label for="hide-privacy-warning">Nu mai afișa acest mesaj</label>
+            <label for="hide-privacy-warning">Do not show this message again</label>
         </div>
     </div>
 
     <div id="instructions" class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4" role="alert">
-        <p class="font-bold">Instrucțiuni:</p>
-        <p>Poziționați-vă fața în cadru și priviți direct la cameră. LiYE vă va observa și vă va oferi feedback.</p>
+        <p class="font-bold">Instructions:</p>
+        <p>Position your face within the frame and look directly at the camera. LiYE will observe you and provide feedback.</p>
         <div class="checkbox-container">
             <input type="checkbox" id="hide-instructions" class="form-checkbox">
-            <label for="hide-instructions">Nu mai afișa aceste instrucțiuni</label>
+            <label for="hide-instructions">Do not show these instructions again</label>
         </div>
     </div>
 
     <video id="raw_video_feed" autoplay muted playsinline></video> 
     <canvas id="output_canvas" width="640" height="480"></canvas>
 
-    <p id="status-message" class="mt-2 text-md text-gray-600">Aștept inițializarea camerei...</p>
+    <p id="status-message" class="mt-2 text-md text-gray-600">Awaiting camera initialization...</p>
     <p id="live-feedback" class="text-sm mt-2 text-gray-500"></p> 
-    <p id="offline-status" class="text-sm text-yellow-600 mt-2 hidden">Mod offline activ. Unele funcționalități pot fi limitate.</p> 
+    <p id="offline-status" class="text-sm text-yellow-600 mt-2 hidden">Offline mode active. Some functionalities may be limited.</p> 
 
     <div class="mt-4 mb-4 flex justify-center items-center gap-4" id="duration-selection-container">
-        <span class="text-gray-700 font-medium">Durată monitorizare:</span>
+        <span class="text-gray-700 font-medium">Monitoring Duration:</span>
         <label class="inline-flex items-center">
             <input type="radio" name="monitorDuration" value="60" checked class="form-radio text-blue-600">
-            <span class="ml-2 text-gray-700">60 secunde</span>
+            <span class="ml-2 text-gray-700">60 seconds</span>
         </label>
         <label class="inline-flex items-center">
             <input type="radio" name="monitorDuration" value="120" class="form-radio text-blue-600">
-            <span class="ml-2 text-gray-700">120 secunde</span>
+            <span class="ml-2 text-gray-700">120 seconds</span>
         </label>
     </div>
 
     <button id="start-camera-btn" class="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition mt-4">
-        Pornește Camera
+        Start Camera
     </button>
 
     <div id="test-ui" class="mt-6 hidden">
-        <div class="text-lg font-medium text-gray-700 mb-2">Timp rămas: <span id="time-left">60</span> secunde</div>
+        <div class="text-lg font-medium text-gray-700 mb-2">Time remaining: <span id="time-left">60</span> seconds</div>
         <div class="w-full h-4 bg-gray-300 rounded">
             <div id="progress-bar" class="h-4 bg-blue-500 rounded" style="width: 0%; transition: width 1s linear;"></div>
         </div>
     </div>
 
     <p id="test-result" class="mt-6 text-xl font-bold text-gray-800 hidden"></p>
-
-    <div id="badge-success" class="hidden opacity-0 transition-opacity duration-500 mt-4 text-green-700 font-semibold">
-        🟢 Felicitări! Privirea ta este în formă excelentă!
-    </div>
 
     <div id="score-visual" class="mt-4 hidden">
         <div class="w-full h-6 bg-gray-200 rounded">
@@ -124,16 +118,26 @@
         <source src="audio/completion-sound-148813.mp3" type="audio/mpeg">
     </audio>
 
-    <button id="restart-btn" class="mt-4 hidden px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition">
-        Reîncepe Testul
-    </button>
-    <a href="exercitii.html" id="relax-link" class="mt-4 text-blue-600 underline hidden">🔁 Relaxează-ți ochii acum</a> 
+    <div class="mt-4 flex justify-center gap-4">
+        <button id="stop-continue-btn" class="px-4 py-2 bg-gray-500 text-white font-semibold rounded hover:bg-gray-600 transition hidden">
+            Stop Monitoring
+        </button>
+        <button id="restart-btn" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition hidden">
+            Restart Monitoring
+        </button>
+    </div>
+    <a href="exercitii.html" id="relax-link" class="mt-4 text-blue-600 underline hidden">🔁 Relax your eyes now</a> 
     
-    <a href="index.html" class="block mt-6 text-sm text-gray-500 hover:text-blue-600 underline">← Înapoi la Pagina Principală</a>
+    <a href="index.html" class="block mt-6 text-sm text-gray-500 hover:text-blue-600 underline">← Back to Main Page</a>
+
+    <div id="badge-success" class="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 hidden opacity-0 transition-opacity duration-500">
+        🟢 Congratulations! Your gaze is excellent!
+    </div>
+
 
     <script>
         // =====================================================================================
-        // UI Elements (Declarații globale)
+        // UI Elements (Global Declarations)
         // =====================================================================================
         const rawVideoFeed = document.getElementById("raw_video_feed"); 
         const canvasElement = document.getElementById("output_canvas");
@@ -166,6 +170,7 @@
         const scoreBar = document.getElementById("score-bar");
         const scoreEmoji = document.getElementById("score-emoji");
 
+        const stopContinueBtn = document.getElementById("stop-continue-btn"); // Added
 
         // MediaPipe Landmark Indices
         const LEFT_EYE_TOP = 159;
@@ -179,7 +184,7 @@
         const EAR_THRESHOLD = 0.015; 
         const BLINK_HOLD_FRAMES = 2; 
         const BLINK_RESET_FRAMES = 5; 
-        const STABLE_THRESHOLD = 30; // Not used in current workflow, but kept for reference
+        // STABLE_THRESHOLD is not used in the new "Observe Me" workflow
         const MAX_FACE_LOST_FRAMES = 150; 
 
         // Global State Variables
@@ -187,9 +192,10 @@
         let isBlinking = false;
         let framesBelowThreshold = 0;
         let framesAboveThreshold = 0;
-        let testStarted = false; // Indicates if monitoring is active
-        let testTimer;
-        let testDuration = 60; // Default, will be updated by radio buttons
+        let monitoringActive = false; // Renamed from testStarted for clarity
+        let monitoringPaused = false; // Added for Stop/Continue logic
+        let monitoringTimer; // Renamed from testTimer
+        let monitoringDuration = 60; // Default, will be updated by radio buttons
         let currentSecond = 0;
         let faceLostCounter = 0; 
         window.lastProcessedLandmarks = null; 
@@ -260,7 +266,7 @@
                         pixelCount++;
                     }
                 } catch (e) {
-                    console.warn("Eroare la getImageData pentru iris:", e);
+                    console.warn("Error getting ImageData for iris:", e);
                 }
             });
 
@@ -282,66 +288,72 @@
         }
 
         function interpretIndiceLumina(score) {
-            if (score >= 80) return "✨ Privirea ta este strălucitoare! E momentul perfect să continui activitățile creative.";
-            if (score >= 60) return "😊 Privirea ta este clară. O scurtă pauză ți-ar păstra concentrarea.";
-            if (score >= 40) return "😟 Privirea ta pare obosită. Recomandăm 3 minute de exerciții vizuale.";
-            return "😩 Privirea ta este tensionată. Oprește-te 5 minute, respiră adânc și privește în depărtare.";
+            if (score >= 80) return "✨ Your gaze is radiant! Perfect for creative activities.";
+            if (score >= 60) return "😊 Your gaze is clear. A short break would maintain your focus.";
+            if (score >= 40) return "😟 Your gaze seems tired. We recommend 3 minutes of eye exercises.";
+            return "😩 Your gaze is strained. Stop for 5 minutes, breathe deeply, and look into the distance.";
         }
 
         // =====================================================================================
-        // CORE: Test Control Functions (now "Monitoring")
+        // CORE: Monitoring Control Functions
         // =====================================================================================
 
-        function startMonitoring() { // Renamed from startTest
-            testStarted = true; // Use testStarted as monitoringStarted
+        function startMonitoring() {
+            monitoringActive = true; 
+            monitoringPaused = false; // Ensure it's not paused when starting
             blinkCount = 0;
             currentSecond = 0;
-            testDuration = parseInt(document.querySelector('input[name="monitorDuration"]:checked').value); // Get selected duration
-            timeLeftEl.textContent = testDuration;
+            monitoringDuration = parseInt(document.querySelector('input[name="monitorDuration"]:checked').value); 
+            timeLeftEl.textContent = monitoringDuration;
             
             // Hide duration selection and start button
             startCameraBtn.classList.add("hidden");
             durationSelectionContainer.classList.add("hidden");
 
+            // Show monitoring UI elements
             testUI.classList.remove("hidden");
-            testResult.classList.add("hidden");
-            restartBtn.classList.add("hidden");
-            relaxLink.classList.add("hidden"); 
-            badgeSuccess.classList.add("hidden", "opacity-0"); 
-            scoreVisual.classList.add("hidden"); 
-            statusMessage.textContent = "Monitorizare în desfășurare...";
+            testResult.classList.add("hidden"); // Hide results from previous test
+            restartBtn.classList.remove("hidden"); // Show restart button
+            stopContinueBtn.classList.remove("hidden"); // Show stop/continue button
+            relaxLink.classList.add("hidden"); // Hide relax link
+            badgeSuccess.classList.add("hidden", "opacity-0"); // Hide badge
+            scoreVisual.classList.add("hidden"); // Hide score visual
+
+            statusMessage.textContent = "Monitoring in progress...";
             backgroundMusic.currentTime = 0;
             backgroundMusic.play();
-            startSound.currentTime = 0; // Reset and play start sound
-            startSound.play().catch(e => console.log("Eroare redare sunet start:", e));
+            startSound.currentTime = 0; 
+            startSound.play().catch(e => console.log("Error playing start sound:", e));
             liveFeedback.textContent = ""; 
 
-            testTimer = setInterval(() => {
-                currentSecond++;
-                timeLeftEl.textContent = testDuration - currentSecond;
-                const progress = (currentSecond / testDuration) * 100;
-                progressBar.style.width = `${progress}%`;
+            monitoringTimer = setInterval(() => {
+                if (!monitoringPaused) { // Only update timer if not paused
+                    currentSecond++;
+                    timeLeftEl.textContent = monitoringDuration - currentSecond;
+                    const progress = (currentSecond / monitoringDuration) * 100;
+                    progressBar.style.width = `${progress}%`;
 
-                if (currentSecond >= testDuration) {
-                    endMonitoring(); // Renamed from endTest
+                    if (currentSecond >= monitoringDuration) {
+                        endMonitoring();
+                    }
                 }
             }, 1000);
         }
 
-        function endMonitoring() // Renamed from endTest
-        {
-            clearInterval(testTimer);
+        function endMonitoring() {
+            clearInterval(monitoringTimer);
             backgroundMusic.pause();
             backgroundMusic.currentTime = 0; 
-            endSound.currentTime = 0; // Reset and play end sound
-            endSound.play().catch(e => console.log("Eroare redare sunet final:", e));
+            endSound.currentTime = 0; 
+            endSound.play().catch(e => console.log("Error playing end sound:", e));
             
-            testUI.classList.add("hidden");
-            testResult.classList.remove("hidden");
-            restartBtn.classList.remove("hidden");
+            testUI.classList.add("hidden"); // Hide monitoring UI
+            testResult.classList.remove("hidden"); // Show test results
+            restartBtn.classList.remove("hidden"); // Show restart button
+            stopContinueBtn.classList.add("hidden"); // Hide stop/continue button
             liveFeedback.textContent = ""; 
 
-            const blinksPerMinute = (blinkCount / testDuration) * 60;
+            const blinksPerMinute = (blinkCount / monitoringDuration) * 60;
 
             const blinkScore = calculateBlinkScore(blinksPerMinute);
 
@@ -349,13 +361,13 @@
             if (window.lastProcessedLandmarks) {
                 luminosityScore = calculateLuminosityScore(canvasCtx, window.lastProcessedLandmarks, canvasElement.width, canvasElement.height);
             } else {
-                console.warn("Nu s-au putut calcula LuminosityScore: landmark-uri lipsă.");
+                console.warn("Could not calculate LuminosityScore: landmarks missing.");
             }
 
             const indiceLumina = calculateIndiceLumina(blinkScore, luminosityScore);
             const feedback = interpretIndiceLumina(indiceLumina);
 
-            testResult.textContent = `Clipituri: ${blinksPerMinute.toFixed(1)}/min – Indice Lumina: ${indiceLumina} – ${feedback}`; // Adjusted display
+            testResult.textContent = `Blinks: ${blinksPerMinute.toFixed(1)}/min – Light Index: ${indiceLumina} – ${feedback}`; 
 
             saveTestResult(blinkCount, feedback, indiceLumina, blinkScore, luminosityScore); 
             
@@ -366,19 +378,19 @@
             let emoji = "";
 
             if (indiceLumina >= 80) { 
-                barText = "Strălucitoare";
+                barText = "Radiant";
                 barColor = "bg-blue-500"; 
                 emoji = "✨";
             } else if (indiceLumina >= 60) {
-                barText = "Claritate";
+                barText = "Clear";
                 barColor = "bg-green-500";
                 emoji = "😊";
             } else if (indiceLumina >= 40) {
-                barText = "Obosită";
+                barText = "Tired";
                 barColor = "bg-yellow-500";
                 emoji = "😟";
             } else {
-                barText = "Tensionată";
+                barText = "Strained";
                 barColor = "bg-red-500";
                 emoji = "😩";
             }
@@ -403,22 +415,36 @@
             } else {
                 relaxLink.classList.add("hidden"); 
             }
+        }
 
-            // resetReminderTimer(); // Memento-urile sunt eliminate
+        // Stop/Continue Button Logic
+        function toggleMonitoringPause() {
+            if (monitoringPaused) {
+                monitoringPaused = false;
+                stopContinueBtn.textContent = "Stop Monitoring";
+                statusMessage.textContent = "Monitoring in progress...";
+                backgroundMusic.play(); // Resume background music
+            } else {
+                monitoringPaused = true;
+                stopContinueBtn.textContent = "Continue Monitoring";
+                statusMessage.textContent = "Monitoring paused. Click 'Continue Monitoring' to resume.";
+                backgroundMusic.pause(); // Pause background music
+            }
         }
 
         restartBtn.addEventListener("click", () => {
-            testStarted = false; // Set monitoring to false
-            // stableFaceCounter = 0; // This variable is not used in the current version
+            monitoringActive = false; 
+            monitoringPaused = false; 
             faceLostCounter = 0; 
             testResult.classList.add("hidden");
             restartBtn.classList.add("hidden");
+            stopContinueBtn.classList.add("hidden"); // Hide on restart
             relaxLink.classList.add("hidden"); 
             badgeSuccess.classList.add("hidden", "opacity-0"); 
             scoreVisual.classList.add("hidden"); 
-            // blinkDisplay.textContent = "Clipituri: 0"; // Removed blinkDisplay element
-            statusMessage.textContent = "Aștept inițializarea camerei..."; 
+            statusMessage.textContent = "Awaiting camera initialization..."; 
             liveFeedback.textContent = ""; 
+            blinkCount = 0; // Reset blink count
             isBlinking = false;
             framesBelowThreshold = 0;
             framesAboveThreshold = 0;
@@ -437,15 +463,13 @@
 
             // Re-attach the initial listener for camera initialization
             startCameraBtn.addEventListener('click', initialCameraClick); // Re-attach the named listener
-            startCameraBtn.textContent = "Pornește Camera"; // Reset button text
+            startCameraBtn.textContent = "Start Camera"; // Reset button text
         });
 
         // =====================================================================================
         // PERSISTENCE: History & Export - Logic removed from here, managed in dashboard.html
         // =====================================================================================
-        // saveTestResult and loadHistory are now standalone functions needed by endMonitoring
-        // The UI elements for history section, clear/export buttons are removed from vision-test.html
-
+        // saveTestResult is now a standalone function needed by endMonitoring
         function saveTestResult(blinks, feedback, indiceLumina, blinkScore, luminosityScore) {
             const entry = {
                 date: new Date().toLocaleString(),
@@ -484,54 +508,51 @@
         faceMesh.onResults(onResults);
 
         // This function obtains the camera stream and initializes MediaPipe's Camera utility.
-        async function initCameraAndMediaPipeStream() { // Renamed for clarity
-            console.log("DEBUG: initCameraAndMediaPipeStream a fost apelată."); 
-            // Hide the start button and duration selection temporarily
+        async function initCameraAndMediaPipeStream() { 
+            console.log("DEBUG: initCameraAndMediaPipeStream called."); 
             startCameraBtn.classList.add("hidden"); 
             durationSelectionContainer.classList.add("hidden"); 
-            statusMessage.textContent = "Se inițializează camera...";
+            statusMessage.textContent = "Initializing camera...";
 
             try {
-                console.log("DEBUG: Încercă accesul la camera (getUserMedia)."); 
+                console.log("DEBUG: Attempting camera access (getUserMedia)."); 
                 const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                console.log("DEBUG: Fluxul camerei a fost obținut."); 
+                console.log("DEBUG: Camera stream obtained."); 
                 
                 rawVideoFeed.srcObject = stream; 
                 await rawVideoFeed.play(); 
-                console.log("✅ Camera a pornit. Flux video vizibil în raw_video_feed.");
-                statusMessage.textContent = "Camera activă. LiYE te observă..."; 
+                console.log("✅ Camera started. Video stream visible in raw_video_feed.");
+                statusMessage.textContent = "Camera active. LiYE is observing you..."; 
                 
-                // Now that raw_video_feed is playing, initialize and start MediaPipe's Camera utility.
                 const camera = new Camera({ 
                     videoElement: rawVideoFeed, 
                     onFrame: async () => {
-                        await new Promise(requestAnimationFrame); // ADDED THIS LINE
+                        await new Promise(requestAnimationFrame); 
                         await faceMesh.send({ image: rawVideoFeed }); 
                     },
                     width: 640,
                     height: 480
                 });
                 camera.start(); 
-                console.log("✅ MediaPipe Camera utility a pornit procesarea.");
+                console.log("✅ MediaPipe Camera utility started processing.");
 
                 // Now the button changes its role from "start camera" to "start monitoring"
-                startCameraBtn.textContent = "Începe Monitorizarea"; 
-                startCameraBtn.classList.remove("hidden"); // Make button visible again (for the second click)
-                durationSelectionContainer.classList.remove("hidden"); // Show duration selection again
-                statusMessage.textContent = "Camera gata. Click 'Începe Monitorizarea'."; // Status for user
+                startCameraBtn.textContent = "Start Monitoring"; 
+                startCameraBtn.classList.remove("hidden"); 
+                durationSelectionContainer.classList.remove("hidden"); 
+                statusMessage.textContent = "Camera ready. Click 'Start Monitoring'."; 
                 
                 // Remove the old listener and attach a new one for the second click
-                // This is crucial for the double-click behavior
-                startCameraBtn.removeEventListener('click', initialCameraClick); // Remove the initial listener
-                startCameraBtn.addEventListener('click', startMonitoringClick); // Add the new listener
+                startCameraBtn.removeEventListener('click', initialCameraClick); 
+                startCameraBtn.addEventListener('click', startMonitoringClick); 
 
             } catch (err) {
-                console.error("❌ Eroare la accesul camerei (catch block):", err); 
-                statusMessage.textContent = `Eroare: Camera nu a putut porni. ${err.name}: ${err.message}. Verificați permisiunile sau alte aplicații care folosesc camera.`;
+                console.error("❌ Error accessing camera (catch block):", err); 
+                statusMessage.textContent = `Error: Camera could not start. ${err.name}: ${err.message}. Check permissions or other apps using camera.`;
                 startCameraBtn.classList.remove("hidden"); 
                 durationSelectionContainer.classList.remove("hidden"); 
             }
-            console.log("DEBUG: initCameraAndMediaPipeStream a terminat execuția."); 
+            console.log("DEBUG: initCameraAndMediaPipeStream finished execution."); 
         }
 
         // Named function for the initial camera click event listener
@@ -567,7 +588,8 @@
                 faceLostCounter = 0; 
 
                 // Logic for blink detection and live feedback during monitoring
-                if (testStarted) { 
+                // Only process if monitoring is active AND not paused
+                if (monitoringActive && !monitoringPaused) { 
                     const earLeft = calculateEyeVerticalDistance(landmarks[LEFT_EYE_TOP], landmarks[LEFT_EYE_BOTTOM]);
                     const earRight = calculateEyeVerticalDistance(landmarks[RIGHT_EYE_TOP], landmarks[RIGHT_EYE_BOTTOM]);
                     const ear = Math.min(earLeft, earRight);
@@ -590,7 +612,7 @@
                     }
 
                     const currentLuminosityScore = calculateLuminosityScore(canvasCtx, landmarks, canvasElement.width, canvasElement.height);
-                    liveFeedback.textContent = `Clipiri: ${blinkCount}, Luminozitate: ${currentLuminosityScore}`;
+                    liveFeedback.textContent = `Blinks: ${blinkCount}, Luminosity: ${currentLuminosityScore}`;
 
                     // Draw landmarks ON TOP of the video feed on the canvas
                     canvasCtx.beginPath();
@@ -634,22 +656,23 @@
             } else { 
                 window.lastProcessedLandmarks = null; 
                 
-                if (testStarted) { 
+                if (monitoringActive) { // Changed from testStarted
                     faceLostCounter++;
                     if (faceLostCounter >= MAX_FACE_LOST_FRAMES) { 
-                        clearInterval(testTimer);
+                        clearInterval(monitoringTimer); // Renamed timer
                         backgroundMusic.pause();
-                        statusMessage.textContent = "Monitorizare întreruptă. Repoziționați fața pentru reluare."; 
-                        testStarted = false;
+                        statusMessage.textContent = "Monitoring interrupted. Reposition your face to resume."; 
+                        monitoringActive = false; // Set monitoring to false
                         restartBtn.classList.remove("hidden");
+                        stopContinueBtn.classList.add("hidden"); // Hide stop/continue
                         liveFeedback.textContent = ""; 
                     } else {
                         const secondsRemaining = Math.floor((MAX_FACE_LOST_FRAMES - faceLostCounter) / 30); 
-                        statusMessage.textContent = `Fața pierdută! Reluați poziția pentru a continua monitorizarea. (${secondsRemaining}s)`; 
+                        statusMessage.textContent = `Face lost! Reposition to continue monitoring. (${secondsRemaining}s)`; 
                     }
                 } else { 
-                    statusMessage.textContent = "Nicio față detectată. Poziționați-vă în fața camerei.";
-                    // stableFaceCounter = 0; // This variable is not used in the current version
+                    statusMessage.textContent = "No face detected. Position your face in front of the camera.";
+                    // stableFaceCounter is not used in this workflow.
                     faceLostCounter = 0; 
                 }
             }
@@ -662,7 +685,7 @@
         // =====================================================================================
 
         document.addEventListener("DOMContentLoaded", () => {
-            // Privacy Warning & Instructions Visibility (New Logic)
+            // Privacy Warning & Instructions Visibility
             const privacyWarningShown = localStorage.getItem('liye_privacy_warning_hidden');
             if (privacyWarningShown === 'true') {
                 privacyWarning.classList.add('hidden');
@@ -683,15 +706,20 @@
                 instructionsDiv.classList.toggle('hidden', hideInstructionsCheckbox.checked);
             });
 
-            // Status offline
+            // Offline Status
             if (!navigator.onLine) {
                 offlineStatus.classList.remove("hidden");
             }
             window.addEventListener('online', () => offlineStatus.classList.add("hidden"));
             window.addEventListener('offline', () => offlineStatus.classList.remove("hidden"));
 
-            // Initial camera stream setup (first click)
-            startCameraBtn.addEventListener('click', initialCameraClick); // Attach the initial listener
+            // Reminders logic removed from vision-test.html, as discussed.
+
+            // Initial setup for the button click sequence
+            startCameraBtn.addEventListener('click', initialCameraClick); 
+            
+            // Listener for Stop/Continue button
+            stopContinueBtn.addEventListener('click', toggleMonitoringPause);
         });
     </script>
 

@@ -103,6 +103,10 @@
 
     <p id="test-result" class="mt-6 text-xl font-bold text-gray-800 hidden"></p>
 
+    <div id="badge-success" class="hidden opacity-0 transition-opacity duration-500 mt-4 text-green-700 font-semibold">
+        🟢 Felicitări! Privirea ta este în formă excelentă!
+    </div>
+
     <div id="score-visual" class="mt-4 hidden">
         <div class="w-full h-6 bg-gray-200 rounded">
             <div id="score-bar" class="h-6 text-sm font-bold text-white text-center leading-6 rounded"></div>
@@ -405,7 +409,7 @@
 
         restartBtn.addEventListener("click", () => {
             testStarted = false; // Set monitoring to false
-            stableFaceCounter = 0; 
+            // stableFaceCounter = 0; // This variable is not used in the current version
             faceLostCounter = 0; 
             testResult.classList.add("hidden");
             restartBtn.classList.add("hidden");
@@ -423,6 +427,13 @@
             // Show duration selection and start button again
             startCameraBtn.classList.remove("hidden");
             durationSelectionContainer.classList.remove("hidden");
+
+            // Stop previous camera stream if active
+            if (rawVideoFeed.srcObject) {
+                const tracks = rawVideoFeed.srcObject.getTracks();
+                tracks.forEach(track => track.stop());
+                rawVideoFeed.srcObject = null;
+            }
 
             // Re-attach the initial listener for camera initialization
             startCameraBtn.addEventListener('click', initialCameraClick); // Re-attach the named listener
@@ -494,6 +505,7 @@
                 const camera = new Camera({ 
                     videoElement: rawVideoFeed, 
                     onFrame: async () => {
+                        await new Promise(requestAnimationFrame); // ADDED THIS LINE
                         await faceMesh.send({ image: rawVideoFeed }); 
                     },
                     width: 640,
@@ -637,7 +649,7 @@
                     }
                 } else { 
                     statusMessage.textContent = "Nicio față detectată. Poziționați-vă în fața camerei.";
-                    stableFaceCounter = 0; 
+                    // stableFaceCounter = 0; // This variable is not used in the current version
                     faceLostCounter = 0; 
                 }
             }
@@ -677,12 +689,6 @@
             }
             window.addEventListener('online', () => offlineStatus.classList.add("hidden"));
             window.addEventListener('offline', () => offlineStatus.classList.remove("hidden"));
-
-            // Memento-uri activate/dezactivate logic (removed from UI, but core logic can be somewhere else)
-            // This part is removed from vision-test.html, as discussed.
-
-            // History loading moved to dashboard.html
-            // loadHistory(); 
 
             // Initial camera stream setup (first click)
             startCameraBtn.addEventListener('click', initialCameraClick); // Attach the initial listener

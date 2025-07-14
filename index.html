@@ -3,20 +3,22 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LiYE – Home</title>
-    <link rel="icon" href="/path/to/your/favicon.ico" type="image/x-icon"> <script src="https://cdn.tailwindcss.com"></script>
+    <title>Lum – Home</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-[#fcfcfc] text-gray-800 font-sans pb-20">
-    <header class="w-full flex justify-between items-center px-4 py-3 bg-white shadow fixed top-0 z-50">
-        <h1 class="text-lg font-bold text-gray-800 tracking-wider">LiYE</h1> <div class="flex space-x-4 text-center">
-            <button class="flex flex-col items-center text-gray-700 text-xs" aria-label="View your rewards">
+<body>
+    <header class="w-full flex justify-between items-center px-4 py-3 shadow fixed top-0 z-50">
+        <h1 class="text-lg font-bold tracking-wider">Lum</h1>
+        <div class="flex space-x-4 text-center">
+            <button class="flex flex-col items-center text-xs" aria-label="View your rewards">
                 <span class="text-xl">⭐</span> Rewards
             </button>
-            <button class="flex flex-col items-center text-gray-700 text-xs" aria-label="Chat with AI assistant">
+            <button class="flex flex-col items-center text-xs" aria-label="Chat with AI assistant">
                 <span class="text-xl">🤖</span> AI Chat
             </button>
-            <button class="flex flex-col items-center text-gray-700 text-xs" aria-label="Access your account settings">
+            <button class="flex flex-col items-center text-xs" aria-label="Access your account settings">
                 <span class="text-xl">👤</span> Account
             </button>
         </div>
@@ -24,83 +26,82 @@
 
     <main>
         <section class="mt-20 px-4 text-center">
-            <div id="textSlider" aria-live="polite" class="bg-gray-100 rounded p-2 text-gray-600 text-sm transition-opacity duration-500 ease-in-out opacity-100 min-h-[36px] flex items-center justify-center">
+            <div id="textSlider" aria-live="polite" class="rounded p-2 text-sm transition-opacity duration-500 ease-in-out opacity-100 min-h-[36px] flex items-center justify-center">
                 Motto: strive for progress not perfection
             </div>
         </section>
 
         <section class="carousel-container relative">
             <div class="carousel px-4 mt-6 pb-4 flex overflow-x-scroll snap-x snap-mandatory" id="carousel">
-                <a href="recommends.html" class="slide recommendations-slide rounded-lg p-6 text-gray-800 shadow-lg flex flex-col justify-end" aria-label="Go to Recommendations section">
+                <a href="recommends.html" class="slide recommendations-slide rounded-lg shadow-lg flex flex-col justify-end" aria-label="Go to Recommendations section">
                     <h2 class="text-xl font-semibold mb-2">Recommends</h2>
                     <p class="text-sm">Personalized exercises and tips for your eyes.</p>
                 </a>
-                <a href="vision-test.html" class="slide liye-test-slide rounded-lg p-6 text-white shadow-lg flex flex-col justify-between" aria-label="Take the LiYE Vision Test">
+                <a href="vision-test.html" class="slide lum-test-slide rounded-lg shadow-lg flex flex-col justify-between" aria-label="Take the Lum Vision Test">
                     <span class="date">Thursday, July 10</span>
                     <div>
-                        <h2 class="text-xl font-semibold mb-2">LiYE Test</h2>
+                        <h2 class="text-xl font-semibold mb-2">Lum Test</h2>
                         <p class="text-sm">Take a quick test now and find out how your eyes are doing.</p>
                     </div>
                 </a>
-                <a href="reports.html" class="slide reports-slide rounded-lg p-6 text-gray-800 shadow-lg flex flex-col justify-end" aria-label="View your progress reports">
+                <a href="reports.html" class="slide reports-slide rounded-lg shadow-lg flex flex-col justify-end" aria-label="View your progress reports">
                     <h2 class="text-xl font-semibold mb-2">Reports</h2>
                     <p class="text-sm">Visualize your test history and inner light progress.</p>
                 </a>
-                <a href="resources.html" class="slide resources-slide rounded-lg p-6 text-gray-800 shadow-lg flex flex-col justify-end" aria-label="Explore resources for eye wellness">
+                <a href="resources.html" class="slide resources-slide rounded-lg shadow-lg flex flex-col justify-end" aria-label="Explore resources for eye wellness">
                     <h2 class="text-xl font-semibold mb-2">Resources</h2>
                     <p class="text-sm">Visual, audio materials, and guides for eye wellness.</p>
                 </a>
             </div>
-            <div class="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-[#fcfcfc] to-transparent pointer-events-none flex items-center justify-center pr-2 text-gray-400">
+            <div class="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-[var(--color-background)] to-transparent pointer-events-none flex items-center justify-center pr-2">
                 <span class="text-2xl">→</span>
             </div>
         </section>
 
         <div class="flex justify-center space-x-2 mt-2" id="carousel-indicators">
-            </div>
+        </div>
 
-        <section class="text-center text-gray-500 text-xs mt-4 px-4">
+        <section class="text-center text-xs mt-4 px-4">
             Disclaimer: always consult a healthcare professional…
         </section>
     </main>
 
     <nav class="fixed bottom-0 left-0 w-full bg-white shadow-inner flex justify-around items-center h-16 z-50">
-        <a href="#" class="nav-item flex flex-col items-center text-xs text-gray-700" id="nav-home" aria-label="Go to Home page">
+        <a href="index.html" class="nav-item flex flex-col items-center text-xs" id="nav-home" aria-label="Go to Home page">
             <span class="text-lg">🏠</span> Home
         </a>
-        <a href="#" class="nav-item flex flex-col items-center text-xs text-gray-700" id="nav-recommends" aria-label="Go to Recommends page">
+        <a href="recommends.html" class="nav-item flex flex-col items-center text-xs" id="nav-recommends" aria-label="Go to Recommends page">
             <span class="text-lg">✅</span> Recommends
         </a>
-        <a href="#" class="nav-item flex flex-col items-center text-xs text-orange-500 font-semibold active" id="nav-liye-test" aria-label="Go to LiYE Test page">
-            <span class="text-lg">👁️</span> LiYE Test
+        <a href="vision-test.html" class="nav-item flex flex-col items-center text-xs font-semibold active" id="nav-lum-test" aria-label="Go to Lum Test page">
+            <span class="text-lg">👁️</span> Lum Test
         </a>
-        <a href="#" class="nav-item flex flex-col items-center text-xs text-gray-700" id="nav-reports" aria-label="Go to Reports page">
+        <a href="reports.html" class="nav-item flex flex-col items-center text-xs" id="nav-reports" aria-label="Go to Reports page">
             <span class="text-lg">📈</span> Reports
         </a>
-        <a href="#" class="nav-item flex flex-col items-center text-xs text-gray-700" id="nav-resources" aria-label="Go to Resources page">
+        <a href="resources.html" class="nav-item flex flex-col items-center text-xs" id="nav-resources" aria-label="Go to Resources page">
             <span class="text-lg">📚</span> Resources
         </a>
     </nav>
 
     <script>
         // --- Text Slider Logic ---
-        const messages = [
+        // Messages for the Home page specific slider
+        const homePageMessages = [
             "Motto: strive for progress not perfection",
-            "Goal: cultivate light in your eyes every day", // Changed to English
-            "Disclaimer: this is not a medical diagnostic tool", // Changed to English
+            "Goal: cultivate light in your eyes every day",
+            "Disclaimer: this app is for informational purposes only",
         ];
         let currentMessageIndex = 0;
         const textSliderElement = document.getElementById("textSlider");
 
         function updateTextSlider() {
-            // Fade out
             textSliderElement.classList.remove("opacity-100");
             textSliderElement.classList.add("opacity-0");
 
             setTimeout(() => {
-                currentMessageIndex = (currentMessageIndex + 1) % messages.length;
-                textSliderElement.textContent = messages[currentMessageIndex];
-                // Fade in
+                currentMessageIndex = (currentMessageIndex + 1) % homePageMessages.length;
+                textSliderElement.textContent = homePageMessages[currentMessageIndex];
                 textSliderElement.classList.remove("opacity-0");
                 textSliderElement.classList.add("opacity-100");
             }, 500); // Duration of fade-out transition
@@ -127,15 +128,20 @@
 
         function updateCarouselIndicators() {
             const scrollLeft = carousel.scrollLeft;
-            const slideWidth = slides[0].offsetWidth + parseFloat(getComputedStyle(slides[0]).marginRight);
+            // Get the actual width of the first slide including its right margin
+            const firstSlide = slides[0];
+            const slideWidth = firstSlide.offsetWidth + parseFloat(getComputedStyle(firstSlide).marginRight);
+            
             // Calculate active index, considering potential partial scrolls
             const activeIndex = Math.round(scrollLeft / slideWidth);
 
             for (let i = 0; i < numSlides; i++) {
                 if (i === activeIndex) {
-                    indicators[i].style.backgroundColor = 'rgb(107 114 128)'; // active: gray-400
+                    indicators[i].classList.remove('bg-gray-300'); // Tailwind gray-300 for inactive
+                    indicators[i].classList.add('bg-gray-400'); // Tailwind gray-400 for active
                 } else {
-                    indicators[i].style.backgroundColor = 'rgb(209 213 219)'; // inactive: gray-300
+                    indicators[i].classList.remove('bg-gray-400');
+                    indicators[i].classList.add('bg-gray-300');
                 }
             }
         }
@@ -158,44 +164,40 @@
         });
 
         // --- Navbar Active State Logic ---
-        // Get all navigation items
         const navItems = document.querySelectorAll('.nav-item');
 
-        // Function to set the active navigation item
         function setActiveNavItem(id) {
             navItems.forEach(item => {
-                item.classList.remove('active', 'text-blue-600', 'font-semibold');
-                item.classList.add('text-gray-700'); // Ensure default color for inactive
-                // For LiYE Test, ensure orange color is applied correctly
-                if (item.id === 'nav-liye-test' && item.id !== id) {
-                     item.classList.remove('text-orange-500', 'font-semibold');
-                     item.classList.add('text-gray-700'); // Reset orange if not active
-                }
+                item.classList.remove('active', 'font-semibold', 'text-orange-500', 'text-blue-600');
+                item.classList.add('text-gray-700'); // Default inactive color
             });
 
             const activeItem = document.getElementById(id);
             if (activeItem) {
                 activeItem.classList.add('active', 'font-semibold');
-                if (id === 'nav-liye-test') {
-                    activeItem.classList.add('text-orange-500'); // Special color for LiYE Test
+                // Use CSS variables defined in style.css or direct Tailwind classes for colors
+                if (id === 'nav-lum-test') { // Changed from nav-liye-test
+                    activeItem.classList.add('text-orange-500'); // Example: Use Tailwind orange for Lum Test
                 } else {
-                    activeItem.classList.add('text-blue-600'); // Default active color
+                    // This color is now controlled by style.css for .nav-item.active
+                    // If you want specific active colors for other items, add them here
+                    // activeItem.classList.add('text-blue-600'); 
                 }
                 activeItem.classList.remove('text-gray-700'); // Remove inactive color
             }
         }
 
-        // Set 'LiYE Test' as active by default on Home page load
-        setActiveNavItem('nav-liye-test');
+        // Set 'Lum Test' as active by default on Home page load for testing
+        // In a real app, this would be determined by the current page URL
+        setActiveNavItem('nav-lum-test');
 
-        // Example: If you navigate to another page, you'd call setActiveNavItem accordingly.
-        // For a single page app or if nav items link to sections on the same page,
-        // you'd add click listeners to each nav item to call setActiveNavItem(item.id).
         navItems.forEach(item => {
             item.addEventListener('click', (e) => {
-                // Prevent default navigation for example, if these are internal links
+                // For a multi-page application, let the default navigation happen
+                // and the correct active state will be set on page load.
+                // For demonstration, you could uncomment preventDefault:
                 // e.preventDefault();
-                setActiveNavItem(item.id);
+                // setActiveNavItem(item.id); // This would make it active immediately on click, but might be reset on page load.
             });
         });
 

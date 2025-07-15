@@ -2,21 +2,23 @@
 
 /* === Lum Zen Color Palette (Variables) === */
 :root {
-    --color-background: #FDF8F5; /* Roz pal, aproape alb */
-    --color-card-bg: #FFFCEB;    /* Bej crem pentru fundaluri de carduri/sectiuni */
-    --color-text-primary: #333333; /* Gri închis pentru text principal */
-    --color-text-secondary: #666666; /* Gri mediu pentru text secundar */
-    --color-text-light: #999999; /* Gri deschis pentru text foarte subtil */
+    --color-background: #FDF8F5;    /* Roz pal, aproape alb - Fundal pagini */
+    --color-header-footer-bg: #FFFCEB; /* Bej crem - Fundal Header și Navbar */
+    --color-card-bg: #FFFFFF;       /* Alb pur - Pentru carduri și elemente ce necesită contrast mai mare */
 
-    --color-accent-primary: #8ECEDA; /* Albastru pudră pentru elemente principale interactive, chenare */
-    --color-accent-secondary: #F5A89A; /* Roz piersică pentru alte elemente interactive */
-    --color-accent-highlight: #E76F51; /* Portocaliu ars pentru highlight-uri importante (ex: REC, progress, activ) */
+    --color-text-primary: #333333;   /* Gri închis - Text principal */
+    --color-text-secondary: #666666; /* Gri mediu - Text secundar, mai discret */
+    --color-text-light: #999999;     /* Gri deschis - Text foarte subtil, indicatori */
 
-    --color-success: #B9FBC0; /* Verde deschis pentru succes (ex: Recommends slide) */
-    --color-info: #8AC0FF;    /* Albastru deschis pentru info (ex: Reports slide) */
-    --color-warning: #FFE68A; /* Galben deschis pentru avertismente (ex: Resources slide) */
-    --color-error: #FCD34D;   /* Galben portocaliu intens pentru erori/atenție (ex: privacy warning border) */
-    --color-error-bg: #FEF3C7; /* Galben pal pentru fundal eroare (ex: privacy warning bg) */
+    --color-accent-primary: #8ECEDA;   /* Albastru pudră - Accent principal, chenare, butoane */
+    --color-accent-secondary: #F5A89A; /* Roz piersică - Accent secundar, toggle-uri */
+    --color-accent-highlight: #E76F51; /* Portocaliu ars - Highlight important (ex: REC, progres, activ) */
+
+    --color-success: #B9FBC0;       /* Verde deschis - Slide Recommends, succes */
+    --color-info: #8AC0FF;          /* Albastru deschis - Slide Reports, informații */
+    --color-warning: #FFE68A;       /* Galben deschis - Slide Resources, avertismente ușoare */
+    --color-error: #FCD34D;         /* Galben portocaliu intens - Atenție, erori (bordură) */
+    --color-error-bg: #FEF3C7;      /* Galben pal - Fundal eroare/avertisment (bg) */
 }
 
 body {
@@ -28,7 +30,7 @@ body {
 
 /* HEADER */
 header {
-    background-color: var(--color-card-bg);
+    background-color: var(--color-header-footer-bg);
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 header h1 {
@@ -46,7 +48,7 @@ header button span {
 
 /* NAVBAR */
 nav {
-    background-color: var(--color-card-bg);
+    background-color: var(--color-header-footer-bg);
     box-shadow: 0 -2px 4px rgba(0,0,0,0.05);
 }
 nav a.nav-item {
@@ -68,31 +70,83 @@ nav a.nav-item span {
 }
 
 
-/* === TEXT SLIDER (Motto) === */
-#textSlider {
-    background-color: var(--color-card-bg);
-    color: var(--color-text-secondary);
+/* === TEXT SLIDER (Motto) & PERMANENT DISCLAIMER === */
+/* Ambele vor avea același fundal ca și body, eliminând aspectul de "casetă" */
+#textSlider,
+#permanent-disclaimer {
+    background-color: transparent; /* Se integrează cu fundalul body */
+    color: var(--color-text-secondary); /* Textul va fi vizibil */
     border-radius: 0.5rem;
     padding: 0.5rem;
-    font-size: 0.875rem;
-    min-height: 36px;
+    font-size: 0.875rem; /* text-sm */
     display: flex;
     align-items: center;
     justify-content: center;
+    text-align: center; /* Asigură centrare pentru texte pe mai multe rânduri */
+    line-height: 1.4; /* Spațiere între rânduri pentru lizibilitate */
     transition: opacity 500ms ease-in-out;
+    /* Fixed height for 2 lines of text */
+    min-height: 48px; /* Ajustează această valoare dacă e nevoie de mai mult spațiu */
+    box-sizing: border-box; /* Include padding-ul în înălțimea totală */
+}
+/* No shadow for these areas to make them blend with the background */
+
+
+/* === INITIAL DISCLAIMER POPUP (NOUA NOTIFICARE) === */
+#initial-disclaimer-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--color-card-bg); /* Un fundal mai alb pentru modal */
+    color: var(--color-text-primary);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+    z-index: 2000; /* Peste orice altceva */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 90%;
+    width: 350px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+}
+#initial-disclaimer-popup.show {
+    opacity: 1;
+    visibility: visible;
+}
+#initial-disclaimer-popup p {
+    margin-bottom: 1rem;
+}
+#initial-disclaimer-popup .flex {
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+#initial-disclaimer-popup button {
+    background-color: var(--color-accent-primary);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+#initial-disclaimer-popup button:hover {
+    background-color: #6EB5C7;
+}
+#initial-disclaimer-popup input[type="checkbox"] {
+    accent-color: var(--color-accent-primary);
+}
+#initial-disclaimer-popup label {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
 }
 
-/* === PRIVACY WARNING / DISCLAIMER === */
-#privacy-warning {
-    background-color: var(--color-error-bg);
-    border-left: 4px solid var(--color-error);
-    color: var(--color-text-primary); /* Text mai închis */
-    padding: 1rem;
-    border-radius: 0.5rem;
-}
-#privacy-warning input[type="checkbox"] {
-    accent-color: var(--color-error);
-}
 
 /* === CAROUSEL (Home Page) === */
 .carousel-container {
@@ -119,7 +173,7 @@ nav a.nav-item span {
     padding: 1.5rem; /* Padding consistent */
     border-radius: 0.75rem; /* Colțuri rotunjite */
     box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Umbră subtilă */
-    min-height: 160px; /* Înălțime minimă pentru sliderele de pe Home */
+    min-height: 210px; /* Înălțime mărită pentru sliderele de pe Home (aprox. +1/3 din 160px) */
     display: flex;
     flex-direction: column;
     justify-content: space-between; /* Pentru a împinge conținutul jos în slide-uri */
@@ -181,12 +235,16 @@ nav a.nav-item span {
     justify-content: center;
     z-index: 10;
     color: var(--color-text-light);
+    /* Adjust background gradient to blend with new body color */
+    background: linear-gradient(to left, var(--color-background) 50%, transparent);
 }
+
 
 /* === VIDEO PLAYER (Vision Test Page) === */
 .video-container {
     position: relative;
     width: 320px; /* Lățime fixă pentru test */
+    /* Maintain 4:3 aspect ratio */
     height: 240px; /* Înălțime fixă pentru test */
     margin: 0 auto;
     border: 2px solid var(--color-accent-primary); /* Chenar albastru pudră */
@@ -194,6 +252,13 @@ nav a.nav-item span {
     overflow: hidden;
     background-color: #000; /* Fundal negru pentru video */
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    /* Explicit aspect ratio for better mobile handling */
+    aspect-ratio: 4 / 3; /* Forțează 4:3 aspect ratio */
+}
+.video-container video, .video-container canvas {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Asigură că umple containerul */
 }
 .video-overlay {
     position: absolute;
@@ -269,7 +334,7 @@ nav a.nav-item span {
 }
 
 /* === NOTIFICATION BANNERS & MODALS === */
-.notification-banner {
+.notification-banner { /* Used for "Test finished" notification */
     position: fixed;
     top: 60px; /* Sub header */
     left: 50%;

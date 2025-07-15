@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="p-4">
+<body>
 
   <header class="dashboard-header flex items-center justify-between mb-6">
     <h1 class="text-2xl font-extrabold">📊 Lum Vision – Dashboard</h1>
@@ -22,17 +22,17 @@
       <p id="total-tests" class="text-2xl font-bold">0</p>
     </div>
     <div class="p-4 rounded shadow">
-      <h2 class="text-sm font-medium">Media Clipituri</h2>
+      <h2 class="text-sm font-medium">Media Clipituri/Minut</h2>
       <p id="avg-blinks" class="text-2xl font-bold">–</p>
     </div>
     <div class="p-4 rounded shadow">
-      <h2 class="text-sm font-medium">Ultimul Scor</h2>
+      <h2 class="text-sm font-medium">Ultimul Indice Lumina</h2>
       <p id="last-score" class="text-xl font-semibold">–</p>
     </div>
   </section>
 
   <section class="mb-8">
-    <h2 class="text-lg font-bold mb-2">Grafic Clipituri (ultimele teste)</h2>
+    <h2 class="text-lg font-bold mb-2">Grafic Indice Lumina (ultimele teste)</h2>
     <div id="graph" class="flex items-end space-x-1 h-40 p-4 rounded shadow overflow-x-auto"></div>
   </section>
 
@@ -94,7 +94,7 @@
 
     // Calculul mediei clipiturilor pe minut, folosind 'blinks' și 'duration'
     const totalBlinks = history.reduce((sum, h) => sum + h.blinks, 0);
-    const totalDuration = history.reduce((sum, h) => sum + (h.duration || 60), 0); // Folosește durata înregistrată sau un default de 60s
+    const totalDuration = history.reduce((sum, h) => sum + (h.duration || 1), 0); // Use 1 to avoid division by zero
     const avgBlinksPerMinute = totalDuration > 0 ? ((totalBlinks / totalDuration) * 60).toFixed(1) : "0.0";
     avgBlinksEl.textContent = avgBlinksPerMinute;
 

@@ -10,211 +10,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
   <script src="vision-test.js" defer></script>
-  <style>
-    /* Culori Zen pentru Lum */
-    body {
-      background-color: #FDF8F5; /* Roz pal, aproape alb */
-      color: #333333; /* Gri închis pentru text */
-      font-family: 'Inter', sans-serif; /* Un font modern și curat */
-    }
-    header {
-      background-color: #FFFCEB; /* Bej crem */
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-    .nav-item.active {
-      color: #E76F51; /* Portocaliu ars pentru activ */
-      font-weight: 600;
-    }
-    .nav-item span {
-      font-size: 1.25rem; /* Ajustare iconițe */
-    }
-
-    #textSlider {
-      background-color: #FFFCEB; /* Bej crem */
-      color: #666666;
-      border-radius: 0.5rem;
-      padding: 0.5rem;
-      font-size: 0.875rem;
-      min-height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 500ms ease-in-out;
-    }
-
-    #privacy-warning {
-      background-color: #FEF3C7; /* Galben pal */
-      border-left: 4px solid #FCD34D; /* Galben portocaliu */
-      color: #78350F; /* Maro închis */
-      padding: 1rem;
-      border-radius: 0.5rem;
-    }
-    #privacy-warning input[type="checkbox"] {
-      accent-color: #FCD34D;
-    }
-
-    /* Stiluri pentru playerul video și elementele noi */
-    .video-container {
-      position: relative;
-      width: 320px; /* Sau o lățime responsivă */
-      height: 240px; /* Sau o înălțime responsivă */
-      margin: 0 auto;
-      border: 2px solid #8ECEDA; /* Albastru pudră pentru chenar */
-      border-radius: 0.75rem;
-      overflow: hidden; /* Pentru a asigura că video/canvas nu depășesc marginile */
-      background-color: #000; /* Fundal negru pentru video */
-    }
-    .video-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background-color: rgba(0,0,0,0.4); /* Strat semi-transparent peste video */
-      color: white;
-      font-size: 1.25rem;
-      cursor: pointer;
-      z-index: 20; /* Peste canvas */
-    }
-    .video-overlay.hidden {
-        display: none;
-    }
-    .video-overlay .rec-icon {
-      font-size: 4rem; /* Dimensiune mare pentru REC */
-      color: #E76F51; /* Roșu piersică pentru REC */
-    }
-    .video-controls {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background-color: rgba(0,0,0,0.6);
-      color: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.5rem;
-      box-sizing: border-box;
-      z-index: 30; /* Peste video și canvas */
-    }
-    .video-controls.hidden {
-        display: none;
-    }
-    .progress-bar-container {
-      width: 100%;
-      height: 8px; /* O bară mai subțire */
-      background-color: rgba(255,255,255,0.2);
-      border-radius: 4px;
-      overflow: hidden;
-      margin-top: 0.5rem;
-    }
-    .progress-bar {
-      height: 100%;
-      background-color: #E76F51; /* Portocaliu ars pentru progres */
-      transition: width 0.1s linear; /* Tranziție lină pentru progres */
-    }
-    #stop-recording-btn {
-      background-color: #E76F51; /* Roșu pentru stop */
-      color: white;
-      padding: 0.3rem 0.6rem;
-      border-radius: 0.25rem;
-      font-size: 0.875rem;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-    #stop-recording-btn:hover {
-      background-color: #D35400; /* Roșu mai închis */
-    }
-
-    /* Notificare și Modal */
-    .notification-banner {
-      position: fixed;
-      top: 60px; /* Sub header */
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #8ECEDA; /* Albastru pudră */
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
-    }
-    .notification-banner.show {
-      opacity: 1;
-      visibility: visible;
-    }
-    .notification-banner button {
-      background: none;
-      border: 1px solid white;
-      color: white;
-      padding: 0.25rem 0.75rem;
-      border-radius: 0.25rem;
-      cursor: pointer;
-    }
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
-    }
-    .modal-overlay.show {
-      opacity: 1;
-      visibility: visible;
-    }
-    .modal-content {
-      background-color: white;
-      padding: 1.5rem;
-      border-radius: 0.75rem;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-      text-align: center;
-      max-width: 90%;
-      width: 300px;
-      color: #333333;
-    }
-    .modal-content button {
-      margin: 0.5rem;
-      padding: 0.75rem 1.5rem;
-      border-radius: 0.5rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-    .modal-content .btn-confirm {
-      background-color: #E76F51;
-      color: white;
-    }
-    .modal-content .btn-confirm:hover {
-      background-color: #D35400;
-    }
-    .modal-content .btn-cancel {
-      background-color: #F0F0F0;
-      color: #333333;
-    }
-    .modal-content .btn-cancel:hover {
-      background-color: #E0E0E0;
-    }
-  </style>
 </head>
-<body class="pb-24">
+<body>
 
   <header class="w-full flex justify-between items-center px-4 py-3 shadow fixed top-0 z-50">
     <h1 class="text-lg font-bold tracking-wider">Lum</h1>
@@ -228,21 +25,10 @@
   <main class="mt-20 px-4">
 
     <section class="text-center mb-4">
-      <div id="textSlider" aria-live="polite" class="rounded p-2 text-sm transition-opacity duration-500 ease-in-out opacity-100 min-h-[36px] flex items-center justify-center">
-        Motto: strive for progress not perfection
+      <div id="textSlider" aria-live="polite" class="rounded p-2 text-sm transition-opacity duration-500 ease-in-out opacity-100">
+        Motto: cultivate light in your eyes every day
       </div>
     </section>
-
-    <div id="privacy-warning" class="mb-4" role="alert">
-      <p class="font-bold">🔒 Privacy:</p>
-      <p>Camera images are processed <strong>exclusively on your device</strong>. Nothing is stored or sent.</p>
-      <p class="font-bold mt-2">Disclaimer:</p>
-      <p>Always consult a healthcare professional for medical advice. This app is not a medical diagnostic tool.</p>
-      <div class="flex items-center mt-2 text-sm text-gray-600">
-        <input type="checkbox" id="hide-privacy-warning" class="mr-2 form-checkbox">
-        <label for="hide-privacy-warning">Don’t show this again</label>
-      </div>
-    </div>
 
     <div class="video-container shadow-xl">
         <video id="raw_video_feed" class="w-full h-full object-cover" autoplay muted playsinline></video>
@@ -263,10 +49,12 @@
         <div id="progress-bar" class="progress-bar" style="width: 0%"></div>
     </div>
 
-
     <p id="status-message" class="mt-4 text-center text-sm font-medium text-gray-600">Initializing camera...</p>
     <p id="live-feedback" class="mt-2 text-center text-xs text-gray-500"></p>
 
+    <section id="permanent-disclaimer" class="mt-4 px-4">
+        Disclaimer: Always consult a healthcare professional for medical advice. This app is for informational purposes only.
+    </section>
 
     <div id="test-finished-notification" class="notification-banner hidden">
       <span>Test finished successfully! See Reports / Recommends.</span>
@@ -283,7 +71,7 @@
         </div>
     </div>
 
-    <div id="offline-status" class="hidden fixed bottom-24 left-1/2 -translate-x-1/2 bg-red-500 text-white px-3 py-1 rounded-full text-xs z-40">
+    <div id="offline-status" class="hidden fixed bottom-24 left-1/2 -translate-x-1/2 rounded-full text-xs z-40">
       You are offline.
     </div>
 
@@ -293,13 +81,33 @@
 
   </main>
 
-  <nav class="fixed bottom-0 left-0 w-full bg-white shadow-inner flex justify-around items-center h-16 z-50">
-    <a href="index.html" class="nav-item flex flex-col items-center text-xs text-gray-700" id="nav-home"><span class="text-lg">🏠</span> Home</a>
-    <a href="recommends.html" class="nav-item flex flex-col items-center text-xs text-gray-700" id="nav-recommends"><span class="text-lg">✅</span> Recommends</a>
-    <a href="vision-test.html" class="nav-item flex flex-col items-center text-xs text-gray-700 font-semibold active" id="nav-liye-test"><span class="text-lg">👁️</span> Lum Test</a>
-    <a href="reports.html" class="nav-item flex flex-col items-center text-xs text-gray-700" id="nav-reports"><span class="text-lg">📈</span> Reports</a>
-    <a href="resources.html" class="nav-item flex flex-col items-center text-xs text-gray-700" id="nav-resources"><span class="text-lg">📚</span> Resources</a>
+  <nav class="fixed bottom-0 left-0 w-full shadow-inner flex justify-around items-center h-16 z-50">
+    <a href="index.html" class="nav-item flex flex-col items-center text-xs" id="nav-home" aria-label="Go to Home page">
+            <span class="text-lg">🏠</span> Home
+        </a>
+        <a href="recommends.html" class="nav-item flex flex-col items-center text-xs" id="nav-recommends" aria-label="Go to Recommends page">
+            <span class="text-lg">✅</span> Recommends
+        </a>
+        <a href="vision-test.html" class="nav-item flex flex-col items-center text-xs font-semibold active" id="nav-lum-test" aria-label="Go to Lum Test page">
+            <span class="text-lg">👁️</span> Lum Test
+        </a>
+        <a href="reports.html" class="nav-item flex flex-col items-center text-xs" id="nav-reports" aria-label="Go to Reports page">
+            <span class="text-lg">📈</span> Reports
+        </a>
+        <a href="resources.html" class="nav-item flex flex-col items-center text-xs" id="nav-resources" aria-label="Go to Resources page">
+            <span class="text-lg">📚</span> Resources
+        </a>
   </nav>
+
+  <div id="initial-disclaimer-popup" role="alert">
+        <p class="font-bold mb-2">Important Disclaimer:</p>
+        <p>Always consult a healthcare professional for medical advice. This app is for informational purposes only and not a diagnostic tool.</p>
+        <div class="flex items-center mt-4">
+            <button id="hide-initial-disclaimer">Got it!</button>
+            <input type="checkbox" id="dont-show-initial-disclaimer-again" class="ml-4">
+            <label for="dont-show-initial-disclaimer-again">Don't show this again</label>
+        </div>
+    </div>
 
 </body>
 </html>

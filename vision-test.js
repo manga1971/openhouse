@@ -1,23 +1,63 @@
 // START vision-test.js
 
-// === TEXT SLIDER ===
-// Definirea mesajelor specifice pentru pagina vision-test
-const pageMessages = {
-  "/vision-test.html": [
-    "Motto: cultivate light in your eyes every day",
-    "Goal: consistent eye care for digital well-being",
-    "Disclaimer: this is not a medical diagnostic tool"
-  ],
-  // Aici poți adăuga mesaje pentru alte pagini, de exemplu:
-  // "/index.html": ["Motto: strive for progress not perfection", "Goal: happy eyes, happy life"],
-  // "/reports.html": ["Insights: understand your eye health patterns", "Action: transform data into better habits"]
+// === GLOBAL CONFIGURATION ===
+// Object to hold messages for different page sections
+const pageContent = {
+  "/index.html": {
+    mottoMessages: [
+      "Motto: strive for progress not perfection",
+      "Goal: cultivate light in your eyes every day",
+      "Lum: your daily partner for eye well-being",
+    ],
+    permanentDisclaimer: "Disclaimer: Always consult a healthcare professional for medical advice. This app is for informational purposes only and not a diagnostic tool.",
+    initialDisclaimer: "Welcome to Lum! Please note: This app is for informational purposes only and not a medical diagnostic tool. Always consult a healthcare professional for any medical concerns."
+  },
+  "/vision-test.html": {
+    mottoMessages: [
+      "Motto: cultivate light in your eyes every day",
+      "Goal: consistent eye care for digital well-being",
+      "Lum: enhance your visual comfort today",
+    ],
+    permanentDisclaimer: "Important: Camera images are processed exclusively on your device. Nothing is stored or sent. Always consult a healthcare professional for medical advice. This app is for informational purposes only.",
+    initialDisclaimer: "Welcome to Lum's Vision Test! Your privacy is paramount: camera images are processed exclusively on your device. Nothing is stored or sent. This test is for informational purposes only and not a medical diagnostic tool."
+  },
+  // Add entries for other pages (e.g., /reports.html, /recommends.html) as needed
+  // Example for Reports page:
+  "/reports.html": {
+    mottoMessages: [
+      "Insights: understand your eye health patterns",
+      "Action: transform data into better habits",
+      "Lum Reports: track your journey to visual well-being"
+    ],
+    permanentDisclaimer: "Disclaimer: Report data is for informational tracking and personal insight only. Consult a healthcare professional for diagnosis or treatment. This app does not provide medical advice.",
+    initialDisclaimer: "Welcome to your Lum Reports! Dive into your eye health journey. Remember, these reports are for informational purposes only and do not constitute medical advice."
+  },
+  // Example for Recommends page:
+  "/recommends.html": {
+    mottoMessages: [
+      "Recommendations: personalized exercises for your eyes",
+      "Guidance: cultivate healthy visual habits daily",
+      "Lum Recommends: tailored support for your eye well-being"
+    ],
+    permanentDisclaimer: "Disclaimer: Recommended exercises and tips are for general well-being. Consult a healthcare professional before starting any new eye care routine. This app does not provide medical advice.",
+    initialDisclaimer: "Explore Lum's personalized recommendations! These suggestions are for general well-being and do not replace professional medical advice. Always consult a healthcare professional."
+  },
+  // Default fallback if page is not found
+  "default": {
+    mottoMessages: ["Motto: strive for progress not perfection"],
+    permanentDisclaimer: "Disclaimer: This application is for informational purposes only and does not provide medical advice. Always consult a healthcare professional.",
+    initialDisclaimer: "This app is for informational purposes only and not a medical diagnostic tool. Always consult a healthcare professional for any medical concerns."
+  }
 };
 
+const currentPageContent = pageContent[window.location.pathname] || pageContent["default"];
+
+// === TEXT SLIDER (Motto) ===
 let currentMessageIndex = 0;
 const textSliderElement = document.getElementById("textSlider");
 
 function updateTextSlider() {
-  const messages = pageMessages[window.location.pathname] || pageMessages["/vision-test.html"]; // Fallback
+  const messages = currentPageContent.mottoMessages;
   textSliderElement.classList.remove("opacity-100");
   textSliderElement.classList.add("opacity-0");
   setTimeout(() => {
@@ -27,27 +67,48 @@ function updateTextSlider() {
     textSliderElement.classList.add("opacity-100");
   }, 500);
 }
-setInterval(updateTextSlider, 4000); // Rulează la 4 secunde
-updateTextSlider(); // Afișează primul mesaj imediat
+setInterval(updateTextSlider, 4000);
+updateTextSlider();
+
+// === PERMANENT DISCLAIMER ===
+const permanentDisclaimerElement = document.getElementById("permanent-disclaimer");
+if (permanentDisclaimerElement) {
+    permanentDisclaimerElement.textContent = currentPageContent.permanentDisclaimer;
+}
 
 // === NAVBAR ACTIVATION ===
 const navItems = document.querySelectorAll('.nav-item');
 function setActiveNavItem(id) {
   navItems.forEach(item => {
-    item.classList.remove('active', 'text-orange-500', 'font-semibold');
+    item.classList.remove('active', 'font-semibold', 'text-orange-500', 'text-blue-600');
     item.classList.add('text-gray-700');
   });
   const activeItem = document.getElementById(id);
   if (activeItem) {
-    activeItem.classList.add('active', 'font-semibold', 'text-orange-500'); // Setează direct orange-500 pentru Lum Test
+    activeItem.classList.add('active', 'font-semibold');
+    if (id === 'nav-lum-test') activeItem.classList.add('text-orange-500');
+    activeItem.classList.remove('text-gray-700');
   }
 }
-setActiveNavItem('nav-liye-test'); // Actualizat la 'nav-liye-test' pentru Lum Test
+// Set active nav item based on current page path
+// Simplified for this context, in a full app you'd parse window.location.pathname
+if (window.location.pathname.includes("vision-test.html")) {
+    setActiveNavItem('nav-lum-test');
+} else if (window.location.pathname.includes("index.html")) {
+    setActiveNavItem('nav-home');
+} else if (window.location.pathname.includes("recommends.html")) {
+    setActiveNavItem('nav-recommends');
+} else if (window.location.pathname.includes("reports.html")) {
+    setActiveNavItem('nav-reports');
+} else if (window.location.pathname.includes("resources.html")) {
+    setActiveNavItem('nav-resources');
+}
 
-// === DOM ELEMENTS ===
+
+// === DOM ELEMENTS (vision-test.html specific) ===
 const rawVideoFeed = document.getElementById("raw_video_feed");
 const canvasElement = document.getElementById("output_canvas");
-const canvasCtx = canvasElement.getContext("2d");
+const canvasCtx = canvasElement ? canvasElement.getContext("2d") : null;
 
 const videoOverlay = document.getElementById("video-overlay");
 const videoControls = document.getElementById("video-controls");
@@ -58,22 +119,23 @@ const progressBar = document.getElementById("progress-bar");
 const statusMessage = document.getElementById("status-message");
 const liveFeedback = document.getElementById("live-feedback");
 
-const privacyWarning = document.getElementById("privacy-warning");
-const hidePrivacyWarningCheckbox = document.getElementById("hide-privacy-warning");
-
-const backgroundMusic = document.getElementById("background-music");
-const startSound = document.getElementById("start-sound");
-const endSound = document.getElementById("end-sound");
-
-const offlineStatus = document.getElementById("offline-status"); // Pentru starea offline
-
-// Notificări și Modaluri
+// Notification/Modal elements
 const testFinishedNotification = document.getElementById("test-finished-notification");
 const hideTestFinishedNotificationBtn = document.getElementById("hide-test-finished-notification");
 const dontShowTestFinishedAgainCheckbox = document.getElementById("dont-show-test-finished-again");
 const navigationConfirmModal = document.getElementById("navigation-confirm-modal");
 const confirmNavigationYesBtn = document.getElementById("confirm-navigation-yes");
 const confirmNavigationNoBtn = document.getElementById("confirm-navigation-no");
+const initialDisclaimerPopup = document.getElementById('initial-disclaimer-popup');
+const hideInitialDisclaimerBtn = document.getElementById('hide-initial-disclaimer');
+const dontShowInitialDisclaimerAgainCheckbox = document.getElementById('dont-show-initial-disclaimer-again');
+
+
+const offlineStatus = document.getElementById("offline-status");
+
+const backgroundMusic = document.getElementById("background-music");
+const startSound = document.getElementById("start-sound");
+const endSound = document.getElementById("end-sound");
 
 // === CONFIG ===
 const LEFT_EYE_TOP = 159, LEFT_EYE_BOTTOM = 145;
@@ -89,15 +151,15 @@ let blinkCount = 0;
 let isBlinking = false;
 let framesBelowThreshold = 0;
 let framesAboveThreshold = 0;
-let monitoringActive = false; // Indicator dacă înregistrarea este activă
-let monitoringPaused = false; // Indicator dacă înregistrarea este în pauză (fără Uti în cadru)
+let monitoringActive = false;
+let monitoringPaused = false; // True if face is lost for too long
 let monitoringTimer;
 const TOTAL_MONITORING_DURATION = 120; // 120 secunde pentru testul calitativ
-let accumulatedMonitoringTime = 0; // Timpul acumulat efectiv de monitorizare calitativă
-let faceLostCounter = 0;
-window.lastProcessedLandmarks = null; // Stochează ultimele landmark-uri pentru calculul luminozității
+let accumulatedMonitoringTime = 0; // Timpul acumulat efectiv de monitorizare calitativă (în secunde)
+let faceLostCounter = 0; // Counts frames where face is lost
+let facePresentThisSecond = false; // Flag to check if face was present in any frame during the last second
 
-// Variabile pentru controlul navigării în timpul testului
+window.lastProcessedLandmarks = null;
 let pendingNavigation = null;
 
 // === HELPER FUNCTIONS ===
@@ -107,7 +169,7 @@ function formatTime(seconds) {
   return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 }
 
-// === SCORING FUNCTIONS (Rămân aceleași, sunt utile pentru salvarea raportului) ===
+// === SCORING FUNCTIONS ===
 function calculateEyeVerticalDistance(top, bottom) {
   return Math.hypot(top.x - bottom.x, top.y - bottom.y);
 }
@@ -116,14 +178,13 @@ function calculateBlinkScore(blinksPerMinute) {
   const OPTIMAL_MIN = 12, OPTIMAL_MAX = 22;
   const EXTREME_LOW = 5, EXTREME_HIGH = 30;
   if (blinksPerMinute >= OPTIMAL_MIN && blinksPerMinute <= OPTIMAL_MAX) return 100;
-  if (blinksPerMinute < EXTREME_LOW || blinksPerMinute > EXTREME_HIGH) return 20;
-  if (blinksPerMinute < OPTIMAL_MIN) return Math.round(20 + (blinksPerMinute - EXTREME_LOW) / (OPTIMAL_MIN - EXTREME_LOW) * 80);
+  if (blinksPerMinute < EXTREME_LOW || blinksPerMinute > EXTREME_HIGH) return Math.round(20 + (blinksPerMinute - EXTREME_LOW) / (OPTIMAL_MIN - EXTREME_LOW) * 80);
   if (blinksPerMinute > OPTIMAL_MAX) return Math.round(20 + (EXTREME_HIGH - blinksPerMinute) / (EXTREME_HIGH - OPTIMAL_MAX) * 80);
-  return 0;
+  return 0; // Should not be reached
 }
 
 function calculateLuminosityScore(ctx, landmarks, w, h) {
-  if (!landmarks) return 0;
+  if (!landmarks || !ctx) return 0;
   let total = 0, count = 0;
   const irisIndices = [LEFT_IRIS_CENTER, RIGHT_IRIS_CENTER];
 
@@ -154,7 +215,7 @@ function calculateLuminosityScore(ctx, landmarks, w, h) {
 
   if (count === 0) return 0;
   const avg = total / count;
-  const minB = 70, maxB = 220; // Valori de calibrare pentru luminozitate
+  const minB = 70, maxB = 220;
   let normalized = (avg - minB) / (maxB - minB) * 100;
   return Math.round(Math.min(100, Math.max(0, normalized)));
 }
@@ -172,11 +233,11 @@ function interpretIndiceLumina(score) {
 
 // === TEST FLOW FUNCTIONS ===
 
-// Funcția de pornire a monitorizării, declanșată de click pe overlay
+// Function to start monitoring, triggered by click on overlay
 async function startMonitoring() {
-  if (monitoringActive) return; // Previne pornirea multiplă
+  if (monitoringActive) return;
 
-  // Asigură-te că stream-ul camerei este activ și FaceMesh procesează
+  // Ensure camera stream is active and FaceMesh is processing
   if (!rawVideoFeed.srcObject || rawVideoFeed.paused) {
     await initCameraAndMediaPipeStream();
   }
@@ -186,7 +247,8 @@ async function startMonitoring() {
   blinkCount = 0;
   accumulatedMonitoringTime = 0;
   faceLostCounter = 0;
-  window.lastProcessedLandmarks = null; // Resetează pentru un test nou
+  window.lastProcessedLandmarks = null;
+  facePresentThisSecond = false; // Reset flag for new test
 
   videoOverlay.classList.add("hidden");
   videoControls.classList.remove("hidden");
@@ -201,29 +263,34 @@ async function startMonitoring() {
   startSound.play().catch(e => console.log("Start sound error:", e));
   liveFeedback.textContent = "";
 
-  // Activează sau dezactivează butoanele Reports/Recommends din navbar
-  toggleNavbarReportsRecommends(false);
+  toggleNavbarReportsRecommends(false); // Disable Reports/Recommends during test
 
-  // Monitorizarea se face frame-by-frame în onResults, nu cu setInterval
-  // setInterval-ul de aici este pentru update-ul timpului afișat dacă NU e în pauză
+  // The setInterval is responsible for incrementing accumulatedMonitoringTime per second
   monitoringTimer = setInterval(() => {
-    if (monitoringActive && !monitoringPaused) {
-      // Logică de update a timpului vizual
-      // Timpul acumulat și progresul sunt actualizate în onResults
-      const remaining = Math.max(0, TOTAL_MONITORING_DURATION - accumulatedMonitoringTime);
-      timeAccumulatedEl.textContent = formatTime(accumulatedMonitoringTime);
-      timeRemainingEl.textContent = formatTime(remaining);
-      progressBar.style.width = `${(accumulatedMonitoringTime / TOTAL_MONITORING_DURATION) * 100}%`;
+    if (monitoringActive) { // Ensure timer only runs if test is active
+      if (facePresentThisSecond && !monitoringPaused) { // Increment only if face was detected this second AND not paused
+        accumulatedMonitoringTime++;
+        // Update UI elements for time and progress bar
+        const remaining = Math.max(0, TOTAL_MONITORING_DURATION - accumulatedMonitoringTime);
+        timeAccumulatedEl.textContent = formatTime(accumulatedMonitoringTime);
+        timeRemainingEl.textContent = formatTime(remaining);
+        progressBar.style.width = `${(accumulatedMonitoringTime / TOTAL_MONITORING_DURATION) * 100}%`;
 
-      if (accumulatedMonitoringTime >= TOTAL_MONITORING_DURATION) {
-        endMonitoring();
+        if (accumulatedMonitoringTime >= TOTAL_MONITORING_DURATION) {
+          endMonitoring();
+        }
+      } else if (monitoringPaused) {
+          // Just update visual status if paused, but don't increment time
+          statusMessage.textContent = `Monitoring paused. Re-center face to resume.`;
       }
+      // Reset the flag for the next second's check
+      facePresentThisSecond = false;
     }
-  }, 1000); // Update la fiecare secundă
+  }, 1000); // This runs every second
 }
 
 function endMonitoring() {
-  if (!monitoringActive) return; // Evită apelarea multiplă
+  if (!monitoringActive) return;
 
   clearInterval(monitoringTimer);
   monitoringActive = false;
@@ -234,15 +301,15 @@ function endMonitoring() {
   endSound.play().catch(e => console.log("End sound error:", e));
 
   videoControls.classList.add("hidden");
-  videoOverlay.classList.remove("hidden"); // Reafișează overlay-ul pentru a re-începe
+  videoOverlay.classList.remove("hidden"); // Re-display overlay to re-start
   statusMessage.textContent = "Test finished. See your reports!";
   liveFeedback.textContent = "";
 
-  // Calculează scorurile finale și salvează rezultatul
-  const blinksPerMinute = (blinkCount / accumulatedMonitoringTime) * 60; // Calcul pe timpul efectiv acumulat
+  // Calculate final scores and save result
+  const blinksPerMinute = accumulatedMonitoringTime > 0 ? (blinkCount / accumulatedMonitoringTime) * 60 : 0;
   const blinkScore = calculateBlinkScore(blinksPerMinute);
   let luminosityScore = 0;
-  if (window.lastProcessedLandmarks) {
+  if (window.lastProcessedLandmarks && canvasCtx) { // Ensure canvasCtx exists
     luminosityScore = calculateLuminosityScore(canvasCtx, window.lastProcessedLandmarks, canvasElement.width, canvasElement.height);
   }
   const indiceLumina = calculateIndiceLumina(blinkScore, luminosityScore);
@@ -250,11 +317,9 @@ function endMonitoring() {
 
   saveTestResult(blinkCount, feedback, indiceLumina, blinkScore, luminosityScore, accumulatedMonitoringTime);
 
-  // Afișează notificarea de finalizare a testului
-  showTestFinishedNotification();
+  showTestFinishedNotification(); // Show test finished notification
 
-  // Activează butoanele Reports/Recommends din navbar
-  toggleNavbarReportsRecommends(true);
+  toggleNavbarReportsRecommends(true); // Enable Reports/Recommends in navbar
 }
 
 function stopAndResetMonitoring() {
@@ -265,17 +330,18 @@ function stopAndResetMonitoring() {
   accumulatedMonitoringTime = 0;
   faceLostCounter = 0;
   window.lastProcessedLandmarks = null;
+  facePresentThisSecond = false; // Reset flag
 
-  // Oprește camera dacă este activă
-  if (rawVideoFeed.srcObject) {
+  // Stop camera if active
+  if (rawVideoFeed && rawVideoFeed.srcObject) {
     const tracks = rawVideoFeed.srcObject.getTracks();
     tracks.forEach(track => track.stop());
     rawVideoFeed.srcObject = null;
-    canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height); // Curăță canvas-ul
+    if (canvasCtx) canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height); // Clear canvas
   }
 
   videoControls.classList.add("hidden");
-  videoOverlay.classList.remove("hidden"); // Reafișează overlay-ul "Start Recording"
+  videoOverlay.classList.remove("hidden"); // Re-display "Start Recording" overlay
   progressBar.style.width = `0%`;
   timeAccumulatedEl.textContent = formatTime(0);
   timeRemainingEl.textContent = formatTime(TOTAL_MONITORING_DURATION);
@@ -286,9 +352,8 @@ function stopAndResetMonitoring() {
   statusMessage.textContent = "Test stopped. Tap to start a new recording.";
   liveFeedback.textContent = "";
 
-  toggleNavbarReportsRecommends(false); // Dezactivează Reports/Recommends dacă s-a oprit prematur
+  toggleNavbarReportsRecommends(false); // Disable Reports/Recommends if test was stopped prematurely
 }
-
 
 function saveTestResult(blinks, feedback, indice, blinkScore, luminosityScore, duration) {
   const entry = {
@@ -297,27 +362,26 @@ function saveTestResult(blinks, feedback, indice, blinkScore, luminosityScore, d
     indiceLumina: indice,
     blinkScore,
     luminosityScore,
-    duration: duration // Durata efectivă a testului acumulat
+    duration: duration // Effective accumulated test duration
   };
-  const history = JSON.parse(localStorage.getItem("vh_history") || "[]");
+  const history = JSON.parse(localStorage.getItem("lum_history") || "[]"); // Changed to lum_history
   history.push(entry);
-  localStorage.setItem("vh_history", JSON.stringify(history));
-  localStorage.setItem("liye_last_test", JSON.stringify(entry)); // Numele vechi, ar trebui schimbat în "lum_last_test"
+  localStorage.setItem("lum_history", JSON.stringify(history)); // Changed to lum_history
+  localStorage.setItem("lum_last_test", JSON.stringify(entry)); // Changed to lum_last_test
 }
 
-// Activează/dezactivează link-urile Reports și Recommends din navbar
+// Enable/disable Reports and Recommends links in navbar
 function toggleNavbarReportsRecommends(enable) {
     const reportsLink = document.getElementById('nav-reports');
     const recommendsLink = document.getElementById('nav-recommends');
 
-    if (enable) {
-        reportsLink.classList.remove('pointer-events-none', 'opacity-50');
-        recommendsLink.classList.remove('pointer-events-none', 'opacity-50');
-        // Poți adăuga și alte stiluri vizuale pentru activare
-    } else {
-        reportsLink.classList.add('pointer-events-none', 'opacity-50');
-        recommendsLink.classList.add('pointer-events-none', 'opacity-50');
-        // Poți adăuga și alte stiluri vizuale pentru dezactivare
+    if (reportsLink && recommendsLink) { // Ensure elements exist
+        if (enable) {
+            reportsLink.classList.remove('pointer-events-none', 'opacity-50');
+            recommendsLink.classList.remove('pointer-events-none', 'opacity-50');
+        } else {
+            reportsLink.classList.add('pointer-events-none', 'opacity-50');
+        }
     }
 }
 
@@ -343,12 +407,12 @@ async function initCameraAndMediaPipeStream() {
     rawVideoFeed.srcObject = stream;
     await rawVideoFeed.play();
 
-    if (camera) camera.stop(); // Oprește camera veche dacă există
+    if (camera) camera.stop();
     camera = new Camera(rawVideoFeed, {
       onFrame: async () => {
         await faceMesh.send({ image: rawVideoFeed });
       },
-      width: 640, // Rezoluție internă pentru procesare
+      width: 640,
       height: 480
     });
     camera.start();
@@ -360,8 +424,9 @@ async function initCameraAndMediaPipeStream() {
   }
 }
 
-
 function onResults(results) {
+  if (!canvasCtx) return; // Ensure canvas context exists before drawing
+
   canvasCtx.save();
   canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
@@ -372,68 +437,45 @@ function onResults(results) {
   if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
     const landmarks = results.multiFaceLandmarks[0];
     window.lastProcessedLandmarks = landmarks;
-    faceLostCounter = 0; // Resetăm contorul de pierdere a feței
-    monitoringPaused = false; // Dacă fața e detectată, nu mai e în pauză
+    facePresentThisSecond = true; // Flag for second-based time accumulation
+    faceLostCounter = 0; // Reset frame counter for face loss
+    monitoringPaused = false; // Resume if face is back
 
-    if (monitoringActive) { // Doar dacă monitorizarea este activă
-        accumulatedMonitoringTime++; // Acumulăm timp de monitorizare calitativă
-        const earLeft = calculateEyeVerticalDistance(landmarks[LEFT_EYE_TOP], landmarks[LEFT_EYE_BOTTOM]);
-        const earRight = calculateEyeVerticalDistance(landmarks[RIGHT_EYE_TOP], landmarks[RIGHT_EYE_BOTTOM]);
-        const ear = Math.min(earLeft, earRight);
+    if (monitoringActive) {
+      // ONLY blink detection logic here (no time accumulation)
+      const earLeft = calculateEyeVerticalDistance(landmarks[LEFT_EYE_TOP], landmarks[LEFT_EYE_BOTTOM]);
+      const earRight = calculateEyeVerticalDistance(landmarks[RIGHT_EYE_TOP], landmarks[RIGHT_EYE_BOTTOM]);
+      const ear = Math.min(earLeft, earRight);
 
-        if (ear < EAR_THRESHOLD) {
-            framesBelowThreshold++;
-            framesAboveThreshold = 0;
-        } else {
-            framesAboveThreshold++;
-            framesBelowThreshold = 0;
-        }
+      if (ear < EAR_THRESHOLD) {
+        framesBelowThreshold++;
+        framesAboveThreshold = 0;
+      } else {
+        framesAboveThreshold++;
+        framesBelowThreshold = 0;
+      }
 
-        if (framesBelowThreshold >= BLINK_HOLD_FRAMES && !isBlinking) {
-            blinkCount++;
-            isBlinking = true;
-        }
-        if (framesAboveThreshold >= BLINK_RESET_FRAMES && isBlinking) {
-            isBlinking = false;
-        }
+      if (framesBelowThreshold >= BLINK_HOLD_FRAMES && !isBlinking) {
+        blinkCount++;
+        isBlinking = true;
+      }
+      if (framesAboveThreshold >= BLINK_RESET_FRAMES && isBlinking) {
+        isBlinking = false;
+      }
 
-        const lumScore = calculateLuminosityScore(canvasCtx, landmarks, canvasElement.width, canvasElement.height);
-        liveFeedback.textContent = `Blinks: ${blinkCount}, Luminosity: ${lumScore}`;
-
-        // Update progress bar și timp afișat la fiecare frame procesat dacă nu e paused
-        const remaining = Math.max(0, TOTAL_MONITORING_DURATION - accumulatedMonitoringTime);
-        timeAccumulatedEl.textContent = formatTime(accumulatedMonitoringTime);
-        timeRemainingEl.textContent = formatTime(remaining);
-        progressBar.style.width = `${(accumulatedMonitoringTime / TOTAL_MONITORING_DURATION) * 100}%`;
-
-        if (accumulatedMonitoringTime >= TOTAL_MONITORING_DURATION) {
-            endMonitoring();
-        }
+      const lumScore = calculateLuminosityScore(canvasCtx, landmarks, canvasElement.width, canvasElement.height);
+      liveFeedback.textContent = `Blinks: ${blinkCount}, Luminosity: ${lumScore}`;
     }
-
-    // Desen landmark-uri ochi și iris (pentru debugging vizual)
-    // canvasCtx.fillStyle = '#FF4136';
-    // [LEFT_EYE_TOP, LEFT_EYE_BOTTOM, RIGHT_EYE_TOP, RIGHT_EYE_BOTTOM].forEach(i => {
-    //   canvasCtx.beginPath();
-    //   canvasCtx.arc(landmarks[i].x * canvasElement.width, landmarks[i].y * canvasElement.height, 3, 0, 2 * Math.PI);
-    //   canvasCtx.fill();
-    // });
-    //
-    // canvasCtx.fillStyle = '#FF851B';
-    // [LEFT_IRIS_CENTER, RIGHT_IRIS_CENTER].forEach(i => {
-    //   canvasCtx.beginPath();
-    //   canvasCtx.arc(landmarks[i].x * canvasElement.width, landmarks[i].y * canvasElement.height, 2, 0, 2 * Math.PI);
-    //   canvasCtx.fill();
-    // });
 
   } else {
     window.lastProcessedLandmarks = null;
+    facePresentThisSecond = false; // No face detected this frame
+
     if (monitoringActive) {
       faceLostCounter++;
       if (faceLostCounter >= MAX_FACE_LOST_FRAMES) {
-        monitoringPaused = true; // Intră în pauză la pierderea feței
+        monitoringPaused = true;
         statusMessage.textContent = `Face lost. Monitoring paused. Please re-center.`;
-        liveFeedback.textContent = `Time remaining to resume: ${Math.floor((MAX_FACE_LOST_FRAMES - faceLostCounter) / 30)}s`;
       } else {
         const remainingTime = Math.floor((MAX_FACE_LOST_FRAMES - faceLostCounter) / 30);
         statusMessage.textContent = `Face lost. ${remainingTime}s to recover...`;
@@ -447,106 +489,166 @@ function onResults(results) {
   canvasCtx.restore();
 }
 
-// === NOTIFICATION HANDLERS ===
+// === NOTIFICATION HANDLERS (for Test Finished) ===
 function showTestFinishedNotification() {
-    const dontShowAgain = localStorage.getItem('lum_test_finished_notification_hidden');
+    const dontShowAgain = localStorage.getItem('lum_test_finished_notification_hidden'); // Changed to lum_
     if (dontShowAgain === 'true') {
-        return; // Nu arăta dacă utilizatorul a bifat să nu mai vadă
+        return;
     }
-    testFinishedNotification.classList.add('show');
-    // Ascunde notificarea automat după 5 secunde
-    setTimeout(() => {
-        testFinishedNotification.classList.remove('show');
-    }, 5000);
+    if (testFinishedNotification) { // Ensure element exists
+        testFinishedNotification.classList.add('show');
+        setTimeout(() => {
+            testFinishedNotification.classList.remove('show');
+        }, 5000);
+    }
 }
 
-hideTestFinishedNotificationBtn.addEventListener('click', () => {
-    testFinishedNotification.classList.remove('show');
-});
+if (hideTestFinishedNotificationBtn) { // Ensure element exists
+    hideTestFinishedNotificationBtn.addEventListener('click', () => {
+        if (testFinishedNotification) testFinishedNotification.classList.remove('show');
+    });
+}
 
-dontShowTestFinishedAgainCheckbox.addEventListener('change', () => {
-    localStorage.setItem('lum_test_finished_notification_hidden', dontShowTestFinishedAgainCheckbox.checked);
-});
-
+if (dontShowTestFinishedAgainCheckbox) { // Ensure element exists
+    dontShowTestFinishedAgainCheckbox.addEventListener('change', () => {
+        localStorage.setItem('lum_test_finished_notification_hidden', dontShowTestFinishedAgainCheckbox.checked); // Changed to lum_
+    });
+}
 
 // === NAVIGATION CONFIRMATION MODAL HANDLERS ===
 function showNavigationConfirmModal(targetUrl) {
-    pendingNavigation = targetUrl; // Salvează URL-ul unde voia să navigheze
-    navigationConfirmModal.classList.add('show');
+    pendingNavigation = targetUrl;
+    if (navigationConfirmModal) navigationConfirmModal.classList.add('show');
 }
 
 function hideNavigationConfirmModal() {
-    navigationConfirmModal.classList.remove('show');
+    if (navigationConfirmModal) navigationConfirmModal.classList.remove('show');
     pendingNavigation = null;
 }
 
-confirmNavigationYesBtn.addEventListener('click', () => {
-    stopAndResetMonitoring(); // Oprește și resetează testul
-    hideNavigationConfirmModal();
-    if (pendingNavigation) {
-        window.location.href = pendingNavigation; // Navighează după confirmare
-    }
-});
+if (confirmNavigationYesBtn) { // Ensure element exists
+    confirmNavigationYesBtn.addEventListener('click', () => {
+        stopAndResetMonitoring(); // Stop and reset the test
+        hideNavigationConfirmModal();
+        if (pendingNavigation) {
+            window.location.href = pendingNavigation; // Navigate after confirmation
+        }
+    });
+}
 
-confirmNavigationNoBtn.addEventListener('click', () => {
-    hideNavigationConfirmModal();
-});
+if (confirmNavigationNoBtn) { // Ensure element exists
+    confirmNavigationNoBtn.addEventListener('click', () => {
+        hideNavigationConfirmModal();
+    });
+}
+
+// === INITIAL DISCLAIMER POPUP HANDLERS ===
+const initialDisclaimerKey = 'lum_initial_disclaimer_hidden'; // Key for localStorage
+
+function showInitialDisclaimerPopup() {
+    const hiddenPreference = localStorage.getItem(initialDisclaimerKey);
+    // Only show if it hasn't been hidden before AND this is the first page load for this session/user
+    if (hiddenPreference !== 'true' && initialDisclaimerPopup) {
+        initialDisclaimerPopup.classList.add('show');
+    }
+}
+
+if (hideInitialDisclaimerBtn) { // Ensure element exists
+    hideInitialDisclaimerBtn.addEventListener('click', () => {
+        if (initialDisclaimerPopup) initialDisclaimerPopup.classList.remove('show');
+        if (dontShowInitialDisclaimerAgainCheckbox.checked) {
+            localStorage.setItem(initialDisclaimerKey, 'true');
+        }
+    });
+}
+
+if (dontShowInitialDisclaimerAgainCheckbox) { // Ensure element exists
+    dontShowInitialDisclaimerAgainCheckbox.addEventListener('change', () => {
+        localStorage.setItem(initialDisclaimerKey, dontShowInitialDisclaimerAgainCheckbox.checked);
+    });
+}
 
 
 // === DOMContentLoaded: setup și evenimente inițiale ===
 document.addEventListener("DOMContentLoaded", () => {
-  // === NOTIFICARE PRIVACY ===
-  const privacyHidden = localStorage.getItem('liye_privacy_warning_hidden'); // Poate redenumi în lum_privacy_warning_hidden
-  if (privacyHidden === 'true') {
-    privacyWarning.classList.add('hidden');
-    hidePrivacyWarningCheckbox.checked = true;
+  // === OFFLINE / ONLINE STATUS ===
+  if (offlineStatus) { // Ensure element exists
+    if (!navigator.onLine) {
+      offlineStatus.classList.remove("hidden");
+    }
+    window.addEventListener('online', () => offlineStatus.classList.add("hidden"));
+    window.addEventListener('offline', () => offlineStatus.classList.remove("hidden"));
   }
-  hidePrivacyWarningCheckbox.addEventListener('change', () => {
-    const checked = hidePrivacyWarningCheckbox.checked;
-    localStorage.setItem('liye_privacy_warning_hidden', checked); // Poate redenumi în lum_privacy_warning_hidden
-    privacyWarning.classList.toggle('hidden', checked);
-  });
 
-  // === OFFLINE / ONLINE ===
-  if (!navigator.onLine) {
-    offlineStatus.classList.remove("hidden");
+  // === Initial Camera Initialization (if video feed exists) ===
+  if (rawVideoFeed) {
+    initCameraAndMediaPipeStream();
   }
-  window.addEventListener('online', () => offlineStatus.classList.add("hidden"));
-  window.addEventListener('offline', () => offlineStatus.classList.remove("hidden"));
 
-  // === Inițializare cameră la încărcarea paginii ===
-  initCameraAndMediaPipeStream();
+  // === Event for START RECORDING (on video overlay) ===
+  if (videoOverlay) { // Ensure element exists
+    videoOverlay.addEventListener('click', () => {
+        startMonitoring();
+    });
+  }
 
-  // === Eveniment pentru START RECORDING (pe overlay-ul video) ===
-  videoOverlay.addEventListener('click', () => {
-      startMonitoring();
-  });
+  // === Event for STOP RECORDING (on controls button) ===
+  if (stopRecordingBtn) { // Ensure element exists
+    stopRecordingBtn.addEventListener('click', () => {
+        stopAndResetMonitoring();
+    });
+  }
 
-  // === Eveniment pentru STOP RECORDING (pe butonul din controls) ===
-  stopRecordingBtn.addEventListener('click', () => {
-      stopAndResetMonitoring();
-  });
-
-  // === Interceptarea click-urilor pe link-uri/butoane de navigare ===
+  // === Intercept navigation clicks during test ===
   document.querySelectorAll('a[href], button').forEach(element => {
-    if (element.id === 'stop-recording-btn' || element.id === 'confirm-navigation-yes' || element.id === 'confirm-navigation-no' || element.id === 'hide-test-finished-notification' || element.id === 'dont-show-test-finished-again' || element.id === 'hide-privacy-warning') {
-        // Exclude butoanele de control ale testului și modalului
+    // Exclude internal control buttons that manage test state or popup
+    if (element.id === 'stop-recording-btn' ||
+        element.id === 'confirm-navigation-yes' ||
+        element.id === 'confirm-navigation-no' ||
+        element.id === 'hide-test-finished-notification' ||
+        element.id === 'dont-show-test-finished-again' ||
+        element.id === 'hide-initial-disclaimer' ||
+        element.id === 'dont-show-initial-disclaimer-again' ||
+        element.closest('header') // Exclude header buttons for simpler logic here
+    ) {
         return;
     }
 
+    // Handle clicks for navbar items and other links
     element.addEventListener('click', (event) => {
-      if (monitoringActive) {
-        event.preventDefault(); // Oprește navigarea implicită
-        // Construiește URL-ul de destinație. Pentru ancore interne (ex: #section), folosește id-ul.
-        // Pentru link-uri externe sau pagini diferite, folosește href-ul.
-        const targetUrl = element.getAttribute('href') || '#'; // Asigură-te că preia href-ul sau un '#' pentru butoane fără href
+      // Check if it's a navbar item and test is active or if it's any other navigation link
+      const isNavbarItem = element.closest('nav');
+      // If it's a navbar item AND Reports/Recommends are DISABLED (meaning test is ongoing), OR if it's any other link and test is active
+      if (monitoringActive && (isNavbarItem && element.classList.contains('pointer-events-none') || !isNavbarItem)) {
+        event.preventDefault(); // Stop default navigation
+        const targetUrl = element.getAttribute('href') || '#';
         showNavigationConfirmModal(targetUrl);
       }
     });
   });
 
-    // Inițial dezactivează link-urile Reports și Recommends din navbar
-    toggleNavbarReportsRecommends(false);
+  // Also handle header button clicks for navigation confirmation
+  document.querySelectorAll('header button').forEach(button => {
+    button.addEventListener('click', (event) => {
+      if (monitoringActive) {
+        event.preventDefault(); // Prevent default button action if test is ongoing
+        // Since header buttons don't have href, we can define a dummy target or just stop the test
+        showNavigationConfirmModal('#'); // Use # or special value if button has no nav function
+      }
+    });
+  });
+
+
+  // Initial activation status for Reports and Recommends based on last test result or empty history
+  const lastTest = localStorage.getItem("lum_last_test");
+  if (lastTest) {
+      toggleNavbarReportsRecommends(true); // If there's a last test, assume reports are ready
+  } else {
+      toggleNavbarReportsRecommends(false); // No tests done yet, disable reports/recommends
+  }
+
+  // Show initial disclaimer popup on DOMContentLoaded for this page
+  showInitialDisclaimerPopup();
 });
 
 // END vision-test.js

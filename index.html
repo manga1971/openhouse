@@ -1,38 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ro">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LumiYE – Home</title>
+  <title>LumiYE – Bun venit</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    /* Stiluri generale pentru corp și HTML, fără overflow pentru o experiență imersivă */
     body, html {
       margin: 0;
       padding: 0;
       overflow: hidden;
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', sans-serif; /* Folosim fontul Inter, conform discuției */
+      background-color: #FDFBF6; /* Fundal bej cald */
+      color: #2E2E2E; /* Text gri foarte închis */
     }
+    /* Stiluri pentru butoanele de navigare cu efect de sticlă */
     .glass-button {
-      @apply backdrop-blur-xl bg-white/10 border border-white/30 rounded-full text-white text-sm shadow-lg flex items-center justify-center;
+      @apply backdrop-blur-xl bg-white/10 border border-white/30 rounded-full text-sm shadow-lg flex items-center justify-center;
       transition: transform 0.3s ease, background-color 0.3s;
+      color: #2E2E2E; /* Culoarea textului pentru butoanele de sticlă */
     }
     .glass-button:hover {
       background-color: rgba(255, 255, 255, 0.15);
     }
+    /* Stiluri pentru "soare" - butonul central de înregistrare */
     .sun {
       @apply absolute rounded-full bg-yellow-300 shadow-2xl;
       width: 160px;
       height: 160px;
       transition: all 0.8s ease-in-out;
+      z-index: 10; /* Asigură că este deasupra altor elemente */
     }
+    /* Animația de expansiune a soarelui */
     .sun.expanding {
       width: 100vw;
       height: 100vh;
       left: 0 !important;
       top: 0 !important;
       border-radius: 0;
-      z-index: 50;
+      z-index: 50; /* Aduce soarele în prim-plan maxim */
+      background-color: #C7EDE6; /* Culoarea de accent verde mentă la expansiune */
     }
+    /* Stiluri pentru egalizatorul audio */
     .equalizer {
       display: flex;
       justify-content: center;
@@ -44,44 +54,53 @@
     .bar {
       width: 4px;
       height: 10px;
-      background: #facc15;
+      background: #C7EDE6; /* Culoarea de accent verde mentă pentru bare */
       animation: bounce 1s infinite ease-in-out;
     }
     .bar:nth-child(2) { animation-delay: 0.1s; }
     .bar:nth-child(3) { animation-delay: 0.2s; }
     .bar:nth-child(4) { animation-delay: 0.3s; }
     .bar:nth-child(5) { animation-delay: 0.4s; }
+    /* Animația de "săritură" a barelor egalizatorului */
     @keyframes bounce {
       0%, 100% { transform: scaleY(1); }
       50% { transform: scaleY(2); }
     }
+    /* Ascunde secțiunea de înregistrare inițial */
     #rec-section {
       display: none;
     }
+    /* Afișează secțiunea de înregistrare când soarele este "activ" */
     #sun.active + #rec-section {
-      display: block;
+      display: flex; /* Folosim flex pentru a centra conținutul */
     }
   </style>
 </head>
-<body class="relative w-screen h-screen">
-  <!-- Background video placeholder -->
-  <video autoplay muted loop class="absolute w-full h-full object-cover z-0">
-    <source src="background.mp4" type="video/mp4">
-  </video>
-
-  <!-- Central sun button -->
-  <div id="sun" class="sun left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center text-white text-lg font-semibold cursor-pointer">
-    <span id="sun-text">Rec.</span>
+<body class="relative w-screen h-screen flex flex-col items-center justify-center">
+  <!-- Mesajul de bun venit și introducere, conform discuției -->
+  <div class="absolute top-1/4 text-center px-4 z-10">
+    <h1 class="text-3xl font-semibold text-gray-800">Bun venit în spațiul tău</h1>
+    <p class="mt-4 text-lg max-w-md mx-auto italic opacity-90">
+      LumiYE este o evadare din prezentul agitat. Un loc în care poți să respiri, să simți, să fii.
+    </p>
+    <p class="mt-4 text-base max-w-sm mx-auto opacity-70">
+      Fie că vrei să păstrezi o stare de bine sau să descarci ceva ce te apasă, <strong>acum</strong> e momentul.
+    </p>
   </div>
 
-  <!-- Planets (Navigation buttons) -->
-  <a href="journal.html" class="glass-button absolute top-16 right-12 w-16 h-16">Journal</a>
-  <a href="mygoals.html" class="glass-button absolute top-1/2 right-8 transform -translate-y-1/2 w-16 h-16">MyGoals</a>
-  <a href="reports.html" class="glass-button absolute bottom-24 left-12 w-16 h-16">Reports</a>
-  <a href="history.html" class="glass-button absolute top-1/3 left-16 w-12 h-12">History</a>
+  <!-- Butonul central "soare" pentru a începe sesiunea -->
+  <div id="sun" class="sun left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center text-white text-lg font-semibold cursor-pointer">
+    <span id="sun-text">🎙️ Începe Sesiunea</span>
+  </div>
 
-  <!-- Equalizer and Text (only visible if recording is active) -->
-  <div id="rec-section" class="absolute bottom-6 w-full flex flex-col items-center z-10 text-white text-sm">
+  <!-- Butoanele de navigare (planete), stilizate ca "glass-button" -->
+  <a href="journal.html" class="glass-button absolute top-16 right-12 w-16 h-16">Jurnal</a>
+  <a href="mygoals.html" class="glass-button absolute top-1/2 right-8 transform -translate-y-1/2 w-16 h-16">Obiective</a>
+  <a href="reports.html" class="glass-button absolute bottom-24 left-12 w-16 h-16">Raport</a>
+  <a href="history.html" class="glass-button absolute top-1/3 left-16 w-12 h-12">Istoric</a>
+
+  <!-- Egalizatorul și textul de stare (vizibile doar la înregistrare activă) -->
+  <div id="rec-section" class="absolute bottom-6 w-full flex-col items-center z-10 text-sm">
     <div class="equalizer">
       <div class="bar"></div>
       <div class="bar"></div>
@@ -101,24 +120,42 @@
     const recSection = document.getElementById('rec-section');
 
     let holdTimeout;
-    let isRecording = false;
+    let isRecording = false; // Stare pentru a ști dacă înregistrarea este activă
 
-    sun.addEventListener('mousedown', () => {
-      holdTimeout = setTimeout(() => {
-        sun.classList.add('expanding');
-        sunText.textContent = 'Inspiră profund';
+    // Funcția pentru a începe animația și a pregăti înregistrarea
+    function startRecordingProcess() {
+      sun.classList.add('expanding'); // Activează animația de expansiune
+      sunText.textContent = 'Inspiră profund'; // Schimbă textul la "Inspiră profund"
+
+      // După 2 secunde, finalizează animația și pregătește UI-ul pentru înregistrare
+      setTimeout(() => {
+        sun.classList.remove('expanding'); // Oprește expansiunea
+        sunText.textContent = '🎙️'; // Schimbă textul la iconița de microfon
+        sun.classList.add('active'); // Adaugă clasa 'active' pentru a afișa egalizatorul
+        recSection.style.display = 'flex'; // Afișează secțiunea de înregistrare
+        isRecording = true; // Setează starea de înregistrare la adevărat
+        // Aici ar începe logica reală de înregistrare (Web Speech API, etc.)
+        // Pentru MVP, aceasta este doar o simulare vizuală
+        console.log("Începe înregistrarea...");
+
+        // Redirecționează către pagina de jurnal după o scurtă întârziere
         setTimeout(() => {
-          sun.classList.remove('expanding');
-          sunText.textContent = '🎙️';
-          sun.classList.add('active');
-          recSection.style.display = 'flex';
-        }, 2000);
-      }, 1200);
+          window.location.href = 'journal.html';
+        }, 1000); // Redirecționează după 1 secundă de la activare
+      }, 2000); // Așteaptă 2 secunde pentru animația "Inspiră profund"
+    }
+
+    // Ascultă evenimentul de apăsare a butonului (mousedown)
+    sun.addEventListener('mousedown', () => {
+      // Setează un timeout pentru a detecta o apăsare lungă (1.2 secunde)
+      holdTimeout = setTimeout(startRecordingProcess, 1200);
     });
 
+    // Anulează timeout-ul dacă butonul este eliberat prea repede
     sun.addEventListener('mouseup', () => {
       clearTimeout(holdTimeout);
     });
+    // Anulează timeout-ul dacă mouse-ul părăsește zona butonului
     sun.addEventListener('mouseleave', () => {
       clearTimeout(holdTimeout);
     });

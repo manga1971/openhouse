@@ -1,1 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Istoric sesiuni – LumiYE</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(to bottom right, #f9fafb, #e5e7eb);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-start p-4">
+  <h1 class="text-2xl font-bold text-gray-800 mb-4">📜 Istoricul sesiunilor</h1>
 
+  <div id="historyList" class="w-full max-w-md space-y-4">
+    <!-- Lista va fi generată din localStorage -->
+  </div>
+
+  <a href="index.html" class="mt-6 text-blue-500 hover:underline">← Înapoi acasă</a>
+
+  <script>
+    const historyList = document.getElementById('historyList');
+
+    function loadHistory() {
+      const rawData = localStorage.getItem('lumiye_sessions');
+      if (!rawData) {
+        historyList.innerHTML = '<p class="text-gray-500">Nicio sesiune salvată încă.</p>';
+        return;
+      }
+
+      const sessions = JSON.parse(rawData);
+      if (!sessions.length) {
+        historyList.innerHTML = '<p class="text-gray-500">Nicio sesiune salvată încă.</p>';
+        return;
+      }
+
+      sessions.reverse().forEach((session, index) => {
+        const item = document.createElement('div');
+        item.className = 'bg-white shadow p-4 rounded-lg border border-gray-200';
+
+        item.innerHTML = `
+          <h2 class="text-lg font-semibold text-gray-800">Sesiune #${sessions.length - index}</h2>
+          <p class="text-sm text-gray-600">🕒 ${session.time || 'Timp necunoscut'}</p>
+          <p class="mt-2 text-gray-700 line-clamp-3">${session.transcript || 'Fără transcriere disponibilă.'}</p>
+        `;
+
+        historyList.appendChild(item);
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', loadHistory);
+  </script>
+</body>
+</html>

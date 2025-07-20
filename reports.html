@@ -3,56 +3,89 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LumiYE – Reports</title>
+  <title>LumiYE – Report</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background: radial-gradient(circle at top, #fefce8, #fef9c3);
+      background: linear-gradient(to bottom, #fefce8, #fef9c3);
+      margin: 0;
+      padding: 0;
     }
-    .highlight-high {
-      background-color: #bbf7d0;
-      padding: 0 4px;
-      border-radius: 4px;
+    .card {
+      @apply bg-white shadow-lg rounded-xl p-6 max-w-2xl mx-auto mt-12;
     }
-    .highlight-low {
-      background-color: #fecaca;
-      padding: 0 4px;
-      border-radius: 4px;
+    .section-title {
+      @apply text-lg font-semibold mt-6 mb-2;
+    }
+    .back {
+      @apply text-sm text-blue-600 underline mt-8 inline-block;
     }
   </style>
 </head>
-<body class="min-h-screen p-6">
-  <header class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-yellow-600">📄 Raportul sesiunii</h1>
-    <a href="home.html" class="text-sm text-blue-600 underline">Înapoi acasă</a>
-  </header>
+<body>
+  <div class="card">
+    <h1 class="text-2xl font-bold text-gray-800">Raportul Sesiunii</h1>
+    <p class="mt-2 text-sm text-gray-500">Perioadă: <strong>12:56 – 13:07 (pauză de prânz)</strong></p>
 
-  <section class="bg-white shadow-md rounded-xl p-6 mb-4">
-    <h2 class="text-lg font-semibold text-gray-700">🕒 Perioada înregistrată</h2>
-    <p class="text-gray-800">12:56 – 13:07 (pauză de prânz)</p>
-  </section>
+    <div class="mt-4">
+      <h2 class="section-title">Transcriere</h2>
+      <p class="text-gray-700 leading-relaxed">
+        Astăzi m-am simțit încărcat, dar și motivat să încep ceva nou. <br>
+        Nu mai vreau să fiu slăbit de îndoieli. <br>
+        Vreau să devin clar, curajos și conectat cu mine însumi.
+      </p>
+    </div>
 
-  <section class="bg-white shadow-md rounded-xl p-6 mb-4">
-    <h2 class="text-lg font-semibold text-gray-700">🗣️ Transcriere conversație</h2>
-    <p class="text-gray-800 leading-relaxed">
-      Astăzi m-am simțit <span class="highlight-low">încărcat</span>, dar și <span class="highlight-high">motivat</span> să încep ceva nou. Nu mai vreau să fiu <span class="highlight-low">slăbit</span> de îndoieli. <br />
-      Vreau să devin <span class="highlight-high">clar</span>, <span class="highlight-high">curajos</span> și <span class="highlight-high">conectat</span> cu mine însumi.
-    </p>
-  </section>
+    <div class="mt-6">
+      <h2 class="section-title">Cuvinte High</h2>
+      <ul class="list-disc list-inside text-green-600">
+        <li>motivat</li>
+        <li>clar</li>
+        <li>curajos</li>
+        <li>conectat</li>
+      </ul>
+    </div>
 
-  <section class="bg-white shadow-md rounded-xl p-6 mb-4">
-    <h2 class="text-lg font-semibold text-gray-700">📊 Analiză emoțională</h2>
-    <ul class="list-disc list-inside text-gray-700">
-      <li><strong>Cuvinte High:</strong> motivat, clar, curajos, conectat</li>
-      <li><strong>Cuvinte Low:</strong> încărcat, slăbit, îndoieli</li>
-      <li><strong>Intentii:</strong> "nu mai vreau să fiu..." → <span class="highlight-low">evitare</span>; "vreau să devin..." → <span class="highlight-high">progres</span></li>
-    </ul>
-  </section>
+    <div class="mt-4">
+      <h2 class="section-title">Cuvinte Low</h2>
+      <ul class="list-disc list-inside text-red-600">
+        <li>încărcat</li>
+        <li>slăbit</li>
+        <li>îndoieli</li>
+      </ul>
+    </div>
 
-  <div class="flex justify-end gap-4">
-    <button class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded-xl">Exportă PDF</button>
-    <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-4 py-2 rounded-xl">Trimite către History</button>
+    <div class="mt-4">
+      <h2 class="section-title">Intenții detectate</h2>
+      <ul class="list-disc list-inside text-yellow-700">
+        <li>„nu mai vreau să fiu...” → evitare</li>
+        <li>„vreau să devin...” → progres</li>
+      </ul>
+    </div>
+
+    <a href="index.html" class="back">← Înapoi la Home</a>
   </div>
+
+  <script>
+    const sessionData = {
+      time: "12:56 – 13:07 (pauză de prânz)",
+      transcript: `Astăzi m-am simțit încărcat, dar și motivat să încep ceva nou. 
+Nu mai vreau să fiu slăbit de îndoieli. 
+Vreau să devin clar, curajos și conectat cu mine însumi.`,
+      analysis: {
+        high: ["motivat", "clar", "curajos", "conectat"],
+        low: ["încărcat", "slăbit", "îndoieli"],
+        intentii: [
+          `"nu mai vreau să fiu..." → evitare`,
+          `"vreau să devin..." → progres`
+        ]
+      }
+    };
+
+    const existing = JSON.parse(localStorage.getItem("lumiye_sessions")) || [];
+    existing.push(sessionData);
+    localStorage.setItem("lumiye_sessions", JSON.stringify(existing));
+  </script>
 </body>
 </html>

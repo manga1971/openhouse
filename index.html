@@ -12,14 +12,26 @@
       padding: 0;
       overflow: hidden;
       font-family: 'Inter', sans-serif; /* Folosim fontul Inter, conform discuției */
-      background-color: #FDFBF6; /* Fundal bej cald */
+      background-color: #FDFBF6; /* Fundal bej cald, va fi acoperit de video */
       color: #2E2E2E; /* Text gri foarte închis */
     }
-    /* Stiluri pentru butoanele de navigare cu efect de sticlă */
+    /* Stil pentru video-ul de fundal (cerul înstelat) */
+    .background-video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0; /* Asigură că video-ul este în spatele conținutului */
+      filter: brightness(0.8); /* Ajustează luminozitatea pentru a face textul mai lizibil */
+    }
+    /* Stiluri pentru butoanele de navigare cu efect de sticlă (planetele) */
     .glass-button {
       @apply backdrop-blur-xl bg-white/10 border border-white/30 rounded-full text-sm shadow-lg flex items-center justify-center;
-      transition: transform 0.3s ease, background-color 0.3s;
-      color: #2E2E2E; /* Culoarea textului pentru butoanele de sticlă */
+      transition: transform 0.3s ease, background-color 0.3s, opacity 0.5s ease; /* Adaugă tranziție pentru opacitate */
+      color: #FDFBF6; /* Text alb pentru a fi vizibil pe fundalul întunecat */
+      z-index: 10; /* Asigură că butoanele sunt deasupra video-ului */
     }
     .glass-button:hover {
       background-color: rgba(255, 255, 255, 0.15);
@@ -29,8 +41,8 @@
       @apply absolute rounded-full bg-yellow-300 shadow-2xl;
       width: 160px;
       height: 160px;
-      transition: all 0.8s ease-in-out;
-      z-index: 10; /* Asigură că este deasupra altor elemente */
+      transition: all 0.8s ease-in-out, background-color 0.5s ease;
+      z-index: 20; /* Soarele este deasupra planetelor */
     }
     /* Animația de expansiune a soarelui */
     .sun.expanding {
@@ -131,16 +143,77 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+
+    /* Stiluri pentru zona de transcriere live */
+    .transcript-area {
+      @apply flex-grow w-full max-w-2xl bg-white/50 backdrop-blur-sm border border-white/30 rounded-xl shadow-lg p-6 overflow-y-auto;
+      min-height: 200px; /* Înălțime minimă pentru zona de transcriere */
+      max-height: 60vh; /* Înălțime maximă pentru a permite scroll */
+      position: absolute; /* Poziționat absolut pentru a fi deasupra video-ului */
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: none; /* Ascuns inițial */
+      color: #2E2E2E; /* Text gri închis pentru transcriere */
+    }
+    .transcript-area p {
+      color: #2E2E2E; /* Asigură culoarea textului în transcriere */
+    }
+    /* Animație subtilă pentru propozițiile care apar */
+    .sentence-pop-in {
+      animation: popIn 0.5s ease-out forwards;
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    @keyframes popIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Stiluri pentru pulsarea soarelui în timpul înregistrării */
+    .sun-pulsating {
+      animation: sunPulse 2s infinite ease-in-out;
+    }
+    @keyframes sunPulse {
+      0% { transform: scale(1) translate(-50%, -50%); }
+      50% { transform: scale(1.05) translate(-50%, -50%); } /* Ușoară dilatare */
+      100% { transform: scale(1) translate(-50%, -50%); }
+    }
+
+    .sun-speaking {
+      animation: sunSpeak 0.5s infinite alternate ease-in-out;
+    }
+    @keyframes sunSpeak {
+      0% { transform: scale(1) translate(-50%, -50%); }
+      100% { transform: scale(0.98) translate(-50%, -50%); } /* Ușoară contracție */
+    }
+
+    /* Clasă pentru ascunderea elementelor */
+    .hidden-element {
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+    }
   </style>
 </head>
 <body class="relative w-screen h-screen flex flex-col items-center justify-center">
-  <!-- Mesajul de bun venit și introducere, conform discuției -->
-  <div class="absolute top-1/4 text-center px-4 z-10">
-    <h1 class="text-3xl font-semibold text-gray-800">Bun venit în spațiul tău</h1>
-    <p class="mt-4 text-lg max-w-md mx-auto italic opacity-90">
+  <!-- Video de fundal cu cerul înstelat -->
+  <video autoplay muted loop class="background-video">
+    <!-- Folosește un placeholder pentru video. În realitate, vei pune un fișier video optimizat. -->
+    <source src="https://assets.mixkit.co/videos/preview/mixkit-stars-in-the-night-sky-1249-large.mp4" type="video/mp4">
+    <!-- Fallback pentru browserele care nu suportă video -->
+    Imagine cu cer înstelat.
+  </video>
+
+  <!-- Mesajul de bun venit și introducere -->
+  <div id="welcomeMessage" class="absolute top-8 text-center px-4 z-10 text-white">
+    <h1 class="text-3xl font-semibold">Bun venit în spațiul tău</h1>
+    <p class="mt-2 text-lg max-w-md mx-auto italic opacity-90">
       LumiYE este o evadare din prezentul agitat. Un loc în care poți să respiri, să simți, să fii.
     </p>
-    <p class="mt-4 text-base max-w-sm mx-auto opacity-70">
+    <p class="mt-2 text-base max-w-sm mx-auto opacity-70">
       Fie că vrei să păstrezi o stare de bine sau să descarci ceva ce te apasă, <strong>acum</strong> e momentul.
     </p>
   </div>
@@ -150,17 +223,17 @@
     <span id="sun-text">🎙️ Începe Sesiunea</span>
   </div>
 
-  <!-- Butoanele de navigare (planete), stilizate ca "glass-button" -->
-  <a href="journal.html" class="glass-button absolute top-16 right-12 w-16 h-16">Jurnal</a>
-  <a href="mygoals.html" class="glass-button absolute top-1/2 right-8 transform -translate-y-1/2 w-16 h-16">Obiective</a>
-  <a href="reports.html" class="glass-button absolute bottom-24 left-12 w-16 h-16">Raport</a>
-  <a href="history.html" class="glass-button absolute top-1/3 left-16 w-12 h-12">Istoric</a>
+  <!-- Butoanele de navigare (planete), poziționate în jurul soarelui -->
+  <a href="journal.html" id="journalButton" class="glass-button absolute top-1/4 right-1/4 w-20 h-20">Jurnal</a>
+  <a href="mygoals.html" id="myGoalsButton" class="glass-button absolute top-1/2 right-1/4 transform -translate-y-1/2 w-20 h-20">Obiective</a>
+  <a href="reports.html" id="reportsButton" class="glass-button absolute bottom-1/4 left-1/4 w-20 h-20">Raport</a>
+  <a href="history.html" id="historyButton" class="glass-button absolute top-1/4 left-1/4 w-20 h-20">Istoric</a>
 
   <!-- Noul buton pentru inspirație rapidă cu Gemini API -->
-  <button id="inspirationButton" class="glass-button absolute bottom-16 right-16 w-24 h-24 text-lg">✨ Inspirație</button>
+  <button id="inspirationButton" class="glass-button absolute bottom-1/2 right-1/4 transform translate-y-1/2 w-20 h-20 text-lg">✨ Inspirație</button>
 
   <!-- Egalizatorul și textul de stare (vizibile doar la înregistrare activă) -->
-  <div id="rec-section" class="absolute bottom-6 w-full flex-col items-center z-10 text-sm">
+  <div id="rec-section" class="absolute bottom-6 w-full flex-col items-center z-10 text-sm text-white">
     <div class="equalizer">
       <div class="bar"></div>
       <div class="bar"></div>
@@ -172,6 +245,11 @@
       Se memorizează starea ta actuală.<br />
       <span class="opacity-70 text-xs">Această memorizare va fi exclusiv în telefonul tău și în posesia ta.</span>
     </p>
+  </div>
+
+  <!-- Zona de transcriere live (ascunsă inițial) -->
+  <div id="transcriptArea" class="transcript-area text-lg leading-relaxed">
+    <p class="text-gray-500 text-center italic">Vorbește liber. LumiYE te ascultă...</p>
   </div>
 
   <!-- Modal pentru afișarea inspirației -->
@@ -189,50 +267,274 @@
     const sunText = document.getElementById('sun-text');
     const recSection = document.getElementById('rec-section');
     const inspirationButton = document.getElementById('inspirationButton');
-    const inspirationModal = document.getElementById('inspirationModal');
+    const inspirationModal = document = document.getElementById('inspirationModal');
     const closeModalButton = document.getElementById('closeModalButton');
     const inspirationText = document.getElementById('inspirationText');
     const loadingSpinner = document.getElementById('loadingSpinner');
+    const welcomeMessage = document.getElementById('welcomeMessage');
+    const transcriptArea = document.getElementById('transcriptArea');
+
+    // Butoanele "planete"
+    const journalButton = document.getElementById('journalButton');
+    const myGoalsButton = document.getElementById('myGoalsButton');
+    const reportsButton = document.getElementById('reportsButton');
+    const historyButton = document.getElementById('historyButton');
 
     let holdTimeout;
-    let isRecording = false; // Stare pentru a ști dacă înregistrarea este activă
+    let isRecording = false;
+    let recognition; // Variabila pentru Web Speech API
+    let startTime;
+    const maxRecordingTime = 120; // 2 minute în secunde
+    let recordingInterval;
+    let currentTranscript = ''; // Stochează transcrierea curentă
+    let silenceTimeout; // Timeout pentru a detecta perioadele de liniște
 
-    // Funcția pentru a începe animația și a pregăti înregistrarea
-    function startRecordingProcess() {
-      sun.classList.add('expanding'); // Activează animația de expansiune
-      sunText.textContent = 'Inspiră profund'; // Schimbă textul la "Inspiră profund"
+    // Funcție pentru a simula analiza NLP (simplificată pentru MVP)
+    function analyzeText(text) {
+      const positiveWords = ['bucurie', 'speranță', 'fericit', 'mulțumit', 'recunoștință', 'curaj', 'potențial', 'vreau', 'succes'];
+      const negativeWords = ['nu pot', 'blocat', 'singur', 'eșec', 'trist', 'copleșit', 'stres', 'îndoieli', 'obosit'];
 
-      // După 2 secunde, finalizează animația și pregătește UI-ul pentru înregistrare
-      setTimeout(() => {
-        sun.classList.remove('expanding'); // Oprește expansiunea
-        sunText.textContent = '🎙️'; // Schimbă textul la iconița de microfon
-        sun.classList.add('active'); // Adaugă clasa 'active' pentru a afișa egalizatorul
-        recSection.style.display = 'flex'; // Afișează secțiunea de înregistrare
-        isRecording = true; // Setează starea de înregistrare la adevărat
-        // Aici ar începe logica reală de înregistrare (Web Speech API, etc.)
-        // Pentru MVP, aceasta este doar o simulare vizuală
-        console.log("Începe înregistrarea...");
+      let positives = 0;
+      let negatives = 0;
 
-        // Redirecționează către pagina de jurnal după o scurtă întârziere
-        setTimeout(() => {
-          window.location.href = 'journal.html';
-        }, 1000); // Redirecționează după 1 secundă de la activare
-      }, 2000); // Așteaptă 2 secunde pentru animația "Inspiră profund"
+      const lowerCaseText = text.toLowerCase();
+
+      positiveWords.forEach(word => {
+        if (lowerCaseText.includes(word)) {
+          positives++;
+        }
+      });
+      negativeWords.forEach(word => {
+        if (lowerCaseText.includes(word)) {
+          negatives++;
+        }
+      });
+
+      let intentii = [];
+      if (lowerCaseText.includes('nu mai vreau să fiu')) {
+        intentii.push(`"nu mai vreau să fiu..." → evitare`);
+      }
+      if (lowerCaseText.includes('vreau să devin')) {
+        intentii.push(`"vreau să devin..." → progres`);
+      }
+
+      return { positives, negatives, intentii };
+    }
+
+    // Funcție pentru a simula analiza respirației (WPM și pauze)
+    function analyzeBreathing(text, durationInSeconds) {
+      const words = text.split(/\s+/).filter(word => word.length > 0);
+      const wordCount = words.length;
+      const wpm = durationInSeconds > 0 ? (wordCount / durationInSeconds) * 60 : 0;
+
+      const sentences = text.split(/[.!?]/).filter(s => s.trim().length > 0);
+      const averageSentenceLength = sentences.length > 0 ? wordCount / sentences.length : 0;
+
+      let breathingFeedback = '';
+      if (wpm > 180) {
+        breathingFeedback = 'Ai vorbit într-un ritm rapid azi.';
+      } else if (wpm < 80 && wpm > 0) {
+        breathingFeedback = 'Ai un ritm de vorbire calm.';
+      }
+
+      if (sentences.length > 1 && averageSentenceLength < 5) {
+         breathingFeedback += ' Pauzele scurte pot semnala agitație.';
+      } else if (sentences.length > 1 && averageSentenceLength > 15) {
+         breathingFeedback += ' Fluxul coerent al vorbirii.';
+      }
+
+      return { wpm: wpm.toFixed(0), breathingFeedback };
+    }
+
+    // Funcția pentru a începe înregistrarea
+    function startRecording() {
+      if (!('webkitSpeechRecognition' in window)) {
+        statusMsg.textContent = 'API-ul de recunoaștere vocală nu este suportat de browserul tău.';
+        return;
+      }
+
+      recognition = new webkitSpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'ro-RO';
+
+      let finalTranscript = '';
+
+      recognition.onstart = () => {
+        isRecording = true;
+        startTime = Date.now();
+        sunText.textContent = '🎙️'; // Microfonul indică activitate
+        sun.classList.add('active', 'sun-pulsating'); // Activează egalizatorul și pulsarea
+        recSection.style.display = 'flex'; // Afișează egalizatorul
+        welcomeMessage.classList.add('hidden-element'); // Ascunde mesajul de bun venit
+        transcriptArea.style.display = 'block'; // Afișează zona de transcriere
+        transcriptArea.innerHTML = '<p class="text-gray-500 text-center italic">Vorbește liber. LumiYE te ascultă...</p>';
+        currentTranscript = '';
+
+        // Ascunde butoanele "planete" și "inspirație"
+        journalButton.classList.add('hidden-element');
+        myGoalsButton.classList.add('hidden-element');
+        reportsButton.classList.add('hidden-element');
+        historyButton.classList.add('hidden-element');
+        inspirationButton.classList.add('hidden-element');
+
+        // Resetarea pulsării la începutul înregistrării
+        sun.classList.remove('sun-speaking');
+        sun.classList.add('sun-pulsating'); // Începe cu dilatare (ascultare)
+
+        // Setează un timeout pentru a detecta liniștea prelungită
+        resetSilenceTimeout();
+      };
+
+      recognition.onresult = (event) => {
+        let interimTranscript = '';
+        let hasSpeech = false;
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript + '. ';
+            const p = document.createElement('p');
+            p.textContent = event.results[i][0].transcript;
+            p.classList.add('sentence-pop-in');
+            transcriptArea.appendChild(p);
+            transcriptArea.scrollTop = transcriptArea.scrollHeight;
+            currentTranscript = finalTranscript;
+            hasSpeech = true;
+          } else {
+            interimTranscript += event.results[i][0].transcript;
+            hasSpeech = true;
+          }
+        }
+
+        // Ajustează pulsarea soarelui în funcție de vorbire
+        if (hasSpeech) {
+          sun.classList.remove('sun-pulsating');
+          sun.classList.add('sun-speaking'); // Contracție când vorbești
+          resetSilenceTimeout(); // Resetează timeout-ul de liniște la fiecare vorbire
+        }
+      };
+
+      recognition.onend = () => {
+        if (isRecording) { // Doar dacă nu a fost oprită manual
+          isRecording = false;
+          clearTimeout(silenceTimeout); // Oprește timeout-ul de liniște
+          sun.classList.remove('sun-pulsating', 'sun-speaking', 'active'); // Oprește animațiile și egalizatorul
+          recSection.style.display = 'none'; // Ascunde egalizatorul
+          transcriptArea.style.display = 'none'; // Ascunde zona de transcriere
+          processSession(currentTranscript); // Procesează sesiunea
+        }
+      };
+
+      recognition.onerror = (event) => {
+        console.error('Eroare recunoaștere vocală:', event.error);
+        statusMsg.textContent = `Eroare: ${event.error}. Te rugăm să încerci din nou.`;
+        isRecording = false;
+        clearTimeout(silenceTimeout);
+        sun.classList.remove('sun-pulsating', 'sun-speaking', 'active');
+        recSection.style.display = 'none';
+        transcriptArea.style.display = 'none';
+        // Afișează din nou butoanele "planete" și mesajul de bun venit
+        journalButton.classList.remove('hidden-element');
+        myGoalsButton.classList.remove('hidden-element');
+        reportsButton.classList.remove('hidden-element');
+        historyButton.classList.remove('hidden-element');
+        inspirationButton.classList.remove('hidden-element');
+        welcomeMessage.classList.remove('hidden-element');
+        sunText.textContent = '🎙️ Începe Sesiunea'; // Resetează textul butonului
+      };
+
+      recognition.start();
+
+      // Oprește înregistrarea automat după timpul maxim
+      recordingInterval = setTimeout(() => {
+        if (isRecording) {
+          stopRecording();
+        }
+      }, maxRecordingTime * 1000);
+    }
+
+    // Funcția pentru a opri înregistrarea
+    function stopRecording() {
+      if (isRecording) {
+        recognition.stop();
+        isRecording = false;
+        clearTimeout(silenceTimeout);
+        clearTimeout(recordingInterval); // Oprește și timeout-ul de durată maximă
+        sun.classList.remove('sun-pulsating', 'sun-speaking', 'active');
+        recSection.style.display = 'none';
+        transcriptArea.style.display = 'none';
+        processSession(currentTranscript);
+      }
+    }
+
+    // Funcție pentru a reseta timeout-ul de liniște
+    function resetSilenceTimeout() {
+      clearTimeout(silenceTimeout);
+      sun.classList.remove('sun-speaking');
+      sun.classList.add('sun-pulsating'); // Revine la dilatare (ascultare)
+      silenceTimeout = setTimeout(() => {
+        // Dacă nu s-a vorbit timp de X secunde, oprește înregistrarea
+        if (isRecording) {
+          stopRecording();
+          console.log("Înregistrare oprită din cauza liniștii prelungite.");
+        }
+      }, 10000); // 10 secunde de liniște
+    }
+
+    // Funcția principală de procesare a sesiunii
+    function processSession(transcript) {
+      const duration = (Date.now() - startTime) / 1000;
+      const { positives, negatives, intentii } = analyzeText(transcript);
+      const { wpm, breathingFeedback } = analyzeBreathing(transcript, duration);
+
+      const sessionData = {
+        time: new Date().toLocaleString('ro-RO', { dateStyle: 'medium', timeStyle: 'short' }),
+        transcript: transcript,
+        duration: duration.toFixed(0),
+        analysis: {
+          positives: positives,
+          negatives: negatives,
+          highWords: [],
+          lowWords: [],
+          intentii: intentii,
+          wpm: wpm,
+          breathingFeedback: breathingFeedback
+        }
+      };
+
+      localStorage.setItem('current_session_data', JSON.stringify(sessionData));
+
+      // Redirecționăm către pagina de feedback
+      window.location.href = 'feedback.html';
     }
 
     // Ascultă evenimentul de apăsare a butonului (mousedown)
     sun.addEventListener('mousedown', () => {
-      // Setează un timeout pentru a detecta o apăsare lungă (1.2 secunde)
-      holdTimeout = setTimeout(startRecordingProcess, 1200);
+      if (!isRecording) { // Doar dacă nu înregistrăm deja
+        holdTimeout = setTimeout(() => {
+          sun.classList.add('expanding');
+          sunText.textContent = 'Inspiră profund';
+          // După animația de inspirație, începe înregistrarea
+          setTimeout(() => {
+            sun.classList.remove('expanding');
+            // Nu mai redirecționăm aici, ci pornim direct înregistrarea pe această pagină
+            startRecording();
+          }, 2000);
+        }, 1200); // Apăsare lungă de 1.2 secunde
+      } else {
+        // Dacă înregistrarea este activă, un click scurt o oprește
+        stopRecording();
+      }
     });
 
-    // Anulează timeout-ul dacă butonul este eliberat prea repede
     sun.addEventListener('mouseup', () => {
-      clearTimeout(holdTimeout);
+      if (!isRecording) { // Anulează doar dacă nu am intrat în modul de înregistrare
+        clearTimeout(holdTimeout);
+      }
     });
-    // Anulează timeout-ul dacă mouse-ul părăsește zona butonului
     sun.addEventListener('mouseleave', () => {
-      clearTimeout(holdTimeout);
+      if (!isRecording) { // Anulează doar dacă nu am intrat în modul de înregistrare
+        clearTimeout(holdTimeout);
+      }
     });
 
     // Funcția pentru a genera inspirație folosind Gemini API

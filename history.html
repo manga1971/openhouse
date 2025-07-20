@@ -1,25 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ro">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Istoric sesiuni – LumiYE</title>
+  <title>LumiYE – Istoric Sesiuni</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    /* Stiluri generale conform filosofiei de design */
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(to bottom right, #f9fafb, #e5e7eb);
+      background-color: #FDFBF6; /* Fundal bej cald */
+      color: #2E2E2E; /* Text gri foarte închis */
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    /* Stil pentru cardurile de sesiune */
+    .session-card {
+      @apply bg-white/50 backdrop-blur-sm shadow p-4 rounded-xl border border-white/30;
+    }
+    .back-link {
+      @apply text-sm text-gray-600 underline mt-8 inline-block;
     }
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-start p-4">
-  <h1 class="text-2xl font-bold text-gray-800 mb-4">📜 Istoricul sesiunilor</h1>
+  <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">📜 Istoricul Sesiunilor</h1>
 
   <div id="historyList" class="w-full max-w-md space-y-4">
     <!-- Lista va fi generată din localStorage -->
   </div>
 
-  <a href="index.html" class="mt-6 text-blue-500 hover:underline">← Înapoi acasă</a>
+  <a href="index.html" class="back-link">← Înapoi acasă</a>
 
   <script>
     const historyList = document.getElementById('historyList');
@@ -27,24 +43,33 @@
     function loadHistory() {
       const rawData = localStorage.getItem('lumiye_sessions');
       if (!rawData) {
-        historyList.innerHTML = '<p class="text-gray-500">Nicio sesiune salvată încă.</p>';
+        historyList.innerHTML = '<p class="text-gray-500 text-center">Nicio sesiune salvată încă.</p>';
         return;
       }
 
       const sessions = JSON.parse(rawData);
       if (!sessions.length) {
-        historyList.innerHTML = '<p class="text-gray-500">Nicio sesiune salvată încă.</p>';
+        historyList.innerHTML = '<p class="text-gray-500 text-center">Nicio sesiune salvată încă.</p>';
         return;
       }
 
+      // Sortăm sesiunile de la cea mai nouă la cea mai veche
       sessions.reverse().forEach((session, index) => {
         const item = document.createElement('div');
-        item.className = 'bg-white shadow p-4 rounded-lg border border-gray-200';
+        item.className = 'session-card';
+
+        // Verificăm dacă este prima sesiune (cea mai veche din lista originală, deci ultima după reverse)
+        const isFirstSession = (sessions.length - 1 - index) === 0; // Indexul original al primei sesiuni
 
         item.innerHTML = `
-          <h2 class="text-lg font-semibold text-gray-800">Sesiune #${sessions.length - index}</h2>
-          <p class="text-sm text-gray-600">🕒 ${session.time || 'Timp necunoscut'}</p>
+          <h2 class="text-lg font-semibold text-gray-800">Sesiune #${sessions.length - index} ${isFirstSession ? '<span class="text-blue-500 text-sm">(Origine)</span>' : ''}</h2>
+          <p class="text-sm text-gray-600">🕒 ${session.time || 'Timp necunoscut'} (Durată: ${session.duration || 'N/A'} secunde)</p>
           <p class="mt-2 text-gray-700 line-clamp-3">${session.transcript || 'Fără transcriere disponibilă.'}</p>
+          <div class="mt-2 text-sm">
+            <span class="text-green-600">Pozitive: ${session.analysis.positives || 0}</span> |
+            <span class="text-red-600">Negative: ${session.analysis.negatives || 0}</span> |
+            <span class="text-blue-500">WPM: ${session.analysis.wpm || 'N/A'}</span>
+          </div>
         `;
 
         historyList.appendChild(item);

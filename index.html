@@ -74,6 +74,63 @@
     #sun.active + #rec-section {
       display: flex; /* Folosim flex pentru a centra conținutul */
     }
+
+    /* Stiluri pentru modalul de inspirație */
+    .modal {
+      display: none; /* Ascuns implicit */
+      position: fixed; /* Poziționat fix pe ecran */
+      z-index: 100; /* Deasupra tuturor elementelor */
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto; /* Permite scroll dacă conținutul este prea mare */
+      background-color: rgba(0,0,0,0.4); /* Fundal semi-transparent */
+      backdrop-filter: blur(5px); /* Efect de blur */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      background-color: #FDFBF6; /* Fundal bej cald */
+      margin: auto;
+      padding: 20px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      position: relative;
+      color: #2E2E2E;
+    }
+    .close-button {
+      color: #aaa;
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .close-button:hover,
+    .close-button:focus {
+      color: #2E2E2E;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .loading-spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #C7EDE6; /* Verde mentă */
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+      display: none; /* Ascuns implicit */
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body class="relative w-screen h-screen flex flex-col items-center justify-center">
@@ -99,6 +156,9 @@
   <a href="reports.html" class="glass-button absolute bottom-24 left-12 w-16 h-16">Raport</a>
   <a href="history.html" class="glass-button absolute top-1/3 left-16 w-12 h-12">Istoric</a>
 
+  <!-- Noul buton pentru inspirație rapidă cu Gemini API -->
+  <button id="inspirationButton" class="glass-button absolute bottom-16 right-16 w-24 h-24 text-lg">✨ Inspirație</button>
+
   <!-- Egalizatorul și textul de stare (vizibile doar la înregistrare activă) -->
   <div id="rec-section" class="absolute bottom-6 w-full flex-col items-center z-10 text-sm">
     <div class="equalizer">
@@ -114,10 +174,25 @@
     </p>
   </div>
 
+  <!-- Modal pentru afișarea inspirației -->
+  <div id="inspirationModal" class="modal">
+    <div class="modal-content">
+      <span class="close-button" id="closeModalButton">&times;</span>
+      <h2 class="text-xl font-semibold mb-4 text-center">✨ Inspirația Ta ✨</h2>
+      <div id="loadingSpinner" class="loading-spinner"></div>
+      <p id="inspirationText" class="text-gray-700 leading-relaxed text-center"></p>
+    </div>
+  </div>
+
   <script>
     const sun = document.getElementById('sun');
     const sunText = document.getElementById('sun-text');
     const recSection = document.getElementById('rec-section');
+    const inspirationButton = document.getElementById('inspirationButton');
+    const inspirationModal = document.getElementById('inspirationModal');
+    const closeModalButton = document.getElementById('closeModalButton');
+    const inspirationText = document.getElementById('inspirationText');
+    const loadingSpinner = document.getElementById('loadingSpinner');
 
     let holdTimeout;
     let isRecording = false; // Stare pentru a ști dacă înregistrarea este activă
@@ -158,6 +233,60 @@
     // Anulează timeout-ul dacă mouse-ul părăsește zona butonului
     sun.addEventListener('mouseleave', () => {
       clearTimeout(holdTimeout);
+    });
+
+    // Funcția pentru a genera inspirație folosind Gemini API
+    async function generateInspiration() {
+      inspirationText.textContent = ''; // Curăță textul anterior
+      loadingSpinner.style.display = 'block'; // Afișează spinner-ul
+      inspirationModal.style.display = 'flex'; // Afișează modalul
+
+      try {
+        let chatHistory = [];
+        const prompt = "Generează o frază scurtă, pozitivă și inspirațională despre auto-reflecție, creștere personală sau liniște interioară. Fraza să fie concisă și să inspire calm.";
+        chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+        const payload = { contents: chatHistory };
+        const apiKey = ""; // Lăsați gol pentru ca Canvas să furnizeze cheia API
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (result.candidates && result.candidates.length > 0 &&
+            result.candidates[0].content && result.candidates[0].content.parts &&
+            result.candidates[0].content.parts.length > 0) {
+          const text = result.candidates[0].content.parts[0].text;
+          inspirationText.textContent = text;
+        } else {
+          inspirationText.textContent = "Nu am putut genera inspirație. Te rugăm să încerci din nou.";
+          console.error("Structura răspunsului API este neașteptată:", result);
+        }
+      } catch (error) {
+        inspirationText.textContent = "A apărut o eroare la generarea inspirației. Verifică conexiunea la internet.";
+        console.error("Eroare la apelul Gemini API:", error);
+      } finally {
+        loadingSpinner.style.display = 'none'; // Ascunde spinner-ul
+      }
+    }
+
+    // Ascultă evenimentul de click pe butonul de inspirație
+    inspirationButton.addEventListener('click', generateInspiration);
+
+    // Închide modalul la click pe butonul de închidere
+    closeModalButton.addEventListener('click', () => {
+      inspirationModal.style.display = 'none';
+    });
+
+    // Închide modalul la click în afara conținutului său
+    window.addEventListener('click', (event) => {
+      if (event.target == inspirationModal) {
+        inspirationModal.style.display = 'none';
+      }
     });
   </script>
 </body>

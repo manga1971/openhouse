@@ -1,1 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LumiYE – Reports</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at top, #fefce8, #fef9c3);
+    }
+    .highlight-high {
+      background-color: #bbf7d0;
+      padding: 0 4px;
+      border-radius: 4px;
+    }
+    .highlight-low {
+      background-color: #fecaca;
+      padding: 0 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="min-h-screen p-6">
+  <header class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold text-yellow-600">📄 Raportul sesiunii</h1>
+    <a href="home.html" class="text-sm text-blue-600 underline">Înapoi acasă</a>
+  </header>
 
+  <section class="bg-white shadow-md rounded-xl p-6 mb-4">
+    <h2 class="text-lg font-semibold text-gray-700">🕒 Perioada înregistrată</h2>
+    <p class="text-gray-800">12:56 – 13:07 (pauză de prânz)</p>
+  </section>
+
+  <section class="bg-white shadow-md rounded-xl p-6 mb-4">
+    <h2 class="text-lg font-semibold text-gray-700">🗣️ Transcriere conversație</h2>
+    <p class="text-gray-800 leading-relaxed">
+      Astăzi m-am simțit <span class="highlight-low">încărcat</span>, dar și <span class="highlight-high">motivat</span> să încep ceva nou. Nu mai vreau să fiu <span class="highlight-low">slăbit</span> de îndoieli. <br />
+      Vreau să devin <span class="highlight-high">clar</span>, <span class="highlight-high">curajos</span> și <span class="highlight-high">conectat</span> cu mine însumi.
+    </p>
+  </section>
+
+  <section class="bg-white shadow-md rounded-xl p-6 mb-4">
+    <h2 class="text-lg font-semibold text-gray-700">📊 Analiză emoțională</h2>
+    <ul class="list-disc list-inside text-gray-700">
+      <li><strong>Cuvinte High:</strong> motivat, clar, curajos, conectat</li>
+      <li><strong>Cuvinte Low:</strong> încărcat, slăbit, îndoieli</li>
+      <li><strong>Intentii:</strong> "nu mai vreau să fiu..." → <span class="highlight-low">evitare</span>; "vreau să devin..." → <span class="highlight-high">progres</span></li>
+    </ul>
+  </section>
+
+  <div class="flex justify-end gap-4">
+    <button class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded-xl">Exportă PDF</button>
+    <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-4 py-2 rounded-xl">Trimite către History</button>
+  </div>
+</body>
+</html>

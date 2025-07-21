@@ -4,6 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LumiYE – Spațiul Tău</title>
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="LumiYE – jurnal audio cu AI, în care îți poți exprima emoțiile și urmări progresul obiectivelor personale.">
+  <meta property="og:title" content="LumiYE – Spațiul Tău Personal cu AI">
+  <meta property="og:description" content="Înregistrează gândurile, primește feedback și urmărește progresul. Cu AI care te ascultă.">
+  <meta property="og:image" content="https://placehold.co/1200x630/000000/FFFFFF?text=LumiYE_Social_Share"> <!-- Placeholder, înlocuiește cu o imagine reală -->
+  <meta name="robots" content="index,follow">
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     /* Stiluri generale pentru corp și HTML */
@@ -52,12 +59,13 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      background-color: rgba(255, 255, 255, 0.1); /* Fundal semi-transparent pentru efect de sticlă */
-      backdrop-filter: blur(10px); /* Efect de blur pentru paginile din spate */
-      transition: transform 0.5s ease-out, opacity 0.5s ease; /* Tranziții fluide */
+      background-color: rgba(255, 255, 255, 0.05); /* Fundal semi-transparent pentru efect de sticlă */
+      backdrop-filter: blur(8px); /* Efect de blur pentru paginile din spate */
+      transition: transform 0.5s ease-out, opacity 0.5s ease, z-index 0.5s step-end; /* Tranziții fluide */
       z-index: 5; /* Z-index de bază */
       box-sizing: border-box;
       padding: 20px;
+      color: #2E2E2E; /* Culoare text implicită pentru pagini */
     }
 
     /* Pozițiile paginilor */
@@ -65,27 +73,28 @@
       transform: translateX(0) translateY(0);
       opacity: 1;
       z-index: 10; /* Pagina centrală este deasupra */
+      pointer-events: auto; /* Permite interacțiuni */
     }
     .page-top {
-      transform: translateY(-100%) translateX(0); /* Complet în afara ecranului sus */
+      transform: translateY(-100vh); /* Complet în afara ecranului sus */
       opacity: 0.7;
       pointer-events: none; /* Nu permite interacțiuni când e parțial vizibilă */
       z-index: 6;
     }
     .page-bottom {
-      transform: translateY(100%) translateX(0); /* Complet în afara ecranului jos */
+      transform: translateY(100vh); /* Complet în afara ecranului jos */
       opacity: 0.7;
       pointer-events: none;
       z-index: 6;
     }
     .page-left {
-      transform: translateX(-100%) translateY(0); /* Complet în afara ecranului stânga */
+      transform: translateX(-100vw); /* Complet în afara ecranului stânga */
       opacity: 0.7;
       pointer-events: none;
       z-index: 6;
     }
     .page-right {
-      transform: translateX(100%) translateY(0); /* Complet în afara ecranului dreapta */
+      transform: translateX(100vw); /* Complet în afara ecranului dreapta */
       opacity: 0.7;
       pointer-events: none;
       z-index: 6;
@@ -96,13 +105,18 @@
       position: absolute;
       background-color: rgba(255, 255, 255, 0.2);
       color: white;
-      padding: 8px 12px;
+      padding: 10px 16px; /* Mărește zona de hit */
       border-radius: 8px;
-      font-size: 0.8rem;
+      font-size: 0.9rem; /* Mărește fontul */
       font-weight: bold;
       opacity: 0; /* Ascuns implicit */
       transition: opacity 0.3s ease;
-      pointer-events: none; /* Nu blochează swipe-ul */
+      pointer-events: auto; /* Permite click pe etichetă */
+      cursor: pointer;
+      white-space: nowrap; /* Previne ruperea textului */
+    }
+    .page-label:hover {
+      background-color: rgba(255, 255, 255, 0.3);
     }
 
     /* Vizibilitatea etichetelor în funcție de poziția paginii */
@@ -113,7 +127,7 @@
 
     /* Stiluri specifice pentru pagina Journal (Home) */
     #journal-page {
-      background-color: rgba(255, 255, 255, 0.1); /* Fundal semi-transparent pentru efect de sticlă */
+      background-color: transparent; /* Journal are fundalul principal */
     }
 
     /* Stiluri pentru "soare" - butonul central de înregistrare */
@@ -258,21 +272,22 @@
     }
 
     /* Stiluri pentru pulsarea soarelui în timpul înregistrării */
-    .sun-pulsating {
-      animation: sunPulse 2s infinite ease-in-out;
+    /* Acestea vor fi aplicate pe background-image pentru efectul de iluminare a întregului ecran */
+    .pulsating-background {
+      animation: backgroundPulse 2s infinite ease-in-out;
     }
-    @keyframes sunPulse {
-      0% { transform: scale(1) translate(-50%, -50%); }
-      50% { transform: scale(1.05) translate(-50%, -50%); } /* Ușoară dilatare */
-      100% { transform: scale(1) translate(-50%, -50%); }
+    @keyframes backgroundPulse {
+      0% { filter: brightness(0.8); }
+      50% { filter: brightness(1.0); } /* Ușoară dilatare a luminii */
+      100% { filter: brightness(0.8); }
     }
 
-    .sun-speaking {
-      animation: sunSpeak 0.5s infinite alternate ease-in-out;
+    .speaking-background {
+      animation: backgroundSpeak 0.5s infinite alternate ease-in-out;
     }
-    @keyframes sunSpeak {
-      0% { transform: scale(1) translate(-50%, -50%); }
-      100% { transform: scale(0.98) translate(-50%, -50%); } /* Ușoară contracție */
+    @keyframes backgroundSpeak {
+      0% { filter: brightness(0.8); }
+      100% { filter: brightness(0.75); } /* Ușoară contracție a luminii */
     }
 
     /* Clasă pentru ascunderea elementelor */
@@ -319,18 +334,18 @@
 </head>
 <body>
   <!-- Fundalul principal cu imaginea Pământ-Răsărit -->
-  <img src="https://placehold.co/1920x1080/000000/FFFFFF?text=Fundal+Pamant+Rasarit" alt="Fundal Pământ Răsărit" class="background-image" id="backgroundImage">
-  <!-- Aici vei înlocui 'https://placehold.co/1920x1080/000000/FFFFFF?text=Fundal+Pamant+Rasarit' cu URL-ul imaginii tale reale: fundal LUM 1.jpg -->
+  <img src="fundal LUM 1.jpg" alt="Fundal Pământ Răsărit" class="background-image" id="backgroundImage">
 
   <!-- Containerul principal al aplicației -->
   <div id="app-container" class="relative w-full h-full">
 
     <!-- Pagina 1: Journal (Home) -->
     <div id="journal-page" class="app-page page-center">
-      <div class="page-label label-bottom">Journal</div>
-      <div class="page-label label-top">Journal</div>
-      <div class="page-label label-left">Journal</div>
-      <div class="page-label label-right">Journal</div>
+      <!-- Etichete pentru navigare - vizibile doar când pagina NU este în centru -->
+      <div class="page-label label-bottom" data-target-page="journal">Journal</div>
+      <div class="page-label label-top" data-target-page="journal">Journal</div>
+      <div class="page-label label-left" data-target-page="journal">Journal</div>
+      <div class="page-label label-right" data-target-page="journal">Journal</div>
 
       <!-- Mesajul de bun venit și introducere -->
       <div id="welcomeMessage" class="text-center px-4 z-10 text-white">
@@ -381,10 +396,10 @@
 
     <!-- Pagina 2: Reports -->
     <div id="reports-page" class="app-page page-right">
-      <div class="page-label label-bottom">Reports</div>
-      <div class="page-label label-top">Reports</div>
-      <div class="page-label label-left">Reports</div>
-      <div class="page-label label-right">Reports</div>
+      <div class="page-label label-bottom" data-target-page="reports">Reports</div>
+      <div class="page-label label-top" data-target-page="reports">Reports</div>
+      <div class="page-label label-left" data-target-page="reports">Reports</div>
+      <div class="page-label label-right" data-target-page="reports">Reports</div>
 
       <div class="card w-full max-w-2xl mx-auto">
         <h1 class="text-2xl font-bold text-gray-800 text-center">Raportul Sesiunii Tale</h1>
@@ -435,10 +450,10 @@
 
     <!-- Pagina 3: My Goals -->
     <div id="mygoals-page" class="app-page page-bottom">
-      <div class="page-label label-bottom">My Goals</div>
-      <div class="page-label label-top">My Goals</div>
-      <div class="page-label label-left">My Goals</div>
-      <div class="page-label label-right">My Goals</div>
+      <div class="page-label label-bottom" data-target-page="mygoals">My Goals</div>
+      <div class="page-label label-top" data-target-page="mygoals">My Goals</div>
+      <div class="page-label label-left" data-target-page="mygoals">My Goals</div>
+      <div class="page-label label-right" data-target-page="mygoals">My Goals</div>
 
       <div class="max-w-xl mx-auto mt-10 w-full">
         <h1 class="text-2xl font-semibold mb-6 text-center">🎯 Obiectivele tale</h1>
@@ -470,10 +485,10 @@
 
     <!-- Pagina 4: History -->
     <div id="history-page" class="app-page page-left">
-      <div class="page-label label-bottom">History</div>
-      <div class="page-label label-top">History</div>
-      <div class="page-label label-left">History</div>
-      <div class="page-label label-right">History</div>
+      <div class="page-label label-bottom" data-target-page="history">History</div>
+      <div class="page-label label-top" data-target-page="history">History</div>
+      <div class="page-label label-left" data-target-page="history">History</div>
+      <div class="page-label label-right" data-target-page="history">History</div>
 
       <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">📜 Istoricul Sesiunilor</h1>
 
@@ -484,10 +499,10 @@
 
     <!-- Pagina 5: Account (Placeholder) -->
     <div id="account-page" class="app-page page-top">
-      <div class="page-label label-bottom">Account</div>
-      <div class="page-label label-top">Account</div>
-      <div class="page-label label-left">Account</div>
-      <div class="page-label label-right">Account</div>
+      <div class="page-label label-bottom" data-target-page="account">Account</div>
+      <div class="page-label label-top" data-target-page="account">Account</div>
+      <div class="page-label label-left" data-target-page="account">Account</div>
+      <div class="page-label label-right" data-target-page="account">Account</div>
 
       <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">⚙️ Contul Meu</h1>
       <p class="text-gray-700 text-center">Detalii despre cont și setări vor fi disponibile aici.</p>
@@ -503,6 +518,7 @@
     const mygoalsPage = document.getElementById('mygoals-page');
     const historyPage = document.getElementById('history-page');
     const accountPage = document.getElementById('account-page');
+    const backgroundImage = document.getElementById('backgroundImage'); // Adăugat pentru pulsație
 
     const pages = {
       'journal': journalPage,
@@ -512,7 +528,9 @@
       'account': accountPage
     };
 
-    let currentPageId = 'journal'; // Pagina inițială este Journal (Home)
+    // Ordinea paginilor pentru navigare intuitivă
+    const pageOrder = ['account', 'history', 'journal', 'reports', 'mygoals'];
+    let currentPageIndex = pageOrder.indexOf('journal'); // Indexul paginii curente în ordinea definită
 
     // Referințe pentru elementele din Journal Page
     const sun = document.getElementById('sun');
@@ -618,79 +636,113 @@
     function updatePagePositions() {
       // Ascunde toate etichetele inițial
       document.querySelectorAll('.page-label').forEach(label => label.style.opacity = '0');
+      document.querySelectorAll('.app-page').forEach(page => page.style.pointerEvents = 'none'); // Dezactivează interacțiunile
 
-      for (const id in pages) {
-        pages[id].classList.remove('page-center', 'page-top', 'page-bottom', 'page-left', 'page-right');
+      for (let i = 0; i < pageOrder.length; i++) {
+        const pageId = pageOrder[i];
+        const pageElement = pages[pageId];
+        pageElement.classList.remove('page-center', 'page-top', 'page-bottom', 'page-left', 'page-right');
+
+        if (i === currentPageIndex) {
+          pageElement.classList.add('page-center');
+          pageElement.style.pointerEvents = 'auto'; // Activează interacțiunile pentru pagina centrală
+        } else {
+          // Calculează poziția relativă față de pagina centrală
+          const relativeIndex = (i - currentPageIndex + pageOrder.length) % pageOrder.length;
+
+          if (relativeIndex === 1) { // Următoarea pagină în ordine (ex: Journal -> Reports)
+            if (pageId === 'reports') pageElement.classList.add('page-right'); // Reports e la dreapta Journal
+            else if (pageId === 'mygoals') pageElement.classList.add('page-bottom'); // MyGoals e sub Reports
+            else if (pageId === 'history') pageElement.classList.add('page-left'); // History e la stânga MyGoals
+            else if (pageId === 'account') pageElement.classList.add('page-top'); // Account e deasupra History
+          } else if (relativeIndex === pageOrder.length - 1) { // Pagina anterioară în ordine (ex: Journal <- Account)
+            if (pageId === 'account') pageElement.classList.add('page-top'); // Account e deasupra Journal
+            else if (pageId === 'history') pageElement.classList.add('page-left'); // History e la stânga Journal
+            else if (pageId === 'mygoals') pageElement.classList.add('page-bottom'); // MyGoals e sub Journal
+            else if (pageId === 'reports') pageElement.classList.add('page-right'); // Reports e la dreapta Journal
+          }
+          // Pentru MVP, simplificăm pozițiile vizibile la doar cele adiacente direct
+          // Etichetele vor fi afișate doar pentru paginile adiacente
+          if (relativeIndex === 1 || relativeIndex === pageOrder.length - 1) {
+            pageElement.querySelectorAll('.page-label').forEach(label => label.style.opacity = '1');
+          }
+        }
       }
-
-      // Setează pozițiile relative la pagina curentă
-      pages[currentPageId].classList.add('page-center');
-
-      // Poziționează celelalte pagini în jurul paginii curente
-      // Acestea trebuie să fie paginile reale, nu doar link-uri
-      // Pentru MVP, vom simula o dispunere fixă în jurul Journal-ului
-      // Journal (center)
-      // Reports (right)
-      // MyGoals (bottom)
-      // History (left)
-      // Account (top)
-
-      if (currentPageId === 'journal') {
-        pages['reports'].classList.add('page-right');
-        pages['mygoals'].classList.add('page-bottom');
-        pages['history'].classList.add('page-left');
-        pages['account'].classList.add('page-top');
-      } else if (currentPageId === 'reports') {
-        pages['journal'].classList.add('page-left'); // Journal e la stanga lui Reports
-        pages['mygoals'].classList.add('page-bottom'); // MyGoals e tot jos
-        pages['history'].classList.add('page-left'); // History e tot stanga
-        pages['account'].classList.add('page-top'); // Account e tot sus
-        // Aici logica devine mai complexă pentru a simula un carusel real cu 5 pagini
-        // Pentru a simplifica, vom presupune că Journal este întotdeauna centrul de referință
-        // și celelalte pagini sunt aduse în centru pe rând.
-        // O implementare reală ar necesita o matrice de poziții sau un sistem de indexare.
-      }
-      // ... și așa mai departe pentru fiecare pagină
-      // Pentru MVP, ne concentrăm pe tranziția *către* pagina centrală și *de la* ea.
-      // Vom simplifica logica de poziționare a celorlalte pagini pentru a corespunde imaginii.
-      // Când o pagină este în centru, celelalte 4 sunt în pozițiile lor fixe (top, bottom, left, right).
-      // Când o pagină este activă, celelalte sunt inactive (pointer-events: none).
-      // Etichetele sunt vizibile doar pentru paginile inactive.
-      // Aceasta este o simplificare majoră pentru MVP, dar respectă cerința vizuală.
     }
 
     // Funcție pentru a naviga la o pagină specifică
     function navigateTo(targetPageId) {
-      if (currentPageId === targetPageId) return; // Deja pe pagina respectivă
+      const targetPageIndex = pageOrder.indexOf(targetPageId);
+      if (targetPageIndex === -1 || targetPageIndex === currentPageIndex) return;
 
-      // Ascunde etichetele paginii curente
-      pages[currentPageId].querySelectorAll('.page-label').forEach(label => label.style.opacity = '0');
+      // Ascunde etichetele paginii curente înainte de tranziție
+      pages[pageOrder[currentPageIndex]].querySelectorAll('.page-label').forEach(label => label.style.opacity = '0');
+      pages[pageOrder[currentPageIndex]].style.pointerEvents = 'none'; // Dezactivează interacțiunile paginii curente
 
-      // Adaugă clasa de ieșire pentru pagina curentă
-      pages[currentPageId].classList.remove('page-center');
-      // Determină direcția de ieșire pentru pagina curentă
-      // Aceasta este o simplificare, în funcție de unde se află pagina țintă
-      let exitClass = '';
-      if (targetPageId === 'account') exitClass = 'page-bottom'; // Dacă mergem sus, pagina curentă iese în jos
-      else if (targetPageId === 'mygoals') exitClass = 'page-top'; // Dacă mergem jos, pagina curentă iese în sus
-      else if (targetPageId === 'history') exitClass = 'page-right'; // Dacă mergem stânga, pagina curentă iese în dreapta
-      else if (targetPageId === 'reports') exitClass = 'page-left'; // Dacă mergem dreapta, pagina curentă iese în stânga
-      else if (targetPageId === 'journal') { // Dacă revenim la journal, depinde de unde am venit
-        // Logică mai complexă aici, pentru MVP vom presupune că revine la centru
-        // și celelalte se repoziționează
-      }
-      pages[currentPageId].classList.add(exitClass);
+      // Determină direcția de tranziție
+      let direction = '';
+      const delta = (targetPageIndex - currentPageIndex + pageOrder.length) % pageOrder.length;
 
+      if (targetPageId === 'account' && currentPageId === 'journal') direction = 'up';
+      else if (targetPageId === 'mygoals' && currentPageId === 'journal') direction = 'down';
+      else if (targetPageId === 'reports' && currentPageId === 'journal') direction = 'left';
+      else if (targetPageId === 'history' && currentPageId === 'journal') direction = 'right';
+      // Adaugă logica inversă pentru a reveni la journal
+      else if (targetPageId === 'journal' && currentPageId === 'account') direction = 'down';
+      else if (targetPageId === 'journal' && currentPageId === 'mygoals') direction = 'up';
+      else if (targetPageId === 'journal' && currentPageId === 'reports') direction = 'right';
+      else if (targetPageId === 'journal' && currentPageId === 'history') direction = 'left';
+      // Pentru navigarea între paginile "planetă", vom simplifica pentru MVP
+      // și le vom face să treacă prin Journal dacă nu sunt adiacente direct.
+      // O implementare completă ar necesita o matrice de tranziții.
 
-      // Setează pagina țintă ca pagină curentă
-      currentPageId = targetPageId;
+      // Aplică transformarea pentru pagina curentă (ieșire)
+      if (direction === 'up') pages[pageOrder[currentPageIndex]].style.transform = 'translateY(-100vh)';
+      else if (direction === 'down') pages[pageOrder[currentPageIndex]].style.transform = 'translateY(100vh)';
+      else if (direction === 'left') pages[pageOrder[currentPageIndex]].style.transform = 'translateX(-100vw)';
+      else if (direction === 'right') pages[pageOrder[currentPageIndex]].style.transform = 'translateX(100vw)';
 
-      // Adaugă clasa de intrare pentru pagina țintă
-      pages[currentPageId].classList.remove('page-top', 'page-bottom', 'page-left', 'page-right');
-      pages[currentPageId].classList.add('page-center');
+      // Actualizează indexul paginii curente
+      currentPageIndex = targetPageIndex;
 
-      // Afișează etichetele pentru paginile adiacente
-      updatePagePositions(); // Re-apelează pentru a asigura vizibilitatea etichetelor corecte
+      // Aplică transformarea pentru pagina țintă (intrare)
+      const targetPageElement = pages[pageOrder[currentPageIndex]];
+      if (direction === 'up') targetPageElement.style.transform = 'translateY(0)';
+      else if (direction === 'down') targetPageElement.style.transform = 'translateY(0)';
+      else if (direction === 'left') targetPageElement.style.transform = 'translateX(0)';
+      else if (direction === 'right') targetPageElement.style.transform = 'translateX(0)';
+
+      // Re-aplica clasele de poziție după un scurt delay pentru a permite tranziția
+      setTimeout(() => {
+        updatePagePositions();
+        // Reîncarcă conținutul paginilor la navigare, dacă este necesar
+        if (currentPageId === 'reports') populateReport(JSON.parse(localStorage.getItem('current_session_data')));
+        if (currentPageId === 'history') loadHistory();
+        if (currentPageId === 'mygoals') {
+            goalsList.innerHTML = '';
+            savedGoals.forEach(addGoalToDOM);
+        }
+        // Asigură că UI-ul Journal este resetat la revenire
+        if (currentPageId === 'journal') {
+            resetJournalUI();
+        }
+      }, 500); // Durata tranziției CSS
+    }
+
+    // Funcție pentru a reseta UI-ul paginii Journal
+    function resetJournalUI() {
+        welcomeMessage.classList.remove('hidden-element');
+        sunText.textContent = '🎙️ Începe Sesiunea';
+        sun.classList.remove('active', 'sun-pulsating', 'sun-speaking');
+        recSection.style.display = 'none';
+        transcriptArea.style.display = 'none';
+        // Afișează din nou paginile secundare și etichetele
+        for (const id in pages) {
+            if (id !== 'journal') { // Doar celelalte pagini
+                pages[id].classList.remove('hidden-element');
+            }
+        }
+        updatePagePositions(); // Re-afișează etichetele
     }
 
 
@@ -699,7 +751,7 @@
     // Funcția pentru a începe înregistrarea
     function startRecording() {
       if (!('webkitSpeechRecognition' in window)) {
-        statusMsg.textContent = 'API-ul de recunoaștere vocală nu este suportat de browserul tău.';
+        document.getElementById('status-msg').textContent = 'API-ul de recunoaștere vocală nu este suportat de browserul tău.';
         return;
       }
 
@@ -714,7 +766,8 @@
         isRecording = true;
         startTime = Date.now();
         sunText.textContent = '🎙️';
-        sun.classList.add('active', 'sun-pulsating');
+        sun.classList.add('active'); // Activează egalizatorul
+        backgroundImage.classList.add('pulsating-background'); // Pulsație pe fundal
         recSection.style.display = 'flex';
         welcomeMessage.classList.add('hidden-element');
         transcriptArea.style.display = 'block';
@@ -725,14 +778,10 @@
         document.querySelectorAll('.page-label').forEach(label => label.style.opacity = '0');
         // Ascunde toate paginile secundare
         for (const id in pages) {
-            if (id !== currentPageId) {
+            if (id !== 'journal') { // Ascunde doar celelalte pagini, nu și journal itself
                 pages[id].classList.add('hidden-element');
             }
         }
-
-        // Resetarea pulsării la începutul înregistrării
-        sun.classList.remove('sun-speaking');
-        sun.classList.add('sun-pulsating');
 
         resetSilenceTimeout();
       };
@@ -753,9 +802,12 @@
         }
 
         if (hasSpeech) {
-          sun.classList.remove('sun-pulsating');
-          sun.classList.add('sun-speaking');
+          backgroundImage.classList.remove('pulsating-background');
+          backgroundImage.classList.add('speaking-background'); // Contracție când vorbești
           resetSilenceTimeout();
+        } else {
+          backgroundImage.classList.remove('speaking-background');
+          backgroundImage.classList.add('pulsating-background'); // Dilatare când e liniște
         }
       };
 
@@ -763,7 +815,8 @@
         if (isRecording) {
           isRecording = false;
           clearTimeout(silenceTimeout);
-          sun.classList.remove('sun-pulsating', 'sun-speaking', 'active');
+          backgroundImage.classList.remove('pulsating-background', 'speaking-background');
+          sun.classList.remove('active');
           recSection.style.display = 'none';
           transcriptArea.style.display = 'none';
           processSession(currentTranscript);
@@ -772,21 +825,14 @@
 
       recognition.onerror = (event) => {
         console.error('Eroare recunoaștere vocală:', event.error);
-        statusMsg.textContent = `Eroare: ${event.error}. Te rugăm să încerci din nou.`;
+        document.getElementById('status-msg').textContent = `Eroare: ${event.error}. Te rugăm să încerci din nou.`;
         isRecording = false;
         clearTimeout(silenceTimeout);
-        sun.classList.remove('sun-pulsating', 'sun-speaking', 'active');
+        backgroundImage.classList.remove('pulsating-background', 'speaking-background');
+        sun.classList.remove('active');
         recSection.style.display = 'none';
         transcriptArea.style.display = 'none';
-        welcomeMessage.classList.remove('hidden-element');
-        sunText.textContent = '🎙️ Începe Sesiunea';
-        // Afișează din nou paginile secundare și etichetele
-        for (const id in pages) {
-            if (id !== currentPageId) {
-                pages[id].classList.remove('hidden-element');
-            }
-        }
-        updatePagePositions();
+        resetJournalUI(); // Resetează UI-ul Journal
       };
 
       recognition.start();
@@ -803,7 +849,8 @@
         isRecording = false;
         clearTimeout(silenceTimeout);
         clearTimeout(recordingInterval);
-        sun.classList.remove('sun-pulsating', 'sun-speaking', 'active');
+        backgroundImage.classList.remove('pulsating-background', 'speaking-background');
+        sun.classList.remove('active');
         recSection.style.display = 'none';
         transcriptArea.style.display = 'none';
         processSession(currentTranscript);
@@ -813,8 +860,8 @@
     // Funcție pentru a reseta timeout-ul de liniște
     function resetSilenceTimeout() {
       clearTimeout(silenceTimeout);
-      sun.classList.remove('sun-speaking');
-      sun.classList.add('sun-pulsating');
+      backgroundImage.classList.remove('speaking-background');
+      backgroundImage.classList.add('pulsating-background');
       silenceTimeout = setTimeout(() => {
         if (isRecording) stopRecording();
         console.log("Înregistrare oprită din cauza liniștii prelungite.");
@@ -838,15 +885,7 @@
 
       // După înregistrare, navigăm la pagina de rapoarte
       navigateTo('reports');
-      // Afișează din nou paginile secundare și etichetele
-      for (const id in pages) {
-            if (id !== currentPageId) {
-                pages[id].classList.remove('hidden-element');
-            }
-        }
-      welcomeMessage.classList.remove('hidden-element');
-      sunText.textContent = '🎙️ Începe Sesiunea';
-      updatePagePositions(); // Re-afișează etichetele
+      resetJournalUI(); // Resetează UI-ul Journal
     }
 
     // --- Logică Gemini API (Inspirație) ---
@@ -1093,21 +1132,21 @@
 
       // Prioritizează swipe-ul dominant (orizontal sau vertical)
       if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > swipeThreshold) {
-        if (deltaY < 0) { // Swipe Up
-          if (currentPageId === 'journal') navigateTo('account'); // Journal -> Account
-          else if (currentPageId === 'mygoals') navigateTo('journal'); // MyGoals -> Journal
-          // Adaugă mai multe cazuri pe măsură ce stabilești ordinea
-        } else { // Swipe Down
+        if (deltaY < 0) { // Swipe Up (tragi de jos în sus, vrei pagina de jos)
           if (currentPageId === 'journal') navigateTo('mygoals'); // Journal -> MyGoals
           else if (currentPageId === 'account') navigateTo('journal'); // Account -> Journal
+          // Adaugă mai multe cazuri pe măsură ce stabilești ordinea
+        } else { // Swipe Down (tragi de sus în jos, vrei pagina de sus)
+          if (currentPageId === 'journal') navigateTo('account'); // Journal -> Account
+          else if (currentPageId === 'mygoals') navigateTo('journal'); // MyGoals -> Journal
           // Adaugă mai multe cazuri
         }
       } else if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > swipeThreshold) {
-        if (deltaX < 0) { // Swipe Left
+        if (deltaX < 0) { // Swipe Left (tragi de la dreapta la stânga, vrei pagina din dreapta)
           if (currentPageId === 'journal') navigateTo('reports'); // Journal -> Reports
           else if (currentPageId === 'history') navigateTo('journal'); // History -> Journal
           // Adaugă mai multe cazuri
-        } else { // Swipe Right
+        } else { // Swipe Right (tragi de la stânga la dreapta, vrei pagina din stânga)
           if (currentPageId === 'journal') navigateTo('history'); // Journal -> History
           else if (currentPageId === 'reports') navigateTo('journal'); // Reports -> Journal
           // Adaugă mai multe cazuri
@@ -1128,11 +1167,13 @@
 
         // Ascunde etichetele paginii curente
         pages[currentPageId].querySelectorAll('.page-label').forEach(label => label.style.opacity = '0');
+        pages[currentPageId].style.pointerEvents = 'none'; // Dezactivează interacțiunile paginii curente
 
         // Muta pagina curentă în afara vizualizării
         pages[currentPageId].classList.remove('page-center');
         // Adaugă o clasă de "ieșire" pentru a simula mișcarea corectă
         let exitClass = '';
+        // Determină direcția de ieșire a paginii curente în funcție de pagina țintă
         if (targetPageId === 'account') exitClass = 'page-bottom'; // Dacă mergem la Account (sus), Journal iese în jos
         else if (targetPageId === 'mygoals') exitClass = 'page-top'; // Dacă mergem la MyGoals (jos), Journal iese în sus
         else if (targetPageId === 'reports') exitClass = 'page-left'; // Dacă mergem la Reports (dreapta), Journal iese în stânga
@@ -1146,14 +1187,12 @@
         // Muta pagina țintă în centru
         pages[currentPageId].classList.remove('page-top', 'page-bottom', 'page-left', 'page-right');
         pages[currentPageId].classList.add('page-center');
+        pages[currentPageId].style.pointerEvents = 'auto'; // Activează interacțiunile pentru noua pagină centrală
 
         // Reafișează etichetele pentru paginile adiacente
-        // Această logică este simplificată pentru MVP, presupunând că Journal este "centrul"
-        // și celelalte pagini sunt întotdeauna în pozițiile lor relative față de Journal.
-        // În realitate, ar trebui să recalculezi pozițiile tuturor paginilor.
-        // Pentru a menține etichetele vizibile, le vom face vizibile din nou după tranziție
         setTimeout(() => {
-            pages[currentPageId].querySelectorAll('.page-label').forEach(label => label.style.opacity = '0'); // Ascunde etichetele paginii curente
+            // Ascunde etichetele paginii curente (dacă nu sunt deja ascunse de stilul page-center)
+            pages[currentPageId].querySelectorAll('.page-label').forEach(label => label.style.opacity = '0');
             // Afișează etichetele pentru paginile adiacente
             for (const id in pages) {
                 if (id !== currentPageId) {
@@ -1166,8 +1205,10 @@
     // Adaugă evenimente de click pentru etichetele paginilor (ca fallback/alternativă la swipe)
     document.querySelectorAll('.page-label').forEach(label => {
         label.addEventListener('click', (e) => {
-            const targetPageId = e.target.textContent.toLowerCase().replace(/\s/g, ''); // Extrage ID-ul paginii din textul etichetei
-            navigateTo(targetPageId);
+            const targetPageId = e.target.dataset.targetPage; // Folosim data-target-page
+            if (targetPageId) {
+                navigateTo(targetPageId);
+            }
         });
     });
 

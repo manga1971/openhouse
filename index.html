@@ -87,25 +87,25 @@
       pointer-events: auto; /* Allow interactions */
     }
     .page-top {
-      transform: translateY(calc(-100vh + 15vh)); /* Partially visible from top */
+      transform: translateY(calc(-80vh - 5vh)); /* Positioned above, partially visible */
       opacity: 0.7;
       pointer-events: none; /* Disallow interactions when partially visible */
       z-index: 6;
     }
     .page-bottom {
-      transform: translateY(calc(100vh - 15vh)); /* Partially visible from bottom */
+      transform: translateY(calc(80vh + 5vh)); /* Positioned below, partially visible */
       opacity: 0.7;
       pointer-events: none;
       z-index: 6;
     }
     .page-left {
-      transform: translateX(calc(-100vw + 15vw)); /* Partially visible from left */
+      transform: translateX(calc(-80vw - 5vw)); /* Positioned left, partially visible */
       opacity: 0.7;
       pointer-events: none;
       z-index: 6;
     }
     .page-right {
-      transform: translateX(calc(100vw - 15vw)); /* Partially visible from right */
+      transform: translateX(calc(80vw + 5vw)); /* Positioned right, partially visible */
       opacity: 0.7;
       pointer-events: none;
       z-index: 6;
@@ -272,20 +272,13 @@
 
     /* Background pulsation during recording */
     .pulsating-background {
-      animation: backgroundPulse 2s infinite ease-in-out;
+      animation: backgroundPulse 16s infinite ease-in-out; /* 4s grow, 4s hold, 8s shrink */
     }
     @keyframes backgroundPulse {
       0% { filter: brightness(0.8); }
-      50% { filter: brightness(1.0); } /* Slight light dilation */
-      100% { filter: brightness(0.8); }
-    }
-
-    .speaking-background {
-      animation: backgroundSpeak 0.5s infinite alternate ease-in-out;
-    }
-    @keyframes backgroundSpeak {
-      0% { filter: brightness(0.8); }
-      100% { filter: brightness(0.75); } /* Slight light contraction */
+      25% { filter: brightness(1.0); } /* Grow for 4s */
+      50% { filter: brightness(1.0); } /* Hold for 4s */
+      100% { filter: brightness(0.8); } /* Shrink for 8s (total 16s cycle) */
     }
 
     /* Class for hiding elements */
@@ -351,15 +344,10 @@
       <div class="page-label label-left" data-target-page="journal">Journal</div>
       <div class="page-label label-right" data-target-page="journal">Journal</div>
 
-      <!-- Welcome message -->
-      <div id="welcomeMessage" class="text-center px-4 z-10 text-white">
-        <h1 class="text-3xl font-semibold">Bun venit în spațiul tău</h1>
-        <p class="mt-2 text-lg max-w-md mx-auto italic opacity-90">
-          LumiYE este o evadare din prezentul agitat. Un loc în care poți să respiri, să simți, să fii.
-        </p>
-        <p class="mt-2 text-base max-w-sm mx-auto opacity-70">
-          Fie că vrei să păstrezi o stare de bine sau să descarci ceva ce te apasă, <strong>acum</strong> e momentul.
-        </p>
+      <!-- Rotating text messages -->
+      <div id="rotatingMessages" class="text-center px-4 z-10 text-white text-lg font-medium">
+        <p class="message-item">tu, cu tine ... o resursă inepuizabilă :)</p>
+        <!-- Other messages will be added/rotated by JS -->
       </div>
 
       <!-- Recording controls (Start/Pause/Stop) -->
@@ -540,6 +528,7 @@
 
     // Journal Page elements
     const welcomeMessage = document.getElementById('welcomeMessage');
+    const rotatingMessagesContainer = document.getElementById('rotatingMessages'); // New element for rotating text
     const recordingControls = document.getElementById('recordingControls');
     const startButton = document.getElementById('startButton');
     const pauseButton = document.getElementById('pauseButton');
@@ -592,6 +581,15 @@
     let touchendX = 0;
     let touchendY = 0;
     let isSwiping = false; // Flag to prevent multiple swipes during transition
+
+    // Rotating messages content
+    const rotatingMessagesContent = [
+        "tu, cu tine ... o resursă inepuizabilă :)",
+        "Disclaimer: înregistrările sunt arhivate exclusiv în telefonul tău.",
+        "LumiYE: Spațiul tău de liniște. Ascultare. Claritate."
+    ];
+    let currentMessageIndex = 0;
+    let messageRotationInterval;
 
     // --- Utility Functions ---
 
@@ -1155,7 +1153,7 @@
         sessionPeriod.textContent = 'Perioadă: N/A';
         transcriptContent.textContent = 'Nicio sesiune salvată recent.';
         emotionalScore.textContent = 'N/A';
-        scoreEmoji.textContent = '�';
+        scoreEmoji.textContent = '🤷';
         highWordsUl.innerHTML = '<li>Niciun cuvânt "High" detectat.</li>';
         lowWordsUl.innerHTML = '<li>Niciun cuvânt "Low" detectat.</li>';
         intentiiList.innerHTML = '<li>Nicio intenție detectată.</li>';
@@ -1248,6 +1246,10 @@
       updatePagePositions(); // Set initial page positions
       loadHistory(); // Load history on startup
       savedGoals.forEach(addGoalToDOM); // Load goals on startup
+
+      // Start rotating messages
+      rotateMessages();
+      messageRotationInterval = setInterval(rotateMessages, 8000); // Rotate every 8 seconds
 
       // Check for ongoing session and update UI
       const ongoingSessionTranscript = sessionStorage.getItem('ongoing_session_transcript');
@@ -1353,6 +1355,12 @@
             }
         });
     });
+
+    // --- Rotating Messages Logic ---
+    function rotateMessages() {
+        rotatingMessagesContainer.innerHTML = `<p class="message-item">${rotatingMessagesContent[currentMessageIndex]}</p>`;
+        currentMessageIndex = (currentMessageIndex + 1) % rotatingMessagesContent.length;
+    }
   </script>
 </body>
 </html>

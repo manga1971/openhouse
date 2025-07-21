@@ -1,51 +1,204 @@
+// START linia 1
 <!DOCTYPE html>
 <html lang="ro">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LumiYE – Spațiul Tău</title>
-  
-  <!-- SEO -->
+
+  <!-- SEO Meta -->
   <meta name="description" content="LumiYE – jurnal audio cu AI pentru reflecție și progres personal.">
-  <meta property="og:title" content="LumiYE – Spațiul Tău cu AI">
-  <meta property="og:description" content="Înregistrează gânduri, primește feedback, urmărește progresul.">
-  <meta property="og:image" content="https://placehold.co/1200x630/000000/FFFFFF?text=LumiYE_Social_Share">
-  <meta name="robots" content="index,follow" />
+  <meta property="og:title" content="LumiYE – Spațiul Tău cu AI" />
+  <meta property="og:description" content="Înregistrează gânduri, primește feedback, urmărește progresul." />
+  <meta property="og:image" content="https://placehold.co/1200x630/000000/FFFFFF?text=LumiYE_Share" />
+  <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#C7EDE6" />
 
-  <!-- Tailwind -->
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- CSS extern -->
+  <!-- CSS + DOMPurify -->
   <link rel="stylesheet" href="assets/style.css" />
-
-  <!-- DOMPurify -->
   <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
 </head>
 <body>
 
-  <!-- Fundalul media (fallback img) -->
+  <!-- Fundal video sau fallback imagine -->
   <picture>
-    <source srcset="assets/background.mp4" type="video/mp4" />
-    <img src="assets/fundal.jpg" alt="Fundal Pământ Răsărit" class="background-media" id="backgroundMedia" />
+    <source srcset="assets/background.mp4" type="video/mp4">
+    <img src="assets/fundal.jpg" alt="Fundal Pământ Răsărit" class="background-media" id="backgroundMedia">
   </picture>
 
-  <!-- Conținutul aplicației -->
+  <!-- Containerul principal -->
   <div id="app-container" class="relative w-full h-full">
+  
+    <!-- PAGINA 1: JOURNAL -->
+    <div id="journal-page" class="app-page page-center">
+      <div class="page-label label-bottom" data-target-page="journal">Journal</div>
+      <div class="page-label label-top" data-target-page="journal">Journal</div>
+      <div class="page-label label-left" data-target-page="journal">Journal</div>
+      <div class="page-label label-right" data-target-page="journal">Journal</div>
 
-    <!-- Include aici cele 5 pagini: journal-page, reports-page, mygoals-page, history-page, account-page -->
-    <!-- Codul HTML complet pentru aceste pagini rămâne neschimbat (îl ai deja corect implementat în fișierul tău) -->
+      <div id="welcomeMessage" class="text-center px-4 z-10 text-white">
+        <h1 class="text-3xl font-semibold">Bun venit în spațiul tău</h1>
+        <p class="mt-2 text-lg max-w-md mx-auto italic opacity-90">
+          LumiYE este o evadare din prezentul agitat. Un loc în care poți să respiri, să simți, să fii.
+        </p>
+        <p class="mt-2 text-base max-w-sm mx-auto opacity-70">
+          Fie că vrei să păstrezi o stare de bine sau să descarci ceva ce te apasă, <strong>acum</strong> e momentul.
+        </p>
+      </div>
 
-    <!-- Exemplu placeholder (poți înlocui cu markup complet al fiecărei pagini) -->
-    <div id="journal-page" class="app-page page-center">...</div>
-    <div id="reports-page" class="app-page page-right">...</div>
-    <div id="mygoals-page" class="app-page page-bottom">...</div>
-    <div id="history-page" class="app-page page-left">...</div>
-    <div id="account-page" class="app-page page-top">...</div>
+      <div id="sun" class="sun mt-8">
+        <span id="sun-text">🎙️ Începe Sesiunea</span>
+      </div>
 
-  </div>
+      <div id="rec-section" class="absolute bottom-6 w-full flex-col items-center z-10 text-sm text-white">
+        <div class="equalizer">
+          <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        </div>
+        <p class="mt-2 text-center px-4" id="status-msg">
+          Se memorizează starea ta actuală.<br />
+          <span class="opacity-70 text-xs">Această memorizare va fi exclusiv în telefonul tău și în posesia ta.</span>
+        </p>
+      </div>
 
-  <!-- JS extern -->
+      <div id="transcriptArea" class="transcript-area text-lg leading-relaxed">
+        <p class="text-gray-500 text-center italic">Vorbește liber. LumiYE te ascultă...</p>
+      </div>
+
+      <div id="inspirationModal" class="modal">
+        <div class="modal-content">
+          <span class="close-button" id="closeModalButton">&times;</span>
+          <h2 class="text-xl font-semibold mb-4 text-center">✨ Inspirația Ta ✨</h2>
+          <div id="loadingSpinner" class="loading-spinner"></div>
+          <p id="inspirationText" class="text-gray-700 leading-relaxed text-center"></p>
+        </div>
+      </div>
+    </div>
+// END linia 100
+// START linia 101
+    <!-- PAGINA 2: REPORTS -->
+    <div id="reports-page" class="app-page page-right">
+      <div class="page-label label-bottom" data-target-page="reports">Reports</div>
+      <div class="page-label label-top" data-target-page="reports">Reports</div>
+      <div class="page-label label-left" data-target-page="reports">Reports</div>
+      <div class="page-label label-right" data-target-page="reports">Reports</div>
+
+      <div class="card w-full max-w-2xl mx-auto">
+        <h1 class="text-2xl font-bold text-gray-800 text-center">Raportul Sesiunii Tale</h1>
+        <p class="mt-2 text-sm text-gray-500 text-center" id="sessionPeriod">Perioadă: N/A</p>
+
+        <div class="mt-6 text-center">
+          <h2 class="section-title">Starea Emoțională Generală</h2>
+          <p id="emotionalScore" class="text-3xl font-bold"></p>
+          <p id="scoreEmoji" class="score-emoji mt-2"></p>
+        </div>
+
+        <div class="mt-4">
+          <h2 class="section-title">Transcriere</h2>
+          <p id="transcriptContent" class="text-gray-700 leading-relaxed whitespace-pre-wrap">
+            Fără transcriere disponibilă.
+          </p>
+        </div>
+
+        <div class="mt-6">
+          <h2 class="section-title">Cuvinte Cheie</h2>
+          <div id="highWordsList" class="mt-2">
+            <h3 class="font-semibold positive-text">Cuvinte High:</h3>
+            <ul class="list-disc list-inside text-gray-700" id="highWordsUl">
+              <li>Niciun cuvânt "High" detectat.</li>
+            </ul>
+          </div>
+          <div id="lowWordsList" class="mt-4">
+            <h3 class="font-semibold negative-text">Cuvinte Low:</h3>
+            <ul class="list-disc list-inside text-gray-700" id="lowWordsUl">
+              <li>Niciun cuvânt "Low" detectat.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <h2 class="section-title">Intenții Detectate</h2>
+          <ul class="list-disc list-inside text-gray-700" id="intentiiList">
+            <li>Nicio intenție detectată.</li>
+          </ul>
+        </div>
+
+        <div class="mt-4">
+          <h2 class="section-title">Analiza Respirației</h2>
+          <p id="breathingAnalysis" class="text-gray-700">Fără analiză disponibilă.</p>
+        </div>
+      </div>
+    </div>
+// END linia 200
+// START linia 201
+    <!-- PAGINA 3: MY GOALS -->
+    <div id="mygoals-page" class="app-page page-bottom">
+      <div class="page-label label-bottom" data-target-page="mygoals">My Goals</div>
+      <div class="page-label label-top" data-target-page="mygoals">My Goals</div>
+      <div class="page-label label-left" data-target-page="mygoals">My Goals</div>
+      <div class="page-label label-right" data-target-page="mygoals">My Goals</div>
+
+      <div class="max-w-xl mx-auto mt-10 w-full">
+        <h1 class="text-2xl font-semibold mb-6 text-center">🎯 Obiectivele tale</h1>
+
+        <div id="goals-list" class="space-y-4 mb-6">
+          <!-- Obiectivele vor fi adăugate aici -->
+        </div>
+
+        <form id="goal-form" class="glass p-4">
+          <label class="block mb-2 text-gray-700">Adaugă un obiectiv nou:</label>
+          <input id="goal-input" type="text" class="input-glass mb-3" placeholder="ex: Să fiu mai răbdător..." required />
+          <button type="submit" class="action-button w-full">Adaugă Obiectiv</button>
+        </form>
+
+        <button id="refineGoalButton" class="action-button w-full mt-4">✨ Refinează Obiectivul</button>
+      </div>
+
+      <!-- Modal pentru rafinarea obiectivului -->
+      <div id="refineGoalModal" class="modal">
+        <div class="modal-content">
+          <span class="close-button" id="closeRefineModalButton">&times;</span>
+          <h2 class="text-xl font-semibold mb-4 text-center">✨ Sugestii pentru Obiectivul Tău ✨</h2>
+          <div id="refineLoadingSpinner" class="loading-spinner"></div>
+          <p id="refineGoalText" class="text-gray-700 leading-relaxed text-center"></p>
+        </div>
+      </div>
+    </div>
+// END linia 300
+// START linia 301
+    <!-- PAGINA 4: HISTORY -->
+    <div id="history-page" class="app-page page-left">
+      <div class="page-label label-bottom" data-target-page="history">History</div>
+      <div class="page-label label-top" data-target-page="history">History</div>
+      <div class="page-label label-left" data-target-page="history">History</div>
+      <div class="page-label label-right" data-target-page="history">History</div>
+
+      <div class="w-full max-w-md mx-auto mt-10 px-4">
+        <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">📜 Istoricul Sesiunilor</h1>
+        <div id="historyList" class="space-y-4">
+          <!-- Conținutul va fi generat din localStorage -->
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGINA 5: ACCOUNT -->
+    <div id="account-page" class="app-page page-top">
+      <div class="page-label label-bottom" data-target-page="account">Account</div>
+      <div class="page-label label-top" data-target-page="account">Account</div>
+      <div class="page-label label-left" data-target-page="account">Account</div>
+      <div class="page-label label-right" data-target-page="account">Account</div>
+
+      <div class="text-center px-4 max-w-lg mx-auto">
+        <h1 class="text-2xl font-bold text-gray-800 mb-6">⚙️ Contul Meu</h1>
+        <p class="text-gray-700">Detalii despre cont și setări vor fi disponibile aici în versiunile viitoare.</p>
+      </div>
+    </div>
+  </div> <!-- end #app-container -->
+
+  <!-- Script principal -->
   <script src="assets/main.js" defer></script>
 </body>
 </html>
+// END linia 400

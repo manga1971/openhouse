@@ -196,6 +196,29 @@
       pointer-events: none;
       visibility: hidden;
     }
+
+    /* Stiluri pentru tranzițiile de pagină (simulare swipe) */
+    .page-slide-up-enter { transform: translateY(100vh); }
+    .page-slide-down-enter { transform: translateY(-100vh); }
+    .page-slide-left-enter { transform: translateX(100vw); }
+    .page-slide-right-enter { transform: translateX(-100vw); }
+
+    .page-slide-enter-active {
+      transition: transform 0.5s ease-out;
+    }
+    .page-slide-exit-active {
+      transition: transform 0.5s ease-out;
+    }
+    .page-slide-up-exit { transform: translateY(0); }
+    .page-slide-down-exit { transform: translateY(0); }
+    .page-slide-left-exit { transform: translateX(0); }
+    .page-slide-right-exit { transform: translateX(0); }
+
+    .page-slide-up-exit-active { transform: translateY(-100vh); }
+    .page-slide-down-exit-active { transform: translateY(100vh); }
+    .page-slide-left-exit-active { transform: translateX(-100vw); }
+    .page-slide-right-exit-active { transform: translateX(100vw); }
+
   </style>
 </head>
 <body class="relative w-screen h-screen flex flex-col items-center justify-center">
@@ -224,10 +247,11 @@
   </div>
 
   <!-- Butoanele de navigare (planete), poziționate în jurul soarelui -->
-  <a href="journal.html" id="journalButton" class="glass-button absolute top-1/4 right-1/4 w-20 h-20">Jurnal</a>
-  <a href="mygoals.html" id="myGoalsButton" class="glass-button absolute top-1/2 right-1/4 transform -translate-y-1/2 w-20 h-20">Obiective</a>
-  <a href="reports.html" id="reportsButton" class="glass-button absolute bottom-1/4 left-1/4 w-20 h-20">Raport</a>
-  <a href="history.html" id="historyButton" class="glass-button absolute top-1/4 left-1/4 w-20 h-20">Istoric</a>
+  <!-- Am eliminat href direct și vom gestiona navigarea prin JS pentru swipe -->
+  <div id="journalButton" class="glass-button absolute top-1/4 right-1/4 w-20 h-20 cursor-pointer">Jurnal</div>
+  <div id="myGoalsButton" class="glass-button absolute top-1/2 right-1/4 transform -translate-y-1/2 w-20 h-20 cursor-pointer">Obiective</div>
+  <div id="reportsButton" class="glass-button absolute bottom-1/4 left-1/4 w-20 h-20 cursor-pointer">Raport</div>
+  <div id="historyButton" class="glass-button absolute top-1/4 left-1/4 w-20 h-20 cursor-pointer">Istoric</div>
 
   <!-- Noul buton pentru inspirație rapidă cu Gemini API -->
   <button id="inspirationButton" class="glass-button absolute bottom-1/2 right-1/4 transform translate-y-1/2 w-20 h-20 text-lg">✨ Inspirație</button>
@@ -267,7 +291,7 @@
     const sunText = document.getElementById('sun-text');
     const recSection = document.getElementById('rec-section');
     const inspirationButton = document.getElementById('inspirationButton');
-    const inspirationModal = document = document.getElementById('inspirationModal');
+    const inspirationModal = document.getElementById('inspirationModal');
     const closeModalButton = document.getElementById('closeModalButton');
     const inspirationText = document.getElementById('inspirationText');
     const loadingSpinner = document.getElementById('loadingSpinner');
@@ -288,6 +312,14 @@
     let recordingInterval;
     let currentTranscript = ''; // Stochează transcrierea curentă
     let silenceTimeout; // Timeout pentru a detecta perioadele de liniște
+
+    // Variabile pentru detectarea swipe-ului
+    let touchstartX = 0;
+    let touchstartY = 0;
+    let touchendX = 0;
+    let touchendY = 0;
+
+    const gestureZone = document.body; // Zona pe care se detectează swipe-ul
 
     // Funcție pentru a simula analiza NLP (simplificată pentru MVP)
     function analyzeText(text) {
@@ -589,6 +621,82 @@
       if (event.target == inspirationModal) {
         inspirationModal.style.display = 'none';
       }
+    });
+
+    // --- Logica de detectare swipe pentru navigare ---
+    gestureZone.addEventListener('touchstart', e => {
+      touchstartX = e.changedTouches[0].screenX;
+      touchstartY = e.changedTouches[0].screenY;
+    });
+
+    gestureZone.addEventListener('touchend', e => {
+      touchendX = e.changedTouches[0].screenX;
+      touchendY = e.changedTouches[0].screenY;
+      handleGesture();
+    });
+
+    function handleGesture() {
+      const swipeThreshold = 50; // Numărul minim de pixeli pentru a detecta un swipe
+      const deltaX = touchendX - touchstartX;
+      const deltaY = touchendY - touchstartY;
+
+      // Asigură-te că nu ești în modul de înregistrare pentru a naviga prin swipe
+      if (isRecording) {
+        return;
+      }
+
+      // Detectează swipe-ul vertical
+      if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > swipeThreshold) {
+        if (deltaY < 0) { // Swipe Up
+          console.log("Swipe Up detected - Navigating to Journal");
+          navigateWithTransition('journal.html', 'slide-up');
+        } else { // Swipe Down
+          console.log("Swipe Down detected - Navigating to Reports");
+          navigateWithTransition('reports.html', 'slide-down');
+        }
+      }
+      // Detectează swipe-ul orizontal
+      else if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > swipeThreshold) {
+        if (deltaX < 0) { // Swipe Left
+          console.log("Swipe Left detected - Navigating to History");
+          navigateWithTransition('history.html', 'slide-left');
+        } else { // Swipe Right
+          console.log("Swipe Right detected - Navigating to MyGoals");
+          navigateWithTransition('mygoals.html', 'slide-right');
+        }
+      }
+    }
+
+    // Funcție pentru a naviga cu tranziție
+    function navigateWithTransition(url, direction) {
+      document.body.classList.add(`page-${direction}-exit-active`);
+      setTimeout(() => {
+        window.location.href = url;
+      }, 500); // Așteaptă ca animația de ieșire să se termine
+    }
+
+    // Adaugă evenimente de click pentru butoanele "planete" ca fallback
+    journalButton.addEventListener('click', () => navigateWithTransition('journal.html', 'slide-up'));
+    myGoalsButton.addEventListener('click', () => navigateWithTransition('mygoals.html', 'slide-right'));
+    reportsButton.addEventListener('click', () => navigateWithTransition('reports.html', 'slide-down'));
+    historyButton.addEventListener('click', () => navigateWithTransition('history.html', 'slide-left'));
+
+    // La încărcarea paginii, verifică dacă a venit dintr-o altă pagină și aplică tranziția de intrare
+    window.addEventListener('load', () => {
+      const referrer = document.referrer;
+      if (referrer.includes('journal.html')) {
+        document.body.classList.add('page-slide-down-enter');
+      } else if (referrer.includes('reports.html')) {
+        document.body.classList.add('page-slide-up-enter');
+      } else if (referrer.includes('history.html')) {
+        document.body.classList.add('page-slide-right-enter');
+      } else if (referrer.includes('mygoals.html')) {
+        document.body.classList.add('page-slide-left-enter');
+      }
+      // Activează tranziția de intrare
+      setTimeout(() => {
+        document.body.classList.add('page-slide-enter-active');
+      }, 10); // Un mic delay pentru a asigura aplicarea clasei inițiale
     });
   </script>
 </body>

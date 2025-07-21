@@ -1,11 +1,9 @@
-// START linia 1
 <!DOCTYPE html>
 <html lang="ro">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LumiYE – Spațiul Tău</title>
-
   <!-- SEO Meta -->
   <meta name="description" content="LumiYE – jurnal audio cu AI pentru reflecție și progres personal.">
   <meta property="og:title" content="LumiYE – Spațiul Tău cu AI" />
@@ -17,28 +15,341 @@
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- CSS + DOMPurify -->
-  <link rel="stylesheet" href="assets/style.css" />
+  <!-- DOMPurify Library for XSS prevention -->
   <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
+
+  <!-- CSS Styles (assets/style.css) -->
+  <style>
+    /* General styles for body and html */
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden; /* Hide scrollbars for carousel effect */
+      font-family: 'Inter', sans-serif;
+      color: #2E2E2E; /* Dark gray text */
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    /* Background video or fallback image */
+    .background-media {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      filter: brightness(0.8); /* Adjust brightness for text readability */
+      transition: filter 0.5s ease-in-out; /* Transition for pulsation effect */
+    }
+
+    /* Main app container */
+    #app-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden; /* Crucial for hiding parts of pages not in center */
+      touch-action: pan-x pan-y; /* Allows vertical + horizontal swipe */
+    }
+
+    /* Base styles for each page */
+    .app-page {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.05); /* Semi-transparent background for glass effect */
+      backdrop-filter: blur(8px); /* Blur effect for background pages */
+      transition: transform 0.5s ease-out, opacity 0.5s ease, z-index 0.5s step-end; /* Smooth transitions */
+      z-index: 5; /* Base z-index */
+      box-sizing: border-box;
+      padding: 20px;
+      color: #2E2E2E; /* Default text color for pages */
+    }
+
+    /* Page positions */
+    .page-center {
+      transform: translateX(0) translateY(0);
+      opacity: 1;
+      z-index: 10; /* Center page is on top */
+      pointer-events: auto; /* Allow interactions */
+    }
+    .page-top {
+      transform: translateY(-100vh); /* Completely off-screen top */
+      opacity: 0.7;
+      pointer-events: none; /* Disallow interactions when partially visible */
+      z-index: 6;
+    }
+    .page-bottom {
+      transform: translateY(100vh); /* Completely off-screen bottom */
+      opacity: 0.7;
+      pointer-events: none;
+      z-index: 6;
+    }
+    .page-left {
+      transform: translateX(-100vw); /* Completely off-screen left */
+      opacity: 0.7;
+      pointer-events: none;
+      z-index: 6;
+    }
+    .page-right {
+      transform: translateX(100vw); /* Completely off-screen right */
+      opacity: 0.7;
+      pointer-events: none;
+      z-index: 6;
+    }
+
+    /* Page labels */
+    .page-label {
+      position: absolute;
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 10px 16px; /* Increase hit area */
+      border-radius: 8px;
+      font-size: 0.9rem; /* Increase font size */
+      font-weight: bold;
+      opacity: 0; /* Hidden by default */
+      transition: opacity 0.3s ease;
+      pointer-events: auto; /* Allow click on label */
+      cursor: pointer;
+      white-space: nowrap; /* Prevent text wrapping */
+    }
+    .page-label:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Label visibility based on page position */
+    .page-top .label-bottom { opacity: 1; bottom: 10px; left: 50%; transform: translateX(-50%); }
+    .page-bottom .label-top { opacity: 1; top: 10px; left: 50%; transform: translateX(-50%); }
+    .page-left .label-right { opacity: 1; right: 10px; top: 50%; transform: translateY(-50%); }
+    .page-right .label-left { opacity: 1; left: 10px; top: 50%; transform: translateY(-50%); }
+
+    /* Specific styles for Journal page (Home) */
+    #journal-page {
+      background-color: transparent; /* Journal uses the main background */
+    }
+
+    /* Recording controls */
+    .record-controls {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      z-index: 20;
+    }
+    .record-button {
+      @apply w-20 h-20 rounded-full flex items-center justify-center text-white text-3xl shadow-lg cursor-pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+    .record-button.start { background-color: #4CAF50; /* Green */ }
+    .record-button.pause { background-color: #FFC107; /* Amber */ }
+    .record-button.stop { background-color: #F44336; /* Red */ }
+    .record-button:active { transform: scale(0.95); }
+
+    /* Equalizer styles */
+    .equalizer {
+      display: flex;
+      justify-content: center;
+      align-items: end;
+      height: 40px;
+      gap: 4px;
+      margin-top: 12px;
+    }
+    .bar {
+      width: 4px;
+      height: 10px;
+      background: #C7EDE6; /* Mint green for bars */
+      animation: bounce 1s infinite ease-in-out;
+    }
+    .bar:nth-child(2) { animation-delay: 0.1s; }
+    .bar:nth-child(3) { animation-delay: 0.2s; }
+    .bar:nth-child(4) { animation-delay: 0.3s; }
+    .bar:nth-child(5) { animation-delay: 0.4s; }
+    @keyframes bounce {
+      0%, 100% { transform: scaleY(1); }
+      50% { transform: scaleY(2); }
+    }
+    /* Hide recording section initially */
+    #rec-section {
+      display: none;
+    }
+    /* Show recording section when active */
+    .recording-active #rec-section {
+      display: flex; /* Use flex to center content */
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Fixed position on screen */
+      z-index: 100; /* On top of all elements */
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto; /* Allow scroll if content is too large */
+      background-color: rgba(0,0,0,0.4); /* Semi-transparent background */
+      backdrop-filter: blur(5px); /* Blur effect */
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      background-color: #FDFBF6; /* Warm beige background */
+      margin: auto;
+      padding: 20px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      position: relative;
+      color: #2E2E2E;
+    }
+    .close-button {
+      color: #aaa;
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .close-button:hover,
+    .close-button:focus {
+      color: #2E2E2E;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .loading-spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #C7EDE6; /* Mint green */
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+      display: none; /* Hidden by default */
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Live transcript area */
+    .transcript-area {
+      @apply w-full max-w-2xl bg-white/50 backdrop-blur-sm border border-white/30 rounded-xl shadow-lg p-6 overflow-y-auto;
+      min-height: 200px;
+      max-height: 60vh;
+      color: #2E2E2E;
+      margin-top: 20px; /* Space below welcome message */
+      display: none; /* Hidden initially */
+    }
+    .transcript-area p {
+      color: #2E2E2E;
+    }
+    /* Subtle animation for appearing sentences */
+    .sentence-pop-in {
+      animation: popIn 0.5s ease-out forwards;
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    @keyframes popIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Background pulsation during recording */
+    .pulsating-background {
+      animation: backgroundPulse 2s infinite ease-in-out;
+    }
+    @keyframes backgroundPulse {
+      0% { filter: brightness(0.8); }
+      50% { filter: brightness(1.0); } /* Slight light dilation */
+      100% { filter: brightness(0.8); }
+    }
+
+    .speaking-background {
+      animation: backgroundSpeak 0.5s infinite alternate ease-in-out;
+    }
+    @keyframes backgroundSpeak {
+      0% { filter: brightness(0.8); }
+      100% { filter: brightness(0.75); } /* Slight light contraction */
+    }
+
+    /* Class for hiding elements */
+    .hidden-element {
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+      transition: opacity 0.5s ease;
+    }
+
+    /* MyGoals page styles */
+    .input-glass {
+      @apply bg-white/30 border border-white/40 rounded-md px-3 py-2 text-gray-800 w-full;
+    }
+    .input-glass::placeholder {
+      color: #718096;
+    }
+    .action-button {
+      @apply bg-blue-300 hover:bg-blue-400 text-white font-medium py-2 px-4 rounded-full transition-colors duration-200;
+    }
+    .glass {
+      @apply backdrop-blur-lg bg-white/50 border border-white/30 rounded-xl shadow-lg;
+    }
+
+    /* Reports page styles */
+    .score-emoji {
+      font-size: 2.5rem;
+    }
+    .positive-text {
+      color: #10B981;
+    }
+    .negative-text {
+      color: #EF4444;
+    }
+    .intent-text {
+      color: #FACC15;
+    }
+
+    /* History page styles */
+    .session-card {
+      @apply bg-white/50 backdrop-blur-sm shadow p-4 rounded-xl border border-white/30;
+    }
+  </style>
 </head>
 <body>
-
-  <!-- Fundal video sau fallback imagine -->
+  <!-- Main background with Earth-Sunrise image or video -->
   <picture>
+    <!-- Video source (replace with your actual video path) -->
     <source srcset="assets/background.mp4" type="video/mp4">
-    <img src="assets/fundal.jpg" alt="Fundal Pământ Răsărit" class="background-media" id="backgroundMedia">
+    <!-- Image fallback (replace with your actual image path) -->
+    <img src="assets/fundal Lum 1.jpg" alt="Earth Sunrise Background" class="background-media" id="backgroundMedia">
   </picture>
+  <!-- IMPORTANT: Replace "assets/background.mp4" and "assets/fundal Lum 1.jpg" with your actual file paths. -->
 
-  <!-- Containerul principal -->
-  <div id="app-container" class="relative w-full h-full">
+  <!-- Main app container -->
+  <div id="app-container" class="relative w-full h-100vh">
   
-    <!-- PAGINA 1: JOURNAL -->
+    <!-- PAGE 1: JOURNAL (HOME) -->
     <div id="journal-page" class="app-page page-center">
+      <!-- Page labels for navigation - visible only when page is NOT in center -->
       <div class="page-label label-bottom" data-target-page="journal">Journal</div>
       <div class="page-label label-top" data-target-page="journal">Journal</div>
       <div class="page-label label-left" data-target-page="journal">Journal</div>
       <div class="page-label label-right" data-target-page="journal">Journal</div>
 
+      <!-- Welcome message -->
       <div id="welcomeMessage" class="text-center px-4 z-10 text-white">
         <h1 class="text-3xl font-semibold">Bun venit în spațiul tău</h1>
         <p class="mt-2 text-lg max-w-md mx-auto italic opacity-90">
@@ -49,10 +360,14 @@
         </p>
       </div>
 
-      <div id="sun" class="sun mt-8">
-        <span id="sun-text">🎙️ Începe Sesiunea</span>
+      <!-- Recording controls (Start/Pause/Stop) -->
+      <div id="recordingControls" class="record-controls">
+        <button id="startButton" class="record-button start">▶️</button>
+        <button id="pauseButton" class="record-button pause hidden">⏸️</button>
+        <button id="stopButton" class="record-button stop hidden">⏹️</button>
       </div>
 
+      <!-- Equalizer and status text (visible only when recording is active) -->
       <div id="rec-section" class="absolute bottom-6 w-full flex-col items-center z-10 text-sm text-white">
         <div class="equalizer">
           <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
@@ -63,10 +378,12 @@
         </p>
       </div>
 
+      <!-- Live transcript area (hidden initially) -->
       <div id="transcriptArea" class="transcript-area text-lg leading-relaxed">
         <p class="text-gray-500 text-center italic">Vorbește liber. LumiYE te ascultă...</p>
       </div>
 
+      <!-- Inspiration modal (not shown automatically on load) -->
       <div id="inspirationModal" class="modal">
         <div class="modal-content">
           <span class="close-button" id="closeModalButton">&times;</span>
@@ -76,9 +393,8 @@
         </div>
       </div>
     </div>
-// END linia 100
-// START linia 101
-    <!-- PAGINA 2: REPORTS -->
+
+    <!-- PAGE 2: REPORTS -->
     <div id="reports-page" class="app-page page-right">
       <div class="page-label label-bottom" data-target-page="reports">Reports</div>
       <div class="page-label label-top" data-target-page="reports">Reports</div>
@@ -131,9 +447,8 @@
         </div>
       </div>
     </div>
-// END linia 200
-// START linia 201
-    <!-- PAGINA 3: MY GOALS -->
+
+    <!-- PAGE 3: MY GOALS -->
     <div id="mygoals-page" class="app-page page-bottom">
       <div class="page-label label-bottom" data-target-page="mygoals">My Goals</div>
       <div class="page-label label-top" data-target-page="mygoals">My Goals</div>
@@ -144,7 +459,7 @@
         <h1 class="text-2xl font-semibold mb-6 text-center">🎯 Obiectivele tale</h1>
 
         <div id="goals-list" class="space-y-4 mb-6">
-          <!-- Obiectivele vor fi adăugate aici -->
+          <!-- Goals will be added here -->
         </div>
 
         <form id="goal-form" class="glass p-4">
@@ -153,10 +468,11 @@
           <button type="submit" class="action-button w-full">Adaugă Obiectiv</button>
         </form>
 
+        <!-- New button for refining goal with Gemini API -->
         <button id="refineGoalButton" class="action-button w-full mt-4">✨ Refinează Obiectivul</button>
       </div>
 
-      <!-- Modal pentru rafinarea obiectivului -->
+      <!-- Modal for refining goal -->
       <div id="refineGoalModal" class="modal">
         <div class="modal-content">
           <span class="close-button" id="closeRefineModalButton">&times;</span>
@@ -166,9 +482,8 @@
         </div>
       </div>
     </div>
-// END linia 300
-// START linia 301
-    <!-- PAGINA 4: HISTORY -->
+
+    <!-- PAGE 4: HISTORY -->
     <div id="history-page" class="app-page page-left">
       <div class="page-label label-bottom" data-target-page="history">History</div>
       <div class="page-label label-top" data-target-page="history">History</div>
@@ -178,12 +493,12 @@
       <div class="w-full max-w-md mx-auto mt-10 px-4">
         <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">📜 Istoricul Sesiunilor</h1>
         <div id="historyList" class="space-y-4">
-          <!-- Conținutul va fi generat din localStorage -->
+          <!-- Content will be generated from localStorage -->
         </div>
       </div>
     </div>
 
-    <!-- PAGINA 5: ACCOUNT -->
+    <!-- PAGE 5: ACCOUNT -->
     <div id="account-page" class="app-page page-top">
       <div class="page-label label-bottom" data-target-page="account">Account</div>
       <div class="page-label label-top" data-target-page="account">Account</div>
@@ -197,8 +512,836 @@
     </div>
   </div> <!-- end #app-container -->
 
-  <!-- Script principal -->
-  <script src="assets/main.js" defer></script>
+  <!-- Main JavaScript (assets/main.js) -->
+  <script>
+    // Initial DOM element references
+    const appContainer = document.getElementById('app-container');
+    const journalPage = document.getElementById('journal-page');
+    const reportsPage = document.getElementById('reports-page');
+    const mygoalsPage = document.getElementById('mygoals-page');
+    const historyPage = document.getElementById('history-page');
+    const accountPage = document.getElementById('account-page');
+    const backgroundMedia = document.getElementById('backgroundMedia'); // Reference to background media element
+
+    const pages = {
+      'journal': journalPage,
+      'reports': reportsPage,
+      'mygoals': mygoalsPage,
+      'history': historyPage,
+      'account': accountPage
+    };
+
+    // Page order for intuitive navigation
+    // This order defines how pages move on swipe
+    const pageOrder = ['account', 'history', 'journal', 'reports', 'mygoals'];
+    let currentPageIndex = pageOrder.indexOf('journal'); // Initial page is Journal (Home)
+
+    // Journal Page elements
+    const welcomeMessage = document.getElementById('welcomeMessage');
+    const recordingControls = document.getElementById('recordingControls');
+    const startButton = document.getElementById('startButton');
+    const pauseButton = document.getElementById('pauseButton');
+    const stopButton = document.getElementById('stopButton');
+    const recSection = document.getElementById('rec-section');
+    const statusMsg = document.getElementById('status-msg'); // Added for direct reference
+    const transcriptArea = document.getElementById('transcriptArea');
+    const inspirationModal = document.getElementById('inspirationModal');
+    const closeModalButton = document.getElementById('closeModalButton');
+    const inspirationText = document.getElementById('inspirationText');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+
+    let isRecording = false;
+    let isPaused = false; // New state for pause functionality
+    let recognition; // Web Speech API
+    let startTime;
+    let pausedTime = 0; // Time when recording was paused
+    const maxRecordingTime = 120; // 2 minutes in seconds
+    let recordingInterval;
+    let currentTranscript = '';
+    let silenceTimeout;
+
+    // MyGoals Page elements
+    const goalForm = document.getElementById('goal-form');
+    const goalInput = document.getElementById('goal-input');
+    const goalsList = document.getElementById('goals-list');
+    const refineGoalButton = document.getElementById('refineGoalButton');
+    const refineGoalModal = document.getElementById('refineGoalModal');
+    const closeRefineModalButton = document.getElementById('closeRefineModalButton');
+    const refineGoalText = document.getElementById('refineGoalText');
+    const refineLoadingSpinner = document.getElementById('refineLoadingSpinner');
+    let savedGoals = JSON.parse(localStorage.getItem('myGoals') || '[]');
+
+    // Reports Page elements
+    const sessionPeriod = document.getElementById('sessionPeriod');
+    const emotionalScore = document.getElementById('emotionalScore');
+    const scoreEmoji = document.getElementById('scoreEmoji');
+    const transcriptContent = document.getElementById('transcriptContent');
+    const highWordsUl = document.getElementById('highWordsUl');
+    const lowWordsUl = document.getElementById('lowWordsUl');
+    const intentiiList = document.getElementById('intentiiList');
+    const breathingAnalysis = document.getElementById('breathingAnalysis');
+
+    // History Page elements
+    const historyList = document.getElementById('historyList');
+
+    // Swipe variables
+    let touchstartX = 0;
+    let touchstartY = 0;
+    let touchendX = 0;
+    let touchendY = 0;
+    let isSwiping = false; // Flag to prevent multiple swipes during transition
+
+    // --- Utility Functions ---
+
+    /**
+     * Sanitizes user input using DOMPurify.
+     * @param {string} input - The string to sanitize.
+     * @returns {string} The sanitized string.
+     */
+    function sanitizeInput(input) {
+        return DOMPurify.sanitize(input);
+    }
+
+    /**
+     * Simulates NLP analysis for text.
+     * @param {string} text - Text to analyze.
+     * @returns {object} An object with positive/negative word counts and detected intentions.
+     */
+    function analyzeText(text) {
+      const positiveWords = ['bucurie', 'speranță', 'fericit', 'mulțumit', 'recunoștință', 'curaj', 'potențial', 'vreau', 'succes'];
+      const negativeWords = ['nu pot', 'blocat', 'singur', 'eșec', 'trist', 'copleșit', 'stres', 'îndoieli', 'obosit'];
+
+      let positives = 0;
+      let negatives = 0;
+      const lowerCaseText = text.toLowerCase();
+
+      positiveWords.forEach(word => { if (lowerCaseText.includes(word)) positives++; });
+      negativeWords.forEach(word => { if (lowerCaseText.includes(word)) negatives++; });
+
+      let intentii = [];
+      if (lowerCaseText.includes('nu mai vreau să fiu')) intentii.push(`"nu mai vreau să fiu..." → evitare`);
+      if (lowerCaseText.includes('vreau să devin')) intentii.push(`"vreau să devin..." → progres`);
+      return { positives, negatives, intentii };
+    }
+
+    /**
+     * Simulates breath analysis based on text and duration.
+     * @param {string} text - Transcribed text.
+     * @param {number} durationInSeconds - Recording duration in seconds.
+     * @returns {object} An object with WPM and breathing feedback.
+     */
+    function analyzeBreathing(text, durationInSeconds) {
+      const words = text.split(/\s+/).filter(word => word.length > 0);
+      const wordCount = words.length;
+      const wpm = durationInSeconds > 0 ? (wordCount / durationInSeconds) * 60 : 0;
+      const sentences = text.split(/[.!?]/).filter(s => s.trim().length > 0);
+      const averageSentenceLength = sentences.length > 0 ? wordCount / sentences.length : 0;
+
+      let breathingFeedback = '';
+      if (wpm > 180) breathingFeedback = 'Ai vorbit într-un ritm rapid azi.';
+      else if (wpm < 80 && wpm > 0) breathingFeedback = 'Ai un ritm de vorbire calm.';
+
+      if (sentences.length > 1 && averageSentenceLength < 5) breathingFeedback += ' Pauzele scurte pot semnala agitație.';
+      else if (sentences.length > 1 && averageSentenceLength > 15) breathingFeedback += ' Fluxul coerent al vorbirii.';
+      return { wpm: wpm.toFixed(0), breathingFeedback };
+    }
+
+    /**
+     * Calculates emotional score and corresponding emoji.
+     * @param {number} positives - Number of positive words.
+     * @param {number} negatives - Number of negative words.
+     * @returns {object} An object with the score (text) and emoji.
+     */
+    function getEmotionalScore(positives, negatives) {
+      if (positives === 0 && negatives === 0) return { score: 'Neutru', emoji: '😐' };
+      const total = positives + negatives;
+      const percentagePositive = (positives / total) * 100;
+
+      if (percentagePositive >= 75) return { score: 'Foarte Pozitiv', emoji: '😊' };
+      else if (percentagePositive >= 50) return { score: 'Pozitiv', emoji: '🙂' };
+      else if (percentagePositive >= 25) return { score: 'Echilibrat', emoji: '😌' };
+      else return { score: 'Mai degrabă Negativ', emoji: '😔' };
+    }
+
+    // --- Navigation Logic (Carousel) ---
+
+    /**
+     * Updates CSS positions of pages based on the current page.
+     * Also manages label visibility and pointer-events.
+     */
+    function updatePagePositions() {
+      // Hide all labels initially and disable pointer-events for all pages
+      document.querySelectorAll('.page-label').forEach(label => label.style.opacity = '0');
+      document.querySelectorAll('.app-page').forEach(page => page.style.pointerEvents = 'none');
+
+      for (let i = 0; i < pageOrder.length; i++) {
+        const pageId = pageOrder[i];
+        const pageElement = pages[pageId];
+        pageElement.classList.remove('page-center', 'page-top', 'page-bottom', 'page-left', 'page-right');
+
+        if (i === currentPageIndex) {
+          pageElement.classList.add('page-center');
+          pageElement.style.pointerEvents = 'auto'; // Enable interactions for the center page
+        } else {
+          // Calculate relative position to the current page
+          const relativeIndex = (i - currentPageIndex + pageOrder.length) % pageOrder.length;
+
+          // Assign classes based on relative position to the central page
+          // This logic ensures pages are positioned correctly around the central one
+          if (pageId === 'account') { // Account is 'top' relative to Journal
+            if (relativeIndex === 1) pageElement.classList.add('page-top');
+            else if (relativeIndex === pageOrder.length -1) pageElement.classList.add('page-top');
+          } else if (pageId === 'history') { // History is 'left' relative to Journal
+            if (relativeIndex === 1) pageElement.classList.add('page-left');
+            else if (relativeIndex === pageOrder.length -1) pageElement.classList.add('page-left');
+          } else if (pageId === 'reports') { // Reports is 'right' relative to Journal
+            if (relativeIndex === 1) pageElement.classList.add('page-right');
+            else if (relativeIndex === pageOrder.length -1) pageElement.classList.add('page-right');
+          } else if (pageId === 'mygoals') { // MyGoals is 'bottom' relative to Journal
+            if (relativeIndex === 1) pageElement.classList.add('page-bottom');
+            else if (relativeIndex === pageOrder.length -1) pageElement.classList.add('page-bottom');
+          }
+
+          // Show labels only for visible adjacent pages
+          if (relativeIndex === 1 || relativeIndex === pageOrder.length - 1) {
+            pageElement.querySelectorAll('.page-label').forEach(label => label.style.opacity = '1');
+          }
+        }
+      }
+    }
+
+    /**
+     * Navigates to a specific page with a transition animation.
+     * @param {string} targetPageId - ID of the target page (e.g., 'reports', 'mygoals').
+     */
+    function navigateTo(targetPageId) {
+      if (isSwiping) return; // Prevent multiple navigations during transition
+      isSwiping = true;
+
+      const targetPageIndex = pageOrder.indexOf(targetPageId);
+      if (targetPageIndex === -1 || targetPageIndex === currentPageIndex) {
+        isSwiping = false;
+        return;
+      }
+
+      const currentPageElement = pages[pageOrder[currentPageIndex]];
+      const targetPageElement = pages[targetPageId];
+
+      // Hide current page labels before transition
+      currentPageElement.querySelectorAll('.page-label').forEach(label => label.style.opacity = '0');
+      currentPageElement.style.pointerEvents = 'none'; // Disable interactions for current page
+
+      // Determine exit transform for current page and enter transform for target page
+      let exitTransform = '';
+      let enterTransform = '';
+
+      // Calculate the difference in index to determine direction
+      const deltaIndex = (targetPageIndex - currentPageIndex + pageOrder.length) % pageOrder.length;
+
+      // Logic for vertical swipe (corrected)
+      if (targetPageId === 'account' && currentPageId === 'journal') { // Journal (center) -> Account (top)
+          exitTransform = 'translateY(100vh)'; // Journal moves down to reveal Account
+          enterTransform = 'translateY(0)'; // Account enters from top
+      } else if (targetPageId === 'journal' && currentPageId === 'account') { // Account (top) -> Journal (center)
+          exitTransform = 'translateY(-100vh)'; // Account moves up to reveal Journal
+          enterTransform = 'translateY(0)'; // Journal enters from bottom
+      } else if (targetPageId === 'mygoals' && currentPageId === 'journal') { // Journal (center) -> MyGoals (bottom)
+          exitTransform = 'translateY(-100vh)'; // Journal moves up to reveal MyGoals
+          enterTransform = 'translateY(0)'; // MyGoals enters from top
+      } else if (targetPageId === 'journal' && currentPageId === 'mygoals') { // MyGoals (bottom) -> Journal (center)
+          exitTransform = 'translateY(100vh)'; // MyGoals moves down to reveal Journal
+          enterTransform = 'translateY(0)'; // Journal enters from bottom
+      }
+      // Logic for horizontal swipe
+      else if (targetPageId === 'reports' && currentPageId === 'journal') { // Journal (center) -> Reports (right)
+          exitTransform = 'translateX(-100vw)'; // Journal moves left to reveal Reports
+          enterTransform = 'translateX(0)'; // Reports enters from right
+      } else if (targetPageId === 'journal' && currentPageId === 'reports') { // Reports (right) -> Journal (center)
+          exitTransform = 'translateX(100vw)'; // Reports moves right to reveal Journal
+          enterTransform = 'translateX(0)'; // Journal enters from left
+      } else if (targetPageId === 'history' && currentPageId === 'journal') { // Journal (center) -> History (left)
+          exitTransform = 'translateX(100vw)'; // Journal moves right to reveal History
+          enterTransform = 'translateX(0)'; // History enters from left
+      } else if (targetPageId === 'journal' && currentPageId === 'history') { // History (left) -> Journal (center)
+          exitTransform = 'translateX(-100vw)'; // History moves left to reveal Journal
+          enterTransform = 'translateX(0)'; // Journal enters from right
+      } else { // Fallback for transitions between non-directly adjacent pages from Journal
+          // For MVP, we simplify: if it's not a direct transition, we do a visual "reset"
+          // and then bring the target page to the center.
+          currentPageElement.style.transform = 'scale(0.8)'; // Shrink current page
+          targetPageElement.style.transform = 'scale(0.8)'; // Shrink target page before bringing it in
+          setTimeout(() => {
+              currentPageElement.style.transform = 'translateX(0) translateY(0)'; // Reset current page position
+              targetPageElement.style.transform = 'translateX(0) translateY(0)'; // Reset target page position
+          }, 250); // Half of transition duration
+      }
+
+      currentPageElement.style.transform = exitTransform;
+      targetPageElement.style.transform = enterTransform;
+
+      // Update current page index
+      currentPageIndex = targetPageIndex;
+
+      // Re-apply position classes after a short delay to allow transition to complete
+      setTimeout(() => {
+        updatePagePositions();
+        // Reload page content on navigation if necessary
+        if (targetPageId === 'reports') populateReport(JSON.parse(localStorage.getItem('current_session_data')));
+        if (targetPageId === 'history') loadHistory();
+        if (targetPageId === 'mygoals') {
+            goalsList.innerHTML = '';
+            savedGoals.forEach(addGoalToDOM);
+        }
+        // Ensure Journal UI is reset on return
+        if (targetPageId === 'journal') {
+            resetJournalUI();
+        }
+        isSwiping = false; // Allow swipes again after transition completes
+      }, 500); // CSS transition duration
+    }
+
+    /**
+     * Resets the UI state of the Journal (Home) page.
+     * Called after recording or when navigating to/from Journal.
+     */
+    function resetJournalUI() {
+        welcomeMessage.classList.remove('hidden-element');
+        // Hide all recording related elements
+        recordingControls.classList.remove('recording-active'); // Hide recording controls
+        startButton.classList.remove('hidden');
+        pauseButton.classList.add('hidden');
+        stopButton.classList.add('hidden');
+        recSection.style.display = 'none';
+        transcriptArea.style.display = 'none';
+        backgroundMedia.classList.remove('pulsating-background', 'speaking-background'); // Stop background animations
+
+        // Show other pages and their labels
+        for (const id in pages) {
+            if (id !== 'journal') { // Only other pages
+                pages[id].classList.remove('hidden-element');
+            }
+        }
+        updatePagePositions(); // Re-show labels
+    }
+
+
+    // --- Recording Logic (Journal Page) ---
+
+    /**
+     * Starts the voice recording process.
+     */
+    function startRecording() {
+      if (!('webkitSpeechRecognition' in window)) {
+        statusMsg.textContent = 'API-ul de recunoaștere vocală nu este suportat de browserul tău.';
+        return;
+      }
+
+      recognition = new webkitSpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'ro-RO';
+
+      let finalTranscript = '';
+
+      recognition.onstart = () => {
+        isRecording = true;
+        isPaused = false;
+        startTime = Date.now() - pausedTime; // Resume from paused time
+        
+        // Update button states
+        startButton.classList.add('hidden');
+        pauseButton.classList.remove('hidden');
+        stopButton.classList.remove('hidden');
+
+        recordingControls.classList.add('recording-active'); // Show recording controls
+        backgroundMedia.classList.add('pulsating-background'); // Background pulsation
+        recSection.style.display = 'flex';
+        welcomeMessage.classList.add('hidden-element');
+        transcriptArea.style.display = 'block';
+        transcriptArea.innerHTML = '<p class="text-gray-500 text-center italic">Vorbește liber. LumiYE te ascultă...</p>';
+        currentTranscript = '';
+
+        // Hide all page labels and other pages
+        document.querySelectorAll('.page-label').forEach(label => label.style.opacity = '0');
+        for (const id in pages) {
+            if (id !== 'journal') {
+                pages[id].classList.add('hidden-element');
+            }
+        }
+
+        resetSilenceTimeout();
+      };
+
+      recognition.onresult = (event) => {
+        let hasSpeech = false;
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTranscript += sanitizeInput(event.results[i][0].transcript) + '. '; // Sanitize input
+            const p = document.createElement('p');
+            p.textContent = sanitizeInput(event.results[i][0].transcript);
+            p.classList.add('sentence-pop-in');
+            transcriptArea.appendChild(p);
+            transcriptArea.scrollTop = transcriptArea.scrollHeight;
+            currentTranscript = finalTranscript;
+            hasSpeech = true;
+          }
+        }
+
+        if (hasSpeech) {
+          backgroundMedia.classList.remove('pulsating-background');
+          backgroundMedia.classList.add('speaking-background'); // Contraction when speaking
+          resetSilenceTimeout();
+        } else {
+          backgroundMedia.classList.remove('speaking-background');
+          backgroundMedia.classList.add('pulsating-background'); // Dilation when silent
+        }
+      };
+
+      recognition.onend = () => {
+        if (isRecording) { // Only if not manually stopped
+          isRecording = false;
+          clearTimeout(silenceTimeout);
+          backgroundMedia.classList.remove('pulsating-background', 'speaking-background');
+          recordingControls.classList.remove('recording-active');
+          recSection.style.display = 'none';
+          transcriptArea.style.display = 'none';
+          processSession(currentTranscript);
+        }
+      };
+
+      recognition.onerror = (event) => {
+        console.error('Voice recognition error:', event.error);
+        statusMsg.textContent = `Eroare: ${event.error}. Te rugăm să încerci din nou.`;
+        isRecording = false;
+        clearTimeout(silenceTimeout);
+        backgroundMedia.classList.remove('pulsating-background', 'speaking-background');
+        recordingControls.classList.remove('recording-active');
+        recSection.style.display = 'none';
+        transcriptArea.style.display = 'none';
+        resetJournalUI(); // Reset Journal UI
+      };
+
+      recognition.start();
+
+      recordingInterval = setTimeout(() => {
+        if (isRecording) stopRecording();
+      }, maxRecordingTime * 1000);
+    }
+
+    /**
+     * Pauses the voice recording process.
+     */
+    function pauseRecording() {
+        if (isRecording && !isPaused) {
+            recognition.stop(); // Stop recognition to pause
+            isPaused = true;
+            pausedTime = Date.now() - startTime; // Save elapsed time
+            clearTimeout(silenceTimeout);
+            clearTimeout(recordingInterval);
+            backgroundMedia.classList.remove('pulsating-background', 'speaking-background');
+            statusMsg.textContent = 'Sesiune întreruptă. Apasă ▶️ pentru a continua.';
+            
+            // Update button states
+            startButton.classList.remove('hidden');
+            pauseButton.classList.add('hidden');
+            stopButton.classList.remove('hidden'); // Stop button remains visible
+        }
+    }
+
+    /**
+     * Resumes the voice recording process.
+     */
+    function resumeRecording() {
+        if (isPaused) {
+            startRecording(); // Call startRecording to resume
+            isPaused = false;
+            statusMsg.textContent = 'Se memorizează starea ta actuală.';
+        }
+    }
+
+    /**
+     * Stops the voice recording process.
+     */
+    function stopRecording() {
+      if (isRecording || isPaused) {
+        if (recognition) recognition.stop(); // Ensure recognition is stopped
+        isRecording = false;
+        isPaused = false;
+        pausedTime = 0; // Reset paused time
+        clearTimeout(silenceTimeout);
+        clearTimeout(recordingInterval);
+        backgroundMedia.classList.remove('pulsating-background', 'speaking-background');
+        recordingControls.classList.remove('recording-active');
+        recSection.style.display = 'none';
+        transcriptArea.style.display = 'none';
+        processSession(currentTranscript);
+      }
+    }
+
+    /**
+     * Resets silence timeout and adjusts background animation.
+     */
+    function resetSilenceTimeout() {
+      clearTimeout(silenceTimeout);
+      backgroundMedia.classList.remove('speaking-background');
+      backgroundMedia.classList.add('pulsating-background');
+      silenceTimeout = setTimeout(() => {
+        if (isRecording) stopRecording();
+        console.log("Recording stopped due to prolonged silence.");
+      }, 10000); // 10 seconds of silence
+    }
+
+    /**
+     * Processes the recording session, analyzes text, and saves data.
+     * @param {string} transcript - Session transcript.
+     */
+    function processSession(transcript) {
+      const duration = (Date.now() - startTime) / 1000;
+      const cleanTranscript = sanitizeInput(transcript); // Sanitize input
+
+      const { positives, negatives, intentii } = analyzeText(cleanTranscript);
+      const { wpm, breathingFeedback } = analyzeBreathing(cleanTranscript, duration);
+
+      const sessionData = {
+        time: new Date().toLocaleString('ro-RO', { dateStyle: 'medium', timeStyle: 'short' }),
+        transcript: cleanTranscript,
+        duration: duration.toFixed(0),
+        analysis: { positives, negatives, highWords: [], lowWords: [], intentii, wpm, breathingFeedback }
+      };
+
+      // Save session to localStorage for history
+      const existingSessions = JSON.parse(localStorage.getItem("lumiye_sessions")) || [];
+      existingSessions.push(sessionData);
+      localStorage.setItem("lumiye_sessions", JSON.stringify(existingSessions));
+      
+      localStorage.setItem('current_session_data', JSON.stringify(sessionData)); // For reports page
+
+      navigateTo('reports');
+      resetJournalUI(); // Reset Journal UI
+    }
+
+    // --- Gemini API Logic (Inspiration) ---
+    /**
+     * Generates an inspirational phrase using Gemini API.
+     * Note: In production, API key should be protected via a backend proxy.
+     */
+    async function generateInspiration() {
+      inspirationText.textContent = '';
+      loadingSpinner.style.display = 'block';
+      inspirationModal.style.display = 'flex';
+
+      try {
+        let chatHistory = [];
+        const prompt = "Generează o frază scurtă, pozitivă și inspirațională despre auto-reflecție, creștere personală sau liniște interioară. Fraza să fie concisă și să inspire calm.";
+        chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+        const payload = { contents: chatHistory };
+        const apiKey = ""; // Leave empty for Canvas to provide API key at runtime
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+
+        if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
+          inspirationText.textContent = result.candidates[0].content.parts[0].text;
+        } else {
+          inspirationText.textContent = "Nu am putut genera inspirație. Te rugăm să încerci din nou.";
+          console.error("API response structure unexpected:", result);
+        }
+      } catch (error) {
+        inspirationText.textContent = "A apărut o eroare la generarea inspirației. Verifică conexiunea la internet.";
+        console.error("Error calling Gemini API:", error);
+      } finally {
+        loadingSpinner.style.display = 'none';
+      }
+    }
+
+    // --- MyGoals Page Logic ---
+    /**
+     * Adds a goal to the DOM.
+     * @param {string} goal - Goal text.
+     */
+    function addGoalToDOM(goal) {
+      const cleanGoal = sanitizeInput(goal); // Sanitize input
+      const div = document.createElement('div');
+      div.className = 'glass p-3 flex items-center justify-between';
+      div.innerHTML = `<span class="block text-gray-800">📝 ${cleanGoal}</span><button class="delete-goal-button text-red-500 hover:text-red-700 ml-4 text-xl">&times;</button>`;
+      goalsList.appendChild(div);
+      div.querySelector('.delete-goal-button').addEventListener('click', () => removeGoalFromDOM(goal, div));
+    }
+
+    /**
+     * Removes a goal from DOM and localStorage.
+     * @param {string} goalToRemove - Goal text to remove.
+     * @param {HTMLElement} element - DOM element of the goal.
+     */
+    function removeGoalFromDOM(goalToRemove, element) {
+      const index = savedGoals.indexOf(goalToRemove);
+      if (index > -1) {
+        savedGoals.splice(index, 1);
+        localStorage.setItem('myGoals', JSON.stringify(savedGoals));
+        element.remove();
+      }
+    }
+
+    /**
+     * Refines a goal using Gemini API.
+     */
+    async function refineGoal() {
+      let goalToRefine = '';
+      if (savedGoals.length > 0) {
+        goalToRefine = savedGoals[savedGoals.length - 1]; // Get the last added goal
+      } else {
+        refineGoalText.textContent = "Nu ai adăugat încă niciun obiectiv. Adaugă unul pentru a primi sugestii.";
+        refineLoadingSpinner.style.display = 'none';
+        refineGoalModal.style.display = 'flex';
+        return;
+      }
+
+      refineGoalText.textContent = '';
+      refineLoadingSpinner.style.display = 'block';
+      refineGoalModal.style.display = 'flex';
+
+      try {
+        let chatHistory = [];
+        const prompt = `Pentru obiectivul "${sanitizeInput(goalToRefine)}", generează o scurtă sugestie de rafinare care să-l facă mai specific și acționabil, sau o afirmație pozitivă legată de atingerea acestui obiectiv. Fii concis și încurajator.`;
+        chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+        const payload = { contents: chatHistory };
+        const apiKey = "";
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+
+        if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
+          refineGoalText.textContent = result.candidates[0].content.parts[0].text;
+        } else {
+          refineGoalText.textContent = "Nu am putut genera sugestii. Te rugăm să încerci din nou.";
+          console.error("API response structure unexpected:", result);
+        }
+      } catch (error) {
+        refineGoalText.textContent = "A apărut o eroare la generarea sugestiilor. Verifică conexiunea la internet.";
+        console.error("Error calling Gemini API:", error);
+      } finally {
+        refineLoadingSpinner.style.display = 'none';
+      }
+    }
+
+    // --- Reports Page Logic ---
+    /**
+     * Populates the reports page with session data.
+     * @param {object} session - Session object.
+     */
+    function populateReport(session) {
+      if (!session) { // Handle case where session data might be missing
+        sessionPeriod.textContent = 'Perioadă: N/A';
+        transcriptContent.textContent = 'Nicio sesiune salvată recent.';
+        emotionalScore.textContent = 'N/A';
+        scoreEmoji.textContent = '🤷';
+        highWordsUl.innerHTML = '<li>Niciun cuvânt "High" detectat.</li>';
+        lowWordsUl.innerHTML = '<li>Niciun cuvânt "Low" detectat.</li>';
+        intentiiList.innerHTML = '<li>Nicio intenție detectată.</li>';
+        breathingAnalysis.textContent = 'Fără analiză disponibilă.';
+        return;
+      }
+      sessionPeriod.textContent = `Perioadă: ${session.time || 'Timp necunoscut'} (Durată: ${session.duration || 'N/A'} secunde)`;
+      transcriptContent.textContent = session.transcript || 'Fără transcriere disponibilă.';
+
+      highWordsUl.innerHTML = '';
+      lowWordsUl.innerHTML = '';
+
+      if (session.analysis.positives > 0) {
+        const li = document.createElement('li');
+        li.textContent = `(Au fost detectate ${session.analysis.positives} cuvinte pozitive)`;
+        highWordsUl.appendChild(li);
+      } else {
+        highWordsUl.innerHTML = '<li>Niciun cuvânt "High" detectat.</li>';
+      }
+
+      if (session.analysis.negatives > 0) {
+        const li = document.createElement('li');
+        li.textContent = `(Au fost detectate ${session.analysis.negatives} cuvinte negative)`;
+        lowWordsUl.appendChild(li);
+      } else {
+        lowWordsUl.innerHTML = '<li>Niciun cuvânt "Low" detectat.</li>';
+      }
+
+      intentiiList.innerHTML = '';
+      if (session.analysis.intentii && session.analysis.intentii.length > 0) {
+        session.analysis.intentii.forEach(intentie => {
+          const li = document.createElement('li');
+          li.textContent = intentie;
+          li.classList.add('intent-text');
+          intentiiList.appendChild(li);
+        });
+      } else {
+        intentiiList.innerHTML = '<li>Nicio intenție detectată.</li>';
+      }
+
+      breathingAnalysis.textContent = session.analysis.breathingFeedback || 'Fără analiză disponibilă.';
+
+      const { score, emoji } = getEmotionalScore(session.analysis.positives, session.analysis.negatives);
+      emotionalScore.textContent = score;
+      scoreEmoji.textContent = emoji;
+    }
+
+    // --- History Page Logic ---
+    /**
+     * Loads and displays session history from localStorage.
+     */
+    function loadHistory() {
+      const rawData = localStorage.getItem('lumiye_sessions');
+      if (!rawData) {
+        historyList.innerHTML = '<p class="text-gray-500 text-center">Nicio sesiune salvată încă.</p>';
+        return;
+      }
+
+      const sessions = JSON.parse(rawData);
+      if (!sessions.length) {
+        historyList.innerHTML = '<p class="text-gray-500 text-center">Nicio sesiune salvată încă.</p>';
+        return;
+      }
+
+      historyList.innerHTML = ''; // Clear list before repopulating
+      sessions.reverse().forEach((session, index) => {
+        const item = document.createElement('div');
+        item.className = 'session-card';
+        const isFirstSession = (sessions.length - 1 - index) === 0;
+
+        item.innerHTML = `
+          <h2 class="text-lg font-semibold text-gray-800">Sesiune #${sessions.length - index} ${isFirstSession ? '<span class="text-blue-500 text-sm">(Origine)</span>' : ''}</h2>
+          <p class="text-sm text-gray-600">🕒 ${session.time || 'Timp necunoscut'} (Durată: ${session.duration || 'N/A'} secunde)</p>
+          <p class="mt-2 text-gray-700 line-clamp-3">${session.transcript || 'Fără transcriere disponibilă.'}</p>
+          <div class="mt-2 text-sm">
+            <span class="text-green-600">Pozitive: ${session.analysis.positives || 0}</span> |
+            <span class="text-red-600">Negative: ${session.analysis.negatives || 0}</span> |
+            <span class="text-blue-500">WPM: ${session.analysis.wpm || 'N/A'}</span>
+          </div>
+        `;
+        historyList.appendChild(item);
+      });
+    }
+
+
+    // --- Initialization and Events ---
+
+    // Initialize pages and load data
+    document.addEventListener('DOMContentLoaded', () => {
+      updatePagePositions(); // Set initial page positions
+      loadHistory(); // Load history on startup
+      savedGoals.forEach(addGoalToDOM); // Load goals on startup
+
+      // Check for ongoing session and update UI
+      const ongoingSessionTranscript = sessionStorage.getItem('ongoing_session_transcript');
+      if (ongoingSessionTranscript) {
+          currentTranscript = ongoingSessionTranscript;
+          isRecording = true; // Indicate that a session is ongoing
+          isPaused = true; // It's paused because we navigated away
+          startTime = parseFloat(sessionStorage.getItem('ongoing_session_startTime')) || Date.now();
+          pausedTime = Date.now() - startTime; // Calculate paused time
+          
+          // Update UI for ongoing session
+          welcomeMessage.classList.add('hidden-element');
+          recordingControls.classList.add('recording-active');
+          startButton.classList.remove('hidden'); // Show start button to resume
+          pauseButton.classList.add('hidden');
+          stopButton.classList.remove('hidden');
+          recSection.style.display = 'flex';
+          transcriptArea.style.display = 'block';
+          transcriptArea.innerHTML = `<p class="text-gray-500 text-center italic">Sesiune anterioară: ${currentTranscript}</p><p class="text-gray-500 text-center italic mt-2">Apasă ▶️ pentru a continua.</p>`;
+          backgroundMedia.classList.remove('pulsating-background', 'speaking-background'); // No animation when paused
+
+          // Hide other pages and labels
+          document.querySelectorAll('.page-label').forEach(label => label.style.opacity = '0');
+          for (const id in pages) {
+              if (id !== 'journal') {
+                  pages[id].classList.add('hidden-element');
+              }
+          }
+      } else {
+          // If no ongoing session, populate reports with last completed session
+          const currentSessionData = localStorage.getItem('current_session_data');
+          if (currentSessionData) {
+            populateReport(JSON.parse(currentSessionData));
+          } else {
+            populateReport(null); // Display empty report if no data
+          }
+      }
+    });
+
+    // Recording control buttons
+    startButton.addEventListener('click', () => {
+        if (!isRecording || isPaused) {
+            resumeRecording();
+        } else {
+            startRecording(); // Should not happen if logic is correct
+        }
+    });
+    pauseButton.addEventListener('click', pauseRecording);
+    stopButton.addEventListener('click', stopRecording);
+
+    // Close modal buttons
+    closeModalButton.addEventListener('click', () => { inspirationModal.style.display = 'none'; });
+    window.addEventListener('click', (event) => { if (event.target == inspirationModal) inspirationModal.style.display = 'none'; });
+
+    closeRefineModalButton.addEventListener('click', () => { refineGoalModal.style.display = 'none'; });
+    window.addEventListener('click', (event) => { if (event.target == refineGoalModal) refineGoalModal.style.display = 'none'; });
+
+    // Goal form and refine button
+    goalForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const goal = goalInput.value.trim();
+      if (goal) {
+        addGoalToDOM(goal);
+        savedGoals.push(goal);
+        localStorage.setItem('myGoals', JSON.stringify(savedGoals));
+        goalInput.value = '';
+      }
+    });
+    refineGoalButton.addEventListener('click', refineGoal);
+
+    // --- Swipe detection logic for navigation ---
+    appContainer.addEventListener('touchstart', e => {
+      if (isRecording || isSwiping) return; // Block swipe during recording or transition
+      touchstartX = e.changedTouches[0].screenX;
+      touchstartY = e.changedTouches[0].screenY;
+    });
+
+    appContainer.addEventListener('touchend', e => {
+      if (isRecording || isSwiping) return; // Block swipe during recording or transition
+      touchendX = e.changedTouches[0].screenX;
+      touchendY = e.changedTouches[0].screenY;
+      handleGesture();
+    });
+
+    // Handle navigation when leaving the page (e.g., app close or tab switch)
+    window.addEventListener('beforeunload', () => {
+        if (isRecording) {
+            recognition.stop(); // Stop recognition
+            sessionStorage.setItem('ongoing_session_transcript', currentTranscript);
+            sessionStorage.setItem('ongoing_session_startTime', startTime);
+        } else {
+            sessionStorage.removeItem('ongoing_session_transcript');
+            sessionStorage.removeItem('ongoing_session_startTime');
+        }
+    });
+
+    // Add click events for page labels (as fallback/alternative to swipe)
+    document.querySelectorAll('.page-label').forEach(label => {
+        label.addEventListener('click', (e) => {
+            const targetPageId = e.target.dataset.targetPage; // Get page ID from data-target-page attribute
+            if (targetPageId) {
+                navigateTo(targetPageId);
+            }
+        });
+    });
+  </script>
 </body>
 </html>
-// END linia 400

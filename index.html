@@ -3,46 +3,133 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LumiYE – Bun venit</title>
+  <title>LumiYE – Spațiul Tău</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Stiluri generale pentru corp și HTML, fără overflow pentru o experiență imersivă */
+    /* Stiluri generale pentru corp și HTML */
     body, html {
       margin: 0;
       padding: 0;
-      overflow: hidden;
-      font-family: 'Inter', sans-serif; /* Folosim fontul Inter, conform discuției */
-      background-color: #FDFBF6; /* Fundal bej cald, va fi acoperit de video */
+      overflow: hidden; /* Ascunde scrollbar-urile pentru efectul de carusel */
+      font-family: 'Inter', sans-serif;
       color: #2E2E2E; /* Text gri foarte închis */
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
     }
-    /* Stil pentru video-ul de fundal (cerul înstelat) */
-    .background-video {
+
+    /* Fundalul cu imaginea Pământ-Răsărit */
+    .background-image {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
-      z-index: 0; /* Asigură că video-ul este în spatele conținutului */
-      filter: brightness(0.8); /* Ajustează luminozitatea pentru a face textul mai lizibil */
+      z-index: 0;
+      filter: brightness(0.8); /* Luminozitate ajustată pentru lizibilitate text */
     }
-    /* Stiluri pentru butoanele de navigare cu efect de sticlă (planetele) */
-    .glass-button {
-      @apply backdrop-blur-xl bg-white/10 border border-white/30 rounded-full text-sm shadow-lg flex items-center justify-center;
-      transition: transform 0.3s ease, background-color 0.3s, opacity 0.5s ease; /* Adaugă tranziție pentru opacitate */
-      color: #FDFBF6; /* Text alb pentru a fi vizibil pe fundalul întunecat */
-      z-index: 10; /* Asigură că butoanele sunt deasupra video-ului */
+
+    /* Containerul principal al aplicației, care va găzdui toate paginile */
+    #app-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden; /* Crucial pentru a ascunde părțile din pagini care nu sunt în centru */
     }
-    .glass-button:hover {
-      background-color: rgba(255, 255, 255, 0.15);
+
+    /* Stiluri de bază pentru fiecare pagină */
+    .app-page {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.1); /* Fundal semi-transparent pentru efect de sticlă */
+      backdrop-filter: blur(10px); /* Efect de blur pentru paginile din spate */
+      transition: transform 0.5s ease-out, opacity 0.5s ease; /* Tranziții fluide */
+      z-index: 5; /* Z-index de bază */
+      box-sizing: border-box;
+      padding: 20px;
     }
+
+    /* Pozițiile paginilor */
+    .page-center {
+      transform: translateX(0) translateY(0);
+      opacity: 1;
+      z-index: 10; /* Pagina centrală este deasupra */
+    }
+    .page-top {
+      transform: translateY(-100%) translateX(0); /* Complet în afara ecranului sus */
+      opacity: 0.7;
+      pointer-events: none; /* Nu permite interacțiuni când e parțial vizibilă */
+      z-index: 6;
+    }
+    .page-bottom {
+      transform: translateY(100%) translateX(0); /* Complet în afara ecranului jos */
+      opacity: 0.7;
+      pointer-events: none;
+      z-index: 6;
+    }
+    .page-left {
+      transform: translateX(-100%) translateY(0); /* Complet în afara ecranului stânga */
+      opacity: 0.7;
+      pointer-events: none;
+      z-index: 6;
+    }
+    .page-right {
+      transform: translateX(100%) translateY(0); /* Complet în afara ecranului dreapta */
+      opacity: 0.7;
+      pointer-events: none;
+      z-index: 6;
+    }
+
+    /* Stiluri pentru etichetele paginilor */
+    .page-label {
+      position: absolute;
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      opacity: 0; /* Ascuns implicit */
+      transition: opacity 0.3s ease;
+      pointer-events: none; /* Nu blochează swipe-ul */
+    }
+
+    /* Vizibilitatea etichetelor în funcție de poziția paginii */
+    .page-top .label-bottom { opacity: 1; bottom: 10px; left: 50%; transform: translateX(-50%); }
+    .page-bottom .label-top { opacity: 1; top: 10px; left: 50%; transform: translateX(-50%); }
+    .page-left .label-right { opacity: 1; right: 10px; top: 50%; transform: translateY(-50%); }
+    .page-right .label-left { opacity: 1; left: 10px; top: 50%; transform: translateY(-50%); }
+
+    /* Stiluri specifice pentru pagina Journal (Home) */
+    #journal-page {
+      background-color: rgba(255, 255, 255, 0.1); /* Fundal semi-transparent pentru efect de sticlă */
+    }
+
     /* Stiluri pentru "soare" - butonul central de înregistrare */
     .sun {
       @apply absolute rounded-full bg-yellow-300 shadow-2xl;
       width: 160px;
       height: 160px;
       transition: all 0.8s ease-in-out, background-color 0.5s ease;
-      z-index: 20; /* Soarele este deasupra planetelor */
+      z-index: 20; /* Soarele este deasupra conținutului paginii */
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 1.2rem;
     }
     /* Animația de expansiune a soarelui */
     .sun.expanding {
@@ -54,6 +141,7 @@
       z-index: 50; /* Aduce soarele în prim-plan maxim */
       background-color: #C7EDE6; /* Culoarea de accent verde mentă la expansiune */
     }
+
     /* Stiluri pentru egalizatorul audio */
     .equalizer {
       display: flex;
@@ -146,18 +234,15 @@
 
     /* Stiluri pentru zona de transcriere live */
     .transcript-area {
-      @apply flex-grow w-full max-w-2xl bg-white/50 backdrop-blur-sm border border-white/30 rounded-xl shadow-lg p-6 overflow-y-auto;
-      min-height: 200px; /* Înălțime minimă pentru zona de transcriere */
-      max-height: 60vh; /* Înălțime maximă pentru a permite scroll */
-      position: absolute; /* Poziționat absolut pentru a fi deasupra video-ului */
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      @apply w-full max-w-2xl bg-white/50 backdrop-blur-sm border border-white/30 rounded-xl shadow-lg p-6 overflow-y-auto;
+      min-height: 200px;
+      max-height: 60vh;
+      color: #2E2E2E;
+      margin-top: 20px; /* Spațiu sub mesajul de bun venit */
       display: none; /* Ascuns inițial */
-      color: #2E2E2E; /* Text gri închis pentru transcriere */
     }
     .transcript-area p {
-      color: #2E2E2E; /* Asigură culoarea textului în transcriere */
+      color: #2E2E2E;
     }
     /* Animație subtilă pentru propozițiile care apar */
     .sentence-pop-in {
@@ -195,123 +280,282 @@
       opacity: 0;
       pointer-events: none;
       visibility: hidden;
+      transition: opacity 0.5s ease;
     }
 
-    /* Stiluri pentru tranzițiile de pagină (simulare swipe) */
-    .page-slide-up-enter { transform: translateY(100vh); }
-    .page-slide-down-enter { transform: translateY(-100vh); }
-    .page-slide-left-enter { transform: translateX(100vw); }
-    .page-slide-right-enter { transform: translateX(-100vw); }
-
-    .page-slide-enter-active {
-      transition: transform 0.5s ease-out;
+    /* Stiluri pentru pagina MyGoals */
+    .input-glass {
+      @apply bg-white/30 border border-white/40 rounded-md px-3 py-2 text-gray-800 w-full;
     }
-    .page-slide-exit-active {
-      transition: transform 0.5s ease-out;
+    .input-glass::placeholder {
+      color: #718096;
     }
-    .page-slide-up-exit { transform: translateY(0); }
-    .page-slide-down-exit { transform: translateY(0); }
-    .page-slide-left-exit { transform: translateX(0); }
-    .page-slide-right-exit { transform: translateX(0); }
+    .action-button {
+      @apply bg-blue-300 hover:bg-blue-400 text-white font-medium py-2 px-4 rounded-full transition-colors duration-200;
+    }
+    .glass {
+      @apply backdrop-blur-lg bg-white/50 border border-white/30 rounded-xl shadow-lg;
+    }
 
-    .page-slide-up-exit-active { transform: translateY(-100vh); }
-    .page-slide-down-exit-active { transform: translateY(100vh); }
-    .page-slide-left-exit-active { transform: translateX(-100vw); }
-    .page-slide-right-exit-active { transform: translateX(100vw); }
+    /* Stiluri pentru pagina Reports */
+    .score-emoji {
+      font-size: 2.5rem;
+    }
+    .positive-text {
+      color: #10B981;
+    }
+    .negative-text {
+      color: #EF4444;
+    }
+    .intent-text {
+      color: #FACC15;
+    }
 
+    /* Stiluri pentru pagina History */
+    .session-card {
+      @apply bg-white/50 backdrop-blur-sm shadow p-4 rounded-xl border border-white/30;
+    }
   </style>
 </head>
-<body class="relative w-screen h-screen flex flex-col items-center justify-center">
-  <!-- Video de fundal cu cerul înstelat -->
-  <video autoplay muted loop class="background-video">
-    <!-- Folosește un placeholder pentru video. În realitate, vei pune un fișier video optimizat. -->
-    <source src="https://assets.mixkit.co/videos/preview/mixkit-stars-in-the-night-sky-1249-large.mp4" type="video/mp4">
-    <!-- Fallback pentru browserele care nu suportă video -->
-    Imagine cu cer înstelat.
-  </video>
+<body>
+  <!-- Fundalul principal cu imaginea Pământ-Răsărit -->
+  <img src="https://placehold.co/1920x1080/000000/FFFFFF?text=Fundal+Pamant+Rasarit" alt="Fundal Pământ Răsărit" class="background-image" id="backgroundImage">
+  <!-- Aici vei înlocui 'https://placehold.co/1920x1080/000000/FFFFFF?text=Fundal+Pamant+Rasarit' cu URL-ul imaginii tale reale: fundal LUM 1.jpg -->
 
-  <!-- Mesajul de bun venit și introducere -->
-  <div id="welcomeMessage" class="absolute top-8 text-center px-4 z-10 text-white">
-    <h1 class="text-3xl font-semibold">Bun venit în spațiul tău</h1>
-    <p class="mt-2 text-lg max-w-md mx-auto italic opacity-90">
-      LumiYE este o evadare din prezentul agitat. Un loc în care poți să respiri, să simți, să fii.
-    </p>
-    <p class="mt-2 text-base max-w-sm mx-auto opacity-70">
-      Fie că vrei să păstrezi o stare de bine sau să descarci ceva ce te apasă, <strong>acum</strong> e momentul.
-    </p>
-  </div>
+  <!-- Containerul principal al aplicației -->
+  <div id="app-container" class="relative w-full h-full">
 
-  <!-- Butonul central "soare" pentru a începe sesiunea -->
-  <div id="sun" class="sun left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center text-white text-lg font-semibold cursor-pointer">
-    <span id="sun-text">🎙️ Începe Sesiunea</span>
-  </div>
+    <!-- Pagina 1: Journal (Home) -->
+    <div id="journal-page" class="app-page page-center">
+      <div class="page-label label-bottom">Journal</div>
+      <div class="page-label label-top">Journal</div>
+      <div class="page-label label-left">Journal</div>
+      <div class="page-label label-right">Journal</div>
 
-  <!-- Butoanele de navigare (planete), poziționate în jurul soarelui -->
-  <!-- Am eliminat href direct și vom gestiona navigarea prin JS pentru swipe -->
-  <div id="journalButton" class="glass-button absolute top-1/4 right-1/4 w-20 h-20 cursor-pointer">Jurnal</div>
-  <div id="myGoalsButton" class="glass-button absolute top-1/2 right-1/4 transform -translate-y-1/2 w-20 h-20 cursor-pointer">Obiective</div>
-  <div id="reportsButton" class="glass-button absolute bottom-1/4 left-1/4 w-20 h-20 cursor-pointer">Raport</div>
-  <div id="historyButton" class="glass-button absolute top-1/4 left-1/4 w-20 h-20 cursor-pointer">Istoric</div>
+      <!-- Mesajul de bun venit și introducere -->
+      <div id="welcomeMessage" class="text-center px-4 z-10 text-white">
+        <h1 class="text-3xl font-semibold">Bun venit în spațiul tău</h1>
+        <p class="mt-2 text-lg max-w-md mx-auto italic opacity-90">
+          LumiYE este o evadare din prezentul agitat. Un loc în care poți să respiri, să simți, să fii.
+        </p>
+        <p class="mt-2 text-base max-w-sm mx-auto opacity-70">
+          Fie că vrei să păstrezi o stare de bine sau să descarci ceva ce te apasă, <strong>acum</strong> e momentul.
+        </p>
+      </div>
 
-  <!-- Noul buton pentru inspirație rapidă cu Gemini API -->
-  <button id="inspirationButton" class="glass-button absolute bottom-1/2 right-1/4 transform translate-y-1/2 w-20 h-20 text-lg">✨ Inspirație</button>
+      <!-- Butonul central "soare" pentru a începe sesiunea -->
+      <div id="sun" class="sun mt-8">
+        <span id="sun-text">🎙️ Începe Sesiunea</span>
+      </div>
 
-  <!-- Egalizatorul și textul de stare (vizibile doar la înregistrare activă) -->
-  <div id="rec-section" class="absolute bottom-6 w-full flex-col items-center z-10 text-sm text-white">
-    <div class="equalizer">
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
+      <!-- Egalizatorul și textul de stare (vizibile doar la înregistrare activă) -->
+      <div id="rec-section" class="absolute bottom-6 w-full flex-col items-center z-10 text-sm text-white">
+        <div class="equalizer">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </div>
+        <p class="mt-2 text-center px-4" id="status-msg">
+          Se memorizează starea ta actuală.<br />
+          <span class="opacity-70 text-xs">Această memorizare va fi exclusiv în telefonul tău și în posesia ta.</span>
+        </p>
+      </div>
+
+      <!-- Zona de transcriere live (ascunsă inițial) -->
+      <div id="transcriptArea" class="transcript-area text-lg leading-relaxed">
+        <p class="text-gray-500 text-center italic">Vorbește liber. LumiYE te ascultă...</p>
+      </div>
+
+      <!-- Modal pentru afișarea inspirației -->
+      <div id="inspirationModal" class="modal">
+        <div class="modal-content">
+          <span class="close-button" id="closeModalButton">&times;</span>
+          <h2 class="text-xl font-semibold mb-4 text-center">✨ Inspirația Ta ✨</h2>
+          <div id="loadingSpinner" class="loading-spinner"></div>
+          <p id="inspirationText" class="text-gray-700 leading-relaxed text-center"></p>
+        </div>
+      </div>
     </div>
-    <p class="mt-2 text-center px-4" id="status-msg">
-      Se memorizează starea ta actuală.<br />
-      <span class="opacity-70 text-xs">Această memorizare va fi exclusiv în telefonul tău și în posesia ta.</span>
-    </p>
-  </div>
 
-  <!-- Zona de transcriere live (ascunsă inițial) -->
-  <div id="transcriptArea" class="transcript-area text-lg leading-relaxed">
-    <p class="text-gray-500 text-center italic">Vorbește liber. LumiYE te ascultă...</p>
-  </div>
+    <!-- Pagina 2: Reports -->
+    <div id="reports-page" class="app-page page-right">
+      <div class="page-label label-bottom">Reports</div>
+      <div class="page-label label-top">Reports</div>
+      <div class="page-label label-left">Reports</div>
+      <div class="page-label label-right">Reports</div>
 
-  <!-- Modal pentru afișarea inspirației -->
-  <div id="inspirationModal" class="modal">
-    <div class="modal-content">
-      <span class="close-button" id="closeModalButton">&times;</span>
-      <h2 class="text-xl font-semibold mb-4 text-center">✨ Inspirația Ta ✨</h2>
-      <div id="loadingSpinner" class="loading-spinner"></div>
-      <p id="inspirationText" class="text-gray-700 leading-relaxed text-center"></p>
+      <div class="card w-full max-w-2xl mx-auto">
+        <h1 class="text-2xl font-bold text-gray-800 text-center">Raportul Sesiunii Tale</h1>
+        <p class="mt-2 text-sm text-gray-500 text-center" id="sessionPeriod">Perioadă: N/A</p>
+
+        <div class="mt-6 text-center">
+          <h2 class="section-title">Starea Emoțională Generală</h2>
+          <p id="emotionalScore" class="text-3xl font-bold"></p>
+          <p id="scoreEmoji" class="score-emoji mt-2"></p>
+        </div>
+
+        <div class="mt-4">
+          <h2 class="section-title">Transcriere</h2>
+          <p id="transcriptContent" class="text-gray-700 leading-relaxed whitespace-pre-wrap">
+            Fără transcriere disponibilă.
+          </p>
+        </div>
+
+        <div class="mt-6">
+          <h2 class="section-title">Cuvinte Cheie</h2>
+          <div id="highWordsList" class="mt-2">
+            <h3 class="font-semibold positive-text">Cuvinte High:</h3>
+            <ul class="list-disc list-inside text-gray-700" id="highWordsUl">
+              <li>Niciun cuvânt "High" detectat.</li>
+            </ul>
+          </div>
+          <div id="lowWordsList" class="mt-4">
+            <h3 class="font-semibold negative-text">Cuvinte Low:</h3>
+            <ul class="list-disc list-inside text-gray-700" id="lowWordsUl">
+              <li>Niciun cuvânt "Low" detectat.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <h2 class="section-title">Intenții Detectate</h2>
+          <ul class="list-disc list-inside text-gray-700" id="intentiiList">
+            <li>Nicio intenție detectată.</li>
+          </ul>
+        </div>
+
+        <div class="mt-4">
+          <h2 class="section-title">Analiza Respirației</h2>
+          <p id="breathingAnalysis" class="text-gray-700">Fără analiză disponibilă.</p>
+        </div>
+      </div>
     </div>
-  </div>
+
+    <!-- Pagina 3: My Goals -->
+    <div id="mygoals-page" class="app-page page-bottom">
+      <div class="page-label label-bottom">My Goals</div>
+      <div class="page-label label-top">My Goals</div>
+      <div class="page-label label-left">My Goals</div>
+      <div class="page-label label-right">My Goals</div>
+
+      <div class="max-w-xl mx-auto mt-10 w-full">
+        <h1 class="text-2xl font-semibold mb-6 text-center">🎯 Obiectivele tale</h1>
+
+        <div id="goals-list" class="space-y-4 mb-6">
+          <!-- Obiective adăugate vor apărea aici -->
+        </div>
+
+        <form id="goal-form" class="glass p-4">
+          <label class="block mb-2 text-gray-700">Adaugă un obiectiv nou:</label>
+          <input id="goal-input" type="text" class="input-glass mb-3" placeholder="ex: Să fiu mai răbdător..." required />
+          <button type="submit" class="action-button w-full">Adaugă Obiectiv</button>
+        </form>
+
+        <!-- Noul buton pentru rafinarea obiectivului cu Gemini API -->
+        <button id="refineGoalButton" class="action-button w-full mt-4">✨ Refinează Obiectivul</button>
+      </div>
+
+      <!-- Modal pentru afișarea rafinării obiectivului -->
+      <div id="refineGoalModal" class="modal">
+        <div class="modal-content">
+          <span class="close-button" id="closeRefineModalButton">&times;</span>
+          <h2 class="text-xl font-semibold mb-4 text-center">✨ Sugestii pentru Obiectivul Tău ✨</h2>
+          <div id="refineLoadingSpinner" class="loading-spinner"></div>
+          <p id="refineGoalText" class="text-gray-700 leading-relaxed text-center"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagina 4: History -->
+    <div id="history-page" class="app-page page-left">
+      <div class="page-label label-bottom">History</div>
+      <div class="page-label label-top">History</div>
+      <div class="page-label label-left">History</div>
+      <div class="page-label label-right">History</div>
+
+      <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">📜 Istoricul Sesiunilor</h1>
+
+      <div id="historyList" class="w-full max-w-md space-y-4">
+        <!-- Lista va fi generată din localStorage -->
+      </div>
+    </div>
+
+    <!-- Pagina 5: Account (Placeholder) -->
+    <div id="account-page" class="app-page page-top">
+      <div class="page-label label-bottom">Account</div>
+      <div class="page-label label-top">Account</div>
+      <div class="page-label label-left">Account</div>
+      <div class="page-label label-right">Account</div>
+
+      <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">⚙️ Contul Meu</h1>
+      <p class="text-gray-700 text-center">Detalii despre cont și setări vor fi disponibile aici.</p>
+    </div>
+
+  </div> <!-- End of #app-container -->
 
   <script>
+    // Referințe la elementele DOM
+    const appContainer = document.getElementById('app-container');
+    const journalPage = document.getElementById('journal-page');
+    const reportsPage = document.getElementById('reports-page');
+    const mygoalsPage = document.getElementById('mygoals-page');
+    const historyPage = document.getElementById('history-page');
+    const accountPage = document.getElementById('account-page');
+
+    const pages = {
+      'journal': journalPage,
+      'reports': reportsPage,
+      'mygoals': mygoalsPage,
+      'history': historyPage,
+      'account': accountPage
+    };
+
+    let currentPageId = 'journal'; // Pagina inițială este Journal (Home)
+
+    // Referințe pentru elementele din Journal Page
     const sun = document.getElementById('sun');
     const sunText = document.getElementById('sun-text');
     const recSection = document.getElementById('rec-section');
-    const inspirationButton = document.getElementById('inspirationButton');
+    const welcomeMessage = document.getElementById('welcomeMessage');
+    const transcriptArea = document.getElementById('transcriptArea');
     const inspirationModal = document.getElementById('inspirationModal');
     const closeModalButton = document.getElementById('closeModalButton');
     const inspirationText = document.getElementById('inspirationText');
     const loadingSpinner = document.getElementById('loadingSpinner');
-    const welcomeMessage = document.getElementById('welcomeMessage');
-    const transcriptArea = document.getElementById('transcriptArea');
 
-    // Butoanele "planete"
-    const journalButton = document.getElementById('journalButton');
-    const myGoalsButton = document.getElementById('myGoalsButton');
-    const reportsButton = document.getElementById('reportsButton');
-    const historyButton = document.getElementById('historyButton');
-
-    let holdTimeout;
     let isRecording = false;
-    let recognition; // Variabila pentru Web Speech API
+    let recognition;
     let startTime;
-    const maxRecordingTime = 120; // 2 minute în secunde
+    const maxRecordingTime = 120;
     let recordingInterval;
-    let currentTranscript = ''; // Stochează transcrierea curentă
-    let silenceTimeout; // Timeout pentru a detecta perioadele de liniște
+    let currentTranscript = '';
+    let silenceTimeout;
+
+    // Referințe pentru elementele din MyGoals Page
+    const goalForm = document.getElementById('goal-form');
+    const goalInput = document.getElementById('goal-input');
+    const goalsList = document.getElementById('goals-list');
+    const refineGoalButton = document.getElementById('refineGoalButton');
+    const refineGoalModal = document.getElementById('refineGoalModal');
+    const closeRefineModalButton = document.getElementById('closeRefineModalButton');
+    const refineGoalText = document.getElementById('refineGoalText');
+    const refineLoadingSpinner = document.getElementById('refineLoadingSpinner');
+    let savedGoals = JSON.parse(localStorage.getItem('myGoals') || '[]');
+
+    // Referințe pentru elementele din Reports Page
+    const sessionPeriod = document.getElementById('sessionPeriod');
+    const emotionalScore = document.getElementById('emotionalScore');
+    const scoreEmoji = document.getElementById('scoreEmoji');
+    const transcriptContent = document.getElementById('transcriptContent');
+    const highWordsUl = document.getElementById('highWordsUl');
+    const lowWordsUl = document.getElementById('lowWordsUl');
+    const intentiiList = document.getElementById('intentiiList');
+    const breathingAnalysis = document.getElementById('breathingAnalysis');
+
+    // Referințe pentru elementele din History Page
+    const historyList = document.getElementById('historyList');
 
     // Variabile pentru detectarea swipe-ului
     let touchstartX = 0;
@@ -319,37 +563,23 @@
     let touchendX = 0;
     let touchendY = 0;
 
-    const gestureZone = document.body; // Zona pe care se detectează swipe-ul
+    // --- Funcții de Utilitate ---
 
-    // Funcție pentru a simula analiza NLP (simplificată pentru MVP)
+    // Funcție pentru a simula analiza NLP
     function analyzeText(text) {
       const positiveWords = ['bucurie', 'speranță', 'fericit', 'mulțumit', 'recunoștință', 'curaj', 'potențial', 'vreau', 'succes'];
       const negativeWords = ['nu pot', 'blocat', 'singur', 'eșec', 'trist', 'copleșit', 'stres', 'îndoieli', 'obosit'];
 
       let positives = 0;
       let negatives = 0;
-
       const lowerCaseText = text.toLowerCase();
 
-      positiveWords.forEach(word => {
-        if (lowerCaseText.includes(word)) {
-          positives++;
-        }
-      });
-      negativeWords.forEach(word => {
-        if (lowerCaseText.includes(word)) {
-          negatives++;
-        }
-      });
+      positiveWords.forEach(word => { if (lowerCaseText.includes(word)) positives++; });
+      negativeWords.forEach(word => { if (lowerCaseText.includes(word)) negatives++; });
 
       let intentii = [];
-      if (lowerCaseText.includes('nu mai vreau să fiu')) {
-        intentii.push(`"nu mai vreau să fiu..." → evitare`);
-      }
-      if (lowerCaseText.includes('vreau să devin')) {
-        intentii.push(`"vreau să devin..." → progres`);
-      }
-
+      if (lowerCaseText.includes('nu mai vreau să fiu')) intentii.push(`"nu mai vreau să fiu..." → evitare`);
+      if (lowerCaseText.includes('vreau să devin')) intentii.push(`"vreau să devin..." → progres`);
       return { positives, negatives, intentii };
     }
 
@@ -358,25 +588,113 @@
       const words = text.split(/\s+/).filter(word => word.length > 0);
       const wordCount = words.length;
       const wpm = durationInSeconds > 0 ? (wordCount / durationInSeconds) * 60 : 0;
-
       const sentences = text.split(/[.!?]/).filter(s => s.trim().length > 0);
       const averageSentenceLength = sentences.length > 0 ? wordCount / sentences.length : 0;
 
       let breathingFeedback = '';
-      if (wpm > 180) {
-        breathingFeedback = 'Ai vorbit într-un ritm rapid azi.';
-      } else if (wpm < 80 && wpm > 0) {
-        breathingFeedback = 'Ai un ritm de vorbire calm.';
-      }
+      if (wpm > 180) breathingFeedback = 'Ai vorbit într-un ritm rapid azi.';
+      else if (wpm < 80 && wpm > 0) breathingFeedback = 'Ai un ritm de vorbire calm.';
 
-      if (sentences.length > 1 && averageSentenceLength < 5) {
-         breathingFeedback += ' Pauzele scurte pot semnala agitație.';
-      } else if (sentences.length > 1 && averageSentenceLength > 15) {
-         breathingFeedback += ' Fluxul coerent al vorbirii.';
-      }
-
+      if (sentences.length > 1 && averageSentenceLength < 5) breathingFeedback += ' Pauzele scurte pot semnala agitație.';
+      else if (sentences.length > 1 && averageSentenceLength > 15) breathingFeedback += ' Fluxul coerent al vorbirii.';
       return { wpm: wpm.toFixed(0), breathingFeedback };
     }
+
+    // Funcție pentru a calcula scorul emoțional și emoji-ul
+    function getEmotionalScore(positives, negatives) {
+      if (positives === 0 && negatives === 0) return { score: 'Neutru', emoji: '😐' };
+      const total = positives + negatives;
+      const percentagePositive = (positives / total) * 100;
+
+      if (percentagePositive >= 75) return { score: 'Foarte Pozitiv', emoji: '😊' };
+      else if (percentagePositive >= 50) return { score: 'Pozitiv', emoji: '🙂' };
+      else if (percentagePositive >= 25) return { score: 'Echilibrat', emoji: '😌' };
+      else return { score: 'Mai degrabă Negativ', emoji: '😔' };
+    }
+
+    // --- Logică de Navigare (Carusel) ---
+
+    // Funcție pentru a actualiza pozițiile paginilor
+    function updatePagePositions() {
+      // Ascunde toate etichetele inițial
+      document.querySelectorAll('.page-label').forEach(label => label.style.opacity = '0');
+
+      for (const id in pages) {
+        pages[id].classList.remove('page-center', 'page-top', 'page-bottom', 'page-left', 'page-right');
+      }
+
+      // Setează pozițiile relative la pagina curentă
+      pages[currentPageId].classList.add('page-center');
+
+      // Poziționează celelalte pagini în jurul paginii curente
+      // Acestea trebuie să fie paginile reale, nu doar link-uri
+      // Pentru MVP, vom simula o dispunere fixă în jurul Journal-ului
+      // Journal (center)
+      // Reports (right)
+      // MyGoals (bottom)
+      // History (left)
+      // Account (top)
+
+      if (currentPageId === 'journal') {
+        pages['reports'].classList.add('page-right');
+        pages['mygoals'].classList.add('page-bottom');
+        pages['history'].classList.add('page-left');
+        pages['account'].classList.add('page-top');
+      } else if (currentPageId === 'reports') {
+        pages['journal'].classList.add('page-left'); // Journal e la stanga lui Reports
+        pages['mygoals'].classList.add('page-bottom'); // MyGoals e tot jos
+        pages['history'].classList.add('page-left'); // History e tot stanga
+        pages['account'].classList.add('page-top'); // Account e tot sus
+        // Aici logica devine mai complexă pentru a simula un carusel real cu 5 pagini
+        // Pentru a simplifica, vom presupune că Journal este întotdeauna centrul de referință
+        // și celelalte pagini sunt aduse în centru pe rând.
+        // O implementare reală ar necesita o matrice de poziții sau un sistem de indexare.
+      }
+      // ... și așa mai departe pentru fiecare pagină
+      // Pentru MVP, ne concentrăm pe tranziția *către* pagina centrală și *de la* ea.
+      // Vom simplifica logica de poziționare a celorlalte pagini pentru a corespunde imaginii.
+      // Când o pagină este în centru, celelalte 4 sunt în pozițiile lor fixe (top, bottom, left, right).
+      // Când o pagină este activă, celelalte sunt inactive (pointer-events: none).
+      // Etichetele sunt vizibile doar pentru paginile inactive.
+      // Aceasta este o simplificare majoră pentru MVP, dar respectă cerința vizuală.
+    }
+
+    // Funcție pentru a naviga la o pagină specifică
+    function navigateTo(targetPageId) {
+      if (currentPageId === targetPageId) return; // Deja pe pagina respectivă
+
+      // Ascunde etichetele paginii curente
+      pages[currentPageId].querySelectorAll('.page-label').forEach(label => label.style.opacity = '0');
+
+      // Adaugă clasa de ieșire pentru pagina curentă
+      pages[currentPageId].classList.remove('page-center');
+      // Determină direcția de ieșire pentru pagina curentă
+      // Aceasta este o simplificare, în funcție de unde se află pagina țintă
+      let exitClass = '';
+      if (targetPageId === 'account') exitClass = 'page-bottom'; // Dacă mergem sus, pagina curentă iese în jos
+      else if (targetPageId === 'mygoals') exitClass = 'page-top'; // Dacă mergem jos, pagina curentă iese în sus
+      else if (targetPageId === 'history') exitClass = 'page-right'; // Dacă mergem stânga, pagina curentă iese în dreapta
+      else if (targetPageId === 'reports') exitClass = 'page-left'; // Dacă mergem dreapta, pagina curentă iese în stânga
+      else if (targetPageId === 'journal') { // Dacă revenim la journal, depinde de unde am venit
+        // Logică mai complexă aici, pentru MVP vom presupune că revine la centru
+        // și celelalte se repoziționează
+      }
+      pages[currentPageId].classList.add(exitClass);
+
+
+      // Setează pagina țintă ca pagină curentă
+      currentPageId = targetPageId;
+
+      // Adaugă clasa de intrare pentru pagina țintă
+      pages[currentPageId].classList.remove('page-top', 'page-bottom', 'page-left', 'page-right');
+      pages[currentPageId].classList.add('page-center');
+
+      // Afișează etichetele pentru paginile adiacente
+      updatePagePositions(); // Re-apelează pentru a asigura vizibilitatea etichetelor corecte
+    }
+
+
+    // --- Logică de Înregistrare (Journal Page) ---
 
     // Funcția pentru a începe înregistrarea
     function startRecording() {
@@ -395,31 +713,31 @@
       recognition.onstart = () => {
         isRecording = true;
         startTime = Date.now();
-        sunText.textContent = '🎙️'; // Microfonul indică activitate
-        sun.classList.add('active', 'sun-pulsating'); // Activează egalizatorul și pulsarea
-        recSection.style.display = 'flex'; // Afișează egalizatorul
-        welcomeMessage.classList.add('hidden-element'); // Ascunde mesajul de bun venit
-        transcriptArea.style.display = 'block'; // Afișează zona de transcriere
+        sunText.textContent = '🎙️';
+        sun.classList.add('active', 'sun-pulsating');
+        recSection.style.display = 'flex';
+        welcomeMessage.classList.add('hidden-element');
+        transcriptArea.style.display = 'block';
         transcriptArea.innerHTML = '<p class="text-gray-500 text-center italic">Vorbește liber. LumiYE te ascultă...</p>';
         currentTranscript = '';
 
-        // Ascunde butoanele "planete" și "inspirație"
-        journalButton.classList.add('hidden-element');
-        myGoalsButton.classList.add('hidden-element');
-        reportsButton.classList.add('hidden-element');
-        historyButton.classList.add('hidden-element');
-        inspirationButton.classList.add('hidden-element');
+        // Ascunde toate etichetele paginilor
+        document.querySelectorAll('.page-label').forEach(label => label.style.opacity = '0');
+        // Ascunde toate paginile secundare
+        for (const id in pages) {
+            if (id !== currentPageId) {
+                pages[id].classList.add('hidden-element');
+            }
+        }
 
         // Resetarea pulsării la începutul înregistrării
         sun.classList.remove('sun-speaking');
-        sun.classList.add('sun-pulsating'); // Începe cu dilatare (ascultare)
+        sun.classList.add('sun-pulsating');
 
-        // Setează un timeout pentru a detecta liniștea prelungită
         resetSilenceTimeout();
       };
 
       recognition.onresult = (event) => {
-        let interimTranscript = '';
         let hasSpeech = false;
         for (let i = event.resultIndex; i < event.results.length; ++i) {
           if (event.results[i].isFinal) {
@@ -431,28 +749,24 @@
             transcriptArea.scrollTop = transcriptArea.scrollHeight;
             currentTranscript = finalTranscript;
             hasSpeech = true;
-          } else {
-            interimTranscript += event.results[i][0].transcript;
-            hasSpeech = true;
           }
         }
 
-        // Ajustează pulsarea soarelui în funcție de vorbire
         if (hasSpeech) {
           sun.classList.remove('sun-pulsating');
-          sun.classList.add('sun-speaking'); // Contracție când vorbești
-          resetSilenceTimeout(); // Resetează timeout-ul de liniște la fiecare vorbire
+          sun.classList.add('sun-speaking');
+          resetSilenceTimeout();
         }
       };
 
       recognition.onend = () => {
-        if (isRecording) { // Doar dacă nu a fost oprită manual
+        if (isRecording) {
           isRecording = false;
-          clearTimeout(silenceTimeout); // Oprește timeout-ul de liniște
-          sun.classList.remove('sun-pulsating', 'sun-speaking', 'active'); // Oprește animațiile și egalizatorul
-          recSection.style.display = 'none'; // Ascunde egalizatorul
-          transcriptArea.style.display = 'none'; // Ascunde zona de transcriere
-          processSession(currentTranscript); // Procesează sesiunea
+          clearTimeout(silenceTimeout);
+          sun.classList.remove('sun-pulsating', 'sun-speaking', 'active');
+          recSection.style.display = 'none';
+          transcriptArea.style.display = 'none';
+          processSession(currentTranscript);
         }
       };
 
@@ -464,23 +778,21 @@
         sun.classList.remove('sun-pulsating', 'sun-speaking', 'active');
         recSection.style.display = 'none';
         transcriptArea.style.display = 'none';
-        // Afișează din nou butoanele "planete" și mesajul de bun venit
-        journalButton.classList.remove('hidden-element');
-        myGoalsButton.classList.remove('hidden-element');
-        reportsButton.classList.remove('hidden-element');
-        historyButton.classList.remove('hidden-element');
-        inspirationButton.classList.remove('hidden-element');
         welcomeMessage.classList.remove('hidden-element');
-        sunText.textContent = '🎙️ Începe Sesiunea'; // Resetează textul butonului
+        sunText.textContent = '🎙️ Începe Sesiunea';
+        // Afișează din nou paginile secundare și etichetele
+        for (const id in pages) {
+            if (id !== currentPageId) {
+                pages[id].classList.remove('hidden-element');
+            }
+        }
+        updatePagePositions();
       };
 
       recognition.start();
 
-      // Oprește înregistrarea automat după timpul maxim
       recordingInterval = setTimeout(() => {
-        if (isRecording) {
-          stopRecording();
-        }
+        if (isRecording) stopRecording();
       }, maxRecordingTime * 1000);
     }
 
@@ -490,7 +802,7 @@
         recognition.stop();
         isRecording = false;
         clearTimeout(silenceTimeout);
-        clearTimeout(recordingInterval); // Oprește și timeout-ul de durată maximă
+        clearTimeout(recordingInterval);
         sun.classList.remove('sun-pulsating', 'sun-speaking', 'active');
         recSection.style.display = 'none';
         transcriptArea.style.display = 'none';
@@ -502,14 +814,11 @@
     function resetSilenceTimeout() {
       clearTimeout(silenceTimeout);
       sun.classList.remove('sun-speaking');
-      sun.classList.add('sun-pulsating'); // Revine la dilatare (ascultare)
+      sun.classList.add('sun-pulsating');
       silenceTimeout = setTimeout(() => {
-        // Dacă nu s-a vorbit timp de X secunde, oprește înregistrarea
-        if (isRecording) {
-          stopRecording();
-          console.log("Înregistrare oprită din cauza liniștii prelungite.");
-        }
-      }, 10000); // 10 secunde de liniște
+        if (isRecording) stopRecording();
+        console.log("Înregistrare oprită din cauza liniștii prelungite.");
+      }, 10000);
     }
 
     // Funcția principală de procesare a sesiunii
@@ -522,65 +831,36 @@
         time: new Date().toLocaleString('ro-RO', { dateStyle: 'medium', timeStyle: 'short' }),
         transcript: transcript,
         duration: duration.toFixed(0),
-        analysis: {
-          positives: positives,
-          negatives: negatives,
-          highWords: [],
-          lowWords: [],
-          intentii: intentii,
-          wpm: wpm,
-          breathingFeedback: breathingFeedback
-        }
+        analysis: { positives, negatives, highWords: [], lowWords: [], intentii, wpm, breathingFeedback }
       };
 
       localStorage.setItem('current_session_data', JSON.stringify(sessionData));
 
-      // Redirecționăm către pagina de feedback
-      window.location.href = 'feedback.html';
+      // După înregistrare, navigăm la pagina de rapoarte
+      navigateTo('reports');
+      // Afișează din nou paginile secundare și etichetele
+      for (const id in pages) {
+            if (id !== currentPageId) {
+                pages[id].classList.remove('hidden-element');
+            }
+        }
+      welcomeMessage.classList.remove('hidden-element');
+      sunText.textContent = '🎙️ Începe Sesiunea';
+      updatePagePositions(); // Re-afișează etichetele
     }
 
-    // Ascultă evenimentul de apăsare a butonului (mousedown)
-    sun.addEventListener('mousedown', () => {
-      if (!isRecording) { // Doar dacă nu înregistrăm deja
-        holdTimeout = setTimeout(() => {
-          sun.classList.add('expanding');
-          sunText.textContent = 'Inspiră profund';
-          // După animația de inspirație, începe înregistrarea
-          setTimeout(() => {
-            sun.classList.remove('expanding');
-            // Nu mai redirecționăm aici, ci pornim direct înregistrarea pe această pagină
-            startRecording();
-          }, 2000);
-        }, 1200); // Apăsare lungă de 1.2 secunde
-      } else {
-        // Dacă înregistrarea este activă, un click scurt o oprește
-        stopRecording();
-      }
-    });
-
-    sun.addEventListener('mouseup', () => {
-      if (!isRecording) { // Anulează doar dacă nu am intrat în modul de înregistrare
-        clearTimeout(holdTimeout);
-      }
-    });
-    sun.addEventListener('mouseleave', () => {
-      if (!isRecording) { // Anulează doar dacă nu am intrat în modul de înregistrare
-        clearTimeout(holdTimeout);
-      }
-    });
-
-    // Funcția pentru a genera inspirație folosind Gemini API
+    // --- Logică Gemini API (Inspirație) ---
     async function generateInspiration() {
-      inspirationText.textContent = ''; // Curăță textul anterior
-      loadingSpinner.style.display = 'block'; // Afișează spinner-ul
-      inspirationModal.style.display = 'flex'; // Afișează modalul
+      inspirationText.textContent = '';
+      loadingSpinner.style.display = 'block';
+      inspirationModal.style.display = 'flex';
 
       try {
         let chatHistory = [];
         const prompt = "Generează o frază scurtă, pozitivă și inspirațională despre auto-reflecție, creștere personală sau liniște interioară. Fraza să fie concisă și să inspire calm.";
         chatHistory.push({ role: "user", parts: [{ text: prompt }] });
         const payload = { contents: chatHistory };
-        const apiKey = ""; // Lăsați gol pentru ca Canvas să furnizeze cheia API
+        const apiKey = "";
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
         const response = await fetch(apiUrl, {
@@ -588,14 +868,10 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-
         const result = await response.json();
 
-        if (result.candidates && result.candidates.length > 0 &&
-            result.candidates[0].content && result.candidates[0].content.parts &&
-            result.candidates[0].content.parts.length > 0) {
-          const text = result.candidates[0].content.parts[0].text;
-          inspirationText.textContent = text;
+        if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+          inspirationText.textContent = result.candidates[0].content.parts[0].text;
         } else {
           inspirationText.textContent = "Nu am putut genera inspirație. Te rugăm să încerci din nou.";
           console.error("Structura răspunsului API este neașteptată:", result);
@@ -604,100 +880,297 @@
         inspirationText.textContent = "A apărut o eroare la generarea inspirației. Verifică conexiunea la internet.";
         console.error("Eroare la apelul Gemini API:", error);
       } finally {
-        loadingSpinner.style.display = 'none'; // Ascunde spinner-ul
+        loadingSpinner.style.display = 'none';
       }
     }
 
-    // Ascultă evenimentul de click pe butonul de inspirație
-    inspirationButton.addEventListener('click', generateInspiration);
+    // --- Logică MyGoals Page ---
+    function addGoalToDOM(goal) {
+      const div = document.createElement('div');
+      div.className = 'glass p-3 flex items-center justify-between';
+      div.innerHTML = `<span class="block text-gray-800">📝 ${goal}</span><button class="delete-goal-button text-red-500 hover:text-red-700 ml-4 text-xl">&times;</button>`;
+      goalsList.appendChild(div);
+      div.querySelector('.delete-goal-button').addEventListener('click', () => removeGoalFromDOM(goal, div));
+    }
 
-    // Închide modalul la click pe butonul de închidere
-    closeModalButton.addEventListener('click', () => {
-      inspirationModal.style.display = 'none';
+    function removeGoalFromDOM(goalToRemove, element) {
+      const index = savedGoals.indexOf(goalToRemove);
+      if (index > -1) {
+        savedGoals.splice(index, 1);
+        localStorage.setItem('myGoals', JSON.stringify(savedGoals));
+        element.remove();
+      }
+    }
+
+    async function refineGoal() {
+      let goalToRefine = '';
+      if (savedGoals.length > 0) {
+        goalToRefine = savedGoals[savedGoals.length - 1];
+      } else {
+        refineGoalText.textContent = "Nu ai adăugat încă niciun obiectiv. Adaugă unul pentru a primi sugestii.";
+        refineLoadingSpinner.style.display = 'none';
+        refineGoalModal.style.display = 'flex';
+        return;
+      }
+
+      refineGoalText.textContent = '';
+      refineLoadingSpinner.style.display = 'block';
+      refineGoalModal.style.display = 'flex';
+
+      try {
+        let chatHistory = [];
+        const prompt = `Pentru obiectivul "${goalToRefine}", generează o scurtă sugestie de rafinare care să-l facă mai specific și acționabil, sau o afirmație pozitivă legată de atingerea acestui obiectiv. Fii concis și încurajator.`;
+        chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+        const payload = { contents: chatHistory };
+        const apiKey = "";
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+
+        if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+          refineGoalText.textContent = result.candidates[0].content.parts[0].text;
+        } else {
+          refineGoalText.textContent = "Nu am putut genera sugestii. Te rugăm să încerci din nou.";
+          console.error("Structura răspunsului API este neașteptată:", result);
+        }
+      } catch (error) {
+        refineGoalText.textContent = "A apărut o eroare la generarea sugestiilor. Verifică conexiunea la internet.";
+        console.error("Eroare la apelul Gemini API:", error);
+      } finally {
+        refineLoadingSpinner.style.display = 'none';
+      }
+    }
+
+    // --- Logică Reports Page ---
+    function populateReport(session) {
+      sessionPeriod.textContent = `Perioadă: ${session.time || 'Timp necunoscut'} (Durată: ${session.duration || 'N/A'} secunde)`;
+      transcriptContent.textContent = session.transcript || 'Fără transcriere disponibilă.';
+
+      highWordsUl.innerHTML = '';
+      lowWordsUl.innerHTML = '';
+
+      if (session.analysis.positives > 0) {
+        const li = document.createElement('li');
+        li.textContent = `(Au fost detectate ${session.analysis.positives} cuvinte pozitive)`;
+        highWordsUl.appendChild(li);
+      } else {
+        highWordsUl.innerHTML = '<li>Niciun cuvânt "High" detectat.</li>';
+      }
+
+      if (session.analysis.negatives > 0) {
+        const li = document.createElement('li');
+        li.textContent = `(Au fost detectate ${session.analysis.negatives} cuvinte negative)`;
+        lowWordsUl.appendChild(li);
+      } else {
+        lowWordsUl.innerHTML = '<li>Niciun cuvânt "Low" detectat.</li>';
+      }
+
+      intentiiList.innerHTML = '';
+      if (session.analysis.intentii && session.analysis.intentii.length > 0) {
+        session.analysis.intentii.forEach(intentie => {
+          const li = document.createElement('li');
+          li.textContent = intentie;
+          li.classList.add('intent-text');
+          intentiiList.appendChild(li);
+        });
+      } else {
+        intentiiList.innerHTML = '<li>Nicio intenție detectată.</li>';
+      }
+
+      breathingAnalysis.textContent = session.analysis.breathingFeedback || 'Fără analiză disponibilă.';
+
+      const { score, emoji } = getEmotionalScore(session.analysis.positives, session.analysis.negatives);
+      emotionalScore.textContent = score;
+      scoreEmoji.textContent = emoji;
+    }
+
+    // --- Logică History Page ---
+    function loadHistory() {
+      const rawData = localStorage.getItem('lumiye_sessions');
+      if (!rawData) {
+        historyList.innerHTML = '<p class="text-gray-500 text-center">Nicio sesiune salvată încă.</p>';
+        return;
+      }
+
+      const sessions = JSON.parse(rawData);
+      if (!sessions.length) {
+        historyList.innerHTML = '<p class="text-gray-500 text-center">Nicio sesiune salvată încă.</p>';
+        return;
+      }
+
+      historyList.innerHTML = ''; // Curăță lista înainte de a o repopula
+      sessions.reverse().forEach((session, index) => {
+        const item = document.createElement('div');
+        item.className = 'session-card';
+        const isFirstSession = (sessions.length - 1 - index) === 0;
+
+        item.innerHTML = `
+          <h2 class="text-lg font-semibold text-gray-800">Sesiune #${sessions.length - index} ${isFirstSession ? '<span class="text-blue-500 text-sm">(Origine)</span>' : ''}</h2>
+          <p class="text-sm text-gray-600">🕒 ${session.time || 'Timp necunoscut'} (Durată: ${session.duration || 'N/A'} secunde)</p>
+          <p class="mt-2 text-gray-700 line-clamp-3">${session.transcript || 'Fără transcriere disponibilă.'}</p>
+          <div class="mt-2 text-sm">
+            <span class="text-green-600">Pozitive: ${session.analysis.positives || 0}</span> |
+            <span class="text-red-600">Negative: ${session.analysis.negatives || 0}</span> |
+            <span class="text-blue-500">WPM: ${session.analysis.wpm || 'N/A'}</span>
+          </div>
+        `;
+        historyList.appendChild(item);
+      });
+    }
+
+
+    // --- Inițializare și Evenimente ---
+
+    // Inițializare pagini
+    document.addEventListener('DOMContentLoaded', () => {
+      updatePagePositions(); // Setează pozițiile inițiale ale paginilor
+      loadHistory(); // Încarcă istoricul la pornire
+      savedGoals.forEach(addGoalToDOM); // Încarcă obiectivele la pornire
     });
 
-    // Închide modalul la click în afara conținutului său
-    window.addEventListener('click', (event) => {
-      if (event.target == inspirationModal) {
-        inspirationModal.style.display = 'none';
+    // Evenimente pentru butonul Soare (înregistrare)
+    sun.addEventListener('mousedown', () => {
+      if (!isRecording) {
+        holdTimeout = setTimeout(() => {
+          sun.classList.add('expanding');
+          sunText.textContent = 'Inspiră profund';
+          setTimeout(() => {
+            sun.classList.remove('expanding');
+            startRecording();
+          }, 2000);
+        }, 1200);
+      } else {
+        stopRecording();
       }
     });
+    sun.addEventListener('mouseup', () => { if (!isRecording) clearTimeout(holdTimeout); });
+    sun.addEventListener('mouseleave', () => { if (!isRecording) clearTimeout(holdTimeout); });
 
-    // --- Logica de detectare swipe pentru navigare ---
-    gestureZone.addEventListener('touchstart', e => {
+    // Evenimente pentru modalul de inspirație
+    closeModalButton.addEventListener('click', () => { inspirationModal.style.display = 'none'; });
+    window.addEventListener('click', (event) => { if (event.target == inspirationModal) inspirationModal.style.display = 'none'; });
+
+    // Evenimente pentru modalul de rafinare a obiectivului
+    closeRefineModalButton.addEventListener('click', () => { refineGoalModal.style.display = 'none'; });
+    window.addEventListener('click', (event) => { if (event.target == refineGoalModal) refineGoalModal.style.display = 'none'; });
+
+    // Evenimente pentru butoanele de acțiune specifice paginilor
+    goalForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const goal = goalInput.value.trim();
+      if (goal) {
+        savedGoals.push(goal);
+        localStorage.setItem('myGoals', JSON.stringify(savedGoals));
+        addGoalToDOM(goal);
+        goalInput.value = '';
+      }
+    });
+    refineGoalButton.addEventListener('click', refineGoal);
+
+    // --- Logică de detectare swipe pentru navigare ---
+    appContainer.addEventListener('touchstart', e => {
       touchstartX = e.changedTouches[0].screenX;
       touchstartY = e.changedTouches[0].screenY;
     });
 
-    gestureZone.addEventListener('touchend', e => {
+    appContainer.addEventListener('touchend', e => {
       touchendX = e.changedTouches[0].screenX;
       touchendY = e.changedTouches[0].screenY;
       handleGesture();
     });
 
     function handleGesture() {
-      const swipeThreshold = 50; // Numărul minim de pixeli pentru a detecta un swipe
+      const swipeThreshold = 75; // Numărul minim de pixeli pentru a detecta un swipe
       const deltaX = touchendX - touchstartX;
       const deltaY = touchendY - touchstartY;
 
-      // Asigură-te că nu ești în modul de înregistrare pentru a naviga prin swipe
-      if (isRecording) {
-        return;
-      }
+      if (isRecording) return; // Dezactivează swipe-ul în timpul înregistrării
 
-      // Detectează swipe-ul vertical
+      // Prioritizează swipe-ul dominant (orizontal sau vertical)
       if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > swipeThreshold) {
         if (deltaY < 0) { // Swipe Up
-          console.log("Swipe Up detected - Navigating to Journal");
-          navigateWithTransition('journal.html', 'slide-up');
+          if (currentPageId === 'journal') navigateTo('account'); // Journal -> Account
+          else if (currentPageId === 'mygoals') navigateTo('journal'); // MyGoals -> Journal
+          // Adaugă mai multe cazuri pe măsură ce stabilești ordinea
         } else { // Swipe Down
-          console.log("Swipe Down detected - Navigating to Reports");
-          navigateWithTransition('reports.html', 'slide-down');
+          if (currentPageId === 'journal') navigateTo('mygoals'); // Journal -> MyGoals
+          else if (currentPageId === 'account') navigateTo('journal'); // Account -> Journal
+          // Adaugă mai multe cazuri
         }
-      }
-      // Detectează swipe-ul orizontal
-      else if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > swipeThreshold) {
+      } else if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > swipeThreshold) {
         if (deltaX < 0) { // Swipe Left
-          console.log("Swipe Left detected - Navigating to History");
-          navigateWithTransition('history.html', 'slide-left');
+          if (currentPageId === 'journal') navigateTo('reports'); // Journal -> Reports
+          else if (currentPageId === 'history') navigateTo('journal'); // History -> Journal
+          // Adaugă mai multe cazuri
         } else { // Swipe Right
-          console.log("Swipe Right detected - Navigating to MyGoals");
-          navigateWithTransition('mygoals.html', 'slide-right');
+          if (currentPageId === 'journal') navigateTo('history'); // Journal -> History
+          else if (currentPageId === 'reports') navigateTo('journal'); // Reports -> Journal
+          // Adaugă mai multe cazuri
         }
       }
-    }
-
-    // Funcție pentru a naviga cu tranziție
-    function navigateWithTransition(url, direction) {
-      document.body.classList.add(`page-${direction}-exit-active`);
-      setTimeout(() => {
-        window.location.href = url;
-      }, 500); // Așteaptă ca animația de ieșire să se termine
-    }
-
-    // Adaugă evenimente de click pentru butoanele "planete" ca fallback
-    journalButton.addEventListener('click', () => navigateWithTransition('journal.html', 'slide-up'));
-    myGoalsButton.addEventListener('click', () => navigateWithTransition('mygoals.html', 'slide-right'));
-    reportsButton.addEventListener('click', () => navigateWithTransition('reports.html', 'slide-down'));
-    historyButton.addEventListener('click', () => navigateWithTransition('history.html', 'slide-left'));
-
-    // La încărcarea paginii, verifică dacă a venit dintr-o altă pagină și aplică tranziția de intrare
-    window.addEventListener('load', () => {
-      const referrer = document.referrer;
-      if (referrer.includes('journal.html')) {
-        document.body.classList.add('page-slide-down-enter');
-      } else if (referrer.includes('reports.html')) {
-        document.body.classList.add('page-slide-up-enter');
-      } else if (referrer.includes('history.html')) {
-        document.body.classList.add('page-slide-right-enter');
-      } else if (referrer.includes('mygoals.html')) {
-        document.body.classList.add('page-slide-left-enter');
+      // Reîncarcă conținutul paginilor la navigare, dacă este necesar
+      if (currentPageId === 'reports') populateReport(JSON.parse(localStorage.getItem('current_session_data')));
+      if (currentPageId === 'history') loadHistory();
+      if (currentPageId === 'mygoals') {
+          goalsList.innerHTML = ''; // Curăță lista înainte de a o repopula
+          savedGoals.forEach(addGoalToDOM);
       }
-      // Activează tranziția de intrare
-      setTimeout(() => {
-        document.body.classList.add('page-slide-enter-active');
-      }, 10); // Un mic delay pentru a asigura aplicarea clasei inițiale
+    }
+
+    // Funcția pentru a naviga la o pagină specifică
+    function navigateTo(targetPageId) {
+        if (currentPageId === targetPageId) return;
+
+        // Ascunde etichetele paginii curente
+        pages[currentPageId].querySelectorAll('.page-label').forEach(label => label.style.opacity = '0');
+
+        // Muta pagina curentă în afara vizualizării
+        pages[currentPageId].classList.remove('page-center');
+        // Adaugă o clasă de "ieșire" pentru a simula mișcarea corectă
+        let exitClass = '';
+        if (targetPageId === 'account') exitClass = 'page-bottom'; // Dacă mergem la Account (sus), Journal iese în jos
+        else if (targetPageId === 'mygoals') exitClass = 'page-top'; // Dacă mergem la MyGoals (jos), Journal iese în sus
+        else if (targetPageId === 'reports') exitClass = 'page-left'; // Dacă mergem la Reports (dreapta), Journal iese în stânga
+        else if (targetPageId === 'history') exitClass = 'page-right'; // Dacă mergem la History (stânga), Journal iese în dreapta
+        pages[currentPageId].classList.add(exitClass);
+
+
+        // Setează pagina țintă ca pagină curentă
+        currentPageId = targetPageId;
+
+        // Muta pagina țintă în centru
+        pages[currentPageId].classList.remove('page-top', 'page-bottom', 'page-left', 'page-right');
+        pages[currentPageId].classList.add('page-center');
+
+        // Reafișează etichetele pentru paginile adiacente
+        // Această logică este simplificată pentru MVP, presupunând că Journal este "centrul"
+        // și celelalte pagini sunt întotdeauna în pozițiile lor relative față de Journal.
+        // În realitate, ar trebui să recalculezi pozițiile tuturor paginilor.
+        // Pentru a menține etichetele vizibile, le vom face vizibile din nou după tranziție
+        setTimeout(() => {
+            pages[currentPageId].querySelectorAll('.page-label').forEach(label => label.style.opacity = '0'); // Ascunde etichetele paginii curente
+            // Afișează etichetele pentru paginile adiacente
+            for (const id in pages) {
+                if (id !== currentPageId) {
+                    pages[id].querySelectorAll('.page-label').forEach(label => label.style.opacity = '1');
+                }
+            }
+        }, 500); // Așteaptă ca tranziția să se termine
+    }
+
+    // Adaugă evenimente de click pentru etichetele paginilor (ca fallback/alternativă la swipe)
+    document.querySelectorAll('.page-label').forEach(label => {
+        label.addEventListener('click', (e) => {
+            const targetPageId = e.target.textContent.toLowerCase().replace(/\s/g, ''); // Extrage ID-ul paginii din textul etichetei
+            navigateTo(targetPageId);
+        });
     });
+
   </script>
 </body>
 </html>

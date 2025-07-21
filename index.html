@@ -33,6 +33,7 @@
       justify-content: center;
       align-items: center;
       position: relative;
+      touch-action: pan-x pan-y; /* Allows vertical + horizontal swipe */
     }
 
     /* Background video or fallback image */
@@ -54,16 +55,16 @@
       width: 100%;
       height: 100%;
       overflow: hidden; /* Crucial for hiding parts of pages not in center */
-      touch-action: pan-x pan-y; /* Allows vertical + horizontal swipe */
     }
 
     /* Base styles for each page */
     .app-page {
       position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
+      /* Adjusted dimensions for carousel effect */
+      width: 80vw; /* Smaller than full screen */
+      height: 80vh; /* Smaller than full screen */
+      top: 10vh; /* Center vertically */
+      left: 10vw; /* Center horizontally */
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -75,6 +76,7 @@
       box-sizing: border-box;
       padding: 20px;
       color: #2E2E2E; /* Default text color for pages */
+      border-radius: 12px; /* Rounded corners for pages */
     }
 
     /* Page positions */
@@ -85,25 +87,25 @@
       pointer-events: auto; /* Allow interactions */
     }
     .page-top {
-      transform: translateY(-100vh); /* Completely off-screen top */
+      transform: translateY(calc(-100vh + 15vh)); /* Partially visible from top */
       opacity: 0.7;
       pointer-events: none; /* Disallow interactions when partially visible */
       z-index: 6;
     }
     .page-bottom {
-      transform: translateY(100vh); /* Completely off-screen bottom */
+      transform: translateY(calc(100vh - 15vh)); /* Partially visible from bottom */
       opacity: 0.7;
       pointer-events: none;
       z-index: 6;
     }
     .page-left {
-      transform: translateX(-100vw); /* Completely off-screen left */
+      transform: translateX(calc(-100vw + 15vw)); /* Partially visible from left */
       opacity: 0.7;
       pointer-events: none;
       z-index: 6;
     }
     .page-right {
-      transform: translateX(100vw); /* Completely off-screen right */
+      transform: translateX(calc(100vw - 15vw)); /* Partially visible from right */
       opacity: 0.7;
       pointer-events: none;
       z-index: 6;
@@ -332,7 +334,7 @@
   <!-- Main background with Earth-Sunrise image or video -->
   <picture>
     <!-- Video source (replace with your actual video path) -->
-    <source srcset="assets/background.mp4" type="video/mp4">
+    <source srcset="assets/background.mp4" type="video/mp4" onerror="this.parentNode.removeChild(this); document.getElementById('backgroundMedia').src='assets/fundal Lum 1.jpg'; console.warn('Video background failed to load, falling back to image.');">
     <!-- Image fallback (replace with your actual image path) -->
     <img src="assets/fundal Lum 1.jpg" alt="Earth Sunrise Background" class="background-media" id="backgroundMedia">
   </picture>
@@ -735,9 +737,6 @@
       let exitTransform = '';
       let enterTransform = '';
 
-      // Calculate the difference in index to determine direction
-      const deltaIndex = (targetPageIndex - currentPageIndex + pageOrder.length) % pageOrder.length;
-
       // Logic for vertical swipe (corrected)
       if (targetPageId === 'account' && currentPageId === 'journal') { // Journal (center) -> Account (top)
           exitTransform = 'translateY(100vh)'; // Journal moves down to reveal Account
@@ -781,6 +780,18 @@
 
       // Update current page index
       currentPageIndex = targetPageIndex;
+
+      // If recording is active and we navigate away from Journal, pause the session
+      if (isRecording && currentPageId !== 'journal') {
+          pauseRecording();
+          // Store current transcript and start time to resume later
+          sessionStorage.setItem('ongoing_session_transcript', currentTranscript);
+          sessionStorage.setItem('ongoing_session_startTime', startTime);
+      } else if (!isRecording && currentPageId === 'journal') {
+          // If returning to Journal and no ongoing session, clear stored session data
+          sessionStorage.removeItem('ongoing_session_transcript');
+          sessionStorage.removeItem('ongoing_session_startTime');
+      }
 
       // Re-apply position classes after a short delay to allow transition to complete
       setTimeout(() => {
@@ -1144,7 +1155,7 @@
         sessionPeriod.textContent = 'Perioadă: N/A';
         transcriptContent.textContent = 'Nicio sesiune salvată recent.';
         emotionalScore.textContent = 'N/A';
-        scoreEmoji.textContent = '🤷';
+        scoreEmoji.textContent = '�';
         highWordsUl.innerHTML = '<li>Niciun cuvânt "High" detectat.</li>';
         lowWordsUl.innerHTML = '<li>Niciun cuvânt "Low" detectat.</li>';
         intentiiList.innerHTML = '<li>Nicio intenție detectată.</li>';

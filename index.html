@@ -12,6 +12,7 @@
   <meta name="robots" content="index,follow">
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Stiluri CSS extrase în "assets/style.css" -->
   <style>
     /* Stiluri generale pentru corp și HTML */
     body, html {
@@ -28,8 +29,8 @@
       position: relative;
     }
 
-    /* Fundalul cu imaginea Pământ-Răsărit */
-    .background-image {
+    /* Fundalul cu imaginea Pământ-Răsărit sau video */
+    .background-media {
       position: absolute;
       top: 0;
       left: 0;
@@ -38,6 +39,7 @@
       object-fit: cover;
       z-index: 0;
       filter: brightness(0.8); /* Luminozitate ajustată pentru lizibilitate text */
+      transition: filter 0.5s ease-in-out; /* Tranziție pentru efectul de pulsație */
     }
 
     /* Containerul principal al aplicației, care va găzdui toate paginile */
@@ -271,8 +273,7 @@
       }
     }
 
-    /* Stiluri pentru pulsarea soarelui în timpul înregistrării */
-    /* Acestea vor fi aplicate pe background-image pentru efectul de iluminare a întregului ecran */
+    /* Stiluri pentru pulsarea fundalului în timpul înregistrării */
     .pulsating-background {
       animation: backgroundPulse 2s infinite ease-in-out;
     }
@@ -333,11 +334,17 @@
   </style>
 </head>
 <body>
-  <!-- Fundalul principal cu imaginea Pământ-Răsărit -->
-  <img src="fundal LUM 1.jpg" alt="Fundal Pământ Răsărit" class="background-image" id="backgroundImage">
+  <!-- Fundalul principal cu imaginea Pământ-Răsărit sau video -->
+  <!-- Utilizăm un element <picture> pentru a oferi o imagine fallback dacă video-ul nu se încarcă -->
+  <picture>
+    <source srcset="path/to/your/background.mp4" type="video/mp4">
+    <img src="fundal Lum 1.jpg" alt="Fundal Pământ Răsărit" class="background-media" id="backgroundMedia">
+  </picture>
+  <!-- IMPORTANT: Înlocuiește "path/to/your/background.mp4" cu calea reală către fișierul tău MP4.
+       De asemenea, asigură-te că "fundal Lum 1.jpg" este în directorul "assets/images" sau calea este corectă. -->
 
   <!-- Containerul principal al aplicației -->
-  <div id="app-container" class="relative w-full h-full">
+  <div id="app-container" class="relative w-full h-100vh">
 
     <!-- Pagina 1: Journal (Home) -->
     <div id="journal-page" class="app-page page-center">
@@ -383,7 +390,7 @@
         <p class="text-gray-500 text-center italic">Vorbește liber. LumiYE te ascultă...</p>
       </div>
 
-      <!-- Modal pentru afișarea inspirației -->
+      <!-- Modal pentru afișarea inspirației (nu se afișează automat la pornire) -->
       <div id="inspirationModal" class="modal">
         <div class="modal-content">
           <span class="close-button" id="closeModalButton">&times;</span>
@@ -510,6 +517,7 @@
 
   </div> <!-- End of #app-container -->
 
+  <!-- Scripturi JavaScript extrase în "assets/main.js" -->
   <script>
     // Referințe la elementele DOM
     const appContainer = document.getElementById('app-container');
@@ -518,7 +526,7 @@
     const mygoalsPage = document.getElementById('mygoals-page');
     const historyPage = document.getElementById('history-page');
     const accountPage = document.getElementById('account-page');
-    const backgroundImage = document.getElementById('backgroundImage'); // Adăugat pentru pulsație
+    const backgroundMedia = document.getElementById('backgroundMedia'); // Referință la elementul media de fundal
 
     const pages = {
       'journal': journalPage,
@@ -529,8 +537,9 @@
     };
 
     // Ordinea paginilor pentru navigare intuitivă
+    // Această ordine definește cum se mișcă paginile la swipe
     const pageOrder = ['account', 'history', 'journal', 'reports', 'mygoals'];
-    let currentPageIndex = pageOrder.indexOf('journal'); // Indexul paginii curente în ordinea definită
+    let currentPageIndex = pageOrder.indexOf('journal'); // Pagina inițială este Journal (Home)
 
     // Referințe pentru elementele din Journal Page
     const sun = document.getElementById('sun');
@@ -544,9 +553,9 @@
     const loadingSpinner = document.getElementById('loadingSpinner');
 
     let isRecording = false;
-    let recognition;
+    let recognition; // Web Speech API
     let startTime;
-    const maxRecordingTime = 120;
+    const maxRecordingTime = 120; // 2 minute în secunde
     let recordingInterval;
     let currentTranscript = '';
     let silenceTimeout;
@@ -580,10 +589,15 @@
     let touchstartY = 0;
     let touchendX = 0;
     let touchendY = 0;
+    let isSwiping = false; // Flag pentru a preveni multiple swipe-uri în timpul tranziției
 
     // --- Funcții de Utilitate ---
 
-    // Funcție pentru a simula analiza NLP
+    /**
+     * Simulează analiza NLP pentru text.
+     * @param {string} text - Textul de analizat.
+     * @returns {object} Un obiect cu numărul de cuvinte pozitive/negative și intenții detectate.
+     */
     function analyzeText(text) {
       const positiveWords = ['bucurie', 'speranță', 'fericit', 'mulțumit', 'recunoștință', 'curaj', 'potențial', 'vreau', 'succes'];
       const negativeWords = ['nu pot', 'blocat', 'singur', 'eșec', 'trist', 'copleșit', 'stres', 'îndoieli', 'obosit'];
@@ -601,7 +615,12 @@
       return { positives, negatives, intentii };
     }
 
-    // Funcție pentru a simula analiza respirației (WPM și pauze)
+    /**
+     * Simulează analiza respirației pe baza textului și duratei.
+     * @param {string} text - Textul transcris.
+     * @param {number} durationInSeconds - Durata înregistrării în secunde.
+     * @returns {object} Un obiect cu WPM și feedback despre respirație.
+     */
     function analyzeBreathing(text, durationInSeconds) {
       const words = text.split(/\s+/).filter(word => word.length > 0);
       const wordCount = words.length;
@@ -618,7 +637,12 @@
       return { wpm: wpm.toFixed(0), breathingFeedback };
     }
 
-    // Funcție pentru a calcula scorul emoțional și emoji-ul
+    /**
+     * Calculează scorul emoțional și emoji-ul corespunzător.
+     * @param {number} positives - Numărul de cuvinte pozitive.
+     * @param {number} negatives - Numărul de cuvinte negative.
+     * @returns {object} Un obiect cu scorul (text) și emoji-ul.
+     */
     function getEmotionalScore(positives, negatives) {
       if (positives === 0 && negatives === 0) return { score: 'Neutru', emoji: '😐' };
       const total = positives + negatives;
@@ -632,11 +656,14 @@
 
     // --- Logică de Navigare (Carusel) ---
 
-    // Funcție pentru a actualiza pozițiile paginilor
+    /**
+     * Actualizează pozițiile CSS ale paginilor în funcție de pagina curentă.
+     * De asemenea, gestionează vizibilitatea etichetelor și pointer-events.
+     */
     function updatePagePositions() {
-      // Ascunde toate etichetele inițial
+      // Ascunde toate etichetele inițial și dezactivează pointer-events pentru toate paginile
       document.querySelectorAll('.page-label').forEach(label => label.style.opacity = '0');
-      document.querySelectorAll('.app-page').forEach(page => page.style.pointerEvents = 'none'); // Dezactivează interacțiunile
+      document.querySelectorAll('.app-page').forEach(page => page.style.pointerEvents = 'none');
 
       for (let i = 0; i < pageOrder.length; i++) {
         const pageId = pageOrder[i];
@@ -648,21 +675,21 @@
           pageElement.style.pointerEvents = 'auto'; // Activează interacțiunile pentru pagina centrală
         } else {
           // Calculează poziția relativă față de pagina centrală
+          // Această logică este crucială pentru a determina ce pagină este "sus", "jos", "stânga", "dreapta"
           const relativeIndex = (i - currentPageIndex + pageOrder.length) % pageOrder.length;
 
-          if (relativeIndex === 1) { // Următoarea pagină în ordine (ex: Journal -> Reports)
-            if (pageId === 'reports') pageElement.classList.add('page-right'); // Reports e la dreapta Journal
-            else if (pageId === 'mygoals') pageElement.classList.add('page-bottom'); // MyGoals e sub Reports
-            else if (pageId === 'history') pageElement.classList.add('page-left'); // History e la stânga MyGoals
-            else if (pageId === 'account') pageElement.classList.add('page-top'); // Account e deasupra History
-          } else if (relativeIndex === pageOrder.length - 1) { // Pagina anterioară în ordine (ex: Journal <- Account)
-            if (pageId === 'account') pageElement.classList.add('page-top'); // Account e deasupra Journal
-            else if (pageId === 'history') pageElement.classList.add('page-left'); // History e la stânga Journal
-            else if (pageId === 'mygoals') pageElement.classList.add('page-bottom'); // MyGoals e sub Journal
-            else if (pageId === 'reports') pageElement.classList.add('page-right'); // Reports e la dreapta Journal
+          if (relativeIndex === 1) { // Pagina "următoare" în sens orar (ex: Journal -> Reports)
+            if (pageId === 'reports') pageElement.classList.add('page-right');
+            else if (pageId === 'mygoals') pageElement.classList.add('page-bottom');
+            else if (pageId === 'history') pageElement.classList.add('page-left');
+            else if (pageId === 'account') pageElement.classList.add('page-top');
+          } else if (relativeIndex === pageOrder.length - 1) { // Pagina "anterioară" în sens orar (ex: Journal <- Account)
+            if (pageId === 'account') pageElement.classList.add('page-top');
+            else if (pageId === 'history') pageElement.classList.add('page-left');
+            else if (pageId === 'mygoals') pageElement.classList.add('page-bottom');
+            else if (pageId === 'reports') pageElement.classList.add('page-right');
           }
-          // Pentru MVP, simplificăm pozițiile vizibile la doar cele adiacente direct
-          // Etichetele vor fi afișate doar pentru paginile adiacente
+          // Afișează etichetele doar pentru paginile adiacente vizibile
           if (relativeIndex === 1 || relativeIndex === pageOrder.length - 1) {
             pageElement.querySelectorAll('.page-label').forEach(label => label.style.opacity = '1');
           }
@@ -670,70 +697,106 @@
       }
     }
 
-    // Funcție pentru a naviga la o pagină specifică
+    /**
+     * Navighează la o pagină specifică cu o animație de tranziție.
+     * @param {string} targetPageId - ID-ul paginii țintă (ex: 'reports', 'mygoals').
+     */
     function navigateTo(targetPageId) {
+      if (isSwiping) return; // Previne navigarea multiplă în timpul tranziției
+      isSwiping = true;
+
       const targetPageIndex = pageOrder.indexOf(targetPageId);
-      if (targetPageIndex === -1 || targetPageIndex === currentPageIndex) return;
+      if (targetPageIndex === -1 || targetPageIndex === currentPageIndex) {
+        isSwiping = false;
+        return;
+      }
+
+      const currentPageElement = pages[pageOrder[currentPageIndex]];
+      const targetPageElement = pages[targetPageId];
 
       // Ascunde etichetele paginii curente înainte de tranziție
-      pages[pageOrder[currentPageIndex]].querySelectorAll('.page-label').forEach(label => label.style.opacity = '0');
-      pages[pageOrder[currentPageIndex]].style.pointerEvents = 'none'; // Dezactivează interacțiunile paginii curente
+      currentPageElement.querySelectorAll('.page-label').forEach(label => label.style.opacity = '0');
+      currentPageElement.style.pointerEvents = 'none'; // Dezactivează interacțiunile paginii curente
 
-      // Determină direcția de tranziție
-      let direction = '';
-      const delta = (targetPageIndex - currentPageIndex + pageOrder.length) % pageOrder.length;
+      // Determină direcția de ieșire a paginii curente și de intrare a paginii țintă
+      let exitTransform = '';
+      let enterTransform = '';
 
-      if (targetPageId === 'account' && currentPageId === 'journal') direction = 'up';
-      else if (targetPageId === 'mygoals' && currentPageId === 'journal') direction = 'down';
-      else if (targetPageId === 'reports' && currentPageId === 'journal') direction = 'left';
-      else if (targetPageId === 'history' && currentPageId === 'journal') direction = 'right';
-      // Adaugă logica inversă pentru a reveni la journal
-      else if (targetPageId === 'journal' && currentPageId === 'account') direction = 'down';
-      else if (targetPageId === 'journal' && currentPageId === 'mygoals') direction = 'up';
-      else if (targetPageId === 'journal' && currentPageId === 'reports') direction = 'right';
-      else if (targetPageId === 'journal' && currentPageId === 'history') direction = 'left';
-      // Pentru navigarea între paginile "planetă", vom simplifica pentru MVP
-      // și le vom face să treacă prin Journal dacă nu sunt adiacente direct.
-      // O implementare completă ar necesita o matrice de tranziții.
+      // Calculează diferența de index pentru a determina direcția
+      const deltaIndex = (targetPageIndex - currentPageIndex + pageOrder.length) % pageOrder.length;
 
-      // Aplică transformarea pentru pagina curentă (ieșire)
-      if (direction === 'up') pages[pageOrder[currentPageIndex]].style.transform = 'translateY(-100vh)';
-      else if (direction === 'down') pages[pageOrder[currentPageIndex]].style.transform = 'translateY(100vh)';
-      else if (direction === 'left') pages[pageOrder[currentPageIndex]].style.transform = 'translateX(-100vw)';
-      else if (direction === 'right') pages[pageOrder[currentPageIndex]].style.transform = 'translateX(100vw)';
+      // Vertical swipe
+      if (targetPageId === 'account' && currentPageId === 'journal') { // Journal (center) -> Account (top)
+          exitTransform = 'translateY(100vh)'; // Journal iese în jos
+          enterTransform = 'translateY(0)'; // Account intră în centru
+      } else if (targetPageId === 'journal' && currentPageId === 'account') { // Account (top) -> Journal (center)
+          exitTransform = 'translateY(-100vh)'; // Account iese în sus
+          enterTransform = 'translateY(0)'; // Journal intră în centru
+      } else if (targetPageId === 'mygoals' && currentPageId === 'journal') { // Journal (center) -> MyGoals (bottom)
+          exitTransform = 'translateY(-100vh)'; // Journal iese în sus
+          enterTransform = 'translateY(0)'; // MyGoals intră în centru
+      } else if (targetPageId === 'journal' && currentPageId === 'mygoals') { // MyGoals (bottom) -> Journal (center)
+          exitTransform = 'translateY(100vh)'; // MyGoals iese în jos
+          enterTransform = 'translateY(0)'; // Journal intră în centru
+      }
+      // Horizontal swipe
+      else if (targetPageId === 'reports' && currentPageId === 'journal') { // Journal (center) -> Reports (right)
+          exitTransform = 'translateX(-100vw)'; // Journal iese în stânga
+          enterTransform = 'translateX(0)'; // Reports intră în centru
+      } else if (targetPageId === 'journal' && currentPageId === 'reports') { // Reports (right) -> Journal (center)
+          exitTransform = 'translateX(100vw)'; // Reports iese în dreapta
+          enterTransform = 'translateX(0)'; // Journal intră în centru
+      } else if (targetPageId === 'history' && currentPageId === 'journal') { // Journal (center) -> History (left)
+          exitTransform = 'translateX(100vw)'; // Journal iese în dreapta
+          enterTransform = 'translateX(0)'; // History intră în centru
+      } else if (targetPageId === 'journal' && currentPageId === 'history') { // History (left) -> Journal (center)
+          exitTransform = 'translateX(-100vw)'; // History iese în stânga
+          enterTransform = 'translateX(0)'; // Journal intră în centru
+      } else { // Fallback pentru tranziții între pagini non-adiacente direct de la Journal
+          // Pentru MVP, simplificăm: dacă nu e o tranziție directă, facem un "reset" vizual
+          // și apoi aducem pagina țintă în centru.
+          // O implementare completă ar calcula calea optimă prin carusel.
+          currentPageElement.style.transform = 'scale(0.8)'; // Micșorează pagina curentă
+          targetPageElement.style.transform = 'scale(0.8)'; // Micșorează pagina țintă înainte de a o aduce
+          setTimeout(() => {
+              currentPageElement.style.transform = 'translateX(0) translateY(0)'; // Resetează poziția paginii curente
+              targetPageElement.style.transform = 'translateX(0) translateY(0)'; // Resetează poziția paginii țintă
+          }, 250); // Jumătate din durata tranziției
+      }
+
+      currentPageElement.style.transform = exitTransform;
+      targetPageElement.style.transform = enterTransform;
 
       // Actualizează indexul paginii curente
       currentPageIndex = targetPageIndex;
-
-      // Aplică transformarea pentru pagina țintă (intrare)
-      const targetPageElement = pages[pageOrder[currentPageIndex]];
-      if (direction === 'up') targetPageElement.style.transform = 'translateY(0)';
-      else if (direction === 'down') targetPageElement.style.transform = 'translateY(0)';
-      else if (direction === 'left') targetPageElement.style.transform = 'translateX(0)';
-      else if (direction === 'right') targetPageElement.style.transform = 'translateX(0)';
 
       // Re-aplica clasele de poziție după un scurt delay pentru a permite tranziția
       setTimeout(() => {
         updatePagePositions();
         // Reîncarcă conținutul paginilor la navigare, dacă este necesar
-        if (currentPageId === 'reports') populateReport(JSON.parse(localStorage.getItem('current_session_data')));
-        if (currentPageId === 'history') loadHistory();
-        if (currentPageId === 'mygoals') {
+        if (targetPageId === 'reports') populateReport(JSON.parse(localStorage.getItem('current_session_data')));
+        if (targetPageId === 'history') loadHistory();
+        if (targetPageId === 'mygoals') {
             goalsList.innerHTML = '';
             savedGoals.forEach(addGoalToDOM);
         }
         // Asigură că UI-ul Journal este resetat la revenire
-        if (currentPageId === 'journal') {
+        if (targetPageId === 'journal') {
             resetJournalUI();
         }
+        isSwiping = false; // Permite din nou swipe-urile după finalizarea tranziției
       }, 500); // Durata tranziției CSS
     }
 
-    // Funcție pentru a reseta UI-ul paginii Journal
+    /**
+     * Resetează starea UI-ului paginii Journal (Home).
+     * Este apelată după înregistrare sau la navigarea către/de la Journal.
+     */
     function resetJournalUI() {
         welcomeMessage.classList.remove('hidden-element');
         sunText.textContent = '🎙️ Începe Sesiunea';
-        sun.classList.remove('active', 'sun-pulsating', 'sun-speaking');
+        sun.classList.remove('active'); // Elimină clasa 'active' de pe soare
+        backgroundMedia.classList.remove('pulsating-background', 'speaking-background'); // Oprește animațiile de fundal
         recSection.style.display = 'none';
         transcriptArea.style.display = 'none';
         // Afișează din nou paginile secundare și etichetele
@@ -748,7 +811,9 @@
 
     // --- Logică de Înregistrare (Journal Page) ---
 
-    // Funcția pentru a începe înregistrarea
+    /**
+     * Pornește procesul de înregistrare vocală.
+     */
     function startRecording() {
       if (!('webkitSpeechRecognition' in window)) {
         document.getElementById('status-msg').textContent = 'API-ul de recunoaștere vocală nu este suportat de browserul tău.';
@@ -767,7 +832,7 @@
         startTime = Date.now();
         sunText.textContent = '🎙️';
         sun.classList.add('active'); // Activează egalizatorul
-        backgroundImage.classList.add('pulsating-background'); // Pulsație pe fundal
+        backgroundMedia.classList.add('pulsating-background'); // Pulsație pe fundal
         recSection.style.display = 'flex';
         welcomeMessage.classList.add('hidden-element');
         transcriptArea.style.display = 'block';
@@ -802,12 +867,12 @@
         }
 
         if (hasSpeech) {
-          backgroundImage.classList.remove('pulsating-background');
-          backgroundImage.classList.add('speaking-background'); // Contracție când vorbești
+          backgroundMedia.classList.remove('pulsating-background');
+          backgroundMedia.classList.add('speaking-background'); // Contracție când vorbești
           resetSilenceTimeout();
         } else {
-          backgroundImage.classList.remove('speaking-background');
-          backgroundImage.classList.add('pulsating-background'); // Dilatare când e liniște
+          backgroundMedia.classList.remove('speaking-background');
+          backgroundMedia.classList.add('pulsating-background'); // Dilatare când e liniște
         }
       };
 
@@ -815,7 +880,7 @@
         if (isRecording) {
           isRecording = false;
           clearTimeout(silenceTimeout);
-          backgroundImage.classList.remove('pulsating-background', 'speaking-background');
+          backgroundMedia.classList.remove('pulsating-background', 'speaking-background');
           sun.classList.remove('active');
           recSection.style.display = 'none';
           transcriptArea.style.display = 'none';
@@ -828,7 +893,7 @@
         document.getElementById('status-msg').textContent = `Eroare: ${event.error}. Te rugăm să încerci din nou.`;
         isRecording = false;
         clearTimeout(silenceTimeout);
-        backgroundImage.classList.remove('pulsating-background', 'speaking-background');
+        backgroundMedia.classList.remove('pulsating-background', 'speaking-background');
         sun.classList.remove('active');
         recSection.style.display = 'none';
         transcriptArea.style.display = 'none';
@@ -842,14 +907,16 @@
       }, maxRecordingTime * 1000);
     }
 
-    // Funcția pentru a opri înregistrarea
+    /**
+     * Oprește procesul de înregistrare vocală.
+     */
     function stopRecording() {
       if (isRecording) {
         recognition.stop();
         isRecording = false;
         clearTimeout(silenceTimeout);
         clearTimeout(recordingInterval);
-        backgroundImage.classList.remove('pulsating-background', 'speaking-background');
+        backgroundMedia.classList.remove('pulsating-background', 'speaking-background');
         sun.classList.remove('active');
         recSection.style.display = 'none';
         transcriptArea.style.display = 'none';
@@ -857,26 +924,33 @@
       }
     }
 
-    // Funcție pentru a reseta timeout-ul de liniște
+    /**
+     * Resetează timeout-ul de liniște și ajustează animația de fundal.
+     */
     function resetSilenceTimeout() {
       clearTimeout(silenceTimeout);
-      backgroundImage.classList.remove('speaking-background');
-      backgroundImage.classList.add('pulsating-background');
+      backgroundMedia.classList.remove('speaking-background');
+      backgroundMedia.classList.add('pulsating-background');
       silenceTimeout = setTimeout(() => {
         if (isRecording) stopRecording();
         console.log("Înregistrare oprită din cauza liniștii prelungite.");
-      }, 10000);
+      }, 10000); // 10 secunde de liniște
     }
 
-    // Funcția principală de procesare a sesiunii
+    /**
+     * Procesează sesiunea de înregistrare, analizează textul și salvează datele.
+     * @param {string} transcript - Transcrierea sesiunii.
+     */
     function processSession(transcript) {
       const duration = (Date.now() - startTime) / 1000;
-      const { positives, negatives, intentii } = analyzeText(transcript);
-      const { wpm, breathingFeedback } = analyzeBreathing(transcript, duration);
+      // Sanitize input before analysis and saving (Security recommendation)
+      const cleanTranscript = DOMPurify.sanitize(transcript); // Requires DOMPurify library if used
+      const { positives, negatives, intentii } = analyzeText(cleanTranscript);
+      const { wpm, breathingFeedback } = analyzeBreathing(cleanTranscript, duration);
 
       const sessionData = {
         time: new Date().toLocaleString('ro-RO', { dateStyle: 'medium', timeStyle: 'short' }),
-        transcript: transcript,
+        transcript: cleanTranscript,
         duration: duration.toFixed(0),
         analysis: { positives, negatives, highWords: [], lowWords: [], intentii, wpm, breathingFeedback }
       };
@@ -889,6 +963,10 @@
     }
 
     // --- Logică Gemini API (Inspirație) ---
+    /**
+     * Generează o frază inspirațională folosind Gemini API.
+     * Notă: În producție, cheia API ar trebui să fie protejată printr-un backend-proxy.
+     */
     async function generateInspiration() {
       inspirationText.textContent = '';
       loadingSpinner.style.display = 'block';
@@ -899,7 +977,7 @@
         const prompt = "Generează o frază scurtă, pozitivă și inspirațională despre auto-reflecție, creștere personală sau liniște interioară. Fraza să fie concisă și să inspire calm.";
         chatHistory.push({ role: "user", parts: [{ text: prompt }] });
         const payload = { contents: chatHistory };
-        const apiKey = "";
+        const apiKey = ""; // Lăsați gol pentru ca Canvas să furnizeze cheia API în runtime
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
         const response = await fetch(apiUrl, {
@@ -924,14 +1002,25 @@
     }
 
     // --- Logică MyGoals Page ---
+    /**
+     * Adaugă un obiectiv în DOM.
+     * @param {string} goal - Textul obiectivului.
+     */
     function addGoalToDOM(goal) {
+      // Sanitize input before adding to DOM (Security recommendation)
+      const cleanGoal = DOMPurify.sanitize(goal); // Requires DOMPurify library if used
       const div = document.createElement('div');
       div.className = 'glass p-3 flex items-center justify-between';
-      div.innerHTML = `<span class="block text-gray-800">📝 ${goal}</span><button class="delete-goal-button text-red-500 hover:text-red-700 ml-4 text-xl">&times;</button>`;
+      div.innerHTML = `<span class="block text-gray-800">📝 ${cleanGoal}</span><button class="delete-goal-button text-red-500 hover:text-red-700 ml-4 text-xl">&times;</button>`;
       goalsList.appendChild(div);
       div.querySelector('.delete-goal-button').addEventListener('click', () => removeGoalFromDOM(goal, div));
     }
 
+    /**
+     * Elimină un obiectiv din DOM și localStorage.
+     * @param {string} goalToRemove - Textul obiectivului de eliminat.
+     * @param {HTMLElement} element - Elementul DOM al obiectivului.
+     */
     function removeGoalFromDOM(goalToRemove, element) {
       const index = savedGoals.indexOf(goalToRemove);
       if (index > -1) {
@@ -941,10 +1030,13 @@
       }
     }
 
+    /**
+     * Rafinează un obiectiv folosind Gemini API.
+     */
     async function refineGoal() {
       let goalToRefine = '';
       if (savedGoals.length > 0) {
-        goalToRefine = savedGoals[savedGoals.length - 1];
+        goalToRefine = savedGoals[savedGoals.length - 1]; // Ia ultimul obiectiv adăugat
       } else {
         refineGoalText.textContent = "Nu ai adăugat încă niciun obiectiv. Adaugă unul pentru a primi sugestii.";
         refineLoadingSpinner.style.display = 'none';
@@ -958,7 +1050,7 @@
 
       try {
         let chatHistory = [];
-        const prompt = `Pentru obiectivul "${goalToRefine}", generează o scurtă sugestie de rafinare care să-l facă mai specific și acționabil, sau o afirmație pozitivă legată de atingerea acestui obiectiv. Fii concis și încurajator.`;
+        const prompt = `Pentru obiectivul "${DOMPurify.sanitize(goalToRefine)}", generează o scurtă sugestie de rafinare care să-l facă mai specific și acționabil, sau o afirmație pozitivă legată de atingerea acestui obiectiv. Fii concis și încurajator.`;
         chatHistory.push({ role: "user", parts: [{ text: prompt }] });
         const payload = { contents: chatHistory };
         const apiKey = "";
@@ -986,7 +1078,22 @@
     }
 
     // --- Logică Reports Page ---
+    /**
+     * Populează pagina de rapoarte cu datele sesiunii.
+     * @param {object} session - Obiectul sesiunii.
+     */
     function populateReport(session) {
+      if (!session) { // Handle case where session data might be missing
+        sessionPeriod.textContent = 'Perioadă: N/A';
+        transcriptContent.textContent = 'Nicio sesiune salvată recent.';
+        emotionalScore.textContent = 'N/A';
+        scoreEmoji.textContent = '🤷';
+        highWordsUl.innerHTML = '<li>Niciun cuvânt "High" detectat.</li>';
+        lowWordsUl.innerHTML = '<li>Niciun cuvânt "Low" detectat.</li>';
+        intentiiList.innerHTML = '<li>Nicio intenție detectată.</li>';
+        breathingAnalysis.textContent = 'Fără analiză disponibilă.';
+        return;
+      }
       sessionPeriod.textContent = `Perioadă: ${session.time || 'Timp necunoscut'} (Durată: ${session.duration || 'N/A'} secunde)`;
       transcriptContent.textContent = session.transcript || 'Fără transcriere disponibilă.';
 
@@ -1029,6 +1136,9 @@
     }
 
     // --- Logică History Page ---
+    /**
+     * Încarcă și afișează istoricul sesiunilor din localStorage.
+     */
     function loadHistory() {
       const rawData = localStorage.getItem('lumiye_sessions');
       if (!rawData) {
@@ -1065,30 +1175,51 @@
 
     // --- Inițializare și Evenimente ---
 
-    // Inițializare pagini
+    // Inițializare pagini și încărcare date
     document.addEventListener('DOMContentLoaded', () => {
       updatePagePositions(); // Setează pozițiile inițiale ale paginilor
       loadHistory(); // Încarcă istoricul la pornire
       savedGoals.forEach(addGoalToDOM); // Încarcă obiectivele la pornire
+
+      // Verifică dacă există date de sesiune curente și populează raportul dacă este cazul
+      const currentSessionData = localStorage.getItem('current_session_data');
+      if (currentSessionData) {
+        populateReport(JSON.parse(currentSessionData));
+      } else {
+        populateReport(null); // Afișează un raport gol dacă nu există date
+      }
     });
 
     // Evenimente pentru butonul Soare (înregistrare)
     sun.addEventListener('mousedown', () => {
       if (!isRecording) {
+        // Previne swipe-ul în timpul animației de expansiune
+        isSwiping = true;
         holdTimeout = setTimeout(() => {
           sun.classList.add('expanding');
           sunText.textContent = 'Inspiră profund';
           setTimeout(() => {
             sun.classList.remove('expanding');
             startRecording();
+            isSwiping = false; // Permite swipe-ul după ce începe înregistrarea
           }, 2000);
         }, 1200);
       } else {
         stopRecording();
       }
     });
-    sun.addEventListener('mouseup', () => { if (!isRecording) clearTimeout(holdTimeout); });
-    sun.addEventListener('mouseleave', () => { if (!isRecording) clearTimeout(holdTimeout); });
+    sun.addEventListener('mouseup', () => {
+      if (!isRecording) { // Anulează doar dacă nu am intrat în modul de înregistrare
+        clearTimeout(holdTimeout);
+        isSwiping = false; // Resetăm flag-ul de swipe
+      }
+    });
+    sun.addEventListener('mouseleave', () => {
+      if (!isRecording) { // Anulează doar dacă nu am intrat în modul de înregistrare
+        clearTimeout(holdTimeout);
+        isSwiping = false; // Resetăm flag-ul de swipe
+      }
+    });
 
     // Evenimente pentru modalul de inspirație
     closeModalButton.addEventListener('click', () => { inspirationModal.style.display = 'none'; });
@@ -1103,9 +1234,9 @@
       e.preventDefault();
       const goal = goalInput.value.trim();
       if (goal) {
-        savedGoals.push(goal);
-        localStorage.setItem('myGoals', JSON.stringify(savedGoals));
-        addGoalToDOM(goal);
+        addGoalToDOM(goal); // Adaugă în DOM
+        savedGoals.push(goal); // Adaugă în array-ul local
+        localStorage.setItem('myGoals', JSON.stringify(savedGoals)); // Salvează în localStorage
         goalInput.value = '';
       }
     });
@@ -1113,11 +1244,13 @@
 
     // --- Logică de detectare swipe pentru navigare ---
     appContainer.addEventListener('touchstart', e => {
+      if (isRecording || isSwiping) return; // Blochează swipe-ul în timpul înregistrării sau tranziției
       touchstartX = e.changedTouches[0].screenX;
       touchstartY = e.changedTouches[0].screenY;
     });
 
     appContainer.addEventListener('touchend', e => {
+      if (isRecording || isSwiping) return; // Blochează swipe-ul în timpul înregistrării sau tranziției
       touchendX = e.changedTouches[0].screenX;
       touchendY = e.changedTouches[0].screenY;
       handleGesture();
@@ -1128,89 +1261,31 @@
       const deltaX = touchendX - touchstartX;
       const deltaY = touchendY - touchstartY;
 
-      if (isRecording) return; // Dezactivează swipe-ul în timpul înregistrării
+      // Determină dacă swipe-ul este mai degrabă orizontal sau vertical
+      const isHorizontalSwipe = Math.abs(deltaX) > Math.abs(deltaY);
 
-      // Prioritizează swipe-ul dominant (orizontal sau vertical)
-      if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > swipeThreshold) {
-        if (deltaY < 0) { // Swipe Up (tragi de jos în sus, vrei pagina de jos)
-          if (currentPageId === 'journal') navigateTo('mygoals'); // Journal -> MyGoals
-          else if (currentPageId === 'account') navigateTo('journal'); // Account -> Journal
-          // Adaugă mai multe cazuri pe măsură ce stabilești ordinea
-        } else { // Swipe Down (tragi de sus în jos, vrei pagina de sus)
-          if (currentPageId === 'journal') navigateTo('account'); // Journal -> Account
-          else if (currentPageId === 'mygoals') navigateTo('journal'); // MyGoals -> Journal
-          // Adaugă mai multe cazuri
-        }
-      } else if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > swipeThreshold) {
+      if (isHorizontalSwipe && Math.abs(deltaX) > swipeThreshold) {
         if (deltaX < 0) { // Swipe Left (tragi de la dreapta la stânga, vrei pagina din dreapta)
-          if (currentPageId === 'journal') navigateTo('reports'); // Journal -> Reports
-          else if (currentPageId === 'history') navigateTo('journal'); // History -> Journal
-          // Adaugă mai multe cazuri
+          if (currentPageIndex === pageOrder.indexOf('journal')) navigateTo('reports');
+          else if (currentPageIndex === pageOrder.indexOf('history')) navigateTo('journal'); // History -> Journal
+          // Adaugă mai multe cazuri pentru navigarea orizontală
         } else { // Swipe Right (tragi de la stânga la dreapta, vrei pagina din stânga)
-          if (currentPageId === 'journal') navigateTo('history'); // Journal -> History
-          else if (currentPageId === 'reports') navigateTo('journal'); // Reports -> Journal
-          // Adaugă mai multe cazuri
+          if (currentPageIndex === pageOrder.indexOf('journal')) navigateTo('history');
+          else if (currentPageIndex === pageOrder.indexOf('reports')) navigateTo('journal'); // Reports -> Journal
+          // Adaugă mai multe cazuri pentru navigarea orizontală
+        }
+      } else if (!isHorizontalSwipe && Math.abs(deltaY) > swipeThreshold) {
+        if (deltaY < 0) { // Swipe Up (tragi de jos în sus, vrei pagina de jos)
+          if (currentPageIndex === pageOrder.indexOf('journal')) navigateTo('mygoals');
+          else if (currentPageIndex === pageOrder.indexOf('account')) navigateTo('journal'); // Account -> Journal
+          // Adaugă mai multe cazuri pentru navigarea verticală
+        } else { // Swipe Down (tragi de sus în jos, vrei pagina de sus)
+          if (currentPageIndex === pageOrder.indexOf('journal')) navigateTo('account');
+          else if (currentPageId === pageOrder.indexOf('mygoals')) navigateTo('journal'); // MyGoals -> Journal
+          // Adaugă mai multe cazuri pentru navigarea verticală
         }
       }
-      // Reîncarcă conținutul paginilor la navigare, dacă este necesar
-      if (currentPageId === 'reports') populateReport(JSON.parse(localStorage.getItem('current_session_data')));
-      if (currentPageId === 'history') loadHistory();
-      if (currentPageId === 'mygoals') {
-          goalsList.innerHTML = ''; // Curăță lista înainte de a o repopula
-          savedGoals.forEach(addGoalToDOM);
-      }
     }
-
-    // Funcția pentru a naviga la o pagină specifică
-    function navigateTo(targetPageId) {
-        if (currentPageId === targetPageId) return;
-
-        // Ascunde etichetele paginii curente
-        pages[currentPageId].querySelectorAll('.page-label').forEach(label => label.style.opacity = '0');
-        pages[currentPageId].style.pointerEvents = 'none'; // Dezactivează interacțiunile paginii curente
-
-        // Muta pagina curentă în afara vizualizării
-        pages[currentPageId].classList.remove('page-center');
-        // Adaugă o clasă de "ieșire" pentru a simula mișcarea corectă
-        let exitClass = '';
-        // Determină direcția de ieșire a paginii curente în funcție de pagina țintă
-        if (targetPageId === 'account') exitClass = 'page-bottom'; // Dacă mergem la Account (sus), Journal iese în jos
-        else if (targetPageId === 'mygoals') exitClass = 'page-top'; // Dacă mergem la MyGoals (jos), Journal iese în sus
-        else if (targetPageId === 'reports') exitClass = 'page-left'; // Dacă mergem la Reports (dreapta), Journal iese în stânga
-        else if (targetPageId === 'history') exitClass = 'page-right'; // Dacă mergem la History (stânga), Journal iese în dreapta
-        pages[currentPageId].classList.add(exitClass);
-
-
-        // Setează pagina țintă ca pagină curentă
-        currentPageId = targetPageId;
-
-        // Muta pagina țintă în centru
-        pages[currentPageId].classList.remove('page-top', 'page-bottom', 'page-left', 'page-right');
-        pages[currentPageId].classList.add('page-center');
-        pages[currentPageId].style.pointerEvents = 'auto'; // Activează interacțiunile pentru noua pagină centrală
-
-        // Reafișează etichetele pentru paginile adiacente
-        setTimeout(() => {
-            // Ascunde etichetele paginii curente (dacă nu sunt deja ascunse de stilul page-center)
-            pages[currentPageId].querySelectorAll('.page-label').forEach(label => label.style.opacity = '0');
-            // Afișează etichetele pentru paginile adiacente
-            for (const id in pages) {
-                if (id !== currentPageId) {
-                    pages[id].querySelectorAll('.page-label').forEach(label => label.style.opacity = '1');
-                }
-            }
-        }, 500); // Așteaptă ca tranziția să se termine
-    }
-
-    // Adaugă evenimente de click pentru etichetele paginilor (ca fallback/alternativă la swipe)
-    document.querySelectorAll('.page-label').forEach(label => {
-        label.addEventListener('click', (e) => {
-            const targetPageId = e.target.dataset.targetPage; // Folosim data-target-page
-            if (targetPageId) {
-                navigateTo(targetPageId);
-            }
-        });
-    });
 
   </script>
 </body>

@@ -7,7 +7,7 @@
   <!-- SEO Meta -->
   <meta name="description" content="LumiYE – jurnal audio cu AI pentru reflecție și progres personal.">
   <meta property="og:title" content="LumiYE – Spațiul Tău cu AI" />
-  <meta property="og:description" content="Înregistrează gânduri, primește feedback, urmărește progresul." />
+  <meta property="og:description" content="Înregistrează gândurile, primește feedback, urmărește progresul." />
   <meta property="og:image" content="https://placehold.co/1200x630/000000/FFFFFF?text=LumiYE_Share" />
   <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#C7EDE6" />
@@ -325,12 +325,12 @@
 </head>
 <body>
   <!-- Main background with Earth-Sunrise image or video -->
-  <picture>
+  <video autoplay muted loop class="background-media" id="backgroundMedia">
     <!-- Video source (replace with your actual video path) -->
-    <source srcset="assets/background.mp4" type="video/mp4" onerror="this.parentNode.removeChild(this); document.getElementById('backgroundMedia').src='assets/fundal Lum 1.jpg'; console.warn('Video background failed to load, falling back to image.');">
-    <!-- Image fallback (replace with your actual image path) -->
-    <img src="assets/fundal Lum 1.jpg" alt="Earth Sunrise Background" class="background-media" id="backgroundMedia">
-  </picture>
+    <source src="assets/background.mp4" type="video/mp4">
+    <!-- Fallback image if video is not supported or fails to load -->
+    <img src="assets/fundal Lum 1.jpg" alt="Earth Sunrise Background">
+  </video>
   <!-- IMPORTANT: Replace "assets/background.mp4" and "assets/fundal Lum 1.jpg" with your actual file paths. -->
 
   <!-- Main app container -->

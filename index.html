@@ -1,1366 +1,365 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LumiYE – Spațiul Tău</title>
-  <!-- SEO Meta -->
-  <meta name="description" content="LumiYE – jurnal audio cu AI pentru reflecție și progres personal.">
-  <meta property="og:title" content="LumiYE – Spațiul Tău cu AI" />
-  <meta property="og:description" content="Înregistrează gândurile, primește feedback, urmărește progresul." />
-  <meta property="og:image" content="https://placehold.co/1200x630/000000/FFFFFF?text=LumiYE_Share" />
-  <meta name="robots" content="index, follow" />
-  <meta name="theme-color" content="#C7EDE6" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audioform - Înregistrare Audio</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/idb-keyval@6/dist/umd.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a202c, #2d3748);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .status-indicator {
+            width: 8px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+        }
+        .status-green { background-color: #4CAF50; }
+        .status-red { background-color: #F44336; }
+        .status-yellow { background-color: #FFC107; }
 
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
+        /* Custom scrollbar for activity list */
+        .scrollable-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        .scrollable-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .scrollable-list::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        .scrollable-list::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+        }
 
-  <!-- DOMPurify Library for XSS prevention -->
-  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
+        /* FAB pulse animation */
+        .pulse {
+            animation: pulse-animation 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+        }
+        @keyframes pulse-animation {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
 
-  <!-- CSS Styles (assets/style.css) -->
-  <style>
-    /* General styles for body and html */
-    body, html {
-      margin: 0;
-      padding: 0;
-      overflow: hidden; /* Hide scrollbars for carousel effect */
-      font-family: 'Inter', sans-serif;
-      color: #2E2E2E; /* Dark gray text */
-      height: 100vh;
-      width: 100vw;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      touch-action: pan-x pan-y; /* Allows vertical + horizontal swipe */
-    }
-
-    /* Background video or fallback image */
-    .background-media {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: 0;
-      filter: brightness(0.8); /* Adjust brightness for text readability */
-      transition: filter 0.5s ease-in-out; /* Transition for pulsation effect */
-    }
-
-    /* Main app container */
-    #app-container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      overflow: hidden; /* Crucial for hiding parts of pages not in center */
-    }
-
-    /* Base styles for each page */
-    .app-page {
-      position: absolute;
-      /* Adjusted dimensions for carousel effect */
-      width: 80vw; /* Smaller than full screen */
-      height: 80vh; /* Smaller than full screen */
-      top: 10vh; /* Center vertically */
-      left: 10vw; /* Center horizontally */
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background-color: rgba(255, 255, 255, 0.05); /* Semi-transparent background for glass effect */
-      backdrop-filter: blur(8px); /* Blur effect for background pages */
-      transition: transform 0.5s ease-out, opacity 0.5s ease, z-index 0.5s step-end; /* Smooth transitions */
-      z-index: 5; /* Base z-index */
-      box-sizing: border-box;
-      padding: 20px;
-      color: #2E2E2E; /* Default text color for pages */
-      border-radius: 12px; /* Rounded corners for pages */
-    }
-
-    /* Page positions */
-    .page-center {
-      transform: translateX(0) translateY(0);
-      opacity: 1;
-      z-index: 10; /* Center page is on top */
-      pointer-events: auto; /* Allow interactions */
-    }
-    .page-top {
-      transform: translateY(calc(-80vh - 5vh)); /* Positioned above, partially visible */
-      opacity: 0.7;
-      pointer-events: none; /* Disallow interactions when partially visible */
-      z-index: 6;
-    }
-    .page-bottom {
-      transform: translateY(calc(80vh + 5vh)); /* Positioned below, partially visible */
-      opacity: 0.7;
-      pointer-events: none;
-      z-index: 6;
-    }
-    .page-left {
-      transform: translateX(calc(-80vw - 5vw)); /* Positioned left, partially visible */
-      opacity: 0.7;
-      pointer-events: none;
-      z-index: 6;
-    }
-    .page-right {
-      transform: translateX(calc(80vw + 5vw)); /* Positioned right, partially visible */
-      opacity: 0.7;
-      pointer-events: none;
-      z-index: 6;
-    }
-
-    /* Page labels */
-    .page-label {
-      position: absolute;
-      background-color: rgba(255, 255, 255, 0.2);
-      color: white;
-      padding: 10px 16px; /* Increase hit area */
-      border-radius: 8px;
-      font-size: 0.9rem; /* Increase font size */
-      font-weight: bold;
-      opacity: 0; /* Hidden by default */
-      transition: opacity 0.3s ease;
-      pointer-events: auto; /* Allow click on label */
-      cursor: pointer;
-      white-space: nowrap; /* Prevent text wrapping */
-    }
-    .page-label:hover {
-      background-color: rgba(255, 255, 255, 0.3);
-    }
-
-    /* Label visibility based on page position */
-    .page-top .label-bottom { opacity: 1; bottom: 10px; left: 50%; transform: translateX(-50%); }
-    .page-bottom .label-top { opacity: 1; top: 10px; left: 50%; transform: translateX(-50%); }
-    .page-left .label-right { opacity: 1; right: 10px; top: 50%; transform: translateY(-50%); }
-    .page-right .label-left { opacity: 1; left: 10px; top: 50%; transform: translateY(-50%); }
-
-    /* Specific styles for Journal page (Home) */
-    #journal-page {
-      background-color: transparent; /* Journal uses the main background */
-    }
-
-    /* Recording controls */
-    .record-controls {
-      display: flex;
-      gap: 1rem;
-      margin-top: 2rem;
-      z-index: 20;
-    }
-    .record-button {
-      @apply w-20 h-20 rounded-full flex items-center justify-center text-white text-3xl shadow-lg cursor-pointer;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-    }
-    .record-button.start { background-color: #4CAF50; /* Green */ }
-    .record-button.pause { background-color: #FFC107; /* Amber */ }
-    .record-button.stop { background-color: #F44336; /* Red */ }
-    .record-button:active { transform: scale(0.95); }
-
-    /* Equalizer styles */
-    .equalizer {
-      display: flex;
-      justify-content: center;
-      align-items: end;
-      height: 40px;
-      gap: 4px;
-      margin-top: 12px;
-    }
-    .bar {
-      width: 4px;
-      height: 10px;
-      background: #C7EDE6; /* Mint green for bars */
-      animation: bounce 1s infinite ease-in-out;
-    }
-    .bar:nth-child(2) { animation-delay: 0.1s; }
-    .bar:nth-child(3) { animation-delay: 0.2s; }
-    .bar:nth-child(4) { animation-delay: 0.3s; }
-    .bar:nth-child(5) { animation-delay: 0.4s; }
-    @keyframes bounce {
-      0%, 100% { transform: scaleY(1); }
-      50% { transform: scaleY(2); }
-    }
-    /* Hide recording section initially */
-    #rec-section {
-      display: none;
-    }
-    /* Show recording section when active */
-    .recording-active #rec-section {
-      display: flex; /* Use flex to center content */
-    }
-
-    /* Modal styles */
-    .modal {
-      display: none; /* Hidden by default */
-      position: fixed; /* Fixed position on screen */
-      z-index: 100; /* On top of all elements */
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto; /* Allow scroll if content is too large */
-      background-color: rgba(0,0,0,0.4); /* Semi-transparent background */
-      backdrop-filter: blur(5px); /* Blur effect */
-      align-items: center;
-      justify-content: center;
-    }
-    .modal-content {
-      background-color: #FDFBF6; /* Warm beige background */
-      margin: auto;
-      padding: 20px;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 500px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      position: relative;
-      color: #2E2E2E;
-    }
-    .close-button {
-      color: #aaa;
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 28px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .close-button:hover,
-    .close-button:focus {
-      color: #2E2E2E;
-      text-decoration: none;
-      cursor: pointer;
-    }
-    .loading-spinner {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #C7EDE6; /* Mint green */
-      border-radius: 50%;
-      width: 30px;
-      height: 30px;
-      animation: spin 1s linear infinite;
-      margin: 20px auto;
-      display: none; /* Hidden by default */
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    /* Live transcript area */
-    .transcript-area {
-      @apply w-full max-w-2xl bg-white/50 backdrop-blur-sm border border-white/30 rounded-xl shadow-lg p-6 overflow-y-auto;
-      min-height: 200px;
-      max-height: 60vh;
-      color: #2E2E2E;
-      margin-top: 20px; /* Space below welcome message */
-      display: none; /* Hidden initially */
-    }
-    .transcript-area p {
-      color: #2E2E2E;
-    }
-    /* Subtle animation for appearing sentences */
-    .sentence-pop-in {
-      animation: popIn 0.5s ease-out forwards;
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    @keyframes popIn {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* Background pulsation during recording */
-    .pulsating-background {
-      animation: backgroundPulse 16s infinite ease-in-out; /* 4s grow, 4s hold, 8s shrink */
-    }
-    @keyframes backgroundPulse {
-      0% { filter: brightness(0.8); }
-      25% { filter: brightness(1.0); } /* Grow for 4s */
-      50% { filter: brightness(1.0); } /* Hold for 4s */
-      100% { filter: brightness(0.8); } /* Shrink for 8s (total 16s cycle) */
-    }
-
-    /* Class for hiding elements */
-    .hidden-element {
-      opacity: 0;
-      pointer-events: none;
-      visibility: hidden;
-      transition: opacity 0.5s ease;
-    }
-
-    /* MyGoals page styles */
-    .input-glass {
-      @apply bg-white/30 border border-white/40 rounded-md px-3 py-2 text-gray-800 w-full;
-    }
-    .input-glass::placeholder {
-      color: #718096;
-    }
-    .action-button {
-      @apply bg-blue-300 hover:bg-blue-400 text-white font-medium py-2 px-4 rounded-full transition-colors duration-200;
-    }
-    .glass {
-      @apply backdrop-blur-lg bg-white/50 border border-white/30 rounded-xl shadow-lg;
-    }
-
-    /* Reports page styles */
-    .score-emoji {
-      font-size: 2.5rem;
-    }
-    .positive-text {
-      color: #10B981;
-    }
-    .negative-text {
-      color: #EF4444;
-    }
-    .intent-text {
-      color: #FACC15;
-    }
-
-    /* History page styles */
-    .session-card {
-      @apply bg-white/50 backdrop-blur-sm shadow p-4 rounded-xl border border-white/30;
-    }
-  </style>
+        /* VuMeter basic styling */
+        #vuMeter {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px; /* Adjust size as needed */
+            height: 60px; /* Adjust size as needed */
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.3);
+            opacity: 0; /* Hidden by default */
+            transition: opacity 0.3s ease-in-out;
+            pointer-events: none; /* Allows clicks to pass through */
+            z-index: 0; /* Behind the FAB text */
+        }
+        #vuMeter.active {
+            opacity: 1;
+        }
+    </style>
 </head>
-<body>
-  <!-- Main background with Earth-Sunrise image or video -->
-  <video autoplay muted loop class="background-media" id="backgroundMedia">
-    <!-- Video source (replace with your actual video path) -->
-    <source src="assets/background.mp4" type="video/mp4">
-    <!-- Fallback image if video is not supported or fails to load -->
-    <img src="assets/fundal Lum 1.jpg" alt="Earth Sunrise Background">
-  </video>
-  <!-- IMPORTANT: Replace "assets/background.mp4" and "assets/fundal Lum 1.jpg" with your actual file paths. -->
+<body class="bg-gray-900 text-white">
 
-  <!-- Main app container -->
-  <div id="app-container" class="relative w-full h-100vh">
-  
-    <!-- PAGE 1: JOURNAL (HOME) -->
-    <div id="journal-page" class="app-page page-center">
-      <!-- Page labels for navigation - visible only when page is NOT in center -->
-      <div class="page-label label-bottom" data-target-page="journal">Journal</div>
-      <div class="page-label label-top" data-target-page="journal">Journal</div>
-      <div class="page-label label-left" data-target-page="journal">Journal</div>
-      <div class="page-label label-right" data-target-page="journal">Journal</div>
+    <div class="relative w-full max-w-md mx-auto p-4">
 
-      <!-- Rotating text messages -->
-      <div id="rotatingMessages" class="text-center px-4 z-10 text-white text-lg font-medium">
-        <p class="message-item">tu, cu tine ... o resursă inepuizabilă :)</p>
-        <!-- Other messages will be added/rotated by JS -->
-      </div>
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-extrabold text-white mb-2">Audioform</h1>
+            <p class="text-indigo-200">Simplifică-ți fluxul de lucru prin înregistrări vocale.</p>
+        </header>
 
-      <!-- Recording controls (Start/Pause/Stop) -->
-      <div id="recordingControls" class="record-controls">
-        <button id="startButton" class="record-button start">▶️</button>
-        <button id="pauseButton" class="record-button pause hidden">⏸️</button>
-        <button id="stopButton" class="record-button stop hidden">⏹️</button>
-      </div>
-
-      <!-- Equalizer and status text (visible only when recording is active) -->
-      <div id="rec-section" class="absolute bottom-6 w-full flex-col items-center z-10 text-sm text-white">
-        <div class="equalizer">
-          <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        <div class="glass p-6 rounded-xl shadow-lg mb-8">
+            <h2 class="text-2xl font-semibold mb-3">Obiectiv curent:</h2>
+            <div class="flex items-center text-indigo-100 mb-4">
+                <svg class="w-6 h-6 mr-2 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                <span>Finalizarea raportului lunar pentru Q2</span>
+            </div>
+            <div class="flex justify-between items-center text-indigo-100 text-sm mb-4">
+                <span>Data limită: 25 Iulie 2025</span>
+                <span class="font-bold text-lg text-indigo-300">75%</span>
+            </div>
+            <div class="w-full bg-gray-700 rounded-full h-2.5">
+                <div class="bg-indigo-500 h-2.5 rounded-full" style="width: 75%;"></div>
+            </div>
+            <button id="viewDetailsButton" class="mt-5 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
+                Vezi detalii
+            </button>
         </div>
-        <p class="mt-2 text-center px-4" id="status-msg">
-          Se memorizează starea ta actuală.<br />
-          <span class="opacity-70 text-xs">Această memorizare va fi exclusiv în telefonul tău și în posesia ta.</span>
-        </p>
-      </div>
 
-      <!-- Live transcript area (hidden initially) -->
-      <div id="transcriptArea" class="transcript-area text-lg leading-relaxed">
-        <p class="text-gray-500 text-center italic">Vorbește liber. LumiYE te ascultă...</p>
-      </div>
+        <div class="glass p-6 rounded-xl shadow-lg mb-8 text-center">
+            <h2 class="text-2xl font-semibold mb-3">Pregătit pentru o nouă înregistrare?</h2>
+            <p class="text-indigo-200 mb-5">Apasă butonul de înregistrare pentru a începe.</p>
 
-      <!-- Inspiration modal (not shown automatically on load) -->
-      <div id="inspirationModal" class="modal">
-        <div class="modal-content">
-          <span class="close-button" id="closeModalButton">&times;</span>
-          <h2 class="text-xl font-semibold mb-4 text-center">✨ Inspirația Ta ✨</h2>
-          <div id="loadingSpinner" class="loading-spinner"></div>
-          <p id="inspirationText" class="text-gray-700 leading-relaxed text-center"></p>
+            <button id="fabRecButton" class="relative w-20 h-20 bg-red-600 hover:bg-red-700 text-white rounded-full flex items-center justify-center text-xl font-bold transition duration-300 shadow-xl mx-auto pulse">
+                REC
+                <div id="vuMeter"></div>
+            </button>
         </div>
-      </div>
+
+        <div class="glass p-6 rounded-xl shadow-lg mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Activitate recentă</h2>
+            <div id="activityList" class="flex flex-col gap-4 max-h-96 overflow-y-auto scrollable-list">
+                <p class="text-indigo-200 text-center" id="noRecordsMessage">Nu există înregistrări salvate încă.</p>
+            </div>
+        </div>
+
+        <div class="glass p-6 rounded-xl shadow-lg mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Șabloane & Statistici</h2>
+            <div class="overflow-x-auto flex snap-x snap-mandatory pb-4 hide-scrollbar">
+                <div class="flex-shrink-0 w-80 snap-center mr-4 glass p-4 rounded-lg flex flex-col items-start">
+                    <h3 class="text-lg font-semibold mb-2">Șablon: Raport Săptămânal</h3>
+                    <p class="text-sm text-indigo-200 mb-3">Generează automat un raport pe baza înregistrărilor din această săptămână.</p>
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition duration-300 mt-auto">
+                        Aplică Șablon
+                    </button>
+                </div>
+                <div class="flex-shrink-0 w-80 snap-center glass p-4 rounded-lg flex flex-col items-start">
+                    <h3 class="text-lg font-semibold mb-2">Statistici: Mesaje Confirmate</h3>
+                    <p class="text-sm text-indigo-200 mb-3">Ai 6 mesaje confirmate în ultima lună.</p>
+                    <button class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition duration-300 mt-auto">
+                        Vezi Statistici
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <nav class="fixed bottom-0 left-0 right-0 glass p-4 flex justify-around items-center rounded-t-xl shadow-lg">
+            <a href="#" class="flex flex-col items-center text-indigo-200 hover:text-white transition duration-200">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-9v10a1 1 0 001 1h3m-6-9a1 1 0 011-1h2a1 1 0 011 1v3a1 1 0 01-1 1h-2a1 1 0 01-1-1v-3z"></path></svg>
+                <span class="text-xs mt-1">Acasă</span>
+            </a>
+            <a href="#" class="flex flex-col items-center text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 7v7m0-7H5m14 0v7m0-7H5m7 0v7"></path></svg>
+                <span class="text-xs mt-1">Înregistrare</span>
+            </a>
+            <a href="#" class="flex flex-col items-center text-indigo-200 hover:text-white transition duration-200">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span class="text-xs mt-1">Setări</span>
+            </a>
+        </nav>
+
     </div>
 
-    <!-- PAGE 2: REPORTS -->
-    <div id="reports-page" class="app-page page-right">
-      <div class="page-label label-bottom" data-target-page="reports">Reports</div>
-      <div class="page-label label-top" data-target-page="reports">Reports</div>
-      <div class="page-label label-left" data-target-page="reports">Reports</div>
-      <div class="page-label label-right" data-target-page="reports">Reports</div>
+    <script>
+        const fabRecButton = document.getElementById('fabRecButton');
+        const vuMeter = document.getElementById('vuMeter');
+        const activityListContainer = document.getElementById('activityList');
+        const noRecordsMessage = document.getElementById('noRecordsMessage');
+        const viewDetailsButton = document.getElementById('viewDetailsButton');
 
-      <div class="card w-full max-w-2xl mx-auto">
-        <h1 class="text-2xl font-bold text-gray-800 text-center">Raportul Sesiunii Tale</h1>
-        <p class="mt-2 text-sm text-gray-500 text-center" id="sessionPeriod">Perioadă: N/A</p>
+        let mediaRecorder;
+        let audioChunks = [];
+        let isRecording = false;
 
-        <div class="mt-6 text-center">
-          <h2 class="section-title">Starea Emoțională Generală</h2>
-          <p id="emotionalScore" class="text-3xl font-bold"></p>
-          <p id="scoreEmoji" class="score-emoji mt-2"></p>
-        </div>
+        // Function to save audio record using IndexedDB (idb-keyval)
+        async function saveAudioRecord(blob) {
+            const now = new Date();
+            const id = crypto.randomUUID();
 
-        <div class="mt-4">
-          <h2 class="section-title">Transcriere</h2>
-          <p id="transcriptContent" class="text-gray-700 leading-relaxed whitespace-pre-wrap">
-            Fără transcriere disponibilă.
-          </p>
-        </div>
+            const record = {
+                id: id,
+                nume: ['Popescu', 'Ioana', 'Adrian'][Math.floor(Math.random() * 3)],
+                status: ['confirmat', 'esuat', 'schita'][Math.floor(Math.random() * 3)],
+                ora: now.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' }),
+                // Simulated tasks (NLP part)
+                tasks: [
+                    '1. Trimite raportul către echipă.',
+                    '2. Verifică stocurile la depozit.',
+                    '3. Programează întâlnirea cu clientul X.'
+                ]
+            };
 
-        <div class="mt-6">
-          <h2 class="section-title">Cuvinte Cheie</h2>
-          <div id="highWordsList" class="mt-2">
-            <h3 class="font-semibold positive-text">Cuvinte High:</h3>
-            <ul class="list-disc list-inside text-gray-700" id="highWordsUl">
-              <li>Niciun cuvânt "High" detectat.</li>
-            </ul>
-          </div>
-          <div id="lowWordsList" class="mt-4">
-            <h3 class="font-semibold negative-text">Cuvinte Low:</h3>
-            <ul class="list-disc list-inside text-gray-700" id="lowWordsUl">
-              <li>Niciun cuvânt "Low" detectat.</li>
-            </ul>
-          </div>
-        </div>
+            // 1. Save metadata to IndexedDB
+            const metaList = (await idbKeyval.get('recordsMeta')) || [];
+            metaList.unshift(record);
+            await idbKeyval.set('recordsMeta', metaList);
 
-        <div class="mt-4">
-          <h2 class="section-title">Intenții Detectate</h2>
-          <ul class="list-disc list-inside text-gray-700" id="intentiiList">
-            <li>Nicio intenție detectată.</li>
-          </ul>
-        </div>
+            // 2. Save audio file (blob) separately with a unique key
+            await idbKeyval.set(`audio-${id}`, blob);
 
-        <div class="mt-4">
-          <h2 class="section-title">Analiza Respirației</h2>
-          <p id="breathingAnalysis" class="text-gray-700">Fără analiză disponibilă.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- PAGE 3: MY GOALS -->
-    <div id="mygoals-page" class="app-page page-bottom">
-      <div class="page-label label-bottom" data-target-page="mygoals">My Goals</div>
-      <div class="page-label label-top" data-target-page="mygoals">My Goals</div>
-      <div class="page-label label-left" data-target-page="mygoals">My Goals</div>
-      <div class="page-label label-right" data-target-page="mygoals">My Goals</div>
-
-      <div class="max-w-xl mx-auto mt-10 w-full">
-        <h1 class="text-2xl font-semibold mb-6 text-center">🎯 Obiectivele tale</h1>
-
-        <div id="goals-list" class="space-y-4 mb-6">
-          <!-- Goals will be added here -->
-        </div>
-
-        <form id="goal-form" class="glass p-4">
-          <label class="block mb-2 text-gray-700">Adaugă un obiectiv nou:</label>
-          <input id="goal-input" type="text" class="input-glass mb-3" placeholder="ex: Să fiu mai răbdător..." required />
-          <button type="submit" class="action-button w-full">Adaugă Obiectiv</button>
-        </form>
-
-        <!-- New button for refining goal with Gemini API -->
-        <button id="refineGoalButton" class="action-button w-full mt-4">✨ Refinează Obiectivul</button>
-      </div>
-
-      <!-- Modal for refining goal -->
-      <div id="refineGoalModal" class="modal">
-        <div class="modal-content">
-          <span class="close-button" id="closeRefineModalButton">&times;</span>
-          <h2 class="text-xl font-semibold mb-4 text-center">✨ Sugestii pentru Obiectivul Tău ✨</h2>
-          <div id="refineLoadingSpinner" class="loading-spinner"></div>
-          <p id="refineGoalText" class="text-gray-700 leading-relaxed text-center"></p>
-        </div>
-      </div>
-    </div>
-
-    <!-- PAGE 4: HISTORY -->
-    <div id="history-page" class="app-page page-left">
-      <div class="page-label label-bottom" data-target-page="history">History</div>
-      <div class="page-label label-top" data-target-page="history">History</div>
-      <div class="page-label label-left" data-target-page="history">History</div>
-      <div class="page-label label-right" data-target-page="history">History</div>
-
-      <div class="w-full max-w-md mx-auto mt-10 px-4">
-        <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">📜 Istoricul Sesiunilor</h1>
-        <div id="historyList" class="space-y-4">
-          <!-- Content will be generated from localStorage -->
-        </div>
-      </div>
-    </div>
-
-    <!-- PAGE 5: ACCOUNT -->
-    <div id="account-page" class="app-page page-top">
-      <div class="page-label label-bottom" data-target-page="account">Account</div>
-      <div class="page-label label-top" data-target-page="account">Account</div>
-      <div class="page-label label-left" data-target-page="account">Account</div>
-      <div class="page-label label-right" data-target-page="account">Account</div>
-
-      <div class="text-center px-4 max-w-lg mx-auto">
-        <h1 class="text-2xl font-bold text-gray-800 mb-6">⚙️ Contul Meu</h1>
-        <p class="text-gray-700">Detalii despre cont și setări vor fi disponibile aici în versiunile viitoare.</p>
-      </div>
-    </div>
-  </div> <!-- end #app-container -->
-
-  <!-- Main JavaScript (assets/main.js) -->
-  <script>
-    // Initial DOM element references
-    const appContainer = document.getElementById('app-container');
-    const journalPage = document.getElementById('journal-page');
-    const reportsPage = document.getElementById('reports-page');
-    const mygoalsPage = document.getElementById('mygoals-page');
-    const historyPage = document.getElementById('history-page');
-    const accountPage = document.getElementById('account-page');
-    const backgroundMedia = document.getElementById('backgroundMedia'); // Reference to background media element
-
-    const pages = {
-      'journal': journalPage,
-      'reports': reportsPage,
-      'mygoals': mygoalsPage,
-      'history': historyPage,
-      'account': accountPage
-    };
-
-    // Page order for intuitive navigation
-    // This order defines how pages move on swipe
-    const pageOrder = ['account', 'history', 'journal', 'reports', 'mygoals'];
-    let currentPageIndex = pageOrder.indexOf('journal'); // Initial page is Journal (Home)
-
-    // Journal Page elements
-    const welcomeMessage = document.getElementById('welcomeMessage');
-    const rotatingMessagesContainer = document.getElementById('rotatingMessages'); // New element for rotating text
-    const recordingControls = document.getElementById('recordingControls');
-    const startButton = document.getElementById('startButton');
-    const pauseButton = document.getElementById('pauseButton');
-    const stopButton = document.getElementById('stopButton');
-    const recSection = document.getElementById('rec-section');
-    const statusMsg = document.getElementById('status-msg'); // Added for direct reference
-    const transcriptArea = document.getElementById('transcriptArea');
-    const inspirationModal = document.getElementById('inspirationModal');
-    const closeModalButton = document.getElementById('closeModalButton');
-    const inspirationText = document.getElementById('inspirationText');
-    const loadingSpinner = document.getElementById('loadingSpinner');
-
-    let isRecording = false;
-    let isPaused = false; // New state for pause functionality
-    let recognition; // Web Speech API
-    let startTime;
-    let pausedTime = 0; // Time when recording was paused
-    const maxRecordingTime = 120; // 2 minutes in seconds
-    let recordingInterval;
-    let currentTranscript = '';
-    let silenceTimeout;
-
-    // MyGoals Page elements
-    const goalForm = document.getElementById('goal-form');
-    const goalInput = document.getElementById('goal-input');
-    const goalsList = document.getElementById('goals-list');
-    const refineGoalButton = document.getElementById('refineGoalButton');
-    const refineGoalModal = document.getElementById('refineGoalModal');
-    const closeRefineModalButton = document.getElementById('closeRefineModalButton');
-    const refineGoalText = document.getElementById('refineGoalText');
-    const refineLoadingSpinner = document.getElementById('refineLoadingSpinner');
-    let savedGoals = JSON.parse(localStorage.getItem('myGoals') || '[]');
-
-    // Reports Page elements
-    const sessionPeriod = document.getElementById('sessionPeriod');
-    const emotionalScore = document.getElementById('emotionalScore');
-    const scoreEmoji = document.getElementById('scoreEmoji');
-    const transcriptContent = document.getElementById('transcriptContent');
-    const highWordsUl = document.getElementById('highWordsUl');
-    const lowWordsUl = document.getElementById('lowWordsUl');
-    const intentiiList = document.getElementById('intentiiList');
-    const breathingAnalysis = document.getElementById('breathingAnalysis');
-
-    // History Page elements
-    const historyList = document.getElementById('historyList');
-
-    // Swipe variables
-    let touchstartX = 0;
-    let touchstartY = 0;
-    let touchendX = 0;
-    let touchendY = 0;
-    let isSwiping = false; // Flag to prevent multiple swipes during transition
-
-    // Rotating messages content
-    const rotatingMessagesContent = [
-        "tu, cu tine ... o resursă inepuizabilă :)",
-        "Disclaimer: înregistrările sunt arhivate exclusiv în telefonul tău.",
-        "LumiYE: Spațiul tău de liniște. Ascultare. Claritate."
-    ];
-    let currentMessageIndex = 0;
-    let messageRotationInterval;
-
-    // --- Utility Functions ---
-
-    /**
-     * Sanitizes user input using DOMPurify.
-     * @param {string} input - The string to sanitize.
-     * @returns {string} The sanitized string.
-     */
-    function sanitizeInput(input) {
-        return DOMPurify.sanitize(input);
-    }
-
-    /**
-     * Simulates NLP analysis for text.
-     * @param {string} text - Text to analyze.
-     * @returns {object} An object with positive/negative word counts and detected intentions.
-     */
-    function analyzeText(text) {
-      const positiveWords = ['bucurie', 'speranță', 'fericit', 'mulțumit', 'recunoștință', 'curaj', 'potențial', 'vreau', 'succes'];
-      const negativeWords = ['nu pot', 'blocat', 'singur', 'eșec', 'trist', 'copleșit', 'stres', 'îndoieli', 'obosit'];
-
-      let positives = 0;
-      let negatives = 0;
-      const lowerCaseText = text.toLowerCase();
-
-      positiveWords.forEach(word => { if (lowerCaseText.includes(word)) positives++; });
-      negativeWords.forEach(word => { if (lowerCaseText.includes(word)) negatives++; });
-
-      let intentii = [];
-      if (lowerCaseText.includes('nu mai vreau să fiu')) intentii.push(`"nu mai vreau să fiu..." → evitare`);
-      if (lowerCaseText.includes('vreau să devin')) intentii.push(`"vreau să devin..." → progres`);
-      return { positives, negatives, intentii };
-    }
-
-    /**
-     * Simulates breath analysis based on text and duration.
-     * @param {string} text - Transcribed text.
-     * @param {number} durationInSeconds - Recording duration in seconds.
-     * @returns {object} An object with WPM and breathing feedback.
-     */
-    function analyzeBreathing(text, durationInSeconds) {
-      const words = text.split(/\s+/).filter(word => word.length > 0);
-      const wordCount = words.length;
-      const wpm = durationInSeconds > 0 ? (wordCount / durationInSeconds) * 60 : 0;
-      const sentences = text.split(/[.!?]/).filter(s => s.trim().length > 0);
-      const averageSentenceLength = sentences.length > 0 ? wordCount / sentences.length : 0;
-
-      let breathingFeedback = '';
-      if (wpm > 180) breathingFeedback = 'Ai vorbit într-un ritm rapid azi.';
-      else if (wpm < 80 && wpm > 0) breathingFeedback = 'Ai un ritm de vorbire calm.';
-
-      if (sentences.length > 1 && averageSentenceLength < 5) breathingFeedback += ' Pauzele scurte pot semnala agitație.';
-      else if (sentences.length > 1 && averageSentenceLength > 15) breathingFeedback += ' Fluxul coerent al vorbirii.';
-      return { wpm: wpm.toFixed(0), breathingFeedback };
-    }
-
-    /**
-     * Calculates emotional score and corresponding emoji.
-     * @param {number} positives - Number of positive words.
-     * @param {number} negatives - Number of negative words.
-     * @returns {object} An object with the score (text) and emoji.
-     */
-    function getEmotionalScore(positives, negatives) {
-      if (positives === 0 && negatives === 0) return { score: 'Neutru', emoji: '😐' };
-      const total = positives + negatives;
-      const percentagePositive = (positives / total) * 100;
-
-      if (percentagePositive >= 75) return { score: 'Foarte Pozitiv', emoji: '😊' };
-      else if (percentagePositive >= 50) return { score: 'Pozitiv', emoji: '🙂' };
-      else if (percentagePositive >= 25) return { score: 'Echilibrat', emoji: '😌' };
-      else return { score: 'Mai degrabă Negativ', emoji: '😔' };
-    }
-
-    // --- Navigation Logic (Carousel) ---
-
-    /**
-     * Updates CSS positions of pages based on the current page.
-     * Also manages label visibility and pointer-events.
-     */
-    function updatePagePositions() {
-      // Hide all labels initially and disable pointer-events for all pages
-      document.querySelectorAll('.page-label').forEach(label => label.style.opacity = '0');
-      document.querySelectorAll('.app-page').forEach(page => page.style.pointerEvents = 'none');
-
-      for (let i = 0; i < pageOrder.length; i++) {
-        const pageId = pageOrder[i];
-        const pageElement = pages[pageId];
-        pageElement.classList.remove('page-center', 'page-top', 'page-bottom', 'page-left', 'page-right');
-
-        if (i === currentPageIndex) {
-          pageElement.classList.add('page-center');
-          pageElement.style.pointerEvents = 'auto'; // Enable interactions for the center page
-        } else {
-          // Calculate relative position to the current page
-          const relativeIndex = (i - currentPageIndex + pageOrder.length) % pageOrder.length;
-
-          // Assign classes based on relative position to the central page
-          // This logic ensures pages are positioned correctly around the central one
-          if (pageId === 'account') { // Account is 'top' relative to Journal
-            if (relativeIndex === 1) pageElement.classList.add('page-top');
-            else if (relativeIndex === pageOrder.length -1) pageElement.classList.add('page-top');
-          } else if (pageId === 'history') { // History is 'left' relative to Journal
-            if (relativeIndex === 1) pageElement.classList.add('page-left');
-            else if (relativeIndex === pageOrder.length -1) pageElement.classList.add('page-left');
-          } else if (pageId === 'reports') { // Reports is 'right' relative to Journal
-            if (relativeIndex === 1) pageElement.classList.add('page-right');
-            else if (relativeIndex === pageOrder.length -1) pageElement.classList.add('page-right');
-          } else if (pageId === 'mygoals') { // MyGoals is 'bottom' relative to Journal
-            if (relativeIndex === 1) pageElement.classList.add('page-bottom');
-            else if (relativeIndex === pageOrder.length -1) pageElement.classList.add('page-bottom');
-          }
-
-          // Show labels only for visible adjacent pages
-          if (relativeIndex === 1 || relativeIndex === pageOrder.length - 1) {
-            pageElement.querySelectorAll('.page-label').forEach(label => label.style.opacity = '1');
-          }
+            renderActivityList(); // Re-render cards after saving
         }
-      }
-    }
 
-    /**
-     * Navigates to a specific page with a transition animation.
-     * @param {string} targetPageId - ID of the target page (e.g., 'reports', 'mygoals').
-     */
-    function navigateTo(targetPageId) {
-      if (isSwiping) return; // Prevent multiple navigations during transition
-      isSwiping = true;
+        // Function to render activity list from IndexedDB
+        async function renderActivityList() {
+            const container = document.getElementById('activityList');
+            if (!container) return;
 
-      const targetPageIndex = pageOrder.indexOf(targetPageId);
-      if (targetPageIndex === -1 || targetPageIndex === currentPageIndex) {
-        isSwiping = false;
-        return;
-      }
+            const records = (await idbKeyval.get('recordsMeta')) || [];
+            container.innerHTML = ''; // Clear existing list
 
-      const currentPageElement = pages[pageOrder[currentPageIndex]];
-      const targetPageElement = pages[targetPageId];
-
-      // Hide current page labels before transition
-      currentPageElement.querySelectorAll('.page-label').forEach(label => label.style.opacity = '0');
-      currentPageElement.style.pointerEvents = 'none'; // Disable interactions for current page
-
-      // Determine exit transform for current page and enter transform for target page
-      let exitTransform = '';
-      let enterTransform = '';
-
-      // Logic for vertical swipe (corrected)
-      if (targetPageId === 'account' && currentPageId === 'journal') { // Journal (center) -> Account (top)
-          exitTransform = 'translateY(100vh)'; // Journal moves down to reveal Account
-          enterTransform = 'translateY(0)'; // Account enters from top
-      } else if (targetPageId === 'journal' && currentPageId === 'account') { // Account (top) -> Journal (center)
-          exitTransform = 'translateY(-100vh)'; // Account moves up to reveal Journal
-          enterTransform = 'translateY(0)'; // Journal enters from bottom
-      } else if (targetPageId === 'mygoals' && currentPageId === 'journal') { // Journal (center) -> MyGoals (bottom)
-          exitTransform = 'translateY(-100vh)'; // Journal moves up to reveal MyGoals
-          enterTransform = 'translateY(0)'; // MyGoals enters from top
-      } else if (targetPageId === 'journal' && currentPageId === 'mygoals') { // MyGoals (bottom) -> Journal (center)
-          exitTransform = 'translateY(100vh)'; // MyGoals moves down to reveal Journal
-          enterTransform = 'translateY(0)'; // Journal enters from bottom
-      }
-      // Logic for horizontal swipe
-      else if (targetPageId === 'reports' && currentPageId === 'journal') { // Journal (center) -> Reports (right)
-          exitTransform = 'translateX(-100vw)'; // Journal moves left to reveal Reports
-          enterTransform = 'translateX(0)'; // Reports enters from right
-      } else if (targetPageId === 'journal' && currentPageId === 'reports') { // Reports (right) -> Journal (center)
-          exitTransform = 'translateX(100vw)'; // Reports moves right to reveal Journal
-          enterTransform = 'translateX(0)'; // Journal enters from left
-      } else if (targetPageId === 'history' && currentPageId === 'journal') { // Journal (center) -> History (left)
-          exitTransform = 'translateX(100vw)'; // Journal moves right to reveal History
-          enterTransform = 'translateX(0)'; // History enters from left
-      } else if (targetPageId === 'journal' && currentPageId === 'history') { // History (left) -> Journal (center)
-          exitTransform = 'translateX(-100vw)'; // History moves left to reveal Journal
-          enterTransform = 'translateX(0)'; // Journal enters from right
-      } else { // Fallback for transitions between non-directly adjacent pages from Journal
-          // For MVP, we simplify: if it's not a direct transition, we do a visual "reset"
-          // and then bring the target page to the center.
-          currentPageElement.style.transform = 'scale(0.8)'; // Shrink current page
-          targetPageElement.style.transform = 'scale(0.8)'; // Shrink target page before bringing it in
-          setTimeout(() => {
-              currentPageElement.style.transform = 'translateX(0) translateY(0)'; // Reset current page position
-              targetPageElement.style.transform = 'translateX(0) translateY(0)'; // Reset target page position
-          }, 250); // Half of transition duration
-      }
-
-      currentPageElement.style.transform = exitTransform;
-      targetPageElement.style.transform = enterTransform;
-
-      // Update current page index
-      currentPageIndex = targetPageIndex;
-
-      // If recording is active and we navigate away from Journal, pause the session
-      if (isRecording && currentPageId !== 'journal') {
-          pauseRecording();
-          // Store current transcript and start time to resume later
-          sessionStorage.setItem('ongoing_session_transcript', currentTranscript);
-          sessionStorage.setItem('ongoing_session_startTime', startTime);
-      } else if (!isRecording && currentPageId === 'journal') {
-          // If returning to Journal and no ongoing session, clear stored session data
-          sessionStorage.removeItem('ongoing_session_transcript');
-          sessionStorage.removeItem('ongoing_session_startTime');
-      }
-
-      // Re-apply position classes after a short delay to allow transition to complete
-      setTimeout(() => {
-        updatePagePositions();
-        // Reload page content on navigation if necessary
-        if (targetPageId === 'reports') populateReport(JSON.parse(localStorage.getItem('current_session_data')));
-        if (targetPageId === 'history') loadHistory();
-        if (targetPageId === 'mygoals') {
-            goalsList.innerHTML = '';
-            savedGoals.forEach(addGoalToDOM);
-        }
-        // Ensure Journal UI is reset on return
-        if (targetPageId === 'journal') {
-            resetJournalUI();
-        }
-        isSwiping = false; // Allow swipes again after transition completes
-      }, 500); // CSS transition duration
-    }
-
-    /**
-     * Resets the UI state of the Journal (Home) page.
-     * Called after recording or when navigating to/from Journal.
-     */
-    function resetJournalUI() {
-        welcomeMessage.classList.remove('hidden-element');
-        // Hide all recording related elements
-        recordingControls.classList.remove('recording-active'); // Hide recording controls
-        startButton.classList.remove('hidden');
-        pauseButton.classList.add('hidden');
-        stopButton.classList.add('hidden');
-        recSection.style.display = 'none';
-        transcriptArea.style.display = 'none';
-        backgroundMedia.classList.remove('pulsating-background', 'speaking-background'); // Stop background animations
-
-        // Show other pages and their labels
-        for (const id in pages) {
-            if (id !== 'journal') { // Only other pages
-                pages[id].classList.remove('hidden-element');
+            if (records.length === 0) {
+                noRecordsMessage.style.display = 'block'; // Show "No records" message
+                return;
+            } else {
+                noRecordsMessage.style.display = 'none'; // Hide "No records" message
             }
-        }
-        updatePagePositions(); // Re-show labels
-    }
 
+            for (const rec of records) {
+                const statusColor =
+                    rec.status === 'confirmat' ? 'status-green' :
+                    rec.status === 'esuat' ? 'status-red' : 'status-yellow';
 
-    // --- Recording Logic (Journal Page) ---
+                const statusText =
+                    rec.status === 'confirmat' ? 'Confirmat' :
+                    rec.status === 'esuat' ? 'Eșuat' : 'Schiță salvată';
 
-    /**
-     * Starts the voice recording process.
-     */
-    function startRecording() {
-      if (!('webkitSpeechRecognition' in window)) {
-        statusMsg.textContent = 'API-ul de recunoaștere vocală nu este suportat de browserul tău.';
-        return;
-      }
+                const statusClass =
+                    rec.status === 'confirmat' ? 'text-green-300' :
+                    rec.status === 'esuat' ? 'text-red-300' : 'text-amber-300';
 
-      recognition = new webkitSpeechRecognition();
-      recognition.continuous = true;
-      recognition.interimResults = true;
-      recognition.lang = 'ro-RO';
+                // Simplified SVG icons for clarity.
+                const icon =
+                    rec.status === 'confirmat'
+                        ? `<svg class="w-4 h-4 mr-1 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8"/></svg>`
+                        : rec.status === 'esuat'
+                        ? `<svg class="w-4 h-4 mr-1 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2"/></svg>`
+                        : `<svg class="w-4 h-4 mr-1 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`;
 
-      let finalTranscript = '';
+                const card = document.createElement('div');
+                card.className = 'glass p-4 text-white relative flex flex-col items-start rounded-xl';
+                
+                // Get audio blob from IndexedDB and create URL
+                const audioBlob = await idbKeyval.get(`audio-${rec.id}`);
+                const audioURL = audioBlob ? URL.createObjectURL(audioBlob) : ''; // Handle case where blob might not be found
 
-      recognition.onstart = () => {
-        isRecording = true;
-        isPaused = false;
-        startTime = Date.now() - pausedTime; // Resume from paused time
-        
-        // Update button states
-        startButton.classList.add('hidden');
-        pauseButton.classList.remove('hidden');
-        stopButton.classList.remove('hidden');
-
-        recordingControls.classList.add('recording-active'); // Show recording controls
-        backgroundMedia.classList.add('pulsating-background'); // Background pulsation
-        recSection.style.display = 'flex';
-        welcomeMessage.classList.add('hidden-element');
-        transcriptArea.style.display = 'block';
-        transcriptArea.innerHTML = '<p class="text-gray-500 text-center italic">Vorbește liber. LumiYE te ascultă...</p>';
-        currentTranscript = '';
-
-        // Hide all page labels and other pages
-        document.querySelectorAll('.page-label').forEach(label => label.style.opacity = '0');
-        for (const id in pages) {
-            if (id !== 'journal') {
-                pages[id].classList.add('hidden-element');
+                card.innerHTML = `
+                    <div class="status-indicator ${statusColor} rounded-tl-xl rounded-bl-xl"></div>
+                    <div class="pl-3 w-full flex justify-between items-center mb-1">
+                        <span class="font-medium text-lg">${rec.nume}</span>
+                        <span class="${statusClass} text-sm font-semibold">${statusText}</span>
+                    </div>
+                    <div class="pl-3 text-sm text-indigo-100 flex items-center">
+                        ${icon}
+                        Salvat la • ${rec.ora}
+                    </div>
+                    <div class="pl-3 mt-2 w-full">
+                        <audio controls class="w-full rounded-md" ${audioURL ? `src="${audioURL}"` : ''}>
+                            Browserul nu suportă redarea audio.
+                        </audio>
+                    </div>
+                    <div class="pl-3 mt-2 w-full flex justify-between items-center">
+                        <button onclick="alert('${rec.tasks.join('\\n')}')"
+                            class="text-sm text-indigo-300 underline hover:text-indigo-400 transition-colors">
+                            Vezi mesajul generat
+                        </button>
+                        <button onclick="generatePDF(this.parentElement.parentElement)"
+                            class="text-sm text-indigo-300 underline hover:text-indigo-400 transition-colors">
+                            Generează PDF
+                        </button>
+                        <a href="detalii.html?id=${rec.id}"
+                            class="text-sm text-indigo-300 underline hover:text-indigo-400 transition-colors">
+                            Detalii
+                        </a>
+                    </div>
+                `;
+                container.appendChild(card);
             }
         }
 
-        resetSilenceTimeout();
-      };
+        // Function to generate PDF from a card element
+        function generatePDF(cardElement) {
+            const clone = cardElement.cloneNode(true);
 
-      recognition.onresult = (event) => {
-        let hasSpeech = false;
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-          if (event.results[i].isFinal) {
-            finalTranscript += sanitizeInput(event.results[i][0].transcript) + '. '; // Sanitize input
-            const p = document.createElement('p');
-            p.textContent = sanitizeInput(event.results[i][0].transcript);
-            p.classList.add('sentence-pop-in');
-            transcriptArea.appendChild(p);
-            transcriptArea.scrollTop = transcriptArea.scrollHeight;
-            currentTranscript = finalTranscript;
-            hasSpeech = true;
-          }
+            // Remove media elements or interactive buttons from the cloned content for PDF
+            clone.querySelector('audio')?.remove();
+            clone.querySelectorAll('button').forEach(btn => btn.remove());
+            clone.querySelector('a')?.remove(); // Remove 'Detalii' link
+
+            const filename = `Raport_${new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-')}.pdf`;
+
+            const opt = {
+                margin: 0.5,
+                filename: filename,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(clone).save();
         }
 
-        if (hasSpeech) {
-          backgroundMedia.classList.remove('pulsating-background');
-          backgroundMedia.classList.add('speaking-background'); // Contraction when speaking
-          resetSilenceTimeout();
-        } else {
-          backgroundMedia.classList.remove('speaking-background');
-          backgroundMedia.classList.add('pulsating-background'); // Dilation when silent
-        }
-      };
 
-      recognition.onend = () => {
-        if (isRecording) { // Only if not manually stopped
-          isRecording = false;
-          clearTimeout(silenceTimeout);
-          backgroundMedia.classList.remove('pulsating-background', 'speaking-background');
-          recordingControls.classList.remove('recording-active');
-          recSection.style.display = 'none';
-          transcriptArea.style.display = 'none';
-          processSession(currentTranscript);
-        }
-      };
+        fabRecButton.addEventListener('click', async () => {
+            if (!isRecording) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
 
-      recognition.onerror = (event) => {
-        console.error('Voice recognition error:', event.error);
-        statusMsg.textContent = `Eroare: ${event.error}. Te rugăm să încerci din nou.`;
-        isRecording = false;
-        clearTimeout(silenceTimeout);
-        backgroundMedia.classList.remove('pulsating-background', 'speaking-background');
-        recordingControls.classList.remove('recording-active');
-        recSection.style.display = 'none';
-        transcriptArea.style.display = 'none';
-        resetJournalUI(); // Reset Journal UI
-      };
+                    mediaRecorder.ondataavailable = (event) => {
+                        audioChunks.push(event.data);
+                    };
 
-      recognition.start();
+                    mediaRecorder.onstop = () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        saveAudioRecord(audioBlob);
+                        audioChunks = []; // Clear chunks for next recording
 
-      recordingInterval = setTimeout(() => {
-        if (isRecording) stopRecording();
-      }, maxRecordingTime * 1000);
-    }
+                        // Reset FAB to REC and re-enable pulse animation
+                        fabRecButton.textContent = 'REC';
+                        fabRecButton.classList.add('pulse');
+                        vuMeter.classList.remove('active'); // Hide vuMeter
+                        isRecording = false;
 
-    /**
-     * Pauses the voice recording process.
-     */
-    function pauseRecording() {
-        if (isRecording && !isPaused) {
-            recognition.stop(); // Stop recognition to pause
-            isPaused = true;
-            pausedTime = Date.now() - startTime; // Save elapsed time
-            clearTimeout(silenceTimeout);
-            clearTimeout(recordingInterval);
-            backgroundMedia.classList.remove('pulsating-background', 'speaking-background');
-            statusMsg.textContent = 'Sesiune întreruptă. Apasă ▶️ pentru a continua.';
-            
-            // Update button states
-            startButton.classList.remove('hidden');
-            pauseButton.classList.add('hidden');
-            stopButton.classList.remove('hidden'); // Stop button remains visible
-        }
-    }
+                        // Stop the audio stream tracks to release microphone
+                        stream.getTracks().forEach(track => track.stop());
+                    };
 
-    /**
-     * Resumes the voice recording process.
-     */
-    function resumeRecording() {
-        if (isPaused) {
-            startRecording(); // Call startRecording to resume
-            isPaused = false;
-            statusMsg.textContent = 'Se memorizează starea ta actuală.';
-        }
-    }
+                    mediaRecorder.start();
+                    isRecording = true;
 
-    /**
-     * Stops the voice recording process.
-     */
-    function stopRecording() {
-      if (isRecording || isPaused) {
-        if (recognition) recognition.stop(); // Ensure recognition is stopped
-        isRecording = false;
-        isPaused = false;
-        pausedTime = 0; // Reset paused time
-        clearTimeout(silenceTimeout);
-        clearTimeout(recordingInterval);
-        backgroundMedia.classList.remove('pulsating-background', 'speaking-background');
-        recordingControls.classList.remove('recording-active');
-        recSection.style.display = 'none';
-        transcriptArea.style.display = 'none';
-        processSession(currentTranscript);
-      }
-    }
-
-    /**
-     * Resets silence timeout and adjusts background animation.
-     */
-    function resetSilenceTimeout() {
-      clearTimeout(silenceTimeout);
-      backgroundMedia.classList.remove('speaking-background');
-      backgroundMedia.classList.add('pulsating-background');
-      silenceTimeout = setTimeout(() => {
-        if (isRecording) stopRecording();
-        console.log("Recording stopped due to prolonged silence.");
-      }, 10000); // 10 seconds of silence
-    }
-
-    /**
-     * Processes the recording session, analyzes text, and saves data.
-     * @param {string} transcript - Session transcript.
-     */
-    function processSession(transcript) {
-      const duration = (Date.now() - startTime) / 1000;
-      const cleanTranscript = sanitizeInput(transcript); // Sanitize input
-
-      const { positives, negatives, intentii } = analyzeText(cleanTranscript);
-      const { wpm, breathingFeedback } = analyzeBreathing(cleanTranscript, duration);
-
-      const sessionData = {
-        time: new Date().toLocaleString('ro-RO', { dateStyle: 'medium', timeStyle: 'short' }),
-        transcript: cleanTranscript,
-        duration: duration.toFixed(0),
-        analysis: { positives, negatives, highWords: [], lowWords: [], intentii, wpm, breathingFeedback }
-      };
-
-      // Save session to localStorage for history
-      const existingSessions = JSON.parse(localStorage.getItem("lumiye_sessions")) || [];
-      existingSessions.push(sessionData);
-      localStorage.setItem("lumiye_sessions", JSON.stringify(existingSessions));
-      
-      localStorage.setItem('current_session_data', JSON.stringify(sessionData)); // For reports page
-
-      navigateTo('reports');
-      resetJournalUI(); // Reset Journal UI
-    }
-
-    // --- Gemini API Logic (Inspiration) ---
-    /**
-     * Generates an inspirational phrase using Gemini API.
-     * Note: In production, API key should be protected via a backend proxy.
-     */
-    async function generateInspiration() {
-      inspirationText.textContent = '';
-      loadingSpinner.style.display = 'block';
-      inspirationModal.style.display = 'flex';
-
-      try {
-        let chatHistory = [];
-        const prompt = "Generează o frază scurtă, pozitivă și inspirațională despre auto-reflecție, creștere personală sau liniște interioară. Fraza să fie concisă și să inspire calm.";
-        chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-        const payload = { contents: chatHistory };
-        const apiKey = ""; // Leave empty for Canvas to provide API key at runtime
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-        const response = await fetch(apiUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        const result = await response.json();
-
-        if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
-          inspirationText.textContent = result.candidates[0].content.parts[0].text;
-        } else {
-          inspirationText.textContent = "Nu am putut genera inspirație. Te rugăm să încerci din nou.";
-          console.error("API response structure unexpected:", result);
-        }
-      } catch (error) {
-        inspirationText.textContent = "A apărut o eroare la generarea inspirației. Verifică conexiunea la internet.";
-        console.error("Error calling Gemini API:", error);
-      } finally {
-        loadingSpinner.style.display = 'none';
-      }
-    }
-
-    // --- MyGoals Page Logic ---
-    /**
-     * Adds a goal to the DOM.
-     * @param {string} goal - Goal text.
-     */
-    function addGoalToDOM(goal) {
-      const cleanGoal = sanitizeInput(goal); // Sanitize input
-      const div = document.createElement('div');
-      div.className = 'glass p-3 flex items-center justify-between';
-      div.innerHTML = `<span class="block text-gray-800">📝 ${cleanGoal}</span><button class="delete-goal-button text-red-500 hover:text-red-700 ml-4 text-xl">&times;</button>`;
-      goalsList.appendChild(div);
-      div.querySelector('.delete-goal-button').addEventListener('click', () => removeGoalFromDOM(goal, div));
-    }
-
-    /**
-     * Removes a goal from DOM and localStorage.
-     * @param {string} goalToRemove - Goal text to remove.
-     * @param {HTMLElement} element - DOM element of the goal.
-     */
-    function removeGoalFromDOM(goalToRemove, element) {
-      const index = savedGoals.indexOf(goalToRemove);
-      if (index > -1) {
-        savedGoals.splice(index, 1);
-        localStorage.setItem('myGoals', JSON.stringify(savedGoals));
-        element.remove();
-      }
-    }
-
-    /**
-     * Refines a goal using Gemini API.
-     */
-    async function refineGoal() {
-      let goalToRefine = '';
-      if (savedGoals.length > 0) {
-        goalToRefine = savedGoals[savedGoals.length - 1]; // Get the last added goal
-      } else {
-        refineGoalText.textContent = "Nu ai adăugat încă niciun obiectiv. Adaugă unul pentru a primi sugestii.";
-        refineLoadingSpinner.style.display = 'none';
-        refineGoalModal.style.display = 'flex';
-        return;
-      }
-
-      refineGoalText.textContent = '';
-      refineLoadingSpinner.style.display = 'block';
-      refineGoalModal.style.display = 'flex';
-
-      try {
-        let chatHistory = [];
-        const prompt = `Pentru obiectivul "${sanitizeInput(goalToRefine)}", generează o scurtă sugestie de rafinare care să-l facă mai specific și acționabil, sau o afirmație pozitivă legată de atingerea acestui obiectiv. Fii concis și încurajator.`;
-        chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-        const payload = { contents: chatHistory };
-        const apiKey = "";
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-        const response = await fetch(apiUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        const result = await response.json();
-
-        if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
-          refineGoalText.textContent = result.candidates[0].content.parts[0].text;
-        } else {
-          refineGoalText.textContent = "Nu am putut genera sugestii. Te rugăm să încerci din nou.";
-          console.error("API response structure unexpected:", result);
-        }
-      } catch (error) {
-        refineGoalText.textContent = "A apărut o eroare la generarea sugestiilor. Verifică conexiunea la internet.";
-        console.error("Error calling Gemini API:", error);
-      } finally {
-        refineLoadingSpinner.style.display = 'none';
-      }
-    }
-
-    // --- Reports Page Logic ---
-    /**
-     * Populates the reports page with session data.
-     * @param {object} session - Session object.
-     */
-    function populateReport(session) {
-      if (!session) { // Handle case where session data might be missing
-        sessionPeriod.textContent = 'Perioadă: N/A';
-        transcriptContent.textContent = 'Nicio sesiune salvată recent.';
-        emotionalScore.textContent = 'N/A';
-        scoreEmoji.textContent = '🤷';
-        highWordsUl.innerHTML = '<li>Niciun cuvânt "High" detectat.</li>';
-        lowWordsUl.innerHTML = '<li>Niciun cuvânt "Low" detectat.</li>';
-        intentiiList.innerHTML = '<li>Nicio intenție detectată.</li>';
-        breathingAnalysis.textContent = 'Fără analiză disponibilă.';
-        return;
-      }
-      sessionPeriod.textContent = `Perioadă: ${session.time || 'Timp necunoscut'} (Durată: ${session.duration || 'N/A'} secunde)`;
-      transcriptContent.textContent = session.transcript || 'Fără transcriere disponibilă.';
-
-      highWordsUl.innerHTML = '';
-      lowWordsUl.innerHTML = '';
-
-      if (session.analysis.positives > 0) {
-        const li = document.createElement('li');
-        li.textContent = `(Au fost detectate ${session.analysis.positives} cuvinte pozitive)`;
-        highWordsUl.appendChild(li);
-      } else {
-        highWordsUl.innerHTML = '<li>Niciun cuvânt "High" detectat.</li>';
-      }
-
-      if (session.analysis.negatives > 0) {
-        const li = document.createElement('li');
-        li.textContent = `(Au fost detectate ${session.analysis.negatives} cuvinte negative)`;
-        lowWordsUl.appendChild(li);
-      } else {
-        lowWordsUl.innerHTML = '<li>Niciun cuvânt "Low" detectat.</li>';
-      }
-
-      intentiiList.innerHTML = '';
-      if (session.analysis.intentii && session.analysis.intentii.length > 0) {
-        session.analysis.intentii.forEach(intentie => {
-          const li = document.createElement('li');
-          li.textContent = intentie;
-          li.classList.add('intent-text');
-          intentiiList.appendChild(li);
-        });
-      } else {
-        intentiiList.innerHTML = '<li>Nicio intenție detectată.</li>';
-      }
-
-      breathingAnalysis.textContent = session.analysis.breathingFeedback || 'Fără analiză disponibilă.';
-
-      const { score, emoji } = getEmotionalScore(session.analysis.positives, session.analysis.negatives);
-      emotionalScore.textContent = score;
-      scoreEmoji.textContent = emoji;
-    }
-
-    // --- History Page Logic ---
-    /**
-     * Loads and displays session history from localStorage.
-     */
-    function loadHistory() {
-      const rawData = localStorage.getItem('lumiye_sessions');
-      if (!rawData) {
-        historyList.innerHTML = '<p class="text-gray-500 text-center">Nicio sesiune salvată încă.</p>';
-        return;
-      }
-
-      const sessions = JSON.parse(rawData);
-      if (!sessions.length) {
-        historyList.innerHTML = '<p class="text-gray-500 text-center">Nicio sesiune salvată încă.</p>';
-        return;
-      }
-
-      historyList.innerHTML = ''; // Clear list before repopulating
-      sessions.reverse().forEach((session, index) => {
-        const item = document.createElement('div');
-        item.className = 'session-card';
-        const isFirstSession = (sessions.length - 1 - index) === 0;
-
-        item.innerHTML = `
-          <h2 class="text-lg font-semibold text-gray-800">Sesiune #${sessions.length - index} ${isFirstSession ? '<span class="text-blue-500 text-sm">(Origine)</span>' : ''}</h2>
-          <p class="text-sm text-gray-600">🕒 ${session.time || 'Timp necunoscut'} (Durată: ${session.duration || 'N/A'} secunde)</p>
-          <p class="mt-2 text-gray-700 line-clamp-3">${session.transcript || 'Fără transcriere disponibilă.'}</p>
-          <div class="mt-2 text-sm">
-            <span class="text-green-600">Pozitive: ${session.analysis.positives || 0}</span> |
-            <span class="text-red-600">Negative: ${session.analysis.negatives || 0}</span> |
-            <span class="text-blue-500">WPM: ${session.analysis.wpm || 'N/A'}</span>
-          </div>
-        `;
-        historyList.appendChild(item);
-      });
-    }
-
-
-    // --- Initialization and Events ---
-
-    // Initialize pages and load data
-    document.addEventListener('DOMContentLoaded', () => {
-      updatePagePositions(); // Set initial page positions
-      loadHistory(); // Load history on startup
-      savedGoals.forEach(addGoalToDOM); // Load goals on startup
-
-      // Start rotating messages
-      rotateMessages();
-      messageRotationInterval = setInterval(rotateMessages, 8000); // Rotate every 8 seconds
-
-      // Check for ongoing session and update UI
-      const ongoingSessionTranscript = sessionStorage.getItem('ongoing_session_transcript');
-      if (ongoingSessionTranscript) {
-          currentTranscript = ongoingSessionTranscript;
-          isRecording = true; // Indicate that a session is ongoing
-          isPaused = true; // It's paused because we navigated away
-          startTime = parseFloat(sessionStorage.getItem('ongoing_session_startTime')) || Date.now();
-          pausedTime = Date.now() - startTime; // Calculate paused time
-          
-          // Update UI for ongoing session
-          welcomeMessage.classList.add('hidden-element');
-          recordingControls.classList.add('recording-active');
-          startButton.classList.remove('hidden'); // Show start button to resume
-          pauseButton.classList.add('hidden');
-          stopButton.classList.remove('hidden');
-          recSection.style.display = 'flex';
-          transcriptArea.style.display = 'block';
-          transcriptArea.innerHTML = `<p class="text-gray-500 text-center italic">Sesiune anterioară: ${currentTranscript}</p><p class="text-gray-500 text-center italic mt-2">Apasă ▶️ pentru a continua.</p>`;
-          backgroundMedia.classList.remove('pulsating-background', 'speaking-background'); // No animation when paused
-
-          // Hide other pages and labels
-          document.querySelectorAll('.page-label').forEach(label => label.style.opacity = '0');
-          for (const id in pages) {
-              if (id !== 'journal') {
-                  pages[id].classList.add('hidden-element');
-              }
-          }
-      } else {
-          // If no ongoing session, populate reports with last completed session
-          const currentSessionData = localStorage.getItem('current_session_data');
-          if (currentSessionData) {
-            populateReport(JSON.parse(currentSessionData));
-          } else {
-            populateReport(null); // Display empty report if no data
-          }
-      }
-    });
-
-    // Recording control buttons
-    startButton.addEventListener('click', () => {
-        if (!isRecording || isPaused) {
-            resumeRecording();
-        } else {
-            startRecording(); // Should not happen if logic is correct
-        }
-    });
-    pauseButton.addEventListener('click', pauseRecording);
-    stopButton.addEventListener('click', stopRecording);
-
-    // Close modal buttons
-    closeModalButton.addEventListener('click', () => { inspirationModal.style.display = 'none'; });
-    window.addEventListener('click', (event) => { if (event.target == inspirationModal) inspirationModal.style.display = 'none'; });
-
-    closeRefineModalButton.addEventListener('click', () => { refineGoalModal.style.display = 'none'; });
-    window.addEventListener('click', (event) => { if (event.target == refineGoalModal) refineGoalModal.style.display = 'none'; });
-
-    // Goal form and refine button
-    goalForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const goal = goalInput.value.trim();
-      if (goal) {
-        addGoalToDOM(goal);
-        savedGoals.push(goal);
-        localStorage.setItem('myGoals', JSON.stringify(savedGoals));
-        goalInput.value = '';
-      }
-    });
-    refineGoalButton.addEventListener('click', refineGoal);
-
-    // --- Swipe detection logic for navigation ---
-    appContainer.addEventListener('touchstart', e => {
-      if (isRecording || isSwiping) return; // Block swipe during recording or transition
-      touchstartX = e.changedTouches[0].screenX;
-      touchstartY = e.changedTouches[0].screenY;
-    });
-
-    appContainer.addEventListener('touchend', e => {
-      if (isRecording || isSwiping) return; // Block swipe during recording or transition
-      touchendX = e.changedTouches[0].screenX;
-      touchendY = e.changedTouches[0].screenY;
-      handleGesture();
-    });
-
-    // Handle navigation when leaving the page (e.g., app close or tab switch)
-    window.addEventListener('beforeunload', () => {
-        if (isRecording) {
-            recognition.stop(); // Stop recognition
-            sessionStorage.setItem('ongoing_session_transcript', currentTranscript);
-            sessionStorage.setItem('ongoing_session_startTime', startTime);
-        } else {
-            sessionStorage.removeItem('ongoing_session_transcript');
-            sessionStorage.removeItem('ongoing_session_startTime');
-        }
-    });
-
-    // Add click events for page labels (as fallback/alternative to swipe)
-    document.querySelectorAll('.page-label').forEach(label => {
-        label.addEventListener('click', (e) => {
-            const targetPageId = e.target.dataset.targetPage; // Get page ID from data-target-page attribute
-            if (targetPageId) {
-                navigateTo(targetPageId);
+                    // Update FAB for recording state
+                    fabRecButton.textContent = 'STOP';
+                    fabRecButton.classList.remove('pulse'); // Remove pulse while recording
+                    vuMeter.classList.add('active'); // Show vuMeter
+                } catch (err) {
+                    console.error('Error accessing microphone:', err);
+                    alert('Nu am putut accesa microfonul. Asigură-te că ai acordat permisiunea.');
+                }
+            } else {
+                mediaRecorder.stop();
             }
         });
-    });
 
-    // --- Rotating Messages Logic ---
-    function rotateMessages() {
-        rotatingMessagesContainer.innerHTML = `<p class="message-item">${rotatingMessagesContent[currentMessageIndex]}</p>`;
-        currentMessageIndex = (currentMessageIndex + 1) % rotatingMessagesContent.length;
-    }
-  </script>
+        // "Vezi detalii" button functionality on main page (placeholder)
+        viewDetailsButton.addEventListener('click', () => {
+            alert('Funcționalitatea "Vezi detalii" pentru obiectivul curent va fi implementată ulterior.');
+        });
+
+        // Run renderActivityList on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Optional: Uncomment to clear old localStorage data after migration
+            // localStorage.removeItem('audioRecords');
+            await renderActivityList();
+        });
+
+    </script>
 </body>
 </html>

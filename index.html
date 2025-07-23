@@ -1,365 +1,77 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audioform - Înregistrare Audio</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/idb-keyval@6/dist/umd.js"></script>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #1a202c, #2d3748);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 2rem;
-            padding-bottom: 2rem;
-        }
-        .glass {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .status-indicator {
-            width: 8px;
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-        }
-        .status-green { background-color: #4CAF50; }
-        .status-red { background-color: #F44336; }
-        .status-yellow { background-color: #FFC107; }
-
-        /* Custom scrollbar for activity list */
-        .scrollable-list::-webkit-scrollbar {
-            width: 8px;
-        }
-        .scrollable-list::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-        .scrollable-list::-webkit-scrollbar-thumb {
-            background-color: rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-        }
-        .scrollable-list::-webkit-scrollbar-thumb:hover {
-            background-color: rgba(255, 255, 255, 0.5);
-        }
-
-        /* FAB pulse animation */
-        .pulse {
-            animation: pulse-animation 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
-        }
-        @keyframes pulse-animation {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
-            }
-        }
-
-        /* VuMeter basic styling */
-        #vuMeter {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60px; /* Adjust size as needed */
-            height: 60px; /* Adjust size as needed */
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.3);
-            opacity: 0; /* Hidden by default */
-            transition: opacity 0.3s ease-in-out;
-            pointer-events: none; /* Allows clicks to pass through */
-            z-index: 0; /* Behind the FAB text */
-        }
-        #vuMeter.active {
-            opacity: 1;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audioform - Înregistrare Audio</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/idb-keyval@6/dist/umd.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #1a202c, #2d3748);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 2rem;
+      padding-bottom: 2rem;
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .pulse {
+      animation: pulse-animation 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+    }
+    @keyframes pulse-animation {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    #vuMeter {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.3);
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+      pointer-events: none;
+      z-index: 0;
+    }
+    #vuMeter.active { opacity: 1; }
+  </style>
 </head>
 <body class="bg-gray-900 text-white">
 
-    <div class="relative w-full max-w-md mx-auto p-4">
+  <div class="relative w-full max-w-md mx-auto p-4">
+    <header class="text-center mb-8">
+      <h1 class="text-4xl font-extrabold text-white mb-1">AudioForm</h1>
+      <p class="text-indigo-200 text-base">Speak Once. Get Things Done.</p>
+    </header>
 
-        <header class="text-center mb-8">
-            <h1 class="text-4xl font-extrabold text-white mb-2">Audioform</h1>
-            <p class="text-indigo-200">Simplifică-ți fluxul de lucru prin înregistrări vocale.</p>
-        </header>
+    <div class="glass p-6 rounded-xl shadow-lg mb-8 text-center">
+      <h2 class="text-2xl font-semibold mb-3">Nouă înregistrare</h2>
+      <button id="fabRecButton" class="relative w-20 h-20 bg-red-600 hover:bg-red-700 text-white rounded-full flex items-center justify-center text-xl font-bold transition duration-300 shadow-xl mx-auto pulse">
+        REC
+        <div id="vuMeter"></div>
+      </button>
 
-        <div class="glass p-6 rounded-xl shadow-lg mb-8">
-            <h2 class="text-2xl font-semibold mb-3">Obiectiv curent:</h2>
-            <div class="flex items-center text-indigo-100 mb-4">
-                <svg class="w-6 h-6 mr-2 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                <span>Finalizarea raportului lunar pentru Q2</span>
-            </div>
-            <div class="flex justify-between items-center text-indigo-100 text-sm mb-4">
-                <span>Data limită: 25 Iulie 2025</span>
-                <span class="font-bold text-lg text-indigo-300">75%</span>
-            </div>
-            <div class="w-full bg-gray-700 rounded-full h-2.5">
-                <div class="bg-indigo-500 h-2.5 rounded-full" style="width: 75%;"></div>
-            </div>
-            <button id="viewDetailsButton" class="mt-5 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
-                Vezi detalii
-            </button>
-        </div>
-
-        <div class="glass p-6 rounded-xl shadow-lg mb-8 text-center">
-            <h2 class="text-2xl font-semibold mb-3">Pregătit pentru o nouă înregistrare?</h2>
-            <p class="text-indigo-200 mb-5">Apasă butonul de înregistrare pentru a începe.</p>
-
-            <button id="fabRecButton" class="relative w-20 h-20 bg-red-600 hover:bg-red-700 text-white rounded-full flex items-center justify-center text-xl font-bold transition duration-300 shadow-xl mx-auto pulse">
-                REC
-                <div id="vuMeter"></div>
-            </button>
-        </div>
-
-        <div class="glass p-6 rounded-xl shadow-lg mb-8">
-            <h2 class="text-2xl font-semibold mb-4">Activitate recentă</h2>
-            <div id="activityList" class="flex flex-col gap-4 max-h-96 overflow-y-auto scrollable-list">
-                <p class="text-indigo-200 text-center" id="noRecordsMessage">Nu există înregistrări salvate încă.</p>
-            </div>
-        </div>
-
-        <div class="glass p-6 rounded-xl shadow-lg mb-8">
-            <h2 class="text-2xl font-semibold mb-4">Șabloane & Statistici</h2>
-            <div class="overflow-x-auto flex snap-x snap-mandatory pb-4 hide-scrollbar">
-                <div class="flex-shrink-0 w-80 snap-center mr-4 glass p-4 rounded-lg flex flex-col items-start">
-                    <h3 class="text-lg font-semibold mb-2">Șablon: Raport Săptămânal</h3>
-                    <p class="text-sm text-indigo-200 mb-3">Generează automat un raport pe baza înregistrărilor din această săptămână.</p>
-                    <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition duration-300 mt-auto">
-                        Aplică Șablon
-                    </button>
-                </div>
-                <div class="flex-shrink-0 w-80 snap-center glass p-4 rounded-lg flex flex-col items-start">
-                    <h3 class="text-lg font-semibold mb-2">Statistici: Mesaje Confirmate</h3>
-                    <p class="text-sm text-indigo-200 mb-3">Ai 6 mesaje confirmate în ultima lună.</p>
-                    <button class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition duration-300 mt-auto">
-                        Vezi Statistici
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <nav class="fixed bottom-0 left-0 right-0 glass p-4 flex justify-around items-center rounded-t-xl shadow-lg">
-            <a href="#" class="flex flex-col items-center text-indigo-200 hover:text-white transition duration-200">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-9v10a1 1 0 001 1h3m-6-9a1 1 0 011-1h2a1 1 0 011 1v3a1 1 0 01-1 1h-2a1 1 0 01-1-1v-3z"></path></svg>
-                <span class="text-xs mt-1">Acasă</span>
-            </a>
-            <a href="#" class="flex flex-col items-center text-white">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 7v7m0-7H5m14 0v7m0-7H5m7 0v7"></path></svg>
-                <span class="text-xs mt-1">Înregistrare</span>
-            </a>
-            <a href="#" class="flex flex-col items-center text-indigo-200 hover:text-white transition duration-200">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                <span class="text-xs mt-1">Setări</span>
-            </a>
-        </nav>
-
+      <div id="postRecordActions" class="mt-4 flex flex-col gap-3 mx-auto max-w-xs hidden">
+        <button id="saveAndPlayButton" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-lg">
+          Redă & Salvează
+        </button>
+        <button id="viewTranscriptButton" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-lg">
+          Vezi Transcriere (Raport)
+        </button>
+        <button id="discardButton" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-lg">
+          Șterge Înregistrarea
+        </button>
+      </div>
     </div>
-
-    <script>
-        const fabRecButton = document.getElementById('fabRecButton');
-        const vuMeter = document.getElementById('vuMeter');
-        const activityListContainer = document.getElementById('activityList');
-        const noRecordsMessage = document.getElementById('noRecordsMessage');
-        const viewDetailsButton = document.getElementById('viewDetailsButton');
-
-        let mediaRecorder;
-        let audioChunks = [];
-        let isRecording = false;
-
-        // Function to save audio record using IndexedDB (idb-keyval)
-        async function saveAudioRecord(blob) {
-            const now = new Date();
-            const id = crypto.randomUUID();
-
-            const record = {
-                id: id,
-                nume: ['Popescu', 'Ioana', 'Adrian'][Math.floor(Math.random() * 3)],
-                status: ['confirmat', 'esuat', 'schita'][Math.floor(Math.random() * 3)],
-                ora: now.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' }),
-                // Simulated tasks (NLP part)
-                tasks: [
-                    '1. Trimite raportul către echipă.',
-                    '2. Verifică stocurile la depozit.',
-                    '3. Programează întâlnirea cu clientul X.'
-                ]
-            };
-
-            // 1. Save metadata to IndexedDB
-            const metaList = (await idbKeyval.get('recordsMeta')) || [];
-            metaList.unshift(record);
-            await idbKeyval.set('recordsMeta', metaList);
-
-            // 2. Save audio file (blob) separately with a unique key
-            await idbKeyval.set(`audio-${id}`, blob);
-
-            renderActivityList(); // Re-render cards after saving
-        }
-
-        // Function to render activity list from IndexedDB
-        async function renderActivityList() {
-            const container = document.getElementById('activityList');
-            if (!container) return;
-
-            const records = (await idbKeyval.get('recordsMeta')) || [];
-            container.innerHTML = ''; // Clear existing list
-
-            if (records.length === 0) {
-                noRecordsMessage.style.display = 'block'; // Show "No records" message
-                return;
-            } else {
-                noRecordsMessage.style.display = 'none'; // Hide "No records" message
-            }
-
-            for (const rec of records) {
-                const statusColor =
-                    rec.status === 'confirmat' ? 'status-green' :
-                    rec.status === 'esuat' ? 'status-red' : 'status-yellow';
-
-                const statusText =
-                    rec.status === 'confirmat' ? 'Confirmat' :
-                    rec.status === 'esuat' ? 'Eșuat' : 'Schiță salvată';
-
-                const statusClass =
-                    rec.status === 'confirmat' ? 'text-green-300' :
-                    rec.status === 'esuat' ? 'text-red-300' : 'text-amber-300';
-
-                // Simplified SVG icons for clarity.
-                const icon =
-                    rec.status === 'confirmat'
-                        ? `<svg class="w-4 h-4 mr-1 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8"/></svg>`
-                        : rec.status === 'esuat'
-                        ? `<svg class="w-4 h-4 mr-1 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2"/></svg>`
-                        : `<svg class="w-4 h-4 mr-1 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`;
-
-                const card = document.createElement('div');
-                card.className = 'glass p-4 text-white relative flex flex-col items-start rounded-xl';
-                
-                // Get audio blob from IndexedDB and create URL
-                const audioBlob = await idbKeyval.get(`audio-${rec.id}`);
-                const audioURL = audioBlob ? URL.createObjectURL(audioBlob) : ''; // Handle case where blob might not be found
-
-                card.innerHTML = `
-                    <div class="status-indicator ${statusColor} rounded-tl-xl rounded-bl-xl"></div>
-                    <div class="pl-3 w-full flex justify-between items-center mb-1">
-                        <span class="font-medium text-lg">${rec.nume}</span>
-                        <span class="${statusClass} text-sm font-semibold">${statusText}</span>
-                    </div>
-                    <div class="pl-3 text-sm text-indigo-100 flex items-center">
-                        ${icon}
-                        Salvat la • ${rec.ora}
-                    </div>
-                    <div class="pl-3 mt-2 w-full">
-                        <audio controls class="w-full rounded-md" ${audioURL ? `src="${audioURL}"` : ''}>
-                            Browserul nu suportă redarea audio.
-                        </audio>
-                    </div>
-                    <div class="pl-3 mt-2 w-full flex justify-between items-center">
-                        <button onclick="alert('${rec.tasks.join('\\n')}')"
-                            class="text-sm text-indigo-300 underline hover:text-indigo-400 transition-colors">
-                            Vezi mesajul generat
-                        </button>
-                        <button onclick="generatePDF(this.parentElement.parentElement)"
-                            class="text-sm text-indigo-300 underline hover:text-indigo-400 transition-colors">
-                            Generează PDF
-                        </button>
-                        <a href="detalii.html?id=${rec.id}"
-                            class="text-sm text-indigo-300 underline hover:text-indigo-400 transition-colors">
-                            Detalii
-                        </a>
-                    </div>
-                `;
-                container.appendChild(card);
-            }
-        }
-
-        // Function to generate PDF from a card element
-        function generatePDF(cardElement) {
-            const clone = cardElement.cloneNode(true);
-
-            // Remove media elements or interactive buttons from the cloned content for PDF
-            clone.querySelector('audio')?.remove();
-            clone.querySelectorAll('button').forEach(btn => btn.remove());
-            clone.querySelector('a')?.remove(); // Remove 'Detalii' link
-
-            const filename = `Raport_${new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-')}.pdf`;
-
-            const opt = {
-                margin: 0.5,
-                filename: filename,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-            };
-
-            html2pdf().set(opt).from(clone).save();
-        }
-
-
-        fabRecButton.addEventListener('click', async () => {
-            if (!isRecording) {
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    mediaRecorder = new MediaRecorder(stream);
-                    audioChunks = [];
-
-                    mediaRecorder.ondataavailable = (event) => {
-                        audioChunks.push(event.data);
-                    };
-
-                    mediaRecorder.onstop = () => {
-                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                        saveAudioRecord(audioBlob);
-                        audioChunks = []; // Clear chunks for next recording
-
-                        // Reset FAB to REC and re-enable pulse animation
-                        fabRecButton.textContent = 'REC';
-                        fabRecButton.classList.add('pulse');
-                        vuMeter.classList.remove('active'); // Hide vuMeter
-                        isRecording = false;
-
-                        // Stop the audio stream tracks to release microphone
-                        stream.getTracks().forEach(track => track.stop());
-                    };
-
-                    mediaRecorder.start();
-                    isRecording = true;
-
-                    // Update FAB for recording state
-                    fabRecButton.textContent = 'STOP';
-                    fabRecButton.classList.remove('pulse'); // Remove pulse while recording
-                    vuMeter.classList.add('active'); // Show vuMeter
-                } catch (err) {
-                    console.error('Error accessing microphone:', err);
-                    alert('Nu am putut accesa microfonul. Asigură-te că ai acordat permisiunea.');
-                }
-            } else {
-                mediaRecorder.stop();
-            }
-        });
-
-        // "Vezi detalii" button functionality on main page (placeholder)
-        viewDetailsButton.addEventListener('click', () => {
-            alert('Funcționalitatea "Vezi detalii" pentru obiectivul curent va fi implementată ulterior.');
-        });
-
-        // Run renderActivityList on page load
-        document.addEventListener('DOMContentLoaded', async () => {
-            // Optional: Uncomment to clear old localStorage data after migration
-            // localStorage.removeItem('audioRecords');
-            await renderActivityList();
-        });
-
-    </script>
-</body>
-</html>

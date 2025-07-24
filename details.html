@@ -32,22 +32,32 @@
         <div id="recordContent">
             <p class="text-indigo-300">Loading...</p>
         </div>
-        <div class="flex justify-between items-center mt-6">
-            <button onclick="generatePDF(document.getElementById('recordContent'))"
-                class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg text-white text-sm font-semibold transition duration-300">
+        <div class="flex flex-wrap justify-between items-center mt-6 gap-3">
+            <button id="generatePdfButton"
+                class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg text-white text-sm font-semibold transition duration-300 flex-grow">
                 Generate PDF
             </button>
-            <button onclick="deleteRecord()"
-                class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-white text-sm font-semibold transition duration-300">
+            <button id="emailTasksButton"
+                class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white text-sm font-semibold transition duration-300 flex-grow">
+                Email Tasks
+            </button>
+            <button id="copyTasksButton"
+                class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-white text-sm font-semibold transition duration-300 flex-grow">
+                Copy Tasks
+            </button>
+            <button id="deleteRecordButton"
+                class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-white text-sm font-semibold transition duration-300 flex-grow">
                 Delete
             </button>
-             <a href="index.html" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg text-white text-sm font-semibold transition duration-300">
+             <a href="index.html" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg text-white text-sm font-semibold transition duration-300 flex-grow">
                 Back
             </a>
         </div>
     </div>
 
     <script>
+        let currentRecord = null; // Store the current record for easy access
+
         async function loadRecord() {
             const params = new URLSearchParams(window.location.search);
             const id = params.get('id');
@@ -62,6 +72,7 @@
                 document.getElementById('recordContent').innerHTML = '<p class="text-red-300">Record not found.</p>';
                 return;
             }
+            currentRecord = record; // Store the record
 
             const blob = await idbKeyval.get('audio-' + id);
             const audioURL = blob ? URL.createObjectURL(blob) : '';
@@ -100,10 +111,6 @@
             clone.style.color = '#333'; // Darker text for readability
             clone.style.backdropFilter = 'none'; // Remove blur for PDF
             
-            // Ensure text color for status is readable on white background if you were to include it
-            // (status isn't directly in this element for PDF, but good practice for other elements)
-
-
             html2pdf().from(clone).set({
                 margin: 0.5,
                 filename: `Record_Details_${new Date().toISOString().slice(0, 16).replace(/[:T.]/g, '-')}.pdf`,
@@ -129,7 +136,48 @@
             window.location.href = 'index.html'; // Redirect back to main page
         }
 
-        document.addEventListener('DOMContentLoaded', loadRecord);
+        function emailTasks() {
+            if (!currentRecord || !currentRecord.tasks || currentRecord.tasks.length === 0) {
+                alert('No tasks to email for this record.');
+                return;
+            }
+
+            const subject = encodeURIComponent(`Tasks from recording: ${currentRecord.name || 'Untitled'}`);
+            const body = encodeURIComponent(
+                `Hello,\n\nHere are the tasks extracted from the recording "${currentRecord.name}" (${currentRecord.time}):\n\n` +
+                currentRecord.tasks.map((task, index) => `${index + 1}. ${task}`).join('\n') +
+                `\n\nBest regards,\nYour Assistant`
+            );
+
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        }
+
+        function copyTasks() {
+            if (!currentRecord || !currentRecord.tasks || currentRecord.tasks.length === 0) {
+                alert('No tasks to copy for this record.');
+                return;
+            }
+
+            const tasksText = currentRecord.tasks.map((task, index) => `${index + 1}. ${task}`).join('\n');
+            navigator.clipboard.writeText(tasksText)
+                .then(() => {
+                    alert('Tasks copied to clipboard!');
+                })
+                .catch(err => {
+                    console.error('Failed to copy tasks: ', err);
+                    alert('Failed to copy tasks. Please try again or copy manually.');
+                });
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadRecord();
+            // Attach event listeners to the new buttons
+            document.getElementById('generatePdfButton').addEventListener('click', () => generatePDF(document.getElementById('recordContent')));
+            document.getElementById('emailTasksButton').addEventListener('click', emailTasks);
+            document.getElementById('copyTasksButton').addEventListener('click', copyTasks);
+            document.getElementById('deleteRecordButton').addEventListener('click', deleteRecord);
+        });
     </script>
 </body>
 </html>

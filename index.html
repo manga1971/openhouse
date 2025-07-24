@@ -52,54 +52,126 @@
             background-color: rgba(255, 255, 255, 0.5);
         }
 
-        /* FAB pulse animation (for REC state) */
-        .pulse {
-            animation: pulse-animation 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
-        }
-        @keyframes pulse-animation {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
-            }
+        /* New Recording Interface Styles */
+        #recordingInterface {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            background: rgba(0, 0, 0, 0.3); /* Darker background for controls */
+            border-radius: 9999px; /* Pill shape */
+            padding: 0.5rem 1.5rem;
+            width: fit-content;
+            margin: 0 auto;
+            min-width: 280px; /* Ensure enough space */
         }
 
-        /* VuMeter basic styling */
-        #vuMeter {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60px; /* Adjust size as needed */
-            height: 60px; /* Adjust size as needed */
+        #recordButton {
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.3);
-            opacity: 0; /* Hidden by default */
-            transition: opacity 0.3s ease-in-out;
-            pointer-events: none; /* Allows clicks to pass through */
-            z-index: 0; /* Behind the FAB text */
+            background-color: #ef4444; /* red-500 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            position: relative;
+            flex-shrink: 0;
         }
-        #vuMeter.active {
-            opacity: 1;
+        #recordButton:hover {
+            background-color: #dc2626; /* red-600 */
+        }
+        #recordButton.recording-active {
+            animation: pulse-red 1.5s infinite; /* Red pulse for active recording */
+        }
+        @keyframes pulse-red {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+        }
+        #recordButton.recording-active::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: white; /* Inner white dot */
+        }
+        #recordButton.paused::before {
+            border-radius: 4px; /* Square for pause */
+            width: 12px;
+            height: 12px;
         }
 
-        /* Enso rotation for recording state */
-        .rotate-enso {
-            animation: rotate-enso-animation 1.5s linear infinite; /* 1.5s for one rotation */
-        }
-        @keyframes rotate-enso-animation {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
+
+        .equalizer-container {
+            display: flex;
+            height: 30px; /* Height of the equalizer bars */
+            align-items: flex-end; /* Align bars to the bottom */
+            gap: 2px;
+            flex-grow: 1; /* Allow equalizer to take available space */
+            margin: 0 0.5rem;
+            min-width: 100px; /* Minimum width for equalizer */
+            max-width: 180px; /* Max width for equalizer */
         }
 
-        /* Hide FAB text when Enso is rotating */
-        #fabRecButton.recording .fab-text {
-            display: none;
+        .equalizer-bar {
+            width: 4px; /* Width of each bar */
+            background-color: #6366f1; /* indigo-500 */
+            border-radius: 2px;
+            transition: height 0.1s ease-out; /* Smooth height transition */
+            opacity: 0.8;
+            will-change: height; /* Optimize for animation */
+        }
+        .equalizer-bar.active {
+            animation: equalize 0.5s infinite alternate; /* General animation for active state */
+        }
+        /* Specific delays for a wave effect */
+        .equalizer-bar:nth-child(1) { animation-delay: 0s; }
+        .equalizer-bar:nth-child(2) { animation-delay: 0.1s; }
+        .equalizer-bar:nth-child(3) { animation-delay: 0.2s; }
+        .equalizer-bar:nth-child(4) { animation-delay: 0.3s; }
+        .equalizer-bar:nth-child(5) { animation-delay: 0.4s; }
+        .equalizer-bar:nth-child(6) { animation-delay: 0.5s; }
+        .equalizer-bar:nth-child(7) { animation-delay: 0.6s; }
+        .equalizer-bar:nth-child(8) { animation-delay: 0.7s; }
+        .equalizer-bar:nth-child(9) { animation-delay: 0.8s; }
+        .equalizer-bar:nth-child(10) { animation-delay: 0.9s; }
+        .equalizer-bar:nth-child(11) { animation-delay: 1.0s; }
+        .equalizer-bar:nth-child(12) { animation-delay: 1.1s; }
+
+
+        @keyframes equalize {
+            0% { height: 20%; }
+            100% { height: 100%; }
+        }
+
+        #timer {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #e0e7ff; /* indigo-100 */
+            flex-shrink: 0;
+            min-width: 50px; /* Ensure enough space for timer */
+            text-align: right;
+        }
+
+        #controlButtons {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .control-btn {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .control-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
         }
     </style>
 </head>
@@ -133,12 +205,25 @@
         <div class="glass p-6 rounded-xl shadow-lg mb-8 text-center">
             <h2 class="text-2xl font-semibold mb-3">New Recording</h2>
             
-            <button id="fabRecButton" class="relative w-20 h-20 bg-red-600 hover:bg-red-700 text-white rounded-full flex items-center justify-center text-xl font-bold transition duration-300 shadow-xl mx-auto pulse">
+            <div id="recordingInterface" class="hidden">
+                <button id="recordButton" class="group">
+                    </button>
+                <div class="equalizer-container">
+                    </div>
+                <span id="timer">00:00</span>
+                <div id="controlButtons" class="flex items-center">
+                    <button id="playPauseButton" class="control-btn hidden">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg>
+                    </button>
+                    <button id="stopButton" class="control-btn hidden">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 6h12v12H6z"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <button id="initialRecordButton" class="relative w-20 h-20 bg-red-600 hover:bg-red-700 text-white rounded-full flex items-center justify-center text-xl font-bold transition duration-300 shadow-xl mx-auto pulse">
                 <span class="fab-text">REC</span>
-                <svg id="ensoLogo" class="absolute w-full h-full p-2" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="50" cy="50" r="40" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-dasharray="250 250" stroke-dashoffset="0"/>
-                </svg>
-                <div id="vuMeter"></div>
+                <svg class="absolute w-full h-full p-2" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-dasharray="250 250" stroke-dashoffset="0" style="opacity: 0.8;"></svg>
             </button>
 
             <div id="postRecordActions" class="mt-4 flex flex-col gap-3 mx-auto max-w-xs hidden">
@@ -199,15 +284,21 @@
     </div>
 
     <script>
-        const fabRecButton = document.getElementById('fabRecButton');
-        const ensoLogo = document.getElementById('ensoLogo');
-        const fabText = fabRecButton.querySelector('.fab-text');
-        const vuMeter = document.getElementById('vuMeter');
+        // Old FAB button (now initial trigger)
+        const initialRecordButton = document.getElementById('initialRecordButton');
+
+        // New recording interface elements
+        const recordingInterface = document.getElementById('recordingInterface');
+        const recordButton = document.getElementById('recordButton');
+        const equalizerContainer = document.querySelector('.equalizer-container');
+        const timerDisplay = document.getElementById('timer');
+        const playPauseButton = document.getElementById('playPauseButton');
+        const stopButton = document.getElementById('stopButton');
+
+        // Other elements remain same
         const activityListContainer = document.getElementById('activityList');
         const noRecordsMessage = document.getElementById('noRecordsMessage');
         const viewDetailsButton = document.getElementById('viewDetailsButton');
-
-        // New variables for post-record actions
         const postRecordActions = document.getElementById('postRecordActions');
         const saveAndPlayButton = document.getElementById('saveAndPlayButton');
         const viewTranscriptButton = document.getElementById('viewTranscriptButton');
@@ -216,22 +307,69 @@
         let mediaRecorder;
         let audioChunks = [];
         let isRecording = false;
-        let lastRecordedBlob = null; // To hold the blob temporarily after recording
-        let lastRecordedId = null; // To hold the ID for navigation after saving
+        let isPaused = false;
+        let lastRecordedBlob = null;
+        let lastRecordedId = null;
+        let timerInterval;
+        let secondsRecorded = 0;
+
+        // Generate equalizer bars dynamically
+        function createEqualizerBars(count = 12) {
+            equalizerContainer.innerHTML = '';
+            for (let i = 0; i < count; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'equalizer-bar';
+                equalizerContainer.appendChild(bar);
+            }
+        }
+        createEqualizerBars(); // Create bars on load
+
+        // Update equalizer bar heights (simulated)
+        function animateEqualizer(active) {
+            const bars = equalizerContainer.querySelectorAll('.equalizer-bar');
+            bars.forEach((bar, index) => {
+                if (active) {
+                    // Apply animation class for continuous animation
+                    bar.classList.add('active');
+                    // Randomize initial height for more natural look (optional)
+                    bar.style.height = `${Math.random() * 80 + 20}%`;
+                } else {
+                    bar.classList.remove('active');
+                    bar.style.height = '20%'; // Reset to small height when inactive
+                    // Clear any lingering animation styles if necessary
+                    bar.style.animation = 'none';
+                }
+            });
+        }
+
+        // Timer functions
+        function startTimer() {
+            secondsRecorded = 0;
+            timerDisplay.textContent = '00:00';
+            timerInterval = setInterval(() => {
+                secondsRecorded++;
+                const minutes = Math.floor(secondsRecorded / 60);
+                const seconds = secondsRecorded % 60;
+                timerDisplay.textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
 
         // Function to save audio record using IndexedDB (idb-keyval)
-        // This function is now called only when user explicitly saves
         async function saveAudioRecord(blob) {
             const now = new Date();
             const id = crypto.randomUUID();
-            lastRecordedId = id; // Store the ID for potential future navigation
+            lastRecordedId = id; 
 
             const record = {
                 id: id,
-                name: ['Popescu', 'Ioana', 'Adrian'][Math.floor(Math.random() * 3)], // Random name
-                status: ['confirmed', 'failed', 'draft'][Math.floor(Math.random() * 3)], // Random status
+                name: ['Popescu', 'Ioana', 'Adrian'][Math.floor(Math.random() * 3)],
+                status: ['confirmed', 'failed', 'draft'][Math.floor(Math.random() * 3)],
                 time: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-                // Simulated tasks (NLP part)
                 tasks: [
                     '1. Send report to the team.',
                     '2. Check warehouse stock.',
@@ -239,16 +377,11 @@
                 ]
             };
 
-            // 1. Save metadata to IndexedDB
             const metaList = (await idbKeyval.get('recordsMeta')) || [];
-            metaList.unshift(record); // Add new record at the beginning
+            metaList.unshift(record);
             await idbKeyval.set('recordsMeta', metaList);
 
-            // 2. Save audio file (blob) separately with a unique key
             await idbKeyval.set(`audio-${id}`, blob);
-
-            // renderActivityList() is now called by the saveAndPlayButton click handler
-            // or after implicit save from viewTranscriptButton
         }
 
         // Function to render activity list from IndexedDB
@@ -257,13 +390,13 @@
             if (!container) return;
 
             const records = (await idbKeyval.get('recordsMeta')) || [];
-            container.innerHTML = ''; // Clear existing list
+            container.innerHTML = '';
 
             if (records.length === 0) {
-                noRecordsMessage.style.display = 'block'; // Show "No records" message
+                noRecordsMessage.style.display = 'block';
                 return;
             } else {
-                noRecordsMessage.style.display = 'none'; // Hide "No records" message
+                noRecordsMessage.style.display = 'none';
             }
 
             for (const rec of records) {
@@ -279,7 +412,6 @@
                     rec.status === 'confirmed' ? 'text-green-300' :
                     rec.status === 'failed' ? 'text-red-300' : 'text-amber-300';
 
-                // Simplified SVG icons for clarity.
                 const icon =
                     rec.status === 'confirmed'
                         ? `<svg class="w-4 h-4 mr-1 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8"/></svg>`
@@ -290,7 +422,6 @@
                 const card = document.createElement('div');
                 card.className = 'glass p-4 text-white relative flex flex-col items-start rounded-xl';
                 
-                // Get audio blob from IndexedDB and create URL
                 const audioBlob = await idbKeyval.get(`audio-${rec.id}`);
                 const audioURL = audioBlob ? URL.createObjectURL(audioBlob) : ''; 
 
@@ -326,7 +457,6 @@
                 `;
                 container.appendChild(card);
 
-                // Revoke object URL after audio element is loaded to free memory
                 if (audioURL) {
                     const audioElement = card.querySelector('audio');
                     audioElement.addEventListener('loadeddata', () => {
@@ -336,30 +466,25 @@
             }
         }
 
-        // Function to generate PDF from a card element
         function generatePDF(cardElement) {
             const clone = cardElement.cloneNode(true);
 
-            // Remove elements not needed in PDF
             clone.querySelector('audio')?.remove();
             clone.querySelectorAll('button').forEach(btn => btn.remove());
-            clone.querySelector('a')?.remove(); // Remove 'Details' link
+            clone.querySelector('a')?.remove(); 
 
-            // Hide the status indicator line as it's a visual element not content
             const statusIndicator = clone.querySelector('.status-indicator');
             if(statusIndicator) statusIndicator.style.display = 'none';
             
-            // Adjust some styles for better PDF rendering
-            clone.style.background = 'white'; // White background for clarity
-            clone.style.color = '#333'; // Darker text for readability
-            clone.style.backdropFilter = 'none'; // Remove blur for PDF
+            clone.style.background = 'white';
+            clone.style.color = '#333';
+            clone.style.backdropFilter = 'none';
 
-            // Ensure text color for status is readable on white background
             const statusSpan = clone.querySelector('.text-green-300, .text-red-300, .text-amber-300');
             if (statusSpan) {
-                if (statusSpan.classList.contains('text-green-300')) statusSpan.style.color = '#22c55e'; // green-500
-                if (statusSpan.classList.contains('text-red-300')) statusSpan.style.color = '#ef4444';   // red-500
-                if (statusSpan.classList.contains('text-amber-300')) statusSpan.style.color = '#f59e0b'; // amber-500
+                if (statusSpan.classList.contains('text-green-300')) statusSpan.style.color = '#22c55e';
+                if (statusSpan.classList.contains('text-red-300')) statusSpan.style.color = '#ef4444';
+                if (statusSpan.classList.contains('text-amber-300')) statusSpan.style.color = '#f59e0b';
             }
 
             const filename = `Report_${new Date().toISOString().slice(0, 16).replace(/[:T.]/g, '-')}.pdf`;
@@ -377,72 +502,113 @@
 
         // Helper function to reset UI state
         function resetRecordUI() {
-            fabRecButton.style.display = 'flex'; // Show REC button again
-            fabRecButton.classList.remove('recording'); // Remove recording class
-            fabRecButton.classList.add('pulse'); // Re-enable pulse
-            fabText.style.display = 'block'; // Show REC text
-            vuMeter.classList.remove('active'); // Hide vuMeter
-            ensoLogo.classList.remove('rotate-enso'); // Stop Enso rotation
-
+            initialRecordButton.style.display = 'flex'; // Show initial REC button
+            initialRecordButton.classList.add('pulse'); // Re-enable pulse
+            
+            recordingInterface.style.display = 'none'; // Hide recording interface
+            recordButton.classList.remove('recording-active', 'paused'); // Remove active/paused states
+            playPauseButton.classList.add('hidden'); // Hide play/pause/stop
+            stopButton.classList.add('hidden');
+            equalizerContainer.querySelectorAll('.equalizer-bar').forEach(bar => bar.classList.remove('active')); // Stop equalizer animation
+            
             postRecordActions.classList.add('hidden'); // Hide action buttons
+            
+            isRecording = false;
+            isPaused = false;
             lastRecordedBlob = null;
             lastRecordedId = null;
+            stopTimer(); // Ensure timer is stopped
         }
 
-        // Main FAB button click handler
-        fabRecButton.addEventListener('click', async () => {
-            if (!isRecording) {
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    mediaRecorder = new MediaRecorder(stream);
+        // Event listener for the initial FAB-like record button
+        initialRecordButton.addEventListener('click', async () => {
+            initialRecordButton.style.display = 'none'; // Hide initial button
+            initialRecordButton.classList.remove('pulse');
+
+            recordingInterface.style.display = 'flex'; // Show new recording interface
+            recordButton.classList.add('recording-active'); // Show red dot pulsing
+            playPauseButton.style.display = 'flex'; // Show play/pause
+            stopButton.style.display = 'flex'; // Show stop button
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+
+                mediaRecorder.ondataavailable = (event) => {
+                    audioChunks.push(event.data);
+                };
+
+                mediaRecorder.onstop = () => {
+                    lastRecordedBlob = new Blob(audioChunks, { type: 'audio/webm' });
                     audioChunks = [];
 
-                    mediaRecorder.ondataavailable = (event) => {
-                        audioChunks.push(event.data);
-                    };
+                    recordingInterface.style.display = 'none'; // Hide recording interface
+                    postRecordActions.classList.remove('hidden'); // Show post-record actions
+                    stopTimer(); // Stop timer on stop
 
-                    mediaRecorder.onstop = () => {
-                        lastRecordedBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                        audioChunks = []; // Clear chunks for next recording
+                    stream.getTracks().forEach(track => track.stop()); // Stop microphone stream
+                };
 
-                        // Hide REC button, text, vuMeter, and stop Enso rotation
-                        fabRecButton.style.display = 'none';
-                        fabRecButton.classList.remove('pulse');
-                        fabRecButton.classList.remove('recording'); // Ensure it's off
-                        ensoLogo.classList.remove('rotate-enso');
-                        vuMeter.classList.remove('active');
-                        isRecording = false;
+                mediaRecorder.start();
+                isRecording = true;
+                isPaused = false;
+                startTimer(); // Start timer
+                animateEqualizer(true); // Start equalizer animation
 
-                        // Display post-record action buttons
-                        postRecordActions.classList.remove('hidden');
+                // Set play/pause icon to pause state initially
+                playPauseButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
 
-                        // Stop the audio stream tracks to release microphone
-                        stream.getTracks().forEach(track => track.stop());
-                    };
+            } catch (err) {
+                console.error('Error accessing microphone:', err);
+                alert('Cannot access microphone. Please ensure you have granted permission.');
+                resetRecordUI(); // Reset UI if microphone access fails
+            }
+        });
 
-                    mediaRecorder.start();
-                    isRecording = true;
-
-                    // Update FAB for recording state
-                    fabRecButton.classList.add('recording'); // Add recording class
-                    fabRecButton.classList.remove('pulse'); // Remove pulse while recording
-                    fabText.style.display = 'none'; // Hide REC text
-                    vuMeter.classList.add('active'); // Show vuMeter
-                    ensoLogo.classList.add('rotate-enso'); // Start Enso rotation
-                } catch (err) {
-                    console.error('Error accessing microphone:', err);
-                    alert('Cannot access microphone. Please ensure you have granted permission.');
+        // Event listener for the Record button within the new interface (toggle play/pause)
+        recordButton.addEventListener('click', () => {
+            if (isRecording) {
+                if (!isPaused) {
+                    mediaRecorder.pause();
+                    isPaused = true;
+                    recordButton.classList.add('paused'); // Change dot to square
+                    recordButton.classList.remove('recording-active'); // Stop pulsing
+                    playPauseButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg>'; // Play icon
+                    stopTimer(); // Pause timer
+                    animateEqualizer(false); // Stop equalizer animation
+                } else {
+                    mediaRecorder.resume();
+                    isPaused = false;
+                    recordButton.classList.remove('paused'); // Change square back to dot
+                    recordButton.classList.add('recording-active'); // Resume pulsing
+                    playPauseButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'; // Pause icon
+                    startTimer(); // Resume timer
+                    animateEqualizer(true); // Resume equalizer animation
                 }
-            } else {
+            }
+        });
+
+        // Event listener for the Stop button
+        stopButton.addEventListener('click', () => {
+            if (isRecording) {
                 mediaRecorder.stop();
             }
         });
+
+        // Event listener for the Play/Pause button (currently acts as Record/Pause toggle)
+        // NOTE: If you want a separate Playback for recorded audio, that would be a new feature.
+        // For now, this button acts as a redundant toggle with the main recordButton.
+        playPauseButton.addEventListener('click', () => {
+            recordButton.click(); // Trigger the click on the main record button
+        });
+
 
         // Event listeners for post-record action buttons
         saveAndPlayButton.addEventListener('click', async () => {
             if (lastRecordedBlob) {
                 await saveAudioRecord(lastRecordedBlob);
-                renderActivityList(); // Re-render after successful save
+                renderActivityList();
                 alert('Recording saved successfully!');
             }
             resetRecordUI();
@@ -450,8 +616,7 @@
 
         viewTranscriptButton.addEventListener('click', async () => {
             if (lastRecordedBlob) {
-                // If not already saved, save it implicitly before viewing details
-                if (!lastRecordedId) { // Check if ID was set by a previous save
+                if (!lastRecordedId) { 
                     await saveAudioRecord(lastRecordedBlob);
                     alert('Recording implicitly saved to view details.');
                 }
@@ -464,7 +629,7 @@
 
         discardButton.addEventListener('click', () => {
             if (confirm('Are you sure you want to discard this recording? It will not be saved.')) {
-                lastRecordedBlob = null; // Clear the blob, effectively discarding it
+                lastRecordedBlob = null;
                 lastRecordedId = null;
                 alert('Recording discarded.');
             }
@@ -476,11 +641,9 @@
             alert('The "View Details" functionality for the current objective will be implemented later.');
         });
 
-        // Run renderActivityList on page load and ensure initial UI state
+        // Initial setup on page load
         document.addEventListener('DOMContentLoaded', async () => {
-            // Optional: Uncomment to clear old localStorage data after migration
-            // localStorage.removeItem('audioRecords');
-            resetRecordUI(); // Ensure REC button is visible and actions are hidden
+            resetRecordUI(); // Ensure initial REC button is visible and others are hidden
             await renderActivityList();
         });
     </script>

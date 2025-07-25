@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forma - Form Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/idb-keyval@6/dist/umd.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a202c, #2d3748);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .status-indicator {
+            width: 8px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+        }
+        .status-green { background-color: #4CAF50; } /* Confirmed / Finalized */
+        .status-red { background-color: #F44336; }   /* Failed / Needs Review / Not Started */
+        .status-yellow { background-color: #FFC107; } /* Draft / In Progress */
+
+        /* Custom scrollbar */
+        .scrollable-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        .scrollable-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .scrollable-list::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        .scrollable-list::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Recording Interface Styles */
+        #recordingInterface {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            background: rgba(0, 0, 0, 0.3); /* Darker background for controls */
+            border-radius: 9999px; /* Pill shape */
+            padding: 0.5rem 1.5rem;
+            width: fit-content;
+            margin: 0 auto;
+            min-width: 280px; /* Ensure enough space */
+        }
+
+        #recordButton {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #ef4444; /* red-500 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            position: relative;
+            flex-shrink: 0;
+        }
+        #recordButton:hover {
+            background-color: #dc2626; /* red-600 */
+        }
+        #recordButton.recording-active {
+            animation: pulse-red 1.5s infinite; /* Red pulse for active recording */
+        }
+        @keyframes pulse-red {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+        }
+        #recordButton.recording-active::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: white; /* Inner white dot */
+        }
+        #recordButton.paused::before {
+            border-radius: 4px; /* Square for pause */
+            width: 12px;
+            height: 12px;
+        }
+
+
+        .equalizer-container {
+            display: flex;
+            height: 30px; /* Height of the equalizer bars */
+            align-items: flex-end; /* Align bars to the bottom */
+            gap: 2px;
+            flex-grow: 1; /* Allow equalizer to take available space */
+            margin: 0 0.5rem;
+            min-width: 100px; /* Minimum width for equalizer */
+            max-width: 180px; /* Max width for equalizer */
+        }
+
+        .equalizer-bar {
+            width: 4px; /* Width of each bar */
+            background-color: #6366f1; /* indigo-500 */
+            border-radius: 2px;
+            transition: height 0.1s ease-out; /* Smooth height transition */
+            opacity: 0.8;
+            will-change: height; /* Optimize for animation */
+        }
+        .equalizer-bar.active {
+            animation: equalize 0.5s infinite alternate; /* General animation for active state */
+        }
+        /* Specific delays for a wave effect */
+        .equalizer-bar:nth-child(1) { animation-delay: 0s; }
+        .equalizer-bar:nth-child(2) { animation-delay: 0.1s; }
+        .equalizer-bar:nth-child(3) { animation-delay: 0.2s; }
+        .equalizer-bar:nth-child(4) { animation-delay: 0.3s; }
+        .equalizer-bar:nth-child(5) { animation-delay: 0.4s; }
+        .equalizer-bar:nth-child(6) { animation-delay: 0.5s; }
+        .equalizer-bar:nth-child(7) { animation-delay: 0.6s; }
+        .equalizer-bar:nth-child(8) { animation-delay: 0.7s; }
+        .equalizer-bar:nth-child(9) { animation-delay: 0.8s; }
+        .equalizer-bar:nth-child(10) { animation-delay: 0.9s; }
+        .equalizer-bar:nth-child(11) { animation-delay: 1.0s; }
+        .equalizer-bar:nth-child(12) { animation-delay: 1.1s; }
+
+
+        @keyframes equalize {
+            0% { height: 20%; }
+            100% { height: 100%; }
+        }
+
+        #timer {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #e0e7ff; /* indigo-100 */
+            flex-shrink: 0;
+            min-width: 50px; /* Ensure enough space for timer */
+            text-align: right;
+        }
+
+        #controlButtons {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .control-btn {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .control-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+
+    <div class="relative w-full max-w-md mx-auto p-4">
+
+        <header class="text-center mb-6 flex justify-between items-center">
+            <a href="index.html" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 flex items-center">
+                <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                Back to Forms
+            </a>
+            <h1 class="text-3xl font-extrabold text-white flex-grow text-center">Form Details</h1>
+            <div class="w-24"></div> </header>
+
+        <div class="glass p-6 rounded-xl shadow-lg mb-8">
+            <h2 id="formTitle" class="text-2xl font-semibold mb-2">Loading Form...</h2>
+            <p id="formSubtitle" class="text-indigo-200 text-lg mb-4">...</p>
+            <div class="flex flex-col gap-2 text-indigo-100 text-sm">
+                <p><strong>Client:</strong> <span id="formBeneficiary"></span></p>
+                <p><strong>Type:</strong> <span id="formType"></span></p>
+                <p><strong>Address:</strong> <span id="formAddress"></span></p>
+                <p><strong>Status:</strong> <span id="formStatus" class="font-semibold"></span></p>
+                <p><strong>Initial Notes:</strong> <span id="formNotes"></span></p>
+            </div>
+            </div>
+
+        <div class="glass p-6 rounded-xl shadow-lg mb-8 text-center">
+            <h2 class="text-2xl font-semibold mb-3">New Recording Section</h2>
+            
+            <div id="recordingInterface">
+                <button id="recordButton" class="group">
+                    </button>
+                <div class="equalizer-container">
+                    </div>
+                <span id="timer">00:00</span>
+                <div id="controlButtons" class="flex items-center">
+                    <button id="playPauseButton" class="control-btn">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg>
+                    </button>
+                    <button id="stopButton" class="control-btn">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 6h12v12H6z"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div id="postRecordActions" class="mt-4 flex flex-col gap-3 mx-auto max-w-xs hidden">
+                <button id="saveAndPlayButton" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-lg">
+                    Save & Play
+                </button>
+                <button id="viewTranscriptButton" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-lg">
+                    View Transcript (Report)
+                </button>
+                <button id="discardButton" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-lg">
+                    Discard Recording
+                </button>
+            </div>
+        </div>
+
+        <div class="glass p-6 rounded-xl shadow-lg mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Recordings for this Form</h2>
+            <div id="formRecordingsList" class="flex flex-col gap-4 max-h-96 overflow-y-auto scrollable-list">
+                <p class="text-indigo-200 text-center" id="noRecordingsMessage">No recordings yet for this form.</p>
+            </div>
+        </div>
+        
+        </div>
+
+    <script>
+        // Form Details elements
+        const formTitleDisplay = document.getElementById('formTitle');
+        const formSubtitleDisplay = document.getElementById('formSubtitle');
+        const formBeneficiaryDisplay = document.getElementById('formBeneficiary');
+        const formTypeDisplay = document.getElementById('formType');
+        const formAddressDisplay = document.getElementById('formAddress');
+        const formStatusDisplay = document.getElementById('formStatus');
+        const formNotesDisplay = document.getElementById('formNotes');
+        let currentFormId = null; // Store the ID of the current form
+
+        // Recording interface elements
+        const recordingInterface = document.getElementById('recordingInterface');
+        const recordButton = document.getElementById('recordButton');
+        const equalizerContainer = document.querySelector('.equalizer-container');
+        const timerDisplay = document.getElementById('timer');
+        const playPauseButton = document.getElementById('playPauseButton');
+        const stopButton = document.getElementById('stopButton');
+
+        // Post-record action buttons
+        const postRecordActions = document.getElementById('postRecordActions');
+        const saveAndPlayButton = document.getElementById('saveAndPlayButton');
+        const viewTranscriptButton = document.getElementById('viewTranscriptButton');
+        const discardButton = document.getElementById('discardButton');
+
+        // Recordings for this form list
+        const formRecordingsListContainer = document.getElementById('formRecordingsList');
+        const noRecordingsMessage = document.getElementById('noRecordingsMessage');
+
+        let mediaRecorder;
+        let audioChunks = [];
+        let isRecording = false;
+        let isPaused = false;
+        let lastRecordedBlob = null; // To hold the blob temporarily
+        let lastRecordedRecordingId = null; // To hold the ID of the individual recording for navigation
+        let timerInterval;
+        let secondsRecorded = 0;
+
+        // --- Core Functions ---
+
+        // Generate equalizer bars dynamically
+        function createEqualizerBars(count = 12) {
+            equalizerContainer.innerHTML = '';
+            for (let i = 0; i < count; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'equalizer-bar';
+                equalizerContainer.appendChild(bar);
+            }
+        }
+        createEqualizerBars();
+
+        // Update equalizer bar heights (simulated)
+        function animateEqualizer(active) {
+            const bars = equalizerContainer.querySelectorAll('.equalizer-bar');
+            bars.forEach((bar, index) => {
+                if (active) {
+                    bar.classList.add('active');
+                    bar.style.height = `${Math.random() * 80 + 20}%`;
+                } else {
+                    bar.classList.remove('active');
+                    bar.style.height = '20%';
+                    bar.style.animation = 'none';
+                }
+            });
+        }
+
+        // Timer functions
+        function startTimer() {
+            secondsRecorded = 0;
+            timerDisplay.textContent = '00:00';
+            timerInterval = setInterval(() => {
+                secondsRecorded++;
+                const minutes = Math.floor(secondsRecorded / 60);
+                const seconds = secondsRecorded % 60;
+                timerDisplay.textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        // Save a NEW Recording associated with the current form
+        async function saveRecordingForForm(blob) {
+            if (!currentFormId) {
+                alert('Error: Cannot save recording, form ID is missing.');
+                resetRecordingUI();
+                return;
+            }
+
+            const now = new Date();
+            const recordingId = crypto.randomUUID();
+            lastRecordedRecordingId = recordingId; // Store for post-save navigation
+
+            const recordingMetaData = {
+                id: recordingId,
+                formId: currentFormId, // Link to the current form
+                name: `Recording on ${now.toLocaleDateString('en-US')} at ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`, // More descriptive name
+                status: 'draft', // Initial status for new recording
+                time: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                date: now.toLocaleDateString('en-US'),
+                tasks: [
+                    '1. Send report to the team.',
+                    '2. Check warehouse stock.',
+                    '3. Schedule meeting with client X.'
+                ]
+            };
+
+            // Retrieve existing recordings metadata for this form, or initialize
+            const formRecordings = (await idbKeyval.get(`formRecordings-${currentFormId}`)) || [];
+            formRecordings.unshift(recordingMetaData); // Add new recording at the beginning
+            await idbKeyval.set(`formRecordings-${currentFormId}`, formRecordings);
+
+            // Save the audio blob itself
+            await idbKeyval.set(`audio-${recordingId}`, blob);
+
+            // Update the form's status to "in-progress" if it's not already completed
+            let allForms = (await idbKeyval.get('formsMetadata')) || []; // Forms now stored under 'formsMetadata'
+            const formIndex = allForms.findIndex(f => f.id === currentFormId);
+            if (formIndex !== -1 && allForms[formIndex].status !== 'completed') {
+                allForms[formIndex].status = 'in-progress';
+                await idbKeyval.set('formsMetadata', allForms);
+            }
+            
+            // Re-render only the recordings list for this form
+            renderFormRecordingsList(currentFormId);
+        }
+
+        // Render recordings specific to this form
+        async function renderFormRecordingsList(formId) {
+            const container = document.getElementById('formRecordingsList');
+            if (!container) return;
+
+            const recordings = (await idbKeyval.get(`formRecordings-${formId}`)) || [];
+            container.innerHTML = '';
+
+            if (recordings.length === 0) {
+                noRecordingsMessage.style.display = 'block';
+                return;
+            } else {
+                noRecordingsMessage.style.display = 'none';
+            }
+
+            for (const rec of recordings) {
+                const statusColor =
+                    rec.status === 'confirmed' ? 'status-green' :
+                    rec.status === 'failed' ? 'status-red' : 'status-yellow';
+
+                const statusText =
+                    rec.status === 'confirmed' ? 'Confirmed' :
+                    rec.status === 'failed' ? 'Failed' : 'Draft';
+
+                const statusClass =
+                    rec.status === 'confirmed' ? 'text-green-300' :
+                    rec.status === 'failed' ? 'text-red-300' : 'text-amber-300';
+
+                const icon =
+                    rec.status === 'confirmed'
+                        ? `<svg class="w-4 h-4 mr-1 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8"/></svg>`
+                        : rec.status === 'failed'
+                        ? `<svg class="w-4 h-4 mr-1 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2"/></svg>`
+                        : `<svg class="w-4 h-4 mr-1 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`;
+
+                const card = document.createElement('div');
+                card.className = 'glass p-4 text-white relative flex flex-col items-start rounded-xl';
+                
+                const audioBlob = await idbKeyval.get(`audio-${rec.id}`);
+                const audioURL = audioBlob ? URL.createObjectURL(audioBlob) : ''; 
+
+                card.innerHTML = `
+                    <div class="status-indicator ${statusColor} rounded-tl-xl rounded-bl-xl"></div>
+                    <div class="pl-3 w-full flex justify-between items-center mb-1">
+                        <span class="font-medium text-lg">${rec.name}</span>
+                        <span class="${statusClass} text-sm font-semibold">${statusText}</span>
+                    </div>
+                    <div class="pl-3 text-sm text-indigo-100 flex items-center">
+                        ${icon}
+                        Recorded at • ${rec.time} on ${rec.date}
+                    </div>
+                    <div class="pl-3 mt-2 w-full">
+                        <audio controls class="w-full rounded-md" ${audioURL ? `src="${audioURL}"` : ''}>
+                            Your browser does not support the audio element.
+                        </audio>
+                    </div>
+                    <div class="pl-3 mt-2 w-full flex justify-between items-center">
+                        <button onclick="alert('${rec.tasks.join('\\n')}')"
+                            class="text-sm text-indigo-300 underline hover:text-indigo-400 transition-colors">
+                            View Generated Message
+                        </button>
+                        <button onclick="generatePDF(this.parentElement.parentElement)"
+                            class="text-sm text-indigo-300 underline hover:text-indigo-400 transition-colors">
+                            Generate PDF
+                        </button>
+                        <a href="details.html?id=${rec.id}"
+                            class="text-sm text-indigo-300 underline hover:text-indigo-400 transition-colors">
+                            Full Recording Details
+                        </a>
+                    </div>
+                `;
+                container.appendChild(card);
+
+                if (audioURL) {
+                    const audioElement = card.querySelector('audio');
+                    audioElement.addEventListener('loadeddata', () => {
+                        URL.revokeObjectURL(audioURL);
+                    }, { once: true });
+                }
+            }
+        }
+
+        // PDF Generation Function
+        function generatePDF(cardElement) {
+            const clone = cardElement.cloneNode(true);
+            clone.querySelector('audio')?.remove();
+            clone.querySelectorAll('button').forEach(btn => btn.remove());
+            clone.querySelector('a')?.remove(); 
+            const statusIndicator = clone.querySelector('.status-indicator');
+            if(statusIndicator) statusIndicator.style.display = 'none';
+            clone.style.background = 'white';
+            clone.style.color = '#333';
+            clone.style.backdropFilter = 'none';
+            const statusSpan = clone.querySelector('.text-green-300, .text-red-300, .text-amber-300');
+            if (statusSpan) {
+                if (statusSpan.classList.contains('text-green-300')) statusSpan.style.color = '#22c55e';
+                if (statusSpan.classList.contains('text-red-300')) statusSpan.style.color = '#ef4444';
+                if (statusSpan.classList.contains('text-amber-300')) statusSpan.style.color = '#f59e0b';
+            }
+            const filename = `Report_${new Date().toISOString().slice(0, 16).replace(/[:T.]/g, '-')}.pdf`;
+            const opt = {
+                margin: 0.5,
+                filename: filename,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(clone).save();
+        }
+
+        // --- UI Reset and Recording Control ---
+
+        // Helper function to reset UI state
+        function resetRecordingUI() {
+            // Hide post-record actions
+            postRecordActions.classList.add('hidden'); 
+            
+            // Show recording interface
+            recordingInterface.style.display = 'flex';
+            recordButton.classList.remove('recording-active', 'paused');
+            // Ensure record button is ready for a new recording (not paused icon)
+            recordButton.innerHTML = ''; // Clear existing content for consistent dot
+            playPauseButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg>'; // Play icon
+
+            isRecording = false;
+            isPaused = false;
+            lastRecordedBlob = null;
+            lastRecordedRecordingId = null;
+            stopTimer(); // Ensure timer is stopped
+            animateEqualizer(false); // Stop equalizer animation
+        }
+
+        // Start recording logic
+        async function startRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+
+                mediaRecorder.ondataavailable = (event) => {
+                    audioChunks.push(event.data);
+                };
+
+                mediaRecorder.onstop = () => {
+                    lastRecordedBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    audioChunks = [];
+
+                    recordingInterface.style.display = 'none'; // Hide recording interface
+                    postRecordActions.classList.remove('hidden'); // Show post-record actions
+                    stopTimer();
+
+                    stream.getTracks().forEach(track => track.stop());
+                };
+
+                mediaRecorder.start();
+                isRecording = true;
+                isPaused = false;
+                startTimer();
+                animateEqualizer(true);
+
+                recordButton.classList.add('recording-active'); // Red pulsing dot
+                playPauseButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'; // Pause icon
+
+            } catch (err) {
+                console.error('Error accessing microphone:', err);
+                alert('Cannot access microphone. Please ensure you have granted permission.');
+                resetRecordingUI();
+            }
+        }
+
+        // Event listener for the main Record button (toggle play/pause)
+        recordButton.addEventListener('click', () => {
+            if (isRecording) { // If already recording
+                if (!isPaused) { // If not paused, then pause
+                    mediaRecorder.pause();
+                    isPaused = true;
+                    recordButton.classList.add('paused'); // Change dot to square
+                    recordButton.classList.remove('recording-active'); // Stop pulsing
+                    playPauseButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg>'; // Play icon
+                    stopTimer();
+                    animateEqualizer(false);
+                } else { // If paused, then resume
+                    mediaRecorder.resume();
+                    isPaused = false;
+                    recordButton.classList.remove('paused'); // Change square back to dot
+                    recordButton.classList.add('recording-active'); // Resume pulsing
+                    playPauseButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'; // Pause icon
+                    startTimer(); // Resume timer
+                    animateEqualizer(true);
+                }
+            } else { // If not recording, start new recording
+                startRecording();
+            }
+        });
+
+        // Event listener for the separate Stop button
+        stopButton.addEventListener('click', () => {
+            if (isRecording) {
+                mediaRecorder.stop();
+            }
+        });
+
+        // Event listener for the play/pause button (redundant with recordButton but kept for clarity)
+        playPauseButton.addEventListener('click', () => {
+            recordButton.click(); // Triggers the same logic as the main record button
+        });
+
+        // Event listeners for post-record action buttons
+        saveAndPlayButton.addEventListener('click', async () => {
+            if (lastRecordedBlob) {
+                await saveRecordingForForm(lastRecordedBlob); // Use new save function
+                alert('Recording saved successfully!');
+            }
+            resetRecordingUI();
+        });
+
+        viewTranscriptButton.addEventListener('click', async () => {
+            if (lastRecordedBlob) {
+                if (!lastRecordedRecordingId) { 
+                    await saveRecordingForForm(lastRecordedBlob);
+                    alert('Recording implicitly saved to view details.');
+                }
+                // Navigate to the 'details.html' (your previous details.html) for full recording details
+                window.location.href = `details.html?id=${lastRecordedRecordingId}`; 
+            } else {
+                alert('No recent recording to view. Please record first.');
+                resetRecordingUI();
+            }
+        });
+
+        discardButton.addEventListener('click', () => {
+            if (confirm('Are you sure you want to discard this recording? It will not be saved.')) {
+                lastRecordedBlob = null;
+                lastRecordedRecordingId = null;
+                alert('Recording discarded.');
+            }
+            resetRecordingUI();
+        });
+
+
+        // --- Page Load Logic ---
+
+        // Function to load and display form details
+        async function loadFormDetails() {
+            const params = new URLSearchParams(window.location.search);
+            currentFormId = params.get('id'); // Get form ID from URL
+
+            if (!currentFormId) {
+                formTitleDisplay.textContent = 'Error: Form ID Missing';
+                formSubtitleDisplay.textContent = 'Please return to My Forms.';
+                return;
+            }
+
+            // Retrieve form metadata from IndexedDB (assuming forms are now in 'formsMetadata')
+            const allForms = (await idbKeyval.get('formsMetadata')) || [];
+            const form = allForms.find(f => f.id === currentFormId);
+
+            if (!form) {
+                formTitleDisplay.textContent = 'Error: Form Not Found';
+                formSubtitleDisplay.textContent = 'The requested form could not be loaded.';
+                return;
+            }
+
+            // Populate form details
+            formTitleDisplay.textContent = form.title || 'Untitled Form';
+            formSubtitleDisplay.textContent = 
+                `${form.date ? new Date(form.date).toLocaleDateString('en-US') : 'No Date'} • ${form.beneficiary || 'No Client'} • ${form.type || 'General'}`;
+            formBeneficiaryDisplay.textContent = form.beneficiary || 'N/A';
+            formTypeDisplay.textContent = form.type || 'N/A';
+            formAddressDisplay.textContent = form.address || 'N/A';
+            formStatusDisplay.textContent = form.status ? form.status.charAt(0).toUpperCase() + form.status.slice(1) : 'N/A';
+            formNotesDisplay.textContent = form.initialNotes || 'No initial notes.';
+
+            // Now render recordings specifically for this form
+            renderFormRecordingsList(currentFormId);
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            resetRecordingUI(); // Ensure recording UI is ready to start
+            await loadFormDetails(); // Load form details and its associated recordings
+        });
+    </script>
+</body>
+</html>

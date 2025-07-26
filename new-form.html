@@ -217,7 +217,7 @@
             width: fit-content; 
             margin: 0 auto 1rem; 
             display: flex;
-            justify-content: center; /* Center items within the bar */
+            justify-content: center; 
             align-items: center;
             gap: 0.5rem; 
         }
@@ -247,11 +247,18 @@
             background-color: rgba(255, 255, 255, 0.2);
             color: #fff;
         }
+        /* Active Navbar Button Style - Rounded Background */
         .custom-navbar .nav-group a.active,
         .custom-navbar .nav-group button.active {
             background-color: #6366f1; /* indigo-500 */
             color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Subtle shadow for active state */
+            /* Ensure it fills the rounded area */
+            padding-left: 1.25rem; /* Adjust padding to make it truly pill-shaped */
+            padding-right: 1.25rem;
+            margin: 0 2px; /* Small margin to ensure separation in group */
         }
+
         .custom-navbar .search-btn {
             background-color: #6366f1; 
             border-radius: 50%;
@@ -650,7 +657,10 @@
             for (const rec of recordings) {
                 const statusDotClass = 
                     rec.status === 'confirmed' ? 'dot-confirmed' :
-                    rec.status === 'failed' ? 'dot-failed' : 'dot-draft';
+                    rec.status === 'failed' ? 'dot-red' : // Assuming 'failed' uses red dot
+                    rec.status === 'draft' ? 'dot-yellow' : 'dot-gray'; // Default to gray if status not recognized
+
+                const statusText = rec.status ? rec.status.charAt(0).toUpperCase() + rec.status.slice(1) : 'N/A'; // For display
 
                 const card = document.createElement('div');
                 card.className = 'glass p-4 text-white relative flex flex-col items-start rounded-xl mb-4';
@@ -764,7 +774,7 @@
             
             await idbKeyval.set('formsMetadata', allForms);
             
-            if (pageTitle.textContent === 'New Form' && !currentFormId) { // Only update if it's a *newly created* form
+            if (pageTitle.textContent === 'New Form') { 
                 pageTitle.textContent = 'Edit Form';
             }
             return formData.id; // Return the ID of the saved form
@@ -883,11 +893,10 @@
         saveFormDetailsButton.addEventListener('click', async () => {
             await saveFormData();
             alert('Form data saved!');
-            // No redirect, stay on page
         });
 
+        // Auto-save on input changes
         formCreationForm.addEventListener('input', debounce(async () => {
-            // Auto-save form data when inputs change
             await saveFormData(); 
         }, 1000)); 
         
@@ -966,12 +975,14 @@
                     formInitialNotesInput.value = form.initialNotes || '';
                     setupAccordions(true); // Open all accordions if editing
                 } else {
+                    // Form ID provided but form not found (e.g., deleted), treat as new form
                     alert('Form not found. Starting a new form.');
                     currentFormId = null; 
                     window.history.replaceState(null, null, 'new-form.html'); 
                     setupAccordions(false); // Default accordion state for new form
                 }
             } else {
+                // Set default planned date to current date/time for new form
                 const now = new Date();
                 now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); 
                 formPlannedDateInput.value = now.toISOString().slice(0, 16);
@@ -990,16 +1001,16 @@
             // Load form details and set up initial UI
             await loadFormDetailsAndRecordings(); 
 
-            const params = new URLSearchParams(window.location.search);
-            const startRecordingFlag = params.get('startRecording') === 'true'; // From new-form creation redirect
-            const quickRecordFromHome = params.get('quickRecord') === 'true'; // From FAB on index.html
-
-            if (quickRecordFromHome || startRecordingFlag) {
-                // If quickRecord was initiated or form is loaded for recording, start immediately
-                await handleRecordingFlow(); 
-            } else {
-                resetRecordingUI(); // Otherwise, just reset UI to ready state
-            }
+            // IMPORTANT CHANGE: Remove auto-start recording logic here
+            // const params = new URLSearchParams(window.location.search);
+            // const startRecordingFlag = params.get('startRecording') === 'true'; 
+            // const quickRecordFromHome = params.get('quickRecord') === 'true'; 
+            // if (quickRecordFromHome || startRecordingFlag) {
+            //     await handleRecordingFlow(); 
+            // } else {
+            //     resetRecordingUI(); 
+            // }
+            resetRecordingUI(); // Always initialize to ready-to-record, waiting for explicit click
         });
     </script>
 </body>

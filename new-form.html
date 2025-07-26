@@ -71,6 +71,13 @@
             box-sizing: border-box; /* Include padding in width calculation */
         }
 
+        .record-control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
         #recordButton {
             width: 50px;
             height: 50px;
@@ -212,7 +219,7 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 0.5rem; /* Adjusted padding */
+            padding: 0.5rem; 
             border-radius: 9999px; 
             width: fit-content; 
             margin: 0 auto 1rem; 
@@ -258,7 +265,6 @@
             padding-right: 1.25rem;
             margin: 0 2px; /* Small margin to ensure separation in group */
         }
-
         .custom-navbar .search-btn {
             background-color: #6366f1; 
             border-radius: 50%;
@@ -355,16 +361,23 @@
         <div class="glass p-6 rounded-xl shadow-lg mb-8 text-center">
             <h2 class="text-2xl font-semibold mb-3">New Recording</h2>
             
-            <div id="recordingInterface">
-                <button id="recordButton" class="group">
-                    </button>
+            <div id="recordingInterface" class="flex flex-col sm:flex-row items-center justify-center sm:justify-around gap-2 sm:gap-4 w-full">
+                <div class="record-control-group">
+                    <button id="recordButton" class="group">
+                        </button>
+                    <span id="recordButtonText" class="text-xs text-indigo-100 mt-1">Start Rec.</span>
+                </div>
+                
                 <div class="equalizer-container">
                     </div>
-                <span id="timer">00:00</span>
-                <div id="controlButtons" class="flex items-center">
+                
+                <span id="timer" class="text-right sm:text-center">00:00</span>
+                
+                <div class="record-control-group">
                     <button id="stopButton" class="control-btn">
                         <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 6h12v12H6z"/></svg>
                     </button>
+                    <span id="stopButtonText" class="text-xs text-indigo-100 mt-1">Stop Rec.</span>
                 </div>
             </div>
 
@@ -432,9 +445,11 @@
         // Recording interface elements
         const recordingInterface = document.getElementById('recordingInterface');
         const recordButton = document.getElementById('recordButton');
+        const recordButtonText = document.getElementById('recordButtonText'); // New text element
         const equalizerContainer = document.querySelector('.equalizer-container');
         const timerDisplay = document.getElementById('timer');
         const stopButton = document.getElementById('stopButton');
+        const stopButtonText = document.getElementById('stopButtonText'); // New text element
 
         // Post-record action buttons
         const postRecordActions = document.getElementById('postRecordActions');
@@ -577,7 +592,8 @@
             recordingInterface.style.display = 'flex'; 
             recordButton.classList.remove('recording-active', 'paused');
             recordButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg>';
-            
+            recordButtonText.textContent = 'Start Rec.'; // Set initial text
+
             isRecording = false;
             isPaused = false;
             lastRecordedBlob = null;
@@ -832,6 +848,7 @@
 
                 recordButton.classList.add('recording-active'); // Red pulsing dot
                 recordButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'; // Pause icon (for active recording)
+                recordButtonText.textContent = 'Pause'; // Set text to Pause
 
             } catch (err) {
                 console.error('Error accessing microphone:', err);
@@ -848,6 +865,7 @@
                 recordButton.classList.add('paused'); // Change dot to square
                 recordButton.classList.remove('recording-active'); // Stop pulsing
                 recordButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg>'; // Play icon (for resume)
+                recordButtonText.textContent = 'Continue'; // Set text to Continue
                 stopTimer(); // Pause timer
                 animateEqualizer(false); // Stop equalizer animation
                 stopSimulatedTranscription(); // Stop simulated transcription
@@ -863,6 +881,7 @@
                 recordButton.classList.remove('paused'); // Change square back to dot
                 recordButton.classList.add('recording-active'); // Resume pulsing
                 recordButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'; // Pause icon (for active recording)
+                recordButtonText.textContent = 'Pause'; // Set text to Pause
                 startTimer(); // Resume timer
                 animateEqualizer(true); // Resume equalizer animation
                 startSimulatedTranscription(); // Resume simulated transcription
@@ -998,18 +1017,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            // Load form details and set up initial UI
             await loadFormDetailsAndRecordings(); 
-
-            // IMPORTANT CHANGE: Remove auto-start recording logic here
-            // const params = new URLSearchParams(window.location.search);
-            // const startRecordingFlag = params.get('startRecording') === 'true'; 
-            // const quickRecordFromHome = params.get('quickRecord') === 'true'; 
-            // if (quickRecordFromHome || startRecordingFlag) {
-            //     await handleRecordingFlow(); 
-            // } else {
-            //     resetRecordingUI(); 
-            // }
             resetRecordingUI(); // Always initialize to ready-to-record, waiting for explicit click
         });
     </script>

@@ -55,20 +55,35 @@
             background-color: rgba(255, 255, 255, 0.5);
         }
 
-        /* Recording Interface Styles */
+        /* New Recording Interface Design (Two Rows) */
         #recordingInterface {
             display: flex;
+            flex-direction: column; /* Main container is column now */
             align-items: center;
             justify-content: center;
-            gap: 0.5rem; /* Reduced gap */
-            background: rgba(0, 0, 0, 0.3); /* Darker background for controls */
-            border-radius: 9999px; /* Pill shape */
-            padding: 0.5rem 1rem; /* Adjusted padding */
-            width: fit-content;
+            background: rgba(0, 0, 0, 0.3); 
+            border-radius: 1.5rem; /* Slightly less rounded than pill for block */
+            padding: 1rem 1.5rem; 
+            width: 95%; /* Use full width of parent */
+            max-width: 350px; /* Limit max width */
             margin: 0 auto;
-            min-width: 250px; /* Reduced min-width */
-            max-width: 95%; /* Prevent overflow on smaller screens */
-            box-sizing: border-box; /* Include padding in width calculation */
+            box-sizing: border-box; 
+        }
+        #recordingInterface .top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* Space out items */
+            width: 100%;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem; /* Space between rows */
+        }
+        #recordingInterface .bottom-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* Space out items */
+            width: 100%;
+            padding: 0 0.25rem; /* Match side padding of top row elements */
+            gap: 0.5rem;
         }
 
         .record-control-group {
@@ -76,102 +91,93 @@
             flex-direction: column;
             align-items: center;
             flex-shrink: 0;
+            min-width: 50px; /* Ensure space for text */
         }
 
         #recordButton {
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background-color: #ef4444; /* red-500 */
+            background-color: #ef4444; 
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: background-color 0.2s;
             position: relative;
-            flex-shrink: 0; /* Prevent shrinking */
+            flex-shrink: 0; 
         }
-        #recordButton:hover {
-            background-color: #dc2626; /* red-600 */
-        }
-        #recordButton.recording-active {
-            animation: pulse-red 1.5s infinite; /* Red pulse for active recording */
-        }
+        #recordButton:hover { background-color: #dc2626; }
+        #recordButton.recording-active { animation: pulse-red 1.5s infinite; }
         @keyframes pulse-red {
             0%, 100% { transform: scale(1); opacity: 1; }
             50% { transform: scale(1.1); opacity: 0.7; }
         }
         #recordButton.recording-active::before {
-            content: '';
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background-color: white; /* Inner white dot */
+            content: ''; position: absolute; width: 16px; height: 16px; border-radius: 50%; background-color: white; 
         }
         #recordButton.paused::before {
-            border-radius: 4px; /* Square for pause */
-            width: 12px;
-            height: 12px;
+            border-radius: 4px; width: 12px; height: 12px;
         }
 
         .equalizer-container {
             display: flex;
-            height: 30px; /* Height of the equalizer bars */
-            align-items: flex-end; /* Align bars to the bottom */
+            height: 30px; 
+            align-items: flex-end; 
             gap: 2px;
-            flex-grow: 1; /* Allow equalizer to take available space */
-            margin: 0 0.25rem; /* Reduced margin */
-            min-width: 60px; /* Further reduced min-width */
-            max-width: 120px; /* Further reduced max-width */
+            flex-grow: 1; 
+            margin: 0 0.5rem; /* Adjusted margin */
+            min-width: 80px; 
+            max-width: 120px; 
             overflow: hidden; 
         }
 
         .equalizer-bar {
-            width: 4px; /* Width of each bar */
-            background-color: #6366f1; /* indigo-500 */
+            width: 4px; 
+            background-color: #6366f1; 
             border-radius: 2px;
-            /* Animation applied by JS now, not directly by class. Active class just triggers it */
+            transition: height 0.1s ease-out; 
             opacity: 0.8;
-            will-change: height; /* Optimize for animation */
+            will-change: height; 
         }
-        .equalizer-bar.active {
-            animation: equalize 0.5s infinite alternate; /* Re-enabled CSS animation */
-        }
-
+        .equalizer-bar.active { animation: equalize 0.5s infinite alternate; }
         @keyframes equalize {
             0% { height: 20%; }
             100% { height: 100%; }
         }
 
         #timer {
-            font-size: 1.2rem;
+            font-size: 1rem; /* Slightly smaller to fit */
             font-weight: 600;
-            color: #e0e7ff; /* indigo-100 */
+            color: #e0e7ff; 
             flex-shrink: 0;
-            min-width: 55px; /* Ensure enough space for timer */
-            text-align: right;
+            min-width: 50px; 
+            text-align: center; /* Center align timer */
+            /* Removed flex-grow to make it fixed width */
         }
-
-        #controlButtons {
-            display: flex;
-            gap: 0.5rem;
-            flex-shrink: 0;
-        }
-        .control-btn {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            width: 40px;
+        
+        #stopButton {
+            width: 40px; /* Smaller stop button */
             height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: background-color 0.2s;
         }
-        .control-btn:hover {
-            background-color: rgba(255, 255, 255, 0.2);
+        #stopButton:hover { background-color: rgba(255, 255, 255, 0.2); }
+        #stopButton svg { width: 24px; height: 24px; color: #fff; } /* Icon color */
+
+        .control-label {
+            font-size: 0.75rem; /* Smaller text size */
+            color: #cbd5e1; /* Light gray for labels */
+            text-align: center;
+            white-space: nowrap; /* Prevent wrapping */
+            min-width: 50px; /* Ensure text fits */
         }
+
 
         /* Accordion styles */
         .accordion-header {
@@ -201,6 +207,19 @@
             transform: rotate(-90deg);
         }
 
+        /* Input field text color (CRITICAL FIX) */
+        input[type="text"],
+        input[type="datetime-local"],
+        select,
+        textarea {
+            color: #ffffff; /* White text for input fields */
+        }
+        input::placeholder,
+        textarea::placeholder {
+            color: rgba(255, 255, 255, 0.6); /* Lighter placeholder for contrast */
+        }
+
+
         /* Small status indicators for recordings list */
         .recording-status-dot {
             width: 10px;
@@ -213,7 +232,7 @@
         .dot-failed { background-color: #F44336; }
         .dot-draft { background-color: #FFC107; }
 
-        /* Navbar Custom Style */
+        /* Navbar Custom Style (Consistent with new-form.html) */
         .custom-navbar {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -310,15 +329,15 @@
                 <form id="formCreationForm">
                     <div class="mb-4">
                         <label for="formTitleInput" class="block text-indigo-200 text-sm font-bold mb-2">Objective Title:</label>
-                        <input type="text" id="formTitleInput" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 text-white" placeholder="e.g., Villa Dacia No 75 Inspection" required>
+                        <input type="text" id="formTitleInput" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 text-white" placeholder="e.g., Villa Dacia No 75 Inspection" required>
                     </div>
                     <div class="mb-4">
                         <label for="formBeneficiaryInput" class="block text-indigo-200 text-sm font-bold mb-2">Client:</label>
-                        <input type="text" id="formBeneficiaryInput" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 text-white" placeholder="e.g., Colosseum SRL">
+                        <input type="text" id="formBeneficiaryInput" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 text-white" placeholder="e.g., Colosseum SRL">
                     </div>
                     <div class="mb-4">
                         <label for="formTypeSelect" class="block text-indigo-200 text-sm font-bold mb-2">Form Type:</label>
-                        <select id="formTypeSelect" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 text-white">
+                        <select id="formTypeSelect" class="shadow border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 text-white">
                             <option value="inspection">Inspection</option>
                             <option value="estimation">Estimation</option>
                             <option value="reception">Reception</option>
@@ -328,11 +347,11 @@
                     </div>
                     <div class="mb-4">
                         <label for="formPlannedDateInput" class="block text-indigo-200 text-sm font-bold mb-2">Planned Date & Time:</label>
-                        <input type="datetime-local" id="formPlannedDateInput" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 text-white">
+                        <input type="datetime-local" id="formPlannedDateInput" class="shadow border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 text-white">
                     </div>
                     <div class="mb-4">
                         <label for="formAddressInput" class="block text-indigo-200 text-sm font-bold mb-2">Address:</label>
-                        <input type="text" id="formAddressInput" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 text-white" placeholder="e.g., Blvd Dacia No 75">
+                        <input type="text" id="formAddressInput" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 text-white" placeholder="e.g., Blvd Dacia No 75">
                     </div>
                     <button type="button" id="saveFormDetailsButton" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 text-lg">
                         Save Form
@@ -347,7 +366,7 @@
                 <svg class="w-5 h-5 accordion-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
             </div>
             <div id="personalNotesContent" class="accordion-content">
-                <textarea id="formInitialNotesInput" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 text-white h-24" placeholder="Any preliminary details or aspects..."></textarea>
+                <textarea id="formInitialNotesInput" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 text-white h-24" placeholder="Any preliminary details or aspects..."></textarea>
             </div>
         </div>
 
@@ -361,23 +380,27 @@
         <div class="glass p-6 rounded-xl shadow-lg mb-8 text-center">
             <h2 class="text-2xl font-semibold mb-3">New Recording</h2>
             
-            <div id="recordingInterface" class="flex flex-col sm:flex-row items-center justify-center sm:justify-around gap-2 sm:gap-4 w-full">
-                <div class="record-control-group">
-                    <button id="recordButton" class="group">
-                        </button>
-                    <span id="recordButtonText" class="text-xs text-indigo-100 mt-1">Start Rec.</span>
-                </div>
-                
-                <div class="equalizer-container">
+            <div id="recordingInterface">
+                <div class="top-row">
+                    <div class="record-control-group">
+                        <button id="recordButton" class="group">
+                            </button>
                     </div>
-                
-                <span id="timer" class="text-right sm:text-center">00:00</span>
-                
-                <div class="record-control-group">
-                    <button id="stopButton" class="control-btn">
-                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 6h12v12H6z"/></svg>
-                    </button>
-                    <span id="stopButtonText" class="text-xs text-indigo-100 mt-1">Stop Rec.</span>
+                    
+                    <div class="equalizer-container">
+                        </div>
+                    
+                    <div class="record-control-group">
+                        <button id="stopButton" class="control-btn">
+                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 6h12v12H6z"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bottom-row">
+                    <span id="recordButtonText" class="control-label">Start Rec.</span>
+                    <span id="timer" class="control-label">00:00</span>
+                    <span id="stopButtonText" class="control-label">Stop Rec.</span>
                 </div>
             </div>
 
@@ -436,20 +459,22 @@
         const formPlannedDateInput = document.getElementById('formPlannedDateInput');
         const formAddressInput = document.getElementById('formAddressInput');
         const formInitialNotesInput = document.getElementById('formInitialNotesInput');
-        const saveFormDetailsButton = document.getElementById('saveFormDetailsButton'); // New Save button
+        const saveFormDetailsButton = document.getElementById('saveFormDetailsButton'); 
         
         // Accordion elements
+        const formDetailsAccordion = document.getElementById('formDetailsAccordion'); // Get accordion div itself
         const formDetailsContent = document.getElementById('formDetailsContent');
+        const personalNotesAccordion = document.getElementById('personalNotesAccordion'); // Get accordion div itself
         const personalNotesContent = document.getElementById('personalNotesContent');
 
         // Recording interface elements
         const recordingInterface = document.getElementById('recordingInterface');
         const recordButton = document.getElementById('recordButton');
-        const recordButtonText = document.getElementById('recordButtonText'); // New text element
+        const recordButtonText = document.getElementById('recordButtonText'); 
         const equalizerContainer = document.querySelector('.equalizer-container');
         const timerDisplay = document.getElementById('timer');
         const stopButton = document.getElementById('stopButton');
-        const stopButtonText = document.getElementById('stopButtonText'); // New text element
+        const stopButtonText = document.getElementById('stopButtonText'); 
 
         // Post-record action buttons
         const postRecordActions = document.getElementById('postRecordActions');
@@ -475,23 +500,32 @@
         let lastRecordedRecordingId = null; 
         let timerInterval;
         let secondsRecorded = 0;
-        let liveTranscriptionInterval; // For simulated live transcription
+        let liveTranscriptionInterval; 
 
 
         // --- UI & Accordion Logic ---
 
-        function toggleAccordion(contentId, headerElement) {
+        // Modified toggleAccordion to allow explicit collapse
+        function toggleAccordion(contentId, headerElement, forceCollapse = false) {
             const content = document.getElementById(contentId);
             const icon = headerElement.querySelector('.accordion-icon');
-            // Toggle display based on current state
-            if (content.style.display === 'none' || content.style.display === '') {
-                content.style.display = 'block';
-                icon.style.transform = 'rotate(0deg)';
-                headerElement.classList.remove('collapsed');
-            } else {
-                content.style.display = 'none';
-                icon.style.transform = 'rotate(-90deg)';
-                headerElement.classList.add('collapsed');
+
+            if (forceCollapse) {
+                if (content.style.display !== 'none') { // Only collapse if not already
+                    content.style.display = 'none';
+                    icon.style.transform = 'rotate(-90deg)';
+                    headerElement.classList.add('collapsed');
+                }
+            } else { // Normal toggle behavior
+                if (content.style.display === 'none' || content.style.display === '') {
+                    content.style.display = 'block';
+                    icon.style.transform = 'rotate(0deg)';
+                    headerElement.classList.remove('collapsed');
+                } else {
+                    content.style.display = 'none';
+                    icon.style.transform = 'rotate(-90deg)';
+                    headerElement.classList.add('collapsed');
+                }
             }
         }
 
@@ -673,10 +707,10 @@
             for (const rec of recordings) {
                 const statusDotClass = 
                     rec.status === 'confirmed' ? 'dot-confirmed' :
-                    rec.status === 'failed' ? 'dot-red' : // Assuming 'failed' uses red dot
-                    rec.status === 'draft' ? 'dot-yellow' : 'dot-gray'; // Default to gray if status not recognized
+                    rec.status === 'failed' ? 'dot-red' : 
+                    rec.status === 'draft' ? 'dot-yellow' : 'dot-gray'; 
 
-                const statusText = rec.status ? rec.status.charAt(0).toUpperCase() + rec.status.slice(1) : 'N/A'; // For display
+                const statusText = rec.status ? rec.status.charAt(0).toUpperCase() + rec.status.slice(1) : 'N/A'; 
 
                 const card = document.createElement('div');
                 card.className = 'glass p-4 text-white relative flex flex-col items-start rounded-xl mb-4';
@@ -850,6 +884,10 @@
                 recordButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'; // Pause icon (for active recording)
                 recordButtonText.textContent = 'Pause'; // Set text to Pause
 
+                // Collapse accordions when recording starts
+                toggleAccordion('formDetailsContent', document.querySelector('#formDetailsAccordion .accordion-header'), true);
+                toggleAccordion('personalNotesContent', document.querySelector('#personalNotesAccordion .accordion-header'), true);
+
             } catch (err) {
                 console.error('Error accessing microphone:', err);
                 alert('Cannot access microphone. Please ensure you have granted permission.');
@@ -912,6 +950,8 @@
         saveFormDetailsButton.addEventListener('click', async () => {
             await saveFormData();
             alert('Form data saved!');
+            // Collapse accordion after saving
+            toggleAccordion('formDetailsContent', document.querySelector('#formDetailsAccordion .accordion-header'), true);
         });
 
         // Auto-save on input changes
@@ -1017,6 +1057,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
+            // Load form details and set up initial UI
             await loadFormDetailsAndRecordings(); 
             resetRecordingUI(); // Always initialize to ready-to-record, waiting for explicit click
         });

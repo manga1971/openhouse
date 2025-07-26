@@ -95,10 +95,16 @@
             background-color: rgba(255, 255, 255, 0.2);
             color: #fff;
         }
+        /* Active Navbar Button Style - Rounded Background */
         .custom-navbar .nav-group a.active,
         .custom-navbar .nav-group button.active {
             background-color: #6366f1; /* indigo-500 */
             color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Subtle shadow for active state */
+            /* Ensure it fills the rounded area */
+            padding-left: 1.25rem; /* Adjust padding to make it truly pill-shaped */
+            padding-right: 1.25rem;
+            margin: 0 2px; /* Small margin to ensure separation in group */
         }
         .custom-navbar .search-btn {
             background-color: #6366f1; 
@@ -141,34 +147,6 @@
                 </div>
         </div>
 
-        <div class="glass p-4 rounded-xl shadow-lg mb-6 flex flex-wrap gap-3 justify-between items-center">
-            <div class="flex items-center gap-2">
-                <label for="statusFilter" class="text-indigo-200 text-sm">Status:</label>
-                <select id="statusFilter" class="bg-gray-700 text-white rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <option value="all">All</option>
-                    <option value="not-started">Not Started</option>
-                    <option value="in-progress">In Progress</option>
-                    <option value="completed">Completed</option>
-                </select>
-            </div>
-            <div class="flex items-center gap-2">
-                <label for="dateFilter" class="text-indigo-200 text-sm">Date:</label>
-                <input type="date" id="dateFilter" class="bg-gray-700 text-white rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            </div>
-            <div class="flex items-center gap-2">
-                <label for="typeFilter" class="text-indigo-200 text-sm">Type:</label>
-                <select id="typeFilter" class="bg-gray-700 text-white rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <option value="all">All</option>
-                    <option value="inspection">Inspection</option>
-                    <option value="estimation">Estimation</option>
-                    <option value="reception">Reception</option>
-                    <option value="meeting">Meeting</option>
-                    <option value="quick-note">Quick Note</option>
-                    <option value="other">Other</option>
-                </select>
-            </div>
-        </div>
-
         <div class="glass p-6 rounded-xl shadow-lg mb-8">
             <h2 class="text-2xl font-semibold mb-4">My Forms</h2>
             <div id="formsList" class="flex flex-col gap-4 max-h-96 overflow-y-auto scrollable-list">
@@ -205,33 +183,18 @@
         const todayTasksList = document.getElementById('todayTasksList');
         const noTodayTasksMessage = document.getElementById('noTodayTasksMessage');
 
-        // Filter elements
-        const statusFilter = document.getElementById('statusFilter');
-        const dateFilter = document.getElementById('dateFilter');
-        const typeFilter = document.getElementById('typeFilter');
+        // Filter elements (removed from HTML, so references can be removed or left as null)
+        // const statusFilter = document.getElementById('statusFilter'); 
+        // const dateFilter = document.getElementById('dateFilter');
+        // const typeFilter = document.getElementById('typeFilter');
 
         // This function will render the list of forms from IndexedDB
         async function renderFormsList() {
             const allForms = (await idbKeyval.get('formsMetadata')) || []; 
             let filteredForms = allForms;
 
-            // Apply filters
-            const selectedStatus = statusFilter.value;
-            const selectedDate = dateFilter.value;
-            const selectedType = typeFilter.value;
-
-            if (selectedStatus !== 'all') {
-                filteredForms = filteredForms.filter(form => form.status === selectedStatus);
-            }
-            if (selectedDate) {
-                filteredForms = filteredForms.filter(form => {
-                    const formDate = form.plannedDateTime ? new Date(form.plannedDateTime).toISOString().split('T')[0] : null;
-                    return formDate === selectedDate;
-                });
-            }
-            if (selectedType !== 'all') {
-                filteredForms = filteredForms.filter(form => form.type === selectedType);
-            }
+            // Filters logic is removed/simplified since elements are gone
+            // if (statusFilter.value !== 'all') { /* ... */ }
 
             formsListContainer.innerHTML = ''; 
 
@@ -243,7 +206,7 @@
             }
 
             filteredForms.forEach(form => { 
-                let statusColorClass = 'status-gray'; // Default to 'Not Started' (gray)
+                let statusColorClass = 'status-gray'; 
                 let statusText = 'Not Started';
                 let statusTextColorClass = 'text-gray-300';
                 if (form.status === 'in-progress') {
@@ -332,15 +295,14 @@
 
         // Event listener for "Add New Form" button (header)
         addNewFormButton.addEventListener('click', () => {
-            // This button means create a new form, then go to it and potentially record
-            // Add startRecording=true to immediately start recording upon reaching new-form.html
-            window.location.href = 'new-form.html?startRecording=true'; 
+            // This button now leads to new-form.html without auto-starting recording
+            window.location.href = 'new-form.html'; 
         });
 
-        // Filter event listeners
-        statusFilter.addEventListener('change', renderFormsList);
-        dateFilter.addEventListener('change', renderFormsList);
-        typeFilter.addEventListener('change', renderFormsList);
+        // Filter event listeners (removed since filters are gone from HTML)
+        // statusFilter.addEventListener('change', renderFormsList);
+        // dateFilter.addEventListener('change', renderFormsList);
+        // typeFilter.addEventListener('change', renderFormsList);
 
 
         // Run on page load

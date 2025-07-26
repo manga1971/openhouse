@@ -219,7 +219,7 @@
             display: flex;
             justify-content: center; /* Center items within the bar */
             align-items: center;
-            gap: 0.5rem; /* Space between buttons */
+            gap: 0.5rem; 
         }
         .custom-navbar .nav-group {
             display: flex;
@@ -253,7 +253,7 @@
             color: #fff;
         }
         .custom-navbar .search-btn {
-            background-color: #6366f1; /* Active color for search btn */
+            background-color: #6366f1; 
             border-radius: 50%;
             width: 48px;
             height: 48px;
@@ -264,10 +264,10 @@
             transition: background-color 0.2s, color 0.2s;
             flex-shrink: 0;
             margin-left: 0.5rem; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Subtle shadow for standalone button */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
         }
         .custom-navbar .search-btn:hover {
-            background-color: #5a5ee0; /* Darker indigo on hover */
+            background-color: #5a5ee0; 
             color: #fff;
         }
         .custom-navbar .search-btn svg {
@@ -321,6 +321,9 @@
                         <label for="formAddressInput" class="block text-indigo-200 text-sm font-bold mb-2">Address:</label>
                         <input type="text" id="formAddressInput" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 text-white" placeholder="e.g., Blvd Dacia No 75">
                     </div>
+                    <button type="button" id="saveFormDetailsButton" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 text-lg">
+                        Save Form
+                    </button>
                 </form>
             </div>
         </div>
@@ -413,6 +416,7 @@
         const formPlannedDateInput = document.getElementById('formPlannedDateInput');
         const formAddressInput = document.getElementById('formAddressInput');
         const formInitialNotesInput = document.getElementById('formInitialNotesInput');
+        const saveFormDetailsButton = document.getElementById('saveFormDetailsButton'); // New Save button
         
         // Accordion elements
         const formDetailsContent = document.getElementById('formDetailsContent');
@@ -423,7 +427,7 @@
         const recordButton = document.getElementById('recordButton');
         const equalizerContainer = document.querySelector('.equalizer-container');
         const timerDisplay = document.getElementById('timer');
-        const stopButton = document.getElementById('stopButton'); // Only stop button remains
+        const stopButton = document.getElementById('stopButton');
 
         // Post-record action buttons
         const postRecordActions = document.getElementById('postRecordActions');
@@ -457,6 +461,7 @@
         function toggleAccordion(contentId, headerElement) {
             const content = document.getElementById(contentId);
             const icon = headerElement.querySelector('.accordion-icon');
+            // Toggle display based on current state
             if (content.style.display === 'none' || content.style.display === '') {
                 content.style.display = 'block';
                 icon.style.transform = 'rotate(0deg)';
@@ -502,7 +507,6 @@
             if (active) {
                 bars.forEach((bar, index) => {
                     bar.classList.add('active'); 
-                    // No need for random height here if CSS animation handles it
                 });
             } else {
                 bars.forEach((bar) => {
@@ -515,8 +519,7 @@
         
         let initialTime = 0; 
         function startTimer() {
-            // No reset for secondsRecorded here, it holds value across pause/resume
-            if (!timerInterval) { // Only set interval if not already running
+            if (!timerInterval) { 
                 timerInterval = setInterval(() => {
                     secondsRecorded++;
                     timerDisplay.textContent = formatTime(secondsRecorded);
@@ -552,7 +555,7 @@
             liveTranscriptionInterval = setInterval(() => {
                 transcriptionTextIndex = (transcriptionTextIndex + 1) % simulatedTranscriptions.length;
                 transcriptionText.textContent = simulatedTranscriptions[transcriptionTextIndex];
-            }, 2000); // Update every 2 seconds
+            }, 2000); 
         }
 
         function stopSimulatedTranscription() {
@@ -566,21 +569,20 @@
         function resetRecordingUI() {
             recordingInterface.style.display = 'flex'; 
             recordButton.classList.remove('recording-active', 'paused');
-            // Restore play icon for initial state
             recordButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg>';
             
             isRecording = false;
             isPaused = false;
             lastRecordedBlob = null;
             lastRecordedRecordingId = null;
-            secondsRecorded = 0; // Reset time for new session
-            timerDisplay.textContent = '00:00'; // Update display
-            stopTimer(); // Ensure timer is stopped
-            animateEqualizer(false); // Stop equalizer animation
-            stopSimulatedTranscription(); // Ensure simulated transcription stops
+            secondsRecorded = 0; 
+            timerDisplay.textContent = '00:00'; 
+            stopTimer(); 
+            animateEqualizer(false); 
+            stopSimulatedTranscription(); 
 
             postRecordActions.classList.add('hidden'); 
-            liveTranscriptionSection.classList.add('hidden'); // Hide live transcription section
+            liveTranscriptionSection.classList.add('hidden'); 
         }
         
         // This function saves an individual recording segment
@@ -762,9 +764,10 @@
             
             await idbKeyval.set('formsMetadata', allForms);
             
-            if (pageTitle.textContent === 'New Form') { 
+            if (pageTitle.textContent === 'New Form' && !currentFormId) { // Only update if it's a *newly created* form
                 pageTitle.textContent = 'Edit Form';
             }
+            return formData.id; // Return the ID of the saved form
         }
 
         // Debounce function to limit function calls (for auto-save)
@@ -876,6 +879,13 @@
 
         // --- Event Listeners ---
 
+        // Explicit Save Form button
+        saveFormDetailsButton.addEventListener('click', async () => {
+            await saveFormData();
+            alert('Form data saved!');
+            // No redirect, stay on page
+        });
+
         formCreationForm.addEventListener('input', debounce(async () => {
             // Auto-save form data when inputs change
             await saveFormData(); 
@@ -986,7 +996,6 @@
 
             if (quickRecordFromHome || startRecordingFlag) {
                 // If quickRecord was initiated or form is loaded for recording, start immediately
-                // This now calls the central handler
                 await handleRecordingFlow(); 
             } else {
                 resetRecordingUI(); // Otherwise, just reset UI to ready state

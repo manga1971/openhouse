@@ -423,8 +423,7 @@
         const recordButton = document.getElementById('recordButton');
         const equalizerContainer = document.querySelector('.equalizer-container');
         const timerDisplay = document.getElementById('timer');
-        // Removed playPauseButton from here
-        const stopButton = document.getElementById('stopButton');
+        const stopButton = document.getElementById('stopButton'); // Only stop button remains
 
         // Post-record action buttons
         const postRecordActions = document.getElementById('postRecordActions');
@@ -458,7 +457,6 @@
         function toggleAccordion(contentId, headerElement) {
             const content = document.getElementById(contentId);
             const icon = headerElement.querySelector('.accordion-icon');
-            // Toggle display based on current state
             if (content.style.display === 'none' || content.style.display === '') {
                 content.style.display = 'block';
                 icon.style.transform = 'rotate(0deg)';
@@ -503,30 +501,27 @@
             const bars = equalizerContainer.querySelectorAll('.equalizer-bar');
             if (active) {
                 bars.forEach((bar, index) => {
-                    // Apply animation directly or ensure class triggers it
-                    bar.classList.add('active'); // Re-adds animation if removed
+                    bar.classList.add('active'); 
+                    // No need for random height here if CSS animation handles it
                 });
             } else {
                 bars.forEach((bar) => {
                     bar.classList.remove('active');
-                    bar.style.height = '20%'; // Reset height
-                    bar.style.animation = 'none'; // Stop any lingering CSS animations
+                    bar.style.height = '20%'; 
+                    bar.style.animation = 'none'; 
                 });
             }
         }
         
-        let initialTime = 0; // Store initial time for timer
+        let initialTime = 0; 
         function startTimer() {
-            if (isPaused) { // If resuming from pause, don't reset secondsRecorded
-                // secondsRecorded retains its value
-            } else { // If starting new recording
-                secondsRecorded = 0;
+            // No reset for secondsRecorded here, it holds value across pause/resume
+            if (!timerInterval) { // Only set interval if not already running
+                timerInterval = setInterval(() => {
+                    secondsRecorded++;
+                    timerDisplay.textContent = formatTime(secondsRecorded);
+                }, 1000);
             }
-            timerDisplay.textContent = formatTime(secondsRecorded);
-            timerInterval = setInterval(() => {
-                secondsRecorded++;
-                timerDisplay.textContent = formatTime(secondsRecorded);
-            }, 1000);
         }
 
         function stopTimer() {
@@ -571,16 +566,17 @@
         function resetRecordingUI() {
             recordingInterface.style.display = 'flex'; 
             recordButton.classList.remove('recording-active', 'paused');
-            recordButton.innerHTML = ''; 
-            // Correct Play icon for initial state (start recording)
+            // Restore play icon for initial state
             recordButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg>';
             
             isRecording = false;
             isPaused = false;
             lastRecordedBlob = null;
             lastRecordedRecordingId = null;
-            stopTimer();
-            animateEqualizer(false);
+            secondsRecorded = 0; // Reset time for new session
+            timerDisplay.textContent = '00:00'; // Update display
+            stopTimer(); // Ensure timer is stopped
+            animateEqualizer(false); // Stop equalizer animation
             stopSimulatedTranscription(); // Ensure simulated transcription stops
 
             postRecordActions.classList.add('hidden'); 
@@ -769,12 +765,6 @@
             if (pageTitle.textContent === 'New Form') { 
                 pageTitle.textContent = 'Edit Form';
             }
-
-            if (!isQuickRecordFlow) { 
-                // Only show alert if not quick record, and form data was explicitly changed
-                // (e.g., if user types in form fields, not just enters quick record flow)
-                // alert('Form data saved!');
-            }
         }
 
         // Debounce function to limit function calls (for auto-save)
@@ -787,11 +777,107 @@
             };
         }
 
+        // --- Core Recording Functions (renamed for clarity) ---
+
+        // Function to start actual microphone recording
+        async function startMicrophoneRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+
+                mediaRecorder.ondataavailable = (event) => {
+                    audioChunks.push(event.data);
+                    // Simulate live transcription updates
+                    if (isRecording && !isPaused) { // Only update if actively recording
+                        transcriptionText.textContent = simulatedTranscriptions[(transcriptionTextIndex) % simulatedTranscriptions.length];
+                        transcriptionTextIndex++;
+                    }
+                };
+
+                mediaRecorder.onstop = () => {
+                    lastRecordedBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    audioChunks = []; // Clear chunks for next recording
+
+                    recordingInterface.style.display = 'none'; // Hide recording interface
+                    postRecordActions.classList.remove('hidden'); // Show post-record actions
+                    stopTimer(); // Stop timer on stop
+                    animateEqualizer(false); // Stop equalizer animation
+                    stopSimulatedTranscription(); // Stop simulated transcription
+                    transcriptionText.textContent = 'Recording stopped. Review options below.';
+
+                    // Stop the audio stream tracks to release microphone
+                    stream.getTracks().forEach(track => track.stop());
+                };
+
+                mediaRecorder.start();
+                isRecording = true;
+                isPaused = false;
+                startTimer(); // Start timer
+                animateEqualizer(true); // Start equalizer animation
+                startSimulatedTranscription(); // Start simulated transcription
+
+                recordButton.classList.add('recording-active'); // Red pulsing dot
+                recordButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'; // Pause icon (for active recording)
+
+            } catch (err) {
+                console.error('Error accessing microphone:', err);
+                alert('Cannot access microphone. Please ensure you have granted permission.');
+                resetRecordingUI(); // Reset UI if microphone access fails
+            }
+        }
+
+        // Function to pause actual microphone recording
+        function pauseMicrophoneRecording() {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.pause();
+                isPaused = true;
+                recordButton.classList.add('paused'); // Change dot to square
+                recordButton.classList.remove('recording-active'); // Stop pulsing
+                recordButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg>'; // Play icon (for resume)
+                stopTimer(); // Pause timer
+                animateEqualizer(false); // Stop equalizer animation
+                stopSimulatedTranscription(); // Stop simulated transcription
+                transcriptionText.textContent = 'Recording paused.';
+            }
+        }
+
+        // Function to resume actual microphone recording
+        function resumeMicrophoneRecording() {
+            if (mediaRecorder && mediaRecorder.state === 'paused') {
+                mediaRecorder.resume();
+                isPaused = false;
+                recordButton.classList.remove('paused'); // Change square back to dot
+                recordButton.classList.add('recording-active'); // Resume pulsing
+                recordButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'; // Pause icon (for active recording)
+                startTimer(); // Resume timer
+                animateEqualizer(true); // Resume equalizer animation
+                startSimulatedTranscription(); // Resume simulated transcription
+            }
+        }
+
+        // Function to handle the overall recording flow (start/pause/resume)
+        async function handleRecordingFlow() {
+            if (!isRecording) { // If not recording, start new recording flow
+                // Ensure form data is created/saved before starting recording
+                if (!currentFormId) {
+                    await saveFormData(); // This will create the new form and set currentFormId
+                }
+                await startMicrophoneRecording();
+            } else { // If already recording, toggle pause/resume
+                if (!isPaused) {
+                    pauseMicrophoneRecording();
+                } else {
+                    resumeMicrophoneRecording();
+                }
+            }
+        }
+
+
         // --- Event Listeners ---
 
         formCreationForm.addEventListener('input', debounce(async () => {
             // Auto-save form data when inputs change
-            // This will ensure a formId exists for subsequent recordings
             await saveFormData(); 
         }, 1000)); 
         
@@ -835,33 +921,8 @@
             resetRecordingUI();
         });
 
-        // Event listener for the main Record button (toggle Start/Pause/Resume)
-        recordButton.addEventListener('click', async () => {
-            if (!isRecording) { // If not recording, start new recording
-                await startRecording();
-            } else { // If already recording, toggle pause/resume
-                if (!isPaused) { // If not paused, then pause
-                    mediaRecorder.pause();
-                    isPaused = true;
-                    recordButton.classList.add('paused'); 
-                    recordButton.classList.remove('recording-active'); 
-                    recordButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg>'; // Play icon for resume
-                    stopTimer();
-                    animateEqualizer(false);
-                    stopSimulatedTranscription();
-                    transcriptionText.textContent = 'Recording paused.';
-                } else { // If paused, then resume
-                    mediaRecorder.resume();
-                    isPaused = false;
-                    recordButton.classList.remove('paused'); 
-                    recordButton.classList.add('recording-active'); 
-                    recordButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'; // Pause icon for active recording
-                    startTimer(); 
-                    animateEqualizer(true); 
-                    startSimulatedTranscription();
-                }
-            }
-        });
+        // Event listener for the main Record button (now calls handleRecordingFlow)
+        recordButton.addEventListener('click', handleRecordingFlow);
 
         // Event listener for the separate Stop button
         stopButton.addEventListener('click', () => {
@@ -915,18 +976,6 @@
             }
         }
 
-
-        // Function to start recording (called on button click or auto-start)
-        async function startRecordingSequence() {
-            // Ensure form data is created/saved before starting recording
-            if (!currentFormId) {
-                await saveFormData(); // This will create the new form and set currentFormId
-            }
-
-            // Now that we have a currentFormId, proceed to start recording
-            await startRecording(); 
-        }
-
         document.addEventListener('DOMContentLoaded', async () => {
             // Load form details and set up initial UI
             await loadFormDetailsAndRecordings(); 
@@ -937,8 +986,8 @@
 
             if (quickRecordFromHome || startRecordingFlag) {
                 // If quickRecord was initiated or form is loaded for recording, start immediately
-                // Note: currentFormId might still be null here if it's a brand new quick record
-                await startRecordingSequence(); 
+                // This now calls the central handler
+                await handleRecordingFlow(); 
             } else {
                 resetRecordingUI(); // Otherwise, just reset UI to ready state
             }

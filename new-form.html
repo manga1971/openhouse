@@ -31,9 +31,12 @@
             top: 0;
             bottom: 0;
         }
-        .status-green { background-color: #4CAF50; } /* Confirmed / Finalized */
-        .status-red { background-color: #F44336; }   /* Failed / Needs Review / Not Started */
-        .status-yellow { background-color: #FFC107; } /* Draft / In Progress */
+        /* Adjusted status colors for better UX, as discussed */
+        .status-green { background-color: #22c55e; }   /* Completed */
+        .status-red { background-color: #ef4444; }     /* Failed / Error */
+        .status-yellow { background-color: #f59e0b; }  /* In Progress / Draft */
+        .status-gray { background-color: #6b7280; }    /* Not Started */
+
 
         /* Custom scrollbar */
         .scrollable-list::-webkit-scrollbar {
@@ -61,9 +64,10 @@
             background: rgba(0, 0, 0, 0.3); /* Darker background for controls */
             border-radius: 9999px; /* Pill shape */
             padding: 0.5rem 1.5rem;
-            width: fit-content;
+            width: fit-content; /* Adjust width to content, not full screen */
             margin: 0 auto;
-            min-width: 280px; /* Ensure enough space */
+            min-width: 280px;
+            max-width: 90%; /* Prevent overflow on smaller screens */
         }
 
         #recordButton {
@@ -110,8 +114,9 @@
             gap: 2px;
             flex-grow: 1; /* Allow equalizer to take available space */
             margin: 0 0.5rem;
-            min-width: 100px; /* Minimum width for equalizer */
-            max-width: 180px; /* Max width for equalizer */
+            min-width: 80px; /* Smaller min-width for equalizer */
+            max-width: 150px; /* Adjusted max-width for equalizer to fit */
+            overflow: hidden; /* Hide overflow if bars are too many */
         }
 
         .equalizer-bar {
@@ -157,6 +162,7 @@
         #controlButtons {
             display: flex;
             gap: 0.5rem;
+            flex-shrink: 0; /* Prevent buttons from shrinking */
         }
         .control-btn {
             background-color: rgba(255, 255, 255, 0.1);
@@ -213,13 +219,77 @@
         .dot-failed { background-color: #F44336; }
         .dot-draft { background-color: #FFC107; }
 
+        /* Navbar Custom Style */
+        .custom-navbar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 0.75rem 1rem; /* Adjusted padding */
+            border-radius: 9999px; /* Fully rounded */
+            width: fit-content; /* Fit content, not full width */
+            margin: 0 auto 1rem; /* Center and provide bottom margin */
+            display: flex;
+            justify-content: space-between; /* Distribute items */
+            align-items: center;
+            gap: 0.5rem; /* Space between buttons */
+        }
+        .custom-navbar .nav-group {
+            display: flex;
+            background: rgba(255, 255, 255, 0.1); /* Background for grouped buttons */
+            border-radius: 9999px; /* Rounded group */
+            overflow: hidden; /* Hide anything outside */
+        }
+        .custom-navbar .nav-group a,
+        .custom-navbar .nav-group button {
+            padding: 0.75rem 1rem; /* Larger touch area */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #cbd5e1; /* gray-300 */
+            transition: background-color 0.2s, color 0.2s;
+            text-decoration: none;
+            flex-shrink: 0;
+            min-width: 60px; /* Ensure buttons have minimum width */
+        }
+        .custom-navbar .nav-group a:hover,
+        .custom-navbar .nav-group button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+        .custom-navbar .nav-group a.active,
+        .custom-navbar .nav-group button.active {
+            background-color: #6366f1; /* indigo-500 */
+            color: #fff;
+        }
+        .custom-navbar .search-btn {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #cbd5e1;
+            transition: background-color 0.2s, color 0.2s;
+            flex-shrink: 0;
+            margin-left: 0.5rem; /* Space from grouped buttons */
+        }
+        .custom-navbar .search-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+        .custom-navbar .search-btn svg {
+            width: 24px;
+            height: 24px;
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-white">
 
-    <div class="relative w-full max-w-md mx-auto p-4">
-
-        <header class="text-center mb-6 flex justify-between items-center">
+    <div class="relative w-full max-w-md mx-auto p-4 pb-20"> <header class="text-center mb-6 flex justify-between items-center">
             <a href="index.html" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 flex items-center">
                 <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
                 Back to Forms
@@ -274,38 +344,15 @@
             </div>
         </div>
 
-        <div id="recordingSectionsAccordion" class="glass rounded-xl shadow-lg mb-8">
-            <div class="accordion-header" onclick="toggleAccordion('recordingSectionsContent', this)">
-                <span>Recording Sections Structure</span>
-                <svg class="w-5 h-5 accordion-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-            </div>
-            <div id="recordingSectionsContent" class="accordion-content">
-                <div id="recordingSections" class="grid grid-cols-2 gap-3">
-                    <div class="flex items-center"><input type="checkbox" id="section-foundation" value="Foundation" class="form-checkbox h-4 w-4 text-indigo-600 rounded"><label for="section-foundation" class="ml-2 text-indigo-100">Foundation</label></div>
-                    <div class="flex items-center"><input type="checkbox" id="section-fence" value="Fence" class="form-checkbox h-4 w-4 text-indigo-600 rounded"><label for="section-fence" class="ml-2 text-indigo-100">Fence</label></div>
-                    <div class="flex items-center"><input type="checkbox" id="section-courtyard" value="Courtyard" class="form-checkbox h-4 w-4 text-indigo-600 rounded"><label for="section-courtyard" class="ml-2 text-indigo-100">Courtyard</label></div>
-                    <div class="flex items-center"><input type="checkbox" id="section-facade" value="Facade" class="form-checkbox h-4 w-4 text-indigo-600 rounded"><label for="section-facade" class="ml-2 text-indigo-100">Facade</label></div>
-                    <div class="flex items-center"><input type="checkbox" id="section-groundfloor" value="Ground Floor" class="form-checkbox h-4 w-4 text-indigo-600 rounded"><label for="section-groundfloor" class="ml-2 text-indigo-100">Ground Floor</label></div>
-                    <div class="flex items-center"><input type="checkbox" id="section-firstfloor" value="First Floor" class="form-checkbox h-4 w-4 text-indigo-600 rounded"><label for="section-firstfloor" class="ml-2 text-indigo-100">First Floor</label></div>
-                    <div class="flex items-center"><input type="checkbox" id="section-attic" value="Attic" class="form-checkbox h-4 w-4 text-indigo-600 rounded"><label for="section-attic" class="ml-2 text-indigo-100">Attic</label></div>
-                    <div class="flex items-center"><input type="checkbox" id="section-roof" value="Roof" class="form-checkbox h-4 w-4 text-indigo-600 rounded"><label for="section-roof" class="ml-2 text-indigo-100">Roof</label></div>
-                    <div class="flex items-center"><input type="checkbox" id="section-conclusion" value="Conclusion" class="form-checkbox h-4 w-4 text-indigo-600 rounded">
-                        <label for="section-conclusion" class="ml-2 text-indigo-100">Conclusion</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="section-estimatedcost" value="Estimated Cost" class="form-checkbox h-4 w-4 text-indigo-600 rounded">
-                        <label for="section-estimatedcost" class="ml-2 text-indigo-100">Estimated Cost</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="section-estimatedtime" value="Estimated Time" class="form-checkbox h-4 w-4 text-indigo-600 rounded">
-                        <label for="section-estimatedtime" class="ml-2 text-indigo-100">Estimated Time</label>
-                    </div>
-                </div>
+        <div id="liveTranscriptionSection" class="glass p-6 rounded-xl shadow-lg mb-8 hidden">
+            <h2 class="text-2xl font-semibold mb-3">Live Transcription</h2>
+            <div id="transcriptionText" class="text-indigo-100 text-left min-h-[100px] border border-gray-600 rounded p-3 overflow-y-auto">
+                Start recording to see live transcription...
             </div>
         </div>
-
+        
         <div class="glass p-6 rounded-xl shadow-lg mb-8 text-center">
-            <h2 class="text-2xl font-semibold mb-3">New Recording Section</h2>
+            <h2 class="text-2xl font-semibold mb-3">New Recording</h2>
             
             <div id="recordingInterface">
                 <button id="recordButton" class="group">
@@ -324,7 +371,7 @@
             </div>
 
             <div id="postRecordActions" class="mt-4 flex flex-col gap-3 mx-auto max-w-xs hidden">
-                <button id="saveAndPlayButton" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-lg">
+                <button id="saveSessionButton" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-lg">
                     Save Session
                 </button>
                 <button id="saveAndFinalizeButton" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-lg">
@@ -346,22 +393,23 @@
             </div>
         </div>
         
-        <nav class="fixed bottom-0 left-0 right-0 glass p-4 flex justify-around items-center rounded-t-xl shadow-lg">
-            <a href="index.html" class="flex flex-col items-center text-indigo-200 hover:text-white transition duration-200">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-9v10a1 1 0 001 1h3m-6-9a1 1 0 011-1h2a1 1 0 011 1v3a1 1 0 01-1 1h-2a1 1 0 01-1-1v-3z"></path></svg>
-                <span class="text-xs mt-1">Home</span>
-            </a>
-            <a href="new-form.html" class="flex flex-col items-center text-white">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15H9V7h2v10zm4 0h-2V7h2v10z"/></svg>
-                <span class="text-xs mt-1">New Form</span>
-            </a>
-            <a href="index.html" class="flex flex-col items-center text-indigo-200 hover:text-white transition duration-200">
-                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 7v7m0-7H5m14 0v7m0-7H5m7 0v7"></path></svg>
-                <span class="text-xs mt-1">My Forms</span>
-            </a>
-            <button class="flex flex-col items-center text-indigo-200 hover:text-white transition duration-200" onclick="alert('Search functionality to be implemented.')">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                <span class="text-xs mt-1">Search</span>
+        <nav class="fixed bottom-0 left-0 right-0 custom-navbar">
+            <div class="nav-group">
+                <a href="index.html" class="">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                    <span class="text-xs mt-1">Home</span>
+                </a>
+                <a href="new-form.html" class="active">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15H9V7h2v10zm4 0h-2V7h2v10z"/></svg>
+                    <span class="text-xs mt-1">New Form</span>
+                </a>
+                <a href="index.html" class="">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 11H5m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 7v7m0-7H5m14 0v7m0-7H5m7 0v7"/></svg>
+                    <span class="text-xs mt-1">My Forms</span>
+                </a>
+            </div>
+            <button class="search-btn" onclick="alert('Search functionality to be implemented.')">
+                <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16a6.471 6.471 0 003.73-1.29l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
             </button>
         </nav>
 
@@ -377,12 +425,11 @@
         const formPlannedDateInput = document.getElementById('formPlannedDateInput');
         const formAddressInput = document.getElementById('formAddressInput');
         const formInitialNotesInput = document.getElementById('formInitialNotesInput');
-        const recordingSectionsContainer = document.getElementById('recordingSections');
         
         // Accordion elements
         const formDetailsContent = document.getElementById('formDetailsContent');
         const personalNotesContent = document.getElementById('personalNotesContent');
-        const recordingSectionsContent = document.getElementById('recordingSectionsContent');
+        // const recordingSectionsContent = document.getElementById('recordingSectionsContent'); // Removed this section
 
         // Recording interface elements
         const recordingInterface = document.getElementById('recordingInterface');
@@ -394,8 +441,8 @@
 
         // Post-record action buttons
         const postRecordActions = document.getElementById('postRecordActions');
-        const saveAndPlayButton = document.getElementById('saveAndPlayButton');
-        const saveAndFinalizeButton = document.getElementById('saveAndFinalizeButton'); // New button
+        const saveSessionButton = document.getElementById('saveSessionButton'); // Renamed
+        const saveAndFinalizeButton = document.getElementById('saveAndFinalizeButton');
         const viewTranscriptButton = document.getElementById('viewTranscriptButton');
         const discardButton = document.getElementById('discardButton');
 
@@ -403,16 +450,20 @@
         const formRecordingsListContainer = document.getElementById('formRecordingsList');
         const noRecordingsMessage = document.getElementById('noRecordingsMessage');
 
-        let currentFormId = null; // Will be null for new form, or ID for existing form
+        // Live Transcription Placeholder (kept for future, hidden now)
+        const liveTranscriptionSection = document.getElementById('liveTranscriptionSection');
+        const transcriptionText = document.getElementById('transcriptionText');
+
+        let currentFormId = null; 
         let mediaRecorder;
         let audioChunks = [];
         let isRecording = false;
         let isPaused = false;
         let lastRecordedBlob = null;
-        let lastRecordedRecordingId = null; // ID of the specific recording (segment)
+        let lastRecordedRecordingId = null;
         let timerInterval;
         let secondsRecorded = 0;
-        let isQuickRecordFlow = false; // Flag for quick record flow
+        let isQuickRecordFlow = false; 
 
         // --- UI & Accordion Logic ---
 
@@ -430,22 +481,22 @@
             }
         }
 
-        // Initially collapse all accordions except the first one (or none if editing)
+        // Setup accordions based on if it's a new form or editing an existing one
         function setupAccordions(isEditing = false) {
-            // Keep "Characteristics / Details" open by default for New Form, collapse others
             if (!isEditing) {
+                // For new forms, only Characteristics/Details is open by default
                 formDetailsContent.style.display = 'block';
                 personalNotesContent.style.display = 'none';
-                recordingSectionsContent.style.display = 'none';
+                // recordingSectionsContent.style.display = 'none'; // No longer needed
                 document.querySelector('#personalNotesAccordion .accordion-header').classList.add('collapsed');
-                document.querySelector('#recordingSectionsAccordion .accordion-header').classList.add('collapsed');
+                // document.querySelector('#recordingSectionsAccordion .accordion-header').classList.add('collapsed'); // No longer needed
             } else {
-                // If editing, keep all open to review content
+                // For editing, all are open by default to review content
                 formDetailsContent.style.display = 'block';
                 personalNotesContent.style.display = 'block';
-                recordingSectionsContent.style.display = 'block';
+                // recordingSectionsContent.style.display = 'block'; // No longer needed
                 document.querySelector('#personalNotesAccordion .accordion-header').classList.remove('collapsed');
-                document.querySelector('#recordingSectionsAccordion .accordion-header').classList.remove('collapsed');
+                // document.querySelector('#recordingSectionsAccordion .accordion-header').classList.remove('collapsed'); // No longer needed
             }
         }
 
@@ -466,11 +517,12 @@
             bars.forEach((bar, index) => {
                 if (active) {
                     bar.classList.add('active');
+                    // Randomize initial height for more natural look (optional)
                     bar.style.height = `${Math.random() * 80 + 20}%`;
                 } else {
                     bar.classList.remove('active');
                     bar.style.height = '20%';
-                    bar.style.animation = 'none';
+                    bar.style.animation = 'none'; // Stop any lingering CSS animations
                 }
             });
         }
@@ -523,11 +575,11 @@
             const recordingMetaData = {
                 id: recordingId,
                 formId: currentFormId,
-                name: `Recording Segment - ${secondsRecorded}s • ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`, // Name reflects duration
+                name: `Recording Segment - ${secondsRecorded}s • ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`, 
                 status: 'draft', 
                 recordedAtTime: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
                 recordedAtDate: now.toLocaleDateString('en-US'),
-                duration: secondsRecorded, // Store duration
+                duration: secondsRecorded,
                 tasks: [ // Simulated tasks
                     '1. Send report to the team.',
                     '2. Check warehouse stock.',
@@ -541,18 +593,22 @@
 
             await idbKeyval.set(`audio-${recordingId}`, blob); // Store audio blob
 
-            // Update form status if not already completed
+            // Update form status to "in-progress" if it's not already completed
+            // First, retrieve the form data to get its current status
             let allForms = (await idbKeyval.get('formsMetadata')) || [];
             const formIndex = allForms.findIndex(f => f.id === currentFormId);
-            if (formIndex !== -1 && allForms[formIndex].status !== 'completed' && allForms[formIndex].status !== 'in-progress') {
-                allForms[formIndex].status = 'in-progress';
+            if (formIndex !== -1) {
+                if (allForms[formIndex].status !== 'completed' && allForms[formIndex].status !== 'in-progress') {
+                    allForms[formIndex].status = 'in-progress'; // Mark as in-progress if not already
+                }
+                allForms[formIndex].lastModified = new Date().toISOString(); // Update last modified date
                 await idbKeyval.set('formsMetadata', allForms);
             }
             
             renderFormRecordingsList(); // Re-render this form's recordings
         }
 
-        // Render recordings specific to this form (timeline style)
+        // Render recordings specific to this form
         async function renderFormRecordingsList() {
             const container = document.getElementById('formRecordingsList');
             if (!container) return;
@@ -567,7 +623,6 @@
                 noRecordingsMessage.style.display = 'none';
             }
 
-            // Group recordings by date for timeline effect (optional, simple list for now)
             recordings.forEach((rec) => {
                 const statusDotClass = 
                     rec.status === 'confirmed' ? 'dot-confirmed' :
@@ -595,7 +650,7 @@
                         <button onclick="generatePDFForRecording(this.parentElement.parentElement, '${rec.id}')" class="text-indigo-300 underline hover:text-indigo-400 transition-colors">
                             Generate PDF (Recording)
                         </button>
-                        <a href="details.html?id=${rec.id}" class="text-indigo-300 underline hover:text-indigo-400 transition-colors">
+                        <a href="record-details.html?id=${rec.id}" class="text-indigo-300 underline hover:text-indigo-400 transition-colors">
                             Full Details
                         </a>
                     </div>
@@ -613,6 +668,10 @@
                                 URL.revokeObjectURL(audioURL);
                             }, { once: true });
                         }
+                    }).catch(error => {
+                        console.error('Error retrieving audio blob:', error);
+                        // Optionally update UI to indicate missing audio
+                        audioElement.innerHTML = 'Audio not available.';
                     });
                 }
             });
@@ -625,7 +684,7 @@
             clone.querySelectorAll('button').forEach(btn => btn.remove());
             clone.querySelector('a')?.remove(); 
             const statusDot = clone.querySelector('.recording-status-dot');
-            if(statusDot) statusDot.remove(); // Remove the dot
+            if(statusDot) statusDot.remove();
             
             // Adjust styles for PDF rendering
             clone.style.background = 'white';
@@ -654,9 +713,11 @@
         // --- Form Data Save & Status Management ---
 
         // Save Form Data to IndexedDB
-        async function saveFormData(newStatus = null) {
-            const selectedSections = Array.from(recordingSectionsContainer.querySelectorAll('input[type="checkbox"]:checked'))
-                                            .map(checkbox => checkbox.value);
+        async function saveFormData(newStatus = null, redirect = false) {
+            // No longer getting sections from checkboxes if they are removed
+            // const selectedSections = Array.from(recordingSectionsContainer.querySelectorAll('input[type="checkbox"]:checked'))
+            //                                 .map(checkbox => checkbox.value);
+            const selectedSections = []; // Empty array if sections are removed
 
             const formData = {
                 id: currentFormId || crypto.randomUUID(),
@@ -666,45 +727,37 @@
                 plannedDateTime: formPlannedDateInput.value ? new Date(formPlannedDateInput.value).toISOString() : null,
                 address: formAddressInput.value.trim(),
                 initialNotes: formInitialNotesInput.value.trim(),
-                sections: selectedSections,
-                // Status management: if newStatus is provided, use it. Otherwise, default to 'not-started' for new form or keep existing.
-                status: newStatus || (currentFormId ? (await idbKeyval.get('formsMetadata'))
+                sections: selectedSections, // Save empty array or from a different source
+                status: newStatus || (currentFormId ? (await idbKeyval.get('formsMetadata') || [])
                     .find(f => f.id === currentFormId)?.status || 'not-started' : 'not-started'),
-                createdAt: currentFormId ? (await idbKeyval.get('formsMetadata'))
+                createdAt: currentFormId ? (await idbKeyval.get('formsMetadata') || [])
                     .find(f => f.id === currentFormId)?.createdAt || new Date().toISOString() : new Date().toISOString(),
-                lastModified: new Date().toISOString() // Track last modification
+                lastModified: new Date().toISOString()
             };
 
-            currentFormId = formData.id; // Update currentFormId in case it's a new form
+            currentFormId = formData.id; 
 
             let allForms = (await idbKeyval.get('formsMetadata')) || [];
 
             if (currentFormId && allForms.some(f => f.id === currentFormId)) {
-                // Editing existing form
                 const index = allForms.findIndex(f => f.id === currentFormId);
                 allForms[index] = formData;
             } else {
-                // Creating new form
                 allForms.unshift(formData);
             }
             
             await idbKeyval.set('formsMetadata', allForms);
             
-            // Update page title if it was a new form
-            if (pageTitle.textContent === 'New Form') {
+            if (pageTitle.textContent === 'New Form' && !redirect) { // Only update if still "New Form" and not redirecting
                 pageTitle.textContent = 'Edit Form';
             }
-            alert('Form data saved!');
-        }
 
-        // --- Event Listeners ---
-
-        // Auto-save form data on input changes (simulated for MVP)
-        formCreationForm.addEventListener('input', debounce(() => {
-            if (currentFormId) { // Only auto-save if it's an existing form or already created
-                saveFormData(); 
+            if (redirect) {
+                window.location.href = `new-form.html?id=${formData.id}`;
+            } else if (!isQuickRecordFlow) { // Only show alert if not quick record
+                alert('Form data saved!');
             }
-        }, 1000)); // Auto-save 1 second after last input
+        }
 
         // Debounce function to limit function calls (for auto-save)
         function debounce(func, delay) {
@@ -716,68 +769,41 @@
             };
         }
 
+        // --- Event Listeners ---
 
-        // Start recording immediately if 'startRecording=true' in URL
-        async function startRecordingImmediately() {
-            // Ensure form data is saved or quickForm is created before starting
-            if (!currentFormId) {
-                const now = new Date();
-                const newFormId = crypto.randomUUID();
-                const quickForm = {
-                    id: newFormId,
-                    title: `Quick Recording ${now.toLocaleDateString('en-US')} ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`,
-                    beneficiary: 'N/A',
-                    type: 'quick-note',
-                    plannedDateTime: now.toISOString(),
-                    address: 'N/A',
-                    initialNotes: 'Quick recording from ' + now.toLocaleString('en-US'),
-                    sections: [],
-                    status: 'in-progress',
-                    createdAt: now.toISOString(),
-                    lastModified: now.toISOString()
-                };
-
-                let allForms = (await idbKeyval.get('formsMetadata')) || [];
-                allForms.unshift(quickForm);
-                await idbKeyval.set('formsMetadata', allForms);
-                currentFormId = newFormId; // Set currentFormId for subsequent saves
-
-                // Update URL to reflect the new form ID
-                window.history.replaceState(null, null, `new-form.html?id=${currentFormId}&startRecording=true`);
+        formCreationForm.addEventListener('input', debounce(() => {
+            // Only auto-save if we are already in the context of a form (new or existing)
+            // or if it's the quick record flow where form will be created immediately
+            if (currentFormId || isQuickRecordFlow) {
+                saveFormData(); 
             }
-            // Now that we have a currentFormId, start recording
-            startRecording();
-        }
-
+        }, 1000)); 
+        
         // Buttons for post-record actions
-        saveAndPlayButton.addEventListener('click', async () => {
+        saveSessionButton.addEventListener('click', async () => {
             if (lastRecordedBlob) {
                 await saveRecordingSegment(lastRecordedBlob);
                 alert('Recording session saved!');
             }
-            resetRecordingUI(); // Reset UI to allow new recording
+            resetRecordingUI(); 
         });
 
         saveAndFinalizeButton.addEventListener('click', async () => {
             if (lastRecordedBlob) {
-                await saveRecordingSegment(lastRecordedBlob);
-                await saveFormData('completed'); // Save form data and mark as completed
-                alert('Recording session saved and Form finalized!');
-            } else {
-                await saveFormData('completed'); // If no recording was made, just finalize the form
-                alert('Form finalized!');
+                await saveRecordingSegment(lastRecordedBlob); // Save current segment first
             }
-            // Navigate back to My Forms after finalizing
-            window.location.href = 'index.html'; 
+            await saveFormData('completed'); // Save form data and mark as completed
+            alert('Form finalized!');
+            window.location.href = 'index.html'; // Go back to My Forms after finalizing
         });
 
         viewTranscriptButton.addEventListener('click', async () => {
             if (lastRecordedBlob) {
                 if (!lastRecordedRecordingId) { 
-                    await saveRecordingSegment(lastRecordedBlob);
+                    await saveRecordingSegment(lastRecordedBlob); // Implicitly save
                     alert('Recording implicitly saved to view details.');
                 }
-                window.location.href = `details.html?id=${lastRecordedRecordingId}`; 
+                window.location.href = `record-details.html?id=${lastRecordedRecordingId}`; 
             } else {
                 alert('No recent recording to view. Please record first.');
                 resetRecordingUI();
@@ -793,41 +819,163 @@
             resetRecordingUI();
         });
 
-        // --- Initial Page Load Logic ---
-        document.addEventListener('DOMContentLoaded', async () => {
-            const params = new URLSearchParams(window.location.search);
-            const formId = params.get('id');
-            const startRecordingFlag = params.get('startRecording'); // Check for the new flag
+        // Event listener for the main Record button (toggle play/pause)
+        recordButton.addEventListener('click', () => {
+            if (isRecording) { // If already recording
+                if (!isPaused) { // If not paused, then pause
+                    mediaRecorder.pause();
+                    isPaused = true;
+                    recordButton.classList.add('paused'); 
+                    recordButton.classList.remove('recording-active'); 
+                    playPauseButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'; // Pause icon
+                    stopTimer();
+                    animateEqualizer(false);
+                } else { // If paused, then resume
+                    mediaRecorder.resume();
+                    isPaused = false;
+                    recordButton.classList.remove('paused'); 
+                    recordButton.classList.add('recording-active'); 
+                    playPauseButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'; // Pause icon
+                    startTimer(); 
+                    animateEqualizer(true); 
+                }
+            } else { // If not recording, start new recording
+                startRecording();
+            }
+        });
 
-            if (formId) {
-                await loadFormData(formId); // Load form data if ID is present (edit mode)
-                pageTitle.textContent = 'Edit Form';
+        // Event listener for the separate Stop button
+        stopButton.addEventListener('click', () => {
+            if (isRecording) {
+                mediaRecorder.stop();
+            }
+        });
+
+        // Event listener for the play/pause button (redundant with recordButton but kept for clarity)
+        playPauseButton.addEventListener('click', () => {
+            recordButton.click(); // Triggers the same logic as the main record button
+        });
+
+        // --- Page Load Logic ---
+
+        // Function to load and display form details
+        async function loadFormDetailsAndRecordings() {
+            const params = new URLSearchParams(window.location.search);
+            currentFormId = params.get('id'); // Get form ID from URL
+
+            if (currentFormId) {
+                // If formId is present, try to load existing form
+                const allForms = (await idbKeyval.get('formsMetadata')) || [];
+                const form = allForms.find(f => f.id === currentFormId);
+
+                if (form) {
+                    pageTitle.textContent = 'Edit Form';
+                    formTitleInput.value = form.title || '';
+                    formBeneficiaryInput.value = form.beneficiary || '';
+                    formTypeSelect.value = form.type || 'inspection';
+                    if (form.plannedDateTime) {
+                        formPlannedDateInput.value = new Date(form.plannedDateTime).toISOString().slice(0, 16);
+                    } else {
+                        formPlannedDateInput.value = '';
+                    }
+                    formAddressInput.value = form.address || '';
+                    formInitialNotesInput.value = form.initialNotes || '';
+
+                    // Sections checkboxes: removed, so no population needed here
+                } else {
+                    // Form ID provided but form not found (e.g., deleted), treat as new form
+                    alert('Form not found. Starting a new form.');
+                    currentFormId = null; // Reset to create new form
+                    window.history.replaceState(null, null, 'new-form.html'); // Clean URL
+                }
             } else {
-                // Set default planned date to current date/time
+                // Set default planned date to current date/time for new form
                 const now = new Date();
-                now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); // Adjust for timezone
+                now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); 
                 formPlannedDateInput.value = now.toISOString().slice(0, 16);
             }
-
-            // If quickRecord was initiated or form is loaded for recording
-            if (startRecordingFlag) {
-                // Ensure form details are loaded/created before starting recording
-                await startRecordingImmediately();
-            } else {
-                resetRecordingUI(); // Initialize UI to ready-to-record state
-            }
             
-            // Always render the list of recordings for the current form after load
-            // Only render if currentFormId is set (i.e., we are in context of a form)
+            // Render recordings for the current form (if currentFormId is set)
             if (currentFormId) {
                  await renderFormRecordingsList();
+                 document.querySelector('#formRecordingsList').parentElement.style.display = 'block'; // Show section
             } else {
-                // Hide recording history section if no form context
-                document.querySelector('#formRecordingsList').parentElement.style.display = 'none';
+                document.querySelector('#formRecordingsList').parentElement.style.display = 'none'; // Hide section
             }
-           
-            // Ensure accordion state is set up
-            setupAccordions(!!formId); // Pass true if formId exists (editing)
+        }
+
+
+        async function startRecording() {
+            try {
+                // Ensure form data is created/saved before starting recording
+                // This is crucial for quick record flow to have a formId
+                if (!currentFormId) {
+                    isQuickRecordFlow = true; // Mark as quick record flow
+                    await saveFormData(null, false); // Save new form data, no redirect
+                    // currentFormId will be set by saveFormData
+                }
+
+                // If live transcription section is not already visible, show it
+                liveTranscriptionSection.classList.remove('hidden');
+                transcriptionText.textContent = 'Recording started...';
+
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+
+                mediaRecorder.ondataavailable = (event) => {
+                    audioChunks.push(event.data);
+                    // Simulate live transcription updates (for MVP)
+                    transcriptionText.textContent = 'Recording live... (simulated text update)'; // For MVP, fixed text
+                };
+
+                mediaRecorder.onstop = () => {
+                    lastRecordedBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    audioChunks = [];
+
+                    recordingInterface.style.display = 'none'; // Hide recording interface
+                    postRecordActions.classList.remove('hidden'); // Show post-record actions
+                    stopTimer();
+
+                    stream.getTracks().forEach(track => track.stop());
+                    transcriptionText.textContent = 'Recording stopped. Review options below.';
+                };
+
+                mediaRecorder.start();
+                isRecording = true;
+                isPaused = false;
+                startTimer();
+                animateEqualizer(true);
+
+                recordButton.classList.add('recording-active'); // Red pulsing dot
+                playPauseButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'; // Pause icon
+
+            } catch (err) {
+                console.error('Error accessing microphone:', err);
+                alert('Cannot access microphone. Please ensure you have granted permission.');
+                resetRecordingUI();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check for quickRecord flag from URL
+            const params = new URLSearchParams(window.location.search);
+            const quickRecordFromHome = params.get('quickRecord') === 'true'; // From FAB on index.html
+            const startRecordingFlag = params.get('startRecording') === 'true'; // From new-form creation redirect
+
+            // Load form details if ID is present
+            await loadFormDetailsAndRecordings(); 
+
+            // Initialize accordion states
+            setupAccordions(!!params.get('id')); 
+
+            if (quickRecordFromHome || startRecordingFlag) {
+                // If coming from quick record flow or redirect, start recording immediately
+                await startRecording(); 
+            } else {
+                // Otherwise, just reset UI to ready state
+                resetRecordingUI();
+            }
         });
     </script>
 </body>

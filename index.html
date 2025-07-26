@@ -32,7 +32,7 @@
         }
         /* Adjusted status colors for better UX */
         .status-green { background-color: #22c55e; }   /* Completed */
-        .status-red { background-color: #ef4444; }     /* Failed / Error */
+        .status-red { background-color: #ef4444; }     /* Failed / Error (not used here but for consistency) */
         .status-yellow { background-color: #f59e0b; }  /* In Progress / Draft */
         .status-gray { background-color: #6b7280; }    /* Not Started */
 
@@ -54,54 +54,41 @@
             background-color: rgba(255, 255, 255, 0.5);
         }
 
-        /* FAB pulse animation */
-        .pulse {
-            animation: pulse-animation 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
-        }
-        @keyframes pulse-animation {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
-            }
-        }
-
-        /* Navbar Custom Style (Copied from new-form.html for consistency) */
+        /* Navbar Custom Style (Consistent with new-form.html) */
         .custom-navbar {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 0.5rem; /* Adjusted padding */
-            border-radius: 9999px; /* Fully rounded */
-            width: fit-content; /* Fit content, not full width */
-            margin: 0 auto 1rem; /* Center and provide bottom margin */
+            padding: 0.5rem; 
+            border-radius: 9999px; 
+            width: fit-content; 
+            margin: 0 auto 1rem; 
             display: flex;
-            justify-content: center; /* Center items within the bar */
+            justify-content: center; 
             align-items: center;
-            gap: 0.5rem; /* Space between buttons */
+            gap: 0.5rem; 
         }
         .custom-navbar .nav-group {
             display: flex;
-            background: rgba(255, 255, 255, 0.1); /* Background for grouped buttons */
-            border-radius: 9999px; /* Rounded group */
-            overflow: hidden; /* Hide anything outside */
+            background: rgba(255, 255, 255, 0.1); 
+            border-radius: 9999px; 
+            overflow: hidden; 
         }
         .custom-navbar .nav-group a,
         .custom-navbar .nav-group button {
-            padding: 0.75rem 1rem; /* Larger touch area */
+            padding: 0.75rem 1rem; 
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            color: #cbd5e1; /* gray-300 */
+            color: #cbd5e1; 
             transition: background-color 0.2s, color 0.2s;
             text-decoration: none;
             flex-shrink: 0;
-            min-width: 60px; /* Ensure buttons have minimum width */
-            border-radius: 9999px; /* Make each button rounded inside the group */
+            min-width: 60px; 
+            border-radius: 9999px; 
         }
         .custom-navbar .nav-group a:hover,
         .custom-navbar .nav-group button:hover {
@@ -114,7 +101,7 @@
             color: #fff;
         }
         .custom-navbar .search-btn {
-            background-color: #6366f1; /* Active color for search btn */
+            background-color: #6366f1; 
             border-radius: 50%;
             width: 48px;
             height: 48px;
@@ -124,11 +111,11 @@
             color: #fff;
             transition: background-color 0.2s, color 0.2s;
             flex-shrink: 0;
-            margin-left: 0.5rem; /* Space from grouped buttons */
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Subtle shadow for standalone button */
+            margin-left: 0.5rem; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
         }
         .custom-navbar .search-btn:hover {
-            background-color: #5a5ee0; /* Darker indigo on hover */
+            background-color: #5a5ee0; 
             color: #fff;
         }
         .custom-navbar .search-btn svg {
@@ -150,18 +137,9 @@
         <div class="glass p-6 rounded-xl shadow-lg mb-6">
             <h2 class="text-2xl font-semibold mb-3">Today's Tasks/Objectives</h2>
             <div id="todayTasksList" class="flex flex-col gap-3 max-h-32 overflow-y-auto scrollable-list">
-                <div class="flex items-center text-indigo-100 p-2 rounded-lg bg-gray-700 bg-opacity-30">
-                    <svg class="w-5 h-5 mr-2 text-yellow-300" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15H9V7h2v10zm4 0h-2V7h2v10z"/></svg>
-                    <span>Form #234: Inspection at Villa Dacia</span>
-                </div>
-                <div class="flex items-center text-indigo-100 p-2 rounded-lg bg-gray-700 bg-opacity-30">
-                    <svg class="w-5 h-5 mr-2 text-green-300" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15H9V7h2v10zm4 0h-2V7h2v10z"/></svg>
-                    <span>Form #235: Meeting with Client X</span>
-                </div>
                 <p id="noTodayTasksMessage" class="text-indigo-200 text-center hidden">No tasks scheduled for today.</p>
-            </div>
+                </div>
         </div>
-
 
         <div class="glass p-4 rounded-xl shadow-lg mb-6 flex flex-wrap gap-3 justify-between items-center">
             <div class="flex items-center gap-2">
@@ -195,7 +173,7 @@
             <h2 class="text-2xl font-semibold mb-4">My Forms</h2>
             <div id="formsList" class="flex flex-col gap-4 max-h-96 overflow-y-auto scrollable-list">
                 <p class="text-indigo-200 text-center" id="noFormsMessage">No forms created yet.</p>
-            </div>
+                </div>
         </div>
 
         <nav class="fixed bottom-0 left-0 right-0 custom-navbar z-10">
@@ -223,7 +201,6 @@
         const formsListContainer = document.getElementById('formsList');
         const noFormsMessage = document.getElementById('noFormsMessage');
         const addNewFormButton = document.getElementById('addNewFormButton');
-        // const quickRecordFab = document.getElementById('quickRecordFab'); // Removed FAB
 
         const todayTasksList = document.getElementById('todayTasksList');
         const noTodayTasksMessage = document.getElementById('noTodayTasksMessage');
@@ -235,10 +212,10 @@
 
         // This function will render the list of forms from IndexedDB
         async function renderFormsList() {
-            const allForms = (await idbKeyval.get('formsMetadata')) || []; // Forms now stored under 'formsMetadata'
+            const allForms = (await idbKeyval.get('formsMetadata')) || []; 
             let filteredForms = allForms;
 
-            // Apply filters (basic implementation for now)
+            // Apply filters
             const selectedStatus = statusFilter.value;
             const selectedDate = dateFilter.value;
             const selectedType = typeFilter.value;
@@ -266,26 +243,26 @@
             }
 
             filteredForms.forEach(form => { 
-                let statusColor = 'status-gray'; // Default to 'Not Started' (gray)
+                let statusColorClass = 'status-gray'; // Default to 'Not Started' (gray)
                 let statusText = 'Not Started';
-                let statusTextColor = 'text-gray-300';
+                let statusTextColorClass = 'text-gray-300';
                 if (form.status === 'in-progress') {
-                    statusColor = 'status-yellow';
+                    statusColorClass = 'status-yellow';
                     statusText = 'In Progress';
-                    statusTextColor = 'text-amber-300';
+                    statusTextColorClass = 'text-amber-300';
                 } else if (form.status === 'completed') {
-                    statusColor = 'status-green';
+                    statusColorClass = 'status-green';
                     statusText = 'Completed';
-                    statusTextColor = 'text-green-300';
+                    statusTextColorClass = 'text-green-300';
                 }
 
                 const card = document.createElement('div');
                 card.className = 'glass p-4 text-white relative flex flex-col items-start rounded-xl';
                 card.innerHTML = `
-                    <div class="status-indicator ${statusColor} rounded-tl-xl rounded-bl-xl"></div>
+                    <div class="status-indicator ${statusColorClass} rounded-tl-xl rounded-bl-xl"></div>
                     <div class="pl-3 w-full flex justify-between items-center mb-1">
                         <span class="font-medium text-lg">${form.title || 'Untitled Form'}</span>
-                        <span class="${statusTextColor} text-sm font-semibold">${statusText}</span>
+                        <span class="${statusTextColorClass} text-sm font-semibold">${statusText}</span>
                     </div>
                     <div class="pl-3 text-sm text-indigo-100 mb-2">
                         ${form.plannedDateTime ? new Date(form.plannedDateTime).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'}) : 'No Date'} • ${form.beneficiary || 'No Client'} • ${form.type || 'General'}
@@ -307,7 +284,6 @@
             await idbKeyval.set('formsMetadata', allForms);
 
             // Also delete associated audio blobs and recordings metadata
-            // Iterate through recordings associated with this form and delete their blobs
             const formRecordings = (await idbKeyval.get(`formRecordings-${id}`)) || [];
             for (const rec of formRecordings) {
                 await idbKeyval.del(`audio-${rec.id}`); // Delete individual audio blob
@@ -357,7 +333,8 @@
         // Event listener for "Add New Form" button (header)
         addNewFormButton.addEventListener('click', () => {
             // This button means create a new form, then go to it and potentially record
-            window.location.href = 'new-form.html'; 
+            // Add startRecording=true to immediately start recording upon reaching new-form.html
+            window.location.href = 'new-form.html?startRecording=true'; 
         });
 
         // Filter event listeners

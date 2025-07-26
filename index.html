@@ -30,9 +30,12 @@
             top: 0;
             bottom: 0;
         }
-        .status-green { background-color: #4CAF50; } /* Confirmed / Finalized */
-        .status-red { background-color: #F44336; }   /* Failed / Needs Review / Not Started */
-        .status-yellow { background-color: #FFC107; } /* Draft / In Progress */
+        /* Adjusted status colors for better UX */
+        .status-green { background-color: #22c55e; }   /* Completed */
+        .status-red { background-color: #ef4444; }     /* Failed / Error */
+        .status-yellow { background-color: #f59e0b; }  /* In Progress / Draft */
+        .status-gray { background-color: #6b7280; }    /* Not Started */
+
 
         /* Custom scrollbar */
         .scrollable-list::-webkit-scrollbar {
@@ -63,28 +66,111 @@
                 transform: scale(1.05);
             }
         }
+
+        /* Navbar Custom Style (Copied from new-form.html for consistency) */
+        .custom-navbar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 0.5rem; /* Adjusted padding */
+            border-radius: 9999px; /* Fully rounded */
+            width: fit-content; /* Fit content, not full width */
+            margin: 0 auto 1rem; /* Center and provide bottom margin */
+            display: flex;
+            justify-content: center; /* Center items within the bar */
+            align-items: center;
+            gap: 0.5rem; /* Space between buttons */
+        }
+        .custom-navbar .nav-group {
+            display: flex;
+            background: rgba(255, 255, 255, 0.1); /* Background for grouped buttons */
+            border-radius: 9999px; /* Rounded group */
+            overflow: hidden; /* Hide anything outside */
+        }
+        .custom-navbar .nav-group a,
+        .custom-navbar .nav-group button {
+            padding: 0.75rem 1rem; /* Larger touch area */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #cbd5e1; /* gray-300 */
+            transition: background-color 0.2s, color 0.2s;
+            text-decoration: none;
+            flex-shrink: 0;
+            min-width: 60px; /* Ensure buttons have minimum width */
+            border-radius: 9999px; /* Make each button rounded inside the group */
+        }
+        .custom-navbar .nav-group a:hover,
+        .custom-navbar .nav-group button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+        .custom-navbar .nav-group a.active,
+        .custom-navbar .nav-group button.active {
+            background-color: #6366f1; /* indigo-500 */
+            color: #fff;
+        }
+        .custom-navbar .search-btn {
+            background-color: #6366f1; /* Active color for search btn */
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            transition: background-color 0.2s, color 0.2s;
+            flex-shrink: 0;
+            margin-left: 0.5rem; /* Space from grouped buttons */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Subtle shadow for standalone button */
+        }
+        .custom-navbar .search-btn:hover {
+            background-color: #5a5ee0; /* Darker indigo on hover */
+            color: #fff;
+        }
+        .custom-navbar .search-btn svg {
+            width: 24px;
+            height: 24px;
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-white">
 
-    <div class="relative w-full max-w-md mx-auto p-4">
-
-        <header class="text-center mb-6 flex justify-between items-center">
+    <div class="relative w-full max-w-md mx-auto p-4 pb-20"> <header class="text-center mb-6 flex justify-between items-center">
             <h1 class="text-4xl font-extrabold text-white">Forma</h1>
             <button id="addNewFormButton" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 flex items-center">
-                <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
+                <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15H9V7h2v10zm4 0h-2V7h2v10z"/></svg>
                 New Form
             </button>
         </header>
+
+        <div class="glass p-6 rounded-xl shadow-lg mb-6">
+            <h2 class="text-2xl font-semibold mb-3">Today's Tasks/Objectives</h2>
+            <div id="todayTasksList" class="flex flex-col gap-3 max-h-32 overflow-y-auto scrollable-list">
+                <div class="flex items-center text-indigo-100 p-2 rounded-lg bg-gray-700 bg-opacity-30">
+                    <svg class="w-5 h-5 mr-2 text-yellow-300" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15H9V7h2v10zm4 0h-2V7h2v10z"/></svg>
+                    <span>Form #234: Inspection at Villa Dacia</span>
+                </div>
+                <div class="flex items-center text-indigo-100 p-2 rounded-lg bg-gray-700 bg-opacity-30">
+                    <svg class="w-5 h-5 mr-2 text-green-300" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15H9V7h2v10zm4 0h-2V7h2v10z"/></svg>
+                    <span>Form #235: Meeting with Client X</span>
+                </div>
+                <p id="noTodayTasksMessage" class="text-indigo-200 text-center hidden">No tasks scheduled for today.</p>
+            </div>
+        </div>
+
 
         <div class="glass p-4 rounded-xl shadow-lg mb-6 flex flex-wrap gap-3 justify-between items-center">
             <div class="flex items-center gap-2">
                 <label for="statusFilter" class="text-indigo-200 text-sm">Status:</label>
                 <select id="statusFilter" class="bg-gray-700 text-white rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     <option value="all">All</option>
+                    <option value="not-started">Not Started</option>
                     <option value="in-progress">In Progress</option>
                     <option value="completed">Completed</option>
-                    <option value="not-started">Not Started</option>
                 </select>
             </div>
             <div class="flex items-center gap-2">
@@ -98,6 +184,9 @@
                     <option value="inspection">Inspection</option>
                     <option value="estimation">Estimation</option>
                     <option value="reception">Reception</option>
+                    <option value="meeting">Meeting</option>
+                    <option value="quick-note">Quick Note</option>
+                    <option value="other">Other</option>
                 </select>
             </div>
         </div>
@@ -109,23 +198,23 @@
             </div>
         </div>
 
-        <button id="quickRecordFab" class="fixed bottom-20 right-4 w-16 h-16 bg-red-600 hover:bg-red-700 text-white rounded-full flex items-center justify-center text-xl font-bold transition duration-300 shadow-xl pulse">
-            REC
-        </button>
-
-        <nav class="fixed bottom-0 left-0 right-0 glass p-4 flex justify-around items-center rounded-t-xl shadow-lg">
-            <a href="#" class="flex flex-col items-center text-white">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-9v10a1 1 0 001 1h3m-6-9a1 1 0 011-1h2a1 1 0 011 1v3a1 1 0 01-1 1h-2a1 1 0 01-1-1v-3z"></path></svg>
-                <span class="text-xs mt-1">Home</span>
-            </a>
-            <a href="#" class="flex flex-col items-center text-indigo-200 hover:text-white transition duration-200">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 7v7m0-7H5m14 0v7m0-7H5m7 0v7"></path></svg>
-                <span class="text-xs mt-1">Record</span>
-            </a>
-            <a href="#" class="flex flex-col items-center text-indigo-200 hover:text-white transition duration-200">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                <span class="text-xs mt-1">Settings</span>
-            </a>
+        <nav class="fixed bottom-0 left-0 right-0 custom-navbar z-10">
+            <div class="nav-group">
+                <a href="index.html" class="active">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                    <span class="text-xs mt-1">Home</span>
+                </a>
+                <a href="new-form.html" class="">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15H9V7h2v10zm4 0h-2V7h2v10z"/></svg>
+                    <span class="text-xs mt-1">New Form</span>
+                </a>
+                <a href="index.html" class=""> <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 11H5m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 7v7m0-7H5m14 0v7m0-7H5m7 0v7"/></svg>
+                    <span class="text-xs mt-1">My Forms</span>
+                </a>
+            </div>
+            <button class="search-btn" onclick="alert('Search functionality to be implemented.')">
+                <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16a6.471 6.471 0 003.73-1.29l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+            </button>
         </nav>
 
     </div>
@@ -134,30 +223,60 @@
         const formsListContainer = document.getElementById('formsList');
         const noFormsMessage = document.getElementById('noFormsMessage');
         const addNewFormButton = document.getElementById('addNewFormButton');
-        const quickRecordFab = document.getElementById('quickRecordFab');
+        // const quickRecordFab = document.getElementById('quickRecordFab'); // Removed FAB
+
+        const todayTasksList = document.getElementById('todayTasksList');
+        const noTodayTasksMessage = document.getElementById('noTodayTasksMessage');
+
+        // Filter elements
+        const statusFilter = document.getElementById('statusFilter');
+        const dateFilter = document.getElementById('dateFilter');
+        const typeFilter = document.getElementById('typeFilter');
 
         // This function will render the list of forms from IndexedDB
         async function renderFormsList() {
-            const records = (await idbKeyval.get('recordsMeta')) || []; // Reuse recordsMeta for forms
+            const allForms = (await idbKeyval.get('formsMetadata')) || []; // Forms now stored under 'formsMetadata'
+            let filteredForms = allForms;
+
+            // Apply filters (basic implementation for now)
+            const selectedStatus = statusFilter.value;
+            const selectedDate = dateFilter.value;
+            const selectedType = typeFilter.value;
+
+            if (selectedStatus !== 'all') {
+                filteredForms = filteredForms.filter(form => form.status === selectedStatus);
+            }
+            if (selectedDate) {
+                filteredForms = filteredForms.filter(form => {
+                    const formDate = form.plannedDateTime ? new Date(form.plannedDateTime).toISOString().split('T')[0] : null;
+                    return formDate === selectedDate;
+                });
+            }
+            if (selectedType !== 'all') {
+                filteredForms = filteredForms.filter(form => form.type === selectedType);
+            }
+
             formsListContainer.innerHTML = ''; 
 
-            if (records.length === 0) {
+            if (filteredForms.length === 0) {
                 noFormsMessage.style.display = 'block';
                 return;
             } else {
                 noFormsMessage.style.display = 'none';
             }
 
-            records.forEach(form => { // Rename 'rec' to 'form' for clarity
-                // Determine status colors/text based on the 'status' property
-                let statusColor = 'status-red'; // Default to 'Not Started'
+            filteredForms.forEach(form => { 
+                let statusColor = 'status-gray'; // Default to 'Not Started' (gray)
                 let statusText = 'Not Started';
+                let statusTextColor = 'text-gray-300';
                 if (form.status === 'in-progress') {
                     statusColor = 'status-yellow';
                     statusText = 'In Progress';
+                    statusTextColor = 'text-amber-300';
                 } else if (form.status === 'completed') {
                     statusColor = 'status-green';
                     statusText = 'Completed';
+                    statusTextColor = 'text-green-300';
                 }
 
                 const card = document.createElement('div');
@@ -166,14 +285,13 @@
                     <div class="status-indicator ${statusColor} rounded-tl-xl rounded-bl-xl"></div>
                     <div class="pl-3 w-full flex justify-between items-center mb-1">
                         <span class="font-medium text-lg">${form.title || 'Untitled Form'}</span>
-                        <span class="${statusColor.replace('status-', 'text-')}-300 text-sm font-semibold">${statusText}</span>
+                        <span class="${statusTextColor} text-sm font-semibold">${statusText}</span>
                     </div>
                     <div class="pl-3 text-sm text-indigo-100 mb-2">
-                        ${form.date ? new Date(form.date).toLocaleDateString('en-US') : 'No Date'} • ${form.beneficiary || 'No Client'} • ${form.type || 'General'}
+                        ${form.plannedDateTime ? new Date(form.plannedDateTime).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'}) : 'No Date'} • ${form.beneficiary || 'No Client'} • ${form.type || 'General'}
                     </div>
                     <div class="pl-3 w-full flex justify-end gap-2 mt-2">
-                        <a href="fisa-detalii.html?id=${form.id}" class="bg-indigo-500 hover:bg-indigo-600 px-3 py-1 rounded-lg text-white text-sm transition duration-300">View</a>
-                        <button onclick="editForm('${form.id}')" class="bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded-lg text-white text-sm transition duration-300">Edit</button>
+                        <a href="new-form.html?id=${form.id}" class="bg-indigo-500 hover:bg-indigo-600 px-3 py-1 rounded-lg text-white text-sm transition duration-300">View/Edit</a>
                         <button onclick="deleteForm('${form.id}')" class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded-lg text-white text-sm transition duration-300">Delete</button>
                     </div>
                 `;
@@ -181,43 +299,77 @@
             });
         }
 
-        // Functions for card actions (will navigate to other pages)
-        function editForm(id) {
-            window.location.href = `fisa-noua.html?id=${id}`;
-        }
-
         async function deleteForm(id) {
             if (!confirm('Are you sure you want to delete this form and all its associated recordings?')) return;
 
-            let allForms = (await idbKeyval.get('recordsMeta')) || [];
+            let allForms = (await idbKeyval.get('formsMetadata')) || [];
             allForms = allForms.filter(f => f.id !== id);
-            await idbKeyval.set('recordsMeta', allForms);
+            await idbKeyval.set('formsMetadata', allForms);
 
-            // Also delete associated audio blobs
-            // This assumes all audio blobs related to a form have keys like `audio-formId-recordingId`
-            // For now, our audio blobs are `audio-recordingId`, so we need to adjust our save logic later
-            // For MVP, we'll just delete the form meta
+            // Also delete associated audio blobs and recordings metadata
+            // Iterate through recordings associated with this form and delete their blobs
+            const formRecordings = (await idbKeyval.get(`formRecordings-${id}`)) || [];
+            for (const rec of formRecordings) {
+                await idbKeyval.del(`audio-${rec.id}`); // Delete individual audio blob
+            }
+            await idbKeyval.del(`formRecordings-${id}`); // Delete the recordings metadata list for this form
             
-            alert('Form deleted.');
+            alert('Form and all associated recordings deleted.');
             renderFormsList(); // Re-render the list
+            renderTodayTasks(); // Update today's tasks as well
         }
 
-        // Event listener for "Add New Form" button
+        // --- Today's Tasks/Objectives ---
+        async function renderTodayTasks() {
+            const allForms = (await idbKeyval.get('formsMetadata')) || [];
+            const today = new Date();
+            const todayString = today.toISOString().split('T')[0]; // YYYY-MM-DD
+
+            const tasksForToday = allForms.filter(form => {
+                if (!form.plannedDateTime) return false;
+                const formPlannedDate = new Date(form.plannedDateTime).toISOString().split('T')[0];
+                return formPlannedDate === todayString && form.status !== 'completed';
+            });
+
+            todayTasksList.innerHTML = '';
+            if (tasksForToday.length === 0) {
+                noTodayTasksMessage.style.display = 'block';
+            } else {
+                noTodayTasksMessage.style.display = 'none';
+                tasksForToday.forEach(form => {
+                    let iconColorClass = 'text-yellow-300'; // Default for in progress/not started
+                    if (form.status === 'completed') iconColorClass = 'text-green-300';
+                    if (form.status === 'not-started') iconColorClass = 'text-gray-300';
+
+                    const taskElement = document.createElement('div');
+                    taskElement.className = 'flex items-center text-indigo-100 p-2 rounded-lg bg-gray-700 bg-opacity-30 cursor-pointer';
+                    taskElement.onclick = () => { window.location.href = `new-form.html?id=${form.id}`; };
+                    taskElement.innerHTML = `
+                        <svg class="w-5 h-5 mr-2 ${iconColorClass}" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15H9V7h2v10zm4 0h-2V7h2v10z"/></svg>
+                        <span>${form.title || 'Untitled Form'}</span>
+                    `;
+                    todayTasksList.appendChild(taskElement);
+                });
+            }
+        }
+
+
+        // Event listener for "Add New Form" button (header)
         addNewFormButton.addEventListener('click', () => {
-            window.location.href = 'fisa-noua.html'; // Navigate to the new form creation page
+            // This button means create a new form, then go to it and potentially record
+            window.location.href = 'new-form.html'; 
         });
 
-        // Event listener for the Quick Record FAB
-        quickRecordFab.addEventListener('click', () => {
-            // For now, navigate to new form page to record quickly without pre-filling
-            // In future, this would auto-create a simple form and go to details page to record
-            window.location.href = 'fisa-noua.html?quickRecord=true'; 
-        });
+        // Filter event listeners
+        statusFilter.addEventListener('change', renderFormsList);
+        dateFilter.addEventListener('change', renderFormsList);
+        typeFilter.addEventListener('change', renderFormsList);
 
 
         // Run on page load
         document.addEventListener('DOMContentLoaded', async () => {
             await renderFormsList();
+            await renderTodayTasks();
         });
     </script>
 </body>

@@ -55,34 +55,34 @@
             background-color: rgba(255, 255, 255, 0.5);
         }
 
-        /* New Recording Interface Design (Two Rows) */
+        /* Recording Interface Styles */
         #recordingInterface {
             display: flex;
             flex-direction: column; /* Main container is column now */
             align-items: center;
             justify-content: center;
             background: rgba(0, 0, 0, 0.3); 
-            border-radius: 1.5rem; /* Slightly less rounded than pill for block */
+            border-radius: 1.5rem; 
             padding: 1rem 1.5rem; 
-            width: 95%; /* Use full width of parent */
-            max-width: 350px; /* Limit max width */
+            width: 95%; 
+            max-width: 350px; 
             margin: 0 auto;
             box-sizing: border-box; 
         }
         #recordingInterface .top-row {
             display: flex;
             align-items: center;
-            justify-content: space-between; /* Space out items */
+            justify-content: space-between; 
             width: 100%;
             gap: 0.5rem;
-            margin-bottom: 0.5rem; /* Space between rows */
+            margin-bottom: 0.5rem; 
         }
         #recordingInterface .bottom-row {
             display: flex;
             align-items: center;
-            justify-content: space-between; /* Space out items */
+            justify-content: space-between; 
             width: 100%;
-            padding: 0 0.25rem; /* Match side padding of top row elements */
+            padding: 0 0.25rem; 
             gap: 0.5rem;
         }
 
@@ -91,7 +91,7 @@
             flex-direction: column;
             align-items: center;
             flex-shrink: 0;
-            min-width: 50px; /* Ensure space for text */
+            min-width: 50px; 
         }
 
         #recordButton {
@@ -126,7 +126,7 @@
             align-items: flex-end; 
             gap: 2px;
             flex-grow: 1; 
-            margin: 0 0.5rem; /* Adjusted margin */
+            margin: 0 0.5rem; 
             min-width: 80px; 
             max-width: 120px; 
             overflow: hidden; 
@@ -136,7 +136,6 @@
             width: 4px; 
             background-color: #6366f1; 
             border-radius: 2px;
-            transition: height 0.1s ease-out; 
             opacity: 0.8;
             will-change: height; 
         }
@@ -147,17 +146,16 @@
         }
 
         #timer {
-            font-size: 1rem; /* Slightly smaller to fit */
+            font-size: 1rem; 
             font-weight: 600;
             color: #e0e7ff; 
             flex-shrink: 0;
             min-width: 50px; 
-            text-align: center; /* Center align timer */
-            /* Removed flex-grow to make it fixed width */
+            text-align: center; 
         }
         
         #stopButton {
-            width: 40px; /* Smaller stop button */
+            width: 40px; 
             height: 40px;
             border-radius: 50%;
             background-color: rgba(255, 255, 255, 0.1);
@@ -168,16 +166,15 @@
             transition: background-color 0.2s;
         }
         #stopButton:hover { background-color: rgba(255, 255, 255, 0.2); }
-        #stopButton svg { width: 24px; height: 24px; color: #fff; } /* Icon color */
+        #stopButton svg { width: 24px; height: 24px; color: #fff; } 
 
         .control-label {
-            font-size: 0.75rem; /* Smaller text size */
-            color: #cbd5e1; /* Light gray for labels */
+            font-size: 0.75rem; 
+            color: #cbd5e1; 
             text-align: center;
-            white-space: nowrap; /* Prevent wrapping */
-            min-width: 50px; /* Ensure text fits */
+            white-space: nowrap; 
+            min-width: 50px; 
         }
-
 
         /* Accordion styles */
         .accordion-header {
@@ -232,7 +229,7 @@
         .dot-failed { background-color: #F44336; }
         .dot-draft { background-color: #FFC107; }
 
-        /* Navbar Custom Style (Consistent with new-form.html) */
+        /* Navbar Custom Style */
         .custom-navbar {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -266,7 +263,7 @@
             text-decoration: none;
             flex-shrink: 0;
             min-width: 60px;
-            border-radius: 9999px; /* Make each button rounded inside the group */
+            border-radius: 9999px; 
         }
         .custom-navbar .nav-group a:hover,
         .custom-navbar .nav-group button:hover {
@@ -276,13 +273,12 @@
         /* Active Navbar Button Style - Rounded Background */
         .custom-navbar .nav-group a.active,
         .custom-navbar .nav-group button.active {
-            background-color: #6366f1; /* indigo-500 */
+            background-color: #6366f1; 
             color: #fff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Subtle shadow for active state */
-            /* Ensure it fills the rounded area */
-            padding-left: 1.25rem; /* Adjust padding to make it truly pill-shaped */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
+            padding-left: 1.25rem; 
             padding-right: 1.25rem;
-            margin: 0 2px; /* Small margin to ensure separation in group */
+            margin: 0 2px; 
         }
         .custom-navbar .search-btn {
             background-color: #6366f1; 
@@ -305,6 +301,16 @@
         .custom-navbar .search-btn svg {
             width: 24px;
             height: 24px;
+        }
+
+        /* Post-Recording Action Buttons Style */
+        .post-record-action-button {
+            width: 100%;
+            font-bold py-3 px-4 rounded-lg transition duration-300 text-lg;
+        }
+        .post-record-action-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -404,17 +410,11 @@
                 </div>
             </div>
 
-            <div id="postRecordActions" class="mt-4 flex flex-col gap-3 mx-auto max-w-xs hidden">
-                <button id="saveSessionButton" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-lg">
-                    Save Session
+            <div class="mt-4 flex flex-col sm:flex-row gap-3 mx-auto max-w-xs">
+                <button id="saveAndViewTranscriptButton" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-lg flex-grow" disabled>
+                    Save & View Transcript
                 </button>
-                <button id="saveAndFinalizeButton" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-lg">
-                    Save & Finalize Form
-                </button>
-                <button id="viewTranscriptButton" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-lg">
-                    View Transcript (Report)
-                </button>
-                <button id="discardButton" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-lg">
+                <button id="discardRecordingButton" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-lg flex-grow" disabled>
                     Discard Recording
                 </button>
             </div>
@@ -462,9 +462,9 @@
         const saveFormDetailsButton = document.getElementById('saveFormDetailsButton'); 
         
         // Accordion elements
-        const formDetailsAccordion = document.getElementById('formDetailsAccordion'); // Get accordion div itself
+        const formDetailsAccordion = document.getElementById('formDetailsAccordion'); 
         const formDetailsContent = document.getElementById('formDetailsContent');
-        const personalNotesAccordion = document.getElementById('personalNotesAccordion'); // Get accordion div itself
+        const personalNotesAccordion = document.getElementById('personalNotesAccordion'); 
         const personalNotesContent = document.getElementById('personalNotesContent');
 
         // Recording interface elements
@@ -476,12 +476,9 @@
         const stopButton = document.getElementById('stopButton');
         const stopButtonText = document.getElementById('stopButtonText'); 
 
-        // Post-record action buttons
-        const postRecordActions = document.getElementById('postRecordActions');
-        const saveSessionButton = document.getElementById('saveSessionButton'); 
-        const saveAndFinalizeButton = document.getElementById('saveAndFinalizeButton'); 
-        const viewTranscriptButton = document.getElementById('viewTranscriptButton');
-        const discardButton = document.getElementById('discardButton');
+        // Post-record action buttons (NEW)
+        const saveAndViewTranscriptButton = document.getElementById('saveAndViewTranscriptButton');
+        const discardRecordingButton = document.getElementById('discardRecordingButton');
 
         // Recordings for this form list
         const formRecordingsListContainer = document.getElementById('formRecordingsList');
@@ -511,12 +508,12 @@
             const icon = headerElement.querySelector('.accordion-icon');
 
             if (forceCollapse) {
-                if (content.style.display !== 'none') { // Only collapse if not already
+                if (content.style.display !== 'none') { 
                     content.style.display = 'none';
                     icon.style.transform = 'rotate(-90deg)';
                     headerElement.classList.add('collapsed');
                 }
-            } else { // Normal toggle behavior
+            } else { 
                 if (content.style.display === 'none' || content.style.display === '') {
                     content.style.display = 'block';
                     icon.style.transform = 'rotate(0deg)';
@@ -532,13 +529,11 @@
         // Setup accordions based on if it's a new form or editing an existing one
         function setupAccordions(isEditing = false) {
             if (!isEditing) {
-                // For new forms, only Characteristics/Details is open by default
                 formDetailsContent.style.display = 'block';
                 document.querySelector('#formDetailsAccordion .accordion-header').classList.remove('collapsed');
                 personalNotesContent.style.display = 'none';
                 document.querySelector('#personalNotesAccordion .accordion-header').classList.add('collapsed');
             } else {
-                // For editing, all are open by default to review content
                 formDetailsContent.style.display = 'block';
                 personalNotesContent.style.display = 'block';
                 document.querySelector('#formDetailsAccordion .accordion-header').classList.remove('collapsed');
@@ -626,7 +621,8 @@
             recordingInterface.style.display = 'flex'; 
             recordButton.classList.remove('recording-active', 'paused');
             recordButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg>';
-            recordButtonText.textContent = 'Start Rec.'; // Set initial text
+            recordButtonText.textContent = 'Start Rec.'; 
+            stopButtonText.textContent = 'Stop Rec.'; // Ensure stop button text is reset too
 
             isRecording = false;
             isPaused = false;
@@ -638,7 +634,11 @@
             animateEqualizer(false); 
             stopSimulatedTranscription(); 
 
-            postRecordActions.classList.add('hidden'); 
+            // Disable and hide new post-recording buttons
+            saveAndViewTranscriptButton.disabled = true;
+            discardRecordingButton.disabled = true;
+            // Removed old postRecordActions div, no need to hide it now
+            
             liveTranscriptionSection.classList.add('hidden'); 
         }
         
@@ -708,7 +708,7 @@
                 const statusDotClass = 
                     rec.status === 'confirmed' ? 'dot-confirmed' :
                     rec.status === 'failed' ? 'dot-red' : 
-                    rec.status === 'draft' ? 'dot-yellow' : 'dot-gray'; 
+                    rec.status === 'draft' ? 'dot-draft' : 'dot-gray'; 
 
                 const statusText = rec.status ? rec.status.charAt(0).toUpperCase() + rec.status.slice(1) : 'N/A'; 
 
@@ -862,11 +862,13 @@
                     lastRecordedBlob = new Blob(audioChunks, { type: 'audio/webm' });
                     audioChunks = []; // Clear chunks for next recording
 
-                    recordingInterface.style.display = 'none'; // Hide recording interface
-                    postRecordActions.classList.remove('hidden'); // Show post-record actions
-                    stopTimer(); // Stop timer on stop
-                    animateEqualizer(false); // Stop equalizer animation
-                    stopSimulatedTranscription(); // Stop simulated transcription
+                    // Enable post-recording action buttons
+                    saveAndViewTranscriptButton.disabled = false;
+                    discardRecordingButton.disabled = false;
+                    
+                    stopTimer(); 
+                    animateEqualizer(false); 
+                    stopSimulatedTranscription(); 
                     transcriptionText.textContent = 'Recording stopped. Review options below.';
 
                     // Stop the audio stream tracks to release microphone
@@ -876,13 +878,13 @@
                 mediaRecorder.start();
                 isRecording = true;
                 isPaused = false;
-                startTimer(); // Start timer
-                animateEqualizer(true); // Start equalizer animation
-                startSimulatedTranscription(); // Start simulated transcription
+                startTimer(); 
+                animateEqualizer(true); 
+                startSimulatedTranscription(); 
 
-                recordButton.classList.add('recording-active'); // Red pulsing dot
-                recordButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'; // Pause icon (for active recording)
-                recordButtonText.textContent = 'Pause'; // Set text to Pause
+                recordButton.classList.add('recording-active'); 
+                recordButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'; // Pause icon
+                recordButtonText.textContent = 'Pause'; 
 
                 // Collapse accordions when recording starts
                 toggleAccordion('formDetailsContent', document.querySelector('#formDetailsAccordion .accordion-header'), true);
@@ -891,7 +893,7 @@
             } catch (err) {
                 console.error('Error accessing microphone:', err);
                 alert('Cannot access microphone. Please ensure you have granted permission.');
-                resetRecordingUI(); // Reset UI if microphone access fails
+                resetRecordingUI(); 
             }
         }
 
@@ -900,29 +902,29 @@
             if (mediaRecorder && mediaRecorder.state === 'recording') {
                 mediaRecorder.pause();
                 isPaused = true;
-                recordButton.classList.add('paused'); // Change dot to square
-                recordButton.classList.remove('recording-active'); // Stop pulsing
-                recordButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg>'; // Play icon (for resume)
-                recordButtonText.textContent = 'Continue'; // Set text to Continue
-                stopTimer(); // Pause timer
-                animateEqualizer(false); // Stop equalizer animation
-                stopSimulatedTranscription(); // Stop simulated transcription
+                recordButton.classList.add('paused'); 
+                recordButton.classList.remove('recording-active'); 
+                recordButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg>'; // Play icon
+                recordButtonText.textContent = 'Continue'; 
+                stopTimer(); 
+                animateEqualizer(false); 
+                stopSimulatedTranscription(); 
                 transcriptionText.textContent = 'Recording paused.';
             }
         }
 
-        // Function to resume actual microphone recording
+        // Function to resume actual microphone microphone recording
         function resumeMicrophoneRecording() {
             if (mediaRecorder && mediaRecorder.state === 'paused') {
                 mediaRecorder.resume();
                 isPaused = false;
-                recordButton.classList.remove('paused'); // Change square back to dot
-                recordButton.classList.add('recording-active'); // Resume pulsing
-                recordButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'; // Pause icon (for active recording)
-                recordButtonText.textContent = 'Pause'; // Set text to Pause
-                startTimer(); // Resume timer
-                animateEqualizer(true); // Resume equalizer animation
-                startSimulatedTranscription(); // Resume simulated transcription
+                recordButton.classList.remove('paused'); 
+                recordButton.classList.add('recording-active'); 
+                recordButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'; // Pause icon
+                recordButtonText.textContent = 'Pause'; 
+                startTimer(); 
+                animateEqualizer(true); 
+                startSimulatedTranscription(); 
             }
         }
 
@@ -931,7 +933,7 @@
             if (!isRecording) { // If not recording, start new recording flow
                 // Ensure form data is created/saved before starting recording
                 if (!currentFormId) {
-                    await saveFormData(); // This will create the new form and set currentFormId
+                    await saveFormData(); 
                 }
                 await startMicrophoneRecording();
             } else { // If already recording, toggle pause/resume
@@ -950,7 +952,6 @@
         saveFormDetailsButton.addEventListener('click', async () => {
             await saveFormData();
             alert('Form data saved!');
-            // Collapse accordion after saving
             toggleAccordion('formDetailsContent', document.querySelector('#formDetailsAccordion .accordion-header'), true);
         });
 
@@ -959,38 +960,19 @@
             await saveFormData(); 
         }, 1000)); 
         
-        // Buttons for post-record actions
-        saveSessionButton.addEventListener('click', async () => {
+        // NEW: Save & View Transcript button
+        saveAndViewTranscriptButton.addEventListener('click', async () => {
             if (lastRecordedBlob) {
                 await saveRecordingSegment(lastRecordedBlob);
-                alert('Recording session saved!');
-            }
-            resetRecordingUI(); 
-        });
-
-        saveAndFinalizeButton.addEventListener('click', async () => {
-            if (lastRecordedBlob) {
-                await saveRecordingSegment(lastRecordedBlob); 
-            }
-            await saveFormData('completed'); 
-            alert('Form finalized!');
-            window.location.href = 'index.html'; 
-        });
-
-        viewTranscriptButton.addEventListener('click', async () => {
-            if (lastRecordedBlob) {
-                if (!lastRecordedRecordingId) { 
-                    await saveRecordingSegment(lastRecordedBlob); 
-                    alert('Recording implicitly saved to view details.');
-                }
                 window.location.href = `record-details.html?id=${lastRecordedRecordingId}`; 
             } else {
-                alert('No recent recording to view. Please record first.');
+                alert('No recent recording to save and view.');
                 resetRecordingUI();
             }
         });
 
-        discardButton.addEventListener('click', () => {
+        // NEW: Discard Recording button
+        discardRecordingButton.addEventListener('click', () => {
             if (confirm('Are you sure you want to discard this recording? It will not be saved.')) {
                 lastRecordedBlob = null;
                 lastRecordedRecordingId = null;
@@ -998,6 +980,7 @@
             }
             resetRecordingUI();
         });
+
 
         // Event listener for the main Record button (now calls handleRecordingFlow)
         recordButton.addEventListener('click', handleRecordingFlow);
@@ -1032,20 +1015,18 @@
                     }
                     formAddressInput.value = form.address || '';
                     formInitialNotesInput.value = form.initialNotes || '';
-                    setupAccordions(true); // Open all accordions if editing
+                    setupAccordions(true); 
                 } else {
-                    // Form ID provided but form not found (e.g., deleted), treat as new form
                     alert('Form not found. Starting a new form.');
                     currentFormId = null; 
                     window.history.replaceState(null, null, 'new-form.html'); 
-                    setupAccordions(false); // Default accordion state for new form
+                    setupAccordions(false); 
                 }
             } else {
-                // Set default planned date to current date/time for new form
                 const now = new Date();
                 now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); 
                 formPlannedDateInput.value = now.toISOString().slice(0, 16);
-                setupAccordions(false); // Default accordion state for new form
+                setupAccordions(false); 
             }
             
             if (currentFormId) {
@@ -1057,9 +1038,8 @@
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            // Load form details and set up initial UI
             await loadFormDetailsAndRecordings(); 
-            resetRecordingUI(); // Always initialize to ready-to-record, waiting for explicit click
+            resetRecordingUI(); 
         });
     </script>
 </body>

@@ -321,8 +321,7 @@
         <header class="text-center mb-6 flex justify-between items-center">
             <a href="index.html" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 flex items-center">
                 <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-                Back to Forms
-            </a>
+                <span id="backToFormsText">Back to Forms</span> </a>
             <h1 id="pageTitle" class="text-3xl font-extrabold text-white flex-grow text-center">New Form</h1>
             <div class="w-24"></div> </header>
 
@@ -341,8 +340,7 @@
                         <label for="formBeneficiaryInput" class="block text-indigo-200 text-sm font-bold mb-2">Client:</label>
                         <input type="text" id="formBeneficiaryInput" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 text-white" placeholder="e.g., Colosseum SRL">
                     </div>
-                    <div class="mb-4">
-                        <label for="formTypeSelect" class="block text-indigo-200 text-sm font-bold mb-2">Form Type:</label>
+                    <div class="mb-4 hidden"> <label for="formTypeSelect" class="block text-indigo-200 text-sm font-bold mb-2">Form Type:</label>
                         <select id="formTypeSelect" class="shadow border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 text-white">
                             <option value="inspection">Inspection</option>
                             <option value="estimation">Estimation</option>
@@ -410,12 +408,15 @@
                 </div>
             </div>
 
-            <div class="mt-4 flex flex-col sm:flex-row gap-3 mx-auto max-w-xs">
-                <button id="saveAndViewTranscriptButton" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-lg flex-grow" disabled>
-                    Save & View Transcript
+            <div class="mt-4 flex flex-col gap-3 mx-auto max-w-xs">
+                <button id="saveRecButton" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-lg" disabled>
+                    Save Rec.
                 </button>
-                <button id="discardRecordingButton" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-lg flex-grow" disabled>
-                    Discard Recording
+                <button id="discardRecButton" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-lg" disabled>
+                    Discard Rec.
+                </button>
+                <button id="viewTranscriptButton" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-lg" disabled>
+                    View Transcript (Report)
                 </button>
             </div>
         </div>
@@ -452,10 +453,11 @@
     <script>
         // Form fields and related elements
         const pageTitle = document.getElementById('pageTitle');
+        const backToFormsText = document.getElementById('backToFormsText'); // Ref for "Back to Forms" text
         const formCreationForm = document.getElementById('formCreationForm');
         const formTitleInput = document.getElementById('formTitleInput');
         const formBeneficiaryInput = document.getElementById('formBeneficiaryInput');
-        const formTypeSelect = document.getElementById('formTypeSelect');
+        const formTypeSelect = document.getElementById('formTypeSelect'); // Reference to be kept for data, even if hidden
         const formPlannedDateInput = document.getElementById('formPlannedDateInput');
         const formAddressInput = document.getElementById('formAddressInput');
         const formInitialNotesInput = document.getElementById('formInitialNotesInput');
@@ -477,8 +479,9 @@
         const stopButtonText = document.getElementById('stopButtonText'); 
 
         // Post-record action buttons (NEW)
-        const saveAndViewTranscriptButton = document.getElementById('saveAndViewTranscriptButton');
-        const discardRecordingButton = document.getElementById('discardRecordingButton');
+        const saveRecButton = document.getElementById('saveRecButton'); // Renamed
+        const discardRecButton = document.getElementById('discardRecButton'); // Renamed
+        const viewTranscriptButton = document.getElementById('viewTranscriptButton'); // Kept, but now third in line
 
         // Recordings for this form list
         const formRecordingsListContainer = document.getElementById('formRecordingsList');
@@ -529,11 +532,13 @@
         // Setup accordions based on if it's a new form or editing an existing one
         function setupAccordions(isEditing = false) {
             if (!isEditing) {
+                // For new forms, only Characteristics/Details is open by default
                 formDetailsContent.style.display = 'block';
                 document.querySelector('#formDetailsAccordion .accordion-header').classList.remove('collapsed');
                 personalNotesContent.style.display = 'none';
                 document.querySelector('#personalNotesAccordion .accordion-header').classList.add('collapsed');
             } else {
+                // For editing, all are open by default to review content
                 formDetailsContent.style.display = 'block';
                 personalNotesContent.style.display = 'block';
                 document.querySelector('#formDetailsAccordion .accordion-header').classList.remove('collapsed');
@@ -635,9 +640,9 @@
             stopSimulatedTranscription(); 
 
             // Disable and hide new post-recording buttons
-            saveAndViewTranscriptButton.disabled = true;
-            discardRecordingButton.disabled = true;
-            // Removed old postRecordActions div, no need to hide it now
+            saveRecButton.disabled = true;
+            discardRecButton.disabled = true;
+            viewTranscriptButton.disabled = true; // Disable View Transcript button as well
             
             liveTranscriptionSection.classList.add('hidden'); 
         }
@@ -735,7 +740,7 @@
                             Generate PDF (Recording)
                         </button>
                         <a href="record-details.html?id=${rec.id}" class="text-indigo-300 underline hover:text-indigo-400 transition-colors">
-                            Full Details
+                            Segment Details
                         </a>
                     </div>
                 `;
@@ -797,6 +802,7 @@
 
             const formData = {
                 id: currentFormId || crypto.randomUUID(),
+                formNumber: null, // Placeholder for sequential number
                 title: formTitleInput.value.trim() || 'Untitled Form',
                 beneficiary: formBeneficiaryInput.value.trim(),
                 type: formTypeSelect.value,
@@ -811,22 +817,30 @@
                 lastModified: new Date().toISOString() 
             };
 
-            currentFormId = formData.id; 
-
             let allForms = (await idbKeyval.get('formsMetadata')) || [];
 
             if (currentFormId && allForms.some(f => f.id === currentFormId)) {
+                // Editing existing form
                 const index = allForms.findIndex(f => f.id === currentFormId);
+                // Preserve existing formNumber if already assigned
+                formData.formNumber = allForms[index].formNumber; 
                 allForms[index] = formData;
             } else {
+                // Creating new form: Assign sequential formNumber
+                let lastFormSequenceNumber = (await idbKeyval.get('lastFormSequenceNumber')) || 0;
+                formData.formNumber = ++lastFormSequenceNumber;
+                await idbKeyval.set('lastFormSequenceNumber', lastFormSequenceNumber);
+
                 allForms.unshift(formData);
             }
             
             await idbKeyval.set('formsMetadata', allForms);
+            currentFormId = formData.id; // Update currentFormId
             
-            if (pageTitle.textContent === 'New Form') { 
-                pageTitle.textContent = 'Edit Form';
-            }
+            // Update page title to include Form Number
+            pageTitle.textContent = `Edit Form No. ${formData.formNumber}`;
+            backToFormsText.textContent = `Form No. ${formData.formNumber}`; // Update Back button text as well
+
             return formData.id; // Return the ID of the saved form
         }
 
@@ -852,7 +866,7 @@
                 mediaRecorder.ondataavailable = (event) => {
                     audioChunks.push(event.data);
                     // Simulate live transcription updates
-                    if (isRecording && !isPaused) { // Only update if actively recording
+                    if (isRecording && !isPaused) { 
                         transcriptionText.textContent = simulatedTranscriptions[(transcriptionTextIndex) % simulatedTranscriptions.length];
                         transcriptionTextIndex++;
                     }
@@ -860,19 +874,26 @@
 
                 mediaRecorder.onstop = () => {
                     lastRecordedBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                    audioChunks = []; // Clear chunks for next recording
+                    audioChunks = []; 
 
                     // Enable post-recording action buttons
-                    saveAndViewTranscriptButton.disabled = false;
-                    discardRecordingButton.disabled = false;
-                    
+                    saveRecButton.disabled = false;
+                    discardRecButton.disabled = false;
+                    viewTranscriptButton.disabled = false; // Enable View Transcript button
+
+                    // Reset recorder UI
+                    recordButton.classList.remove('recording-active', 'paused'); // Fix bug here
+                    recordButton.innerHTML = '<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg>'; // Play icon
+                    recordButtonText.textContent = 'Start Rec.'; // Reset text
+
                     stopTimer(); 
                     animateEqualizer(false); 
                     stopSimulatedTranscription(); 
                     transcriptionText.textContent = 'Recording stopped. Review options below.';
 
-                    // Stop the audio stream tracks to release microphone
                     stream.getTracks().forEach(track => track.stop());
+                    isRecording = false; // Crucial: Reset recording state
+                    isPaused = false; // Ensure paused state is also reset
                 };
 
                 mediaRecorder.start();
@@ -933,7 +954,7 @@
             if (!isRecording) { // If not recording, start new recording flow
                 // Ensure form data is created/saved before starting recording
                 if (!currentFormId) {
-                    await saveFormData(); 
+                    await saveFormData(); // This will create the new form and set currentFormId
                 }
                 await startMicrophoneRecording();
             } else { // If already recording, toggle pause/resume
@@ -960,25 +981,31 @@
             await saveFormData(); 
         }, 1000)); 
         
-        // NEW: Save & View Transcript button
-        saveAndViewTranscriptButton.addEventListener('click', async () => {
+        // NEW CONSOLIDATED POST-RECORDING BUTTONS
+        saveRecButton.addEventListener('click', async () => {
             if (lastRecordedBlob) {
                 await saveRecordingSegment(lastRecordedBlob);
-                window.location.href = `record-details.html?id=${lastRecordedRecordingId}`; 
-            } else {
-                alert('No recent recording to save and view.');
-                resetRecordingUI();
+                alert('Recording saved!');
             }
+            resetRecordingUI(); 
         });
 
-        // NEW: Discard Recording button
-        discardRecordingButton.addEventListener('click', () => {
+        discardRecButton.addEventListener('click', () => {
             if (confirm('Are you sure you want to discard this recording? It will not be saved.')) {
                 lastRecordedBlob = null;
                 lastRecordedRecordingId = null;
                 alert('Recording discarded.');
             }
             resetRecordingUI();
+        });
+
+        viewTranscriptButton.addEventListener('click', async () => {
+            if (currentFormId) { // Check if form exists
+                // The record-details page will now expect formId
+                window.location.href = `record-details.html?id=${currentFormId}`; 
+            } else {
+                alert('Please save the form first to view its transcript report.');
+            }
         });
 
 
@@ -999,12 +1026,16 @@
             const params = new URLSearchParams(window.location.search);
             currentFormId = params.get('id'); // Get form ID from URL
 
+            let currentFormData = null; // Store current form data
+
             if (currentFormId) {
                 const allForms = (await idbKeyval.get('formsMetadata')) || [];
                 const form = allForms.find(f => f.id === currentFormId);
 
                 if (form) {
-                    pageTitle.textContent = 'Edit Form';
+                    currentFormData = form; // Assign found form data
+                    pageTitle.textContent = `Edit Form No. ${form.formNumber || 'N/A'}`; // Include form number
+                    backToFormsText.textContent = `Form No. ${form.formNumber || 'N/A'}`; // Update Back button text
                     formTitleInput.value = form.title || '';
                     formBeneficiaryInput.value = form.beneficiary || '';
                     formTypeSelect.value = form.type || 'inspection';
@@ -1032,6 +1063,11 @@
             if (currentFormId) {
                  await renderFormRecordingsList();
                  document.querySelector('#formRecordingsList').parentElement.style.display = 'block'; 
+                 // If there are recordings, enable View Transcript button
+                 const formRecordings = (await idbKeyval.get(`formRecordings-${currentFormId}`)) || [];
+                 if (formRecordings.length > 0) {
+                     viewTranscriptButton.disabled = false;
+                 }
             } else {
                 document.querySelector('#formRecordingsList').parentElement.style.display = 'none'; 
             }

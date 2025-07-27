@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forma - Recording Report</title>
+    <title>Forma - Consolidated Report</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/idb-keyval@6/dist/umd.js"></script>
@@ -24,35 +24,23 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        /* Status dot for recordings */
-        .recording-status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 8px;
-            flex-shrink: 0;
-        }
-        .dot-confirmed { background-color: #4CAF50; }
-        .dot-failed { background-color: #F44336; }
-        .dot-draft { background-color: #FFC107; }
-
-        /* Styles for the prominent Transcript section */
-        #transcriptSection {
-            background: rgba(255, 255, 255, 0.15); /* Slightly lighter glass for prominence */
+        /* Styles for the prominent Consolidated Transcript section */
+        #consolidatedTranscriptSection {
+            background: rgba(255, 255, 255, 0.15); 
             padding: 1.5rem;
             border-radius: 1rem;
             margin-bottom: 1.5rem;
-            min-height: 150px; /* Ensure visibility */
-            max-height: 300px; /* Allow scrolling for long transcripts */
+            min-height: 200px; 
+            max-height: 400px; 
             overflow-y: auto;
             border: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
-        #transcriptTextDisplay {
+        #consolidatedTranscriptTextDisplay {
             font-size: 1rem;
             line-height: 1.6;
-            color: #e0e7ff; /* Lighter indigo for text */
-            white-space: pre-wrap; /* Preserve newlines and wrap text */
+            color: #e0e7ff; 
+            white-space: pre-wrap; 
         }
     </style>
 </head>
@@ -63,167 +51,189 @@
                 <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
                 Back to Form
             </a>
-            <h1 class="text-3xl font-bold text-white flex-grow text-center">Recording Report</h1>
+            <h1 class="text-3xl font-bold text-white flex-grow text-center">Form Report</h1>
             <div class="w-24"></div> </header>
 
-        <div id="recordingReportContent">
-            <p class="text-indigo-300">Loading recording report...</p>
+        <div class="glass p-6 rounded-xl shadow-lg mb-8">
+            <h2 id="formReportTitle" class="text-2xl font-semibold mb-3">Loading Form...</h2>
+            <p class="text-indigo-100 mb-1"><strong>Client:</strong> <span id="formReportBeneficiary"></span></p>
+            <p class="text-indigo-100 mb-1"><strong>Type:</strong> <span id="formReportType"></span></p>
+            <p class="text-indigo-100 mb-1"><strong>Address:</strong> <span id="formReportAddress"></span></p>
+            <p class="text-indigo-100 mb-1"><strong>Planned Date:</strong> <span id="formReportPlannedDate"></span></p>
+            <p class="text-indigo-100 mb-1"><strong>Initial Notes:</strong> <span id="formReportInitialNotes"></span></p>
+        </div>
+
+        <div id="consolidatedTranscriptSection" class="glass rounded-xl shadow-lg">
+            <h2 class="text-2xl font-semibold mb-3">Consolidated Transcript</h2>
+            <div id="consolidatedTranscriptTextDisplay">
+                Loading consolidated transcript...
+            </div>
+            <p id="noConsolidatedTranscriptMessage" class="text-indigo-300 text-center hidden">No recordings available for this form yet.</p>
+        </div>
+
+        <div class="glass p-6 rounded-xl shadow-lg mt-8">
+            <h2 class="text-2xl font-semibold mb-4">Recording Segments</h2>
+            <div id="recordingSegmentsList" class="flex flex-col gap-4 max-h-96 overflow-y-auto scrollable-list">
+                <p id="noRecordingSegmentsMessage" class="text-indigo-300 text-center hidden">No recording segments for this form.</p>
+                </div>
         </div>
 
         <div class="flex flex-wrap justify-between items-center mt-6 gap-3">
             <button id="generatePdfButton"
                 class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg text-white text-sm font-semibold transition duration-300 flex-grow">
-                Generate PDF
+                Generate PDF (Full Report)
             </button>
-            <button id="emailTasksButton"
+            <button id="emailFullTranscriptButton"
                 class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white text-sm font-semibold transition duration-300 flex-grow">
-                Email Tasks
+                Email Full Transcript
             </button>
-            <button id="copyTasksButton"
+            <button id="copyFullTranscriptButton"
                 class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-white text-sm font-semibold transition duration-300 flex-grow">
-                Copy Tasks
+                Copy Full Transcript
             </button>
-            <button id="downloadAudioButton"
-                class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg text-white text-sm font-semibold transition duration-300 flex-grow">
-                Download Audio
-            </button>
-            <button id="deleteRecordingButton"
+            <button id="deleteFormButton"
                 class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-white text-sm font-semibold transition duration-300 flex-grow">
-                Delete Recording
+                Delete Form & Recordings
             </button>
         </div>
     </div>
 
     <script>
-        const recordingReportContent = document.getElementById('recordingReportContent');
+        const formReportTitle = document.getElementById('formReportTitle');
+        const formReportBeneficiary = document.getElementById('formReportBeneficiary');
+        const formReportType = document.getElementById('formReportType');
+        const formReportAddress = document.getElementById('formReportAddress');
+        const formReportPlannedDate = document.getElementById('formReportPlannedDate');
+        const formReportInitialNotes = document.getElementById('formReportInitialNotes');
+
+        const consolidatedTranscriptTextDisplay = document.getElementById('consolidatedTranscriptTextDisplay');
+        const noConsolidatedTranscriptMessage = document.getElementById('noConsolidatedTranscriptMessage');
+
+        const recordingSegmentsList = document.getElementById('recordingSegmentsList');
+        const noRecordingSegmentsMessage = document.getElementById('noRecordingSegmentsMessage');
+
         const backToFormButton = document.getElementById('backToFormButton');
         const generatePdfButton = document.getElementById('generatePdfButton');
-        const emailTasksButton = document.getElementById('emailTasksButton');
-        const copyTasksButton = document.getElementById('copyTasksButton');
-        const downloadAudioButton = document.getElementById('downloadAudioButton');
-        const deleteRecordingButton = document.getElementById('deleteRecordingButton');
+        const emailFullTranscriptButton = document.getElementById('emailFullTranscriptButton');
+        const copyFullTranscriptButton = document.getElementById('copyFullTranscriptButton');
+        const deleteFormButton = document.getElementById('deleteFormButton');
 
-        let currentRecording = null;
+        let currentFormId = null;
         let currentForm = null;
-        let currentAudioBlob = null;
-        let currentAudioURL = null; 
+        let allFormRecordings = []; // To store all segments for this form
 
-        // Utility to format time (copied from new-form.html for consistency)
+        // Utility to format time (copied for consistency)
         function formatTime(totalSeconds) {
             const minutes = Math.floor(totalSeconds / 60);
             const seconds = totalSeconds % 60;
             return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
 
-        async function loadRecordingReport() {
+        async function loadFormReport() {
             const params = new URLSearchParams(window.location.search);
-            const recordingId = params.get('id');
-            if (!recordingId) {
-                recordingReportContent.innerHTML = '<p class="text-red-300">Recording ID missing from URL.</p>';
+            currentFormId = params.get('id');
+
+            if (!currentFormId) {
+                document.getElementById('formReportTitle').textContent = 'Error: Form ID Missing';
                 return;
             }
 
-            // --- Step 1: Find the recording metadata and its parent form ID ---
-            let foundRecording = null;
-            let foundFormId = null;
+            // Load Form Details
             const allForms = (await idbKeyval.get('formsMetadata')) || [];
+            currentForm = allForms.find(f => f.id === currentFormId);
 
-            for (const form of allForms) {
-                const formRecordings = (await idbKeyval.get(`formRecordings-${form.id}`)) || [];
-                const rec = formRecordings.find(r => r.id === recordingId);
-                if (rec) {
-                    foundRecording = rec;
-                    foundFormId = form.id;
-                    break;
+            if (!currentForm) {
+                document.getElementById('formReportTitle').textContent = 'Error: Form Not Found';
+                return;
+            }
+
+            // Populate Form Details
+            formReportTitle.textContent = currentForm.title || 'Untitled Form';
+            formReportBeneficiary.textContent = currentForm.beneficiary || 'N/A';
+            formReportType.textContent = currentForm.type || 'N/A';
+            formReportAddress.textContent = currentForm.address || 'N/A';
+            formReportPlannedDate.textContent = currentForm.plannedDateTime ? new Date(currentForm.plannedDateTime).toLocaleDateString('en-US') : 'N/A';
+            formReportInitialNotes.textContent = currentForm.initialNotes || 'No initial notes.';
+
+            // Load All Recording Segments for this Form
+            allFormRecordings = (await idbKeyval.get(`formRecordings-${currentFormId}`)) || [];
+            
+            // --- Consolidated Transcript ---
+            let consolidatedTranscriptText = '';
+            if (allFormRecordings.length === 0) {
+                noConsolidatedTranscriptMessage.style.display = 'block';
+                consolidatedTranscriptTextDisplay.style.display = 'none';
+            } else {
+                noConsolidatedTranscriptMessage.style.display = 'none';
+                consolidatedTranscriptTextDisplay.style.display = 'block';
+                allFormRecordings.sort((a, b) => new Date(a.recordedAtDate + ' ' + a.recordedAtTime).getTime() - new Date(b.recordedAtDate + ' ' + b.recordedAtTime).getTime()); // Sort by recording time
+                
+                allFormRecordings.forEach((rec, index) => {
+                    consolidatedTranscriptText += `\n--- Segment ${index + 1}: ${rec.name} ---\n`;
+                    consolidatedTranscriptText += rec.tasks.map((task, i) => `${i + 1}. ${task}`).join('\n') + '\n';
+                });
+                consolidatedTranscriptTextDisplay.textContent = consolidatedTranscriptText.trim();
+            }
+
+            // --- Individual Recording Segments List ---
+            recordingSegmentsList.innerHTML = '';
+            if (allFormRecordings.length === 0) {
+                noRecordingSegmentsMessage.style.display = 'block';
+            } else {
+                noRecordingSegmentsMessage.style.display = 'none';
+                for (const rec of allFormRecordings) {
+                    const card = document.createElement('div');
+                    card.className = 'glass p-4 text-white relative flex flex-col items-start rounded-xl';
+                    
+                    const audioBlob = await idbKeyval.get(`audio-${rec.id}`);
+                    const audioURL = audioBlob ? URL.createObjectURL(audioBlob) : '';
+
+                    card.innerHTML = `
+                        <div class="pl-3 w-full flex justify-between items-center mb-1">
+                            <span class="font-medium text-lg">${rec.name}</span>
+                        </div>
+                        <div class="pl-3 text-sm text-indigo-100 mb-2">
+                            Recorded at ${rec.recordedAtTime} on ${rec.recordedAtDate} (${formatTime(rec.duration)})
+                        </div>
+                        <div class="pl-3 mt-2 w-full">
+                            <audio controls class="w-full rounded-md" data-recording-id="${rec.id}">
+                                Your browser does not support the audio element.
+                            </audio>
+                        </div>
+                        <div class="pl-3 mt-2 w-full flex justify-end gap-2 text-sm">
+                            <a href="record-details.html?id=${rec.id}" class="text-indigo-300 underline hover:text-indigo-400 transition-colors">
+                                Segment Details
+                            </a>
+                        </div>
+                    `;
+                    recordingSegmentsList.appendChild(card);
+
+                    // Revoke object URL after audio element is loaded
+                    const audioElement = card.querySelector(`audio[data-recording-id="${rec.id}"]`);
+                    if (audioElement && audioURL) {
+                        audioElement.addEventListener('loadeddata', () => {
+                            URL.revokeObjectURL(audioURL);
+                        }, { once: true });
+                    }
                 }
             }
 
-            if (!foundRecording || !foundFormId) {
-                recordingReportContent.innerHTML = '<p class="text-red-300">Recording not found.</p>';
-                return;
-            }
-
-            currentRecording = foundRecording;
-            currentForm = allForms.find(f => f.id === foundFormId); // Store parent form too
-
-            // --- Step 2: Load the audio blob ---
-            currentAudioBlob = await idbKeyval.get(`audio-${recordingId}`);
-            if (currentAudioBlob) {
-                currentAudioURL = URL.createObjectURL(currentAudioBlob);
-            } else {
-                console.warn(`Audio blob for recording ${recordingId} not found.`);
-            }
-
-            // --- Step 3: Populate the UI with new layout ---
-            const statusDotClass = 
-                currentRecording.status === 'confirmed' ? 'dot-confirmed' :
-                currentRecording.status === 'failed' ? 'dot-red' : 
-                currentRecording.status === 'draft' ? 'dot-draft' : 'dot-gray'; 
-
-            const transcriptContent = currentRecording.tasks.length > 0 
-                ? currentRecording.tasks.map((task, index) => `${index + 1}. ${task}`).join('\n') 
-                : 'No transcript available for this recording yet.';
-
-            const reportHtml = `
-                <div class="glass p-6 rounded-xl shadow-lg mb-8" id="transcriptSection">
-                    <h2 class="text-2xl font-semibold mb-3">Transcript</h2>
-                    <div id="transcriptTextDisplay" class="text-indigo-100 text-left">
-                        ${transcriptContent}
-                    </div>
-                </div>
-
-                <div class="glass p-6 rounded-xl shadow-lg mb-8" id="formContextSection">
-                    <h2 class="text-2xl font-semibold mb-3">Parent Form Context</h2>
-                    <p class="text-indigo-100 mb-1"><strong>Title:</strong> ${currentForm?.title || 'N/A'}</p>
-                    <p class="text-indigo-100 mb-1"><strong>Client:</strong> ${currentForm?.beneficiary || 'N/A'}</p>
-                    <p class="text-indigo-100 mb-1"><strong>Type:</strong> ${currentForm?.type || 'N/A'}</p>
-                    <p class="text-indigo-100 mb-1"><strong>Address:</strong> ${currentForm?.address || 'N/A'}</p>
-                    <p class="text-indigo-100 mb-1"><strong>Planned Date:</strong> ${currentForm?.plannedDateTime ? new Date(currentForm.plannedDateTime).toLocaleDateString('en-US') : 'N/A'}</p>
-                </div>
-
-                <div class="glass p-6 rounded-xl shadow-lg mb-8" id="recordingPlaybackSection">
-                    <h2 class="text-2xl font-semibold mb-3">Audio Playback</h2>
-                    <p class="pl-5 text-indigo-100 mb-1">Recorded at ${currentRecording.recordedAtTime} on ${currentRecording.recordedAtDate}</p>
-                    <p class="pl-5 text-indigo-100 mb-3">Duration: ${formatTime(currentRecording.duration)}</p>
-                    <audio controls class="w-full rounded-md" ${currentAudioURL ? `src="${currentAudioURL}"` : ''}>
-                        Your browser does not support the audio element.
-                    </audio>
-                </div>
-            `;
-            recordingReportContent.innerHTML = reportHtml;
-
-            // --- Step 4: Configure action buttons and cleanup ---
-            if (currentForm) { 
-                 backToFormButton.href = `new-form.html?id=${currentForm.id}`;
-            } else {
-                 backToFormButton.href = `index.html`; 
-                 backToFormButton.textContent = "Back to Home";
-            }
-           
-            const audioEl = document.querySelector('#recordingPlaybackSection audio');
-            if (audioEl && currentAudioURL) {
-                audioEl.addEventListener('loadeddata', () => {
-                    URL.revokeObjectURL(currentAudioURL);
-                }, { once: true });
-            }
-            window.addEventListener('beforeunload', () => {
-                if (currentAudioURL) URL.revokeObjectURL(currentAudioURL);
-            });
+            // Configure "Back to Form" button
+            backToFormButton.href = `new-form.html?id=${currentFormId}`;
         }
 
         // --- Action Button Logic ---
 
         function generatePDF() {
-            const content = document.getElementById('recordingReportContent'); 
+            // Target the entire page content except header for the PDF
+            const content = document.querySelector('.max-w-2xl.mx-auto.glass'); 
             const clone = content.cloneNode(true);
 
-            // Remove non-printable elements from clone
-            clone.querySelectorAll('audio').forEach(el => el.remove());
-            clone.querySelectorAll('button').forEach(el => el.remove());
-            clone.querySelectorAll('a').forEach(el => el.remove());
-            clone.querySelectorAll('.recording-status-dot').forEach(el => el.remove());
+            // Remove header and buttons from the PDF clone
+            clone.querySelector('header')?.remove();
+            clone.querySelector('.flex.flex-wrap.justify-between.items-center.mt-6.gap-3')?.remove(); // Action buttons div
 
-            // Adjust styles for better PDF rendering
+            // Style adjustments for PDF
             clone.style.background = 'white';
             clone.style.color = '#333';
             clone.style.backdropFilter = 'none';
@@ -232,23 +242,15 @@
                 el.style.border = '1px solid #e2e8f0'; 
                 el.style.boxShadow = 'none';
             });
-            clone.querySelectorAll('.text-indigo-100').forEach(el => el.style.color = '#475569'); 
-            clone.querySelectorAll('.text-indigo-300').forEach(el => el.style.color = '#4f46e5'); 
-
-            // Ensure the Transcript section is rendered clearly
-            const transcriptSectionClone = clone.querySelector('#transcriptSection');
-            if (transcriptSectionClone) {
-                transcriptSectionClone.style.background = 'white';
-                transcriptSectionClone.style.border = '1px solid #e2e8f0';
-                transcriptSectionClone.style.boxShadow = 'none';
-                const transcriptTextDisplayClone = transcriptSectionClone.querySelector('#transcriptTextDisplay');
-                if (transcriptTextDisplayClone) {
-                    transcriptTextDisplayClone.style.color = '#333'; // Ensure black text for transcript
-                }
-            }
+            clone.querySelectorAll('.text-indigo-100, .text-indigo-300').forEach(el => el.style.color = '#475569'); 
+            
+            // Ensure audio players are removed from PDF
+            clone.querySelectorAll('audio').forEach(el => el.remove());
+            // Remove Segment Details links from PDF
+            clone.querySelectorAll('a[href^="record-details.html"]').forEach(el => el.remove());
 
 
-            const filename = `Report_${currentRecording.id.slice(0, 8)}_${new Date().toISOString().slice(0, 16).replace(/[:T.]/g, '-')}.pdf`;
+            const filename = `Form_Report_${currentForm.title.replace(/[^a-z0-9_]/gi, '')}_${currentForm.id.slice(0, 8)}.pdf`;
             const opt = {
                 margin: 0.5,
                 filename: filename,
@@ -259,91 +261,79 @@
             html2pdf().set(opt).from(clone).save();
         }
 
-        function emailTasks() {
-            if (!currentRecording || !currentRecording.tasks || currentRecording.tasks.length === 0) {
-                alert('No tasks to email for this recording.');
+        function emailFullTranscript() {
+            if (!currentForm || allFormRecordings.length === 0) {
+                alert('No transcript to email for this form.');
                 return;
             }
 
-            const subject = encodeURIComponent(`Tasks from recording: ${currentRecording.name || 'Untitled Recording'}`);
+            const consolidatedTranscript = allFormRecordings.sort((a, b) => new Date(a.recordedAtDate + ' ' + a.recordedAtTime).getTime() - new Date(b.recordedAtDate + ' ' + b.recordedAtTime).getTime())
+                .map((rec, index) => `--- Segment ${index + 1}: ${rec.name} ---\n${rec.tasks.map((task, i) => `${i + 1}. ${task}`).join('\n')}`).join('\n\n');
+
+            const subject = encodeURIComponent(`Consolidated Report for Form: ${currentForm.title || 'Untitled Form'}`);
             const body = encodeURIComponent(
-                `Hello,\n\nHere are the tasks extracted from the recording "${currentRecording.name}" (${currentRecording.recordedAtDate} at ${currentRecording.recordedAtTime}):\n\n` +
-                currentRecording.tasks.map((task, index) => `${index + 1}. ${task}`).join('\n') +
-                `\n\nAssociated Form: ${currentForm?.title || 'N/A'}\nClient: ${currentForm?.beneficiary || 'N/A'}\nAddress: ${currentForm?.address || 'N/A'}` +
+                `Hello,\n\nHere is the consolidated transcript for the form "${currentForm.title}" (${currentForm.plannedDateTime ? new Date(currentForm.plannedDateTime).toLocaleDateString('en-US') : 'N/A'}):\n\n` +
+                consolidatedTranscript +
+                `\n\nClient: ${currentForm.beneficiary || 'N/A'}\nAddress: ${currentForm.address || 'N/A'}` +
                 `\n\nBest regards,\nYour Assistant`
             );
 
             window.location.href = `mailto:?subject=${subject}&body=${body}`;
         }
 
-        function copyTasks() {
-            if (!currentRecording || !currentRecording.tasks || currentRecording.tasks.length === 0) {
-                alert('No tasks to copy for this recording.');
+        function copyFullTranscript() {
+            if (!currentForm || allFormRecordings.length === 0) {
+                alert('No transcript to copy for this form.');
                 return;
             }
 
-            const tasksText = currentRecording.tasks.map((task, index) => `${index + 1}. ${task}`).join('\n');
-            const fullText = `Tasks from recording "${currentRecording.name}" (${currentRecording.recordedAtDate} at ${currentRecording.recordedAtTime}):\n\n` + tasksText +
-                             `\n\nAssociated Form: ${currentForm?.title || 'N/A'}\nClient: ${currentForm?.beneficiary || 'N/A'}\nAddress: ${currentForm?.address || 'N/A'}`;
+            const consolidatedTranscript = allFormRecordings.sort((a, b) => new Date(a.recordedAtDate + ' ' + a.recordedAtTime).getTime() - new Date(b.recordedAtDate + ' ' + b.recordedAtTime).getTime())
+                .map((rec, index) => `--- Segment ${index + 1}: ${rec.name} ---\n${rec.tasks.map((task, i) => `${i + 1}. ${task}`).join('\n')}`).join('\n\n');
+
+            const fullText = `Consolidated Transcript for Form "${currentForm.title}" (${currentForm.plannedDateTime ? new Date(currentForm.plannedDateTime).toLocaleDateString('en-US') : 'N/A'}):\n\n` + consolidatedTranscript +
+                             `\n\nClient: ${currentForm.beneficiary || 'N/A'}\nAddress: ${currentForm.address || 'N/A'}`;
 
             navigator.clipboard.writeText(fullText)
                 .then(() => {
-                    alert('Tasks and context copied to clipboard!');
+                    alert('Consolidated transcript and context copied to clipboard!');
                 })
                 .catch(err => {
-                    console.error('Failed to copy tasks: ', err);
-                    alert('Failed to copy tasks. Please try again or copy manually.');
+                    console.error('Failed to copy transcript: ', err);
+                    alert('Failed to copy transcript. Please try again or copy manually.');
                 });
         }
 
-        function downloadAudio() {
-            if (!currentAudioBlob) {
-                alert('Audio file not available for download.');
-                return;
+        async function deleteForm() {
+            if (!currentForm) return; 
+
+            if (!confirm(`Are you sure you want to delete the entire form "${currentForm.title}" and ALL its associated recordings? This cannot be undone.`)) return;
+
+            // 1. Delete all associated audio blobs
+            const formRecordings = (await idbKeyval.get(`formRecordings-${currentForm.id}`)) || [];
+            for (const rec of formRecordings) {
+                await idbKeyval.del(`audio-${rec.id}`); 
             }
-            const url = URL.createObjectURL(currentAudioBlob);
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            a.download = `${currentRecording.name.replace(/[^a-z0-9_]/gi, '')}_${currentRecording.id.slice(0, 8)}.webm`; // Sanitize filename
-            document.body.appendChild(a);
-            a.click();
-            URL.revokeObjectURL(url); 
-            document.body.removeChild(a);
-            alert('Audio download started.');
+            // 2. Delete the recordings metadata list for this form
+            await idbKeyval.del(`formRecordings-${currentForm.id}`); 
+
+            // 3. Delete the form metadata itself
+            let allForms = (await idbKeyval.get('formsMetadata')) || [];
+            allForms = allForms.filter(f => f.id !== currentForm.id);
+            await idbKeyval.set('formsMetadata', allForms);
+            
+            alert(`Form "${currentForm.title}" and all its recordings deleted successfully.`);
+            window.location.href = 'index.html'; // Redirect back to Home/My Forms
         }
 
-        async function deleteRecording() {
-            if (!currentRecording) return; // Should not happen
-
-            if (!confirm('Are you sure you want to delete THIS recording segment? This cannot be undone.')) return;
-
-            // Delete from formRecordings-<formId>
-            let formRecordings = (await idbKeyval.get(`formRecordings-${currentRecording.formId}`)) || [];
-            formRecordings = formRecordings.filter(rec => rec.id !== currentRecording.id);
-            await idbKeyval.set(`formRecordings-${currentRecording.formId}`, formRecordings);
-
-            // Delete the audio blob itself
-            await idbKeyval.del(`audio-${currentRecording.id}`);
-
-            alert('Recording segment deleted successfully.');
-            // Redirect back to the parent form
-            if (currentRecording.formId) {
-                window.location.href = `new-form.html?id=${currentRecording.formId}`;
-            } else {
-                window.location.href = `index.html`; // Fallback if no formId (shouldn't happen with current flow)
-            }
-        }
 
         // --- Event Listeners ---
         generatePdfButton.addEventListener('click', generatePDF);
-        emailTasksButton.addEventListener('click', emailTasks);
-        copyTasksButton.addEventListener('click', copyTasks);
-        downloadAudioButton.addEventListener('click', downloadAudio);
-        deleteRecordingButton.addEventListener('click', deleteRecording);
+        emailFullTranscriptButton.addEventListener('click', emailFullTranscript);
+        copyFullTranscriptButton.addEventListener('click', copyFullTranscript);
+        deleteFormButton.addEventListener('click', deleteForm);
 
 
-        document.addEventListener('DOMContentLoaded', loadRecordingReport);
+        document.addEventListener('DOMContentLoaded', loadFormReport);
     </script>
 </body>
 </html>

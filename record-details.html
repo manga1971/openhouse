@@ -35,6 +35,25 @@
         .dot-confirmed { background-color: #4CAF50; }
         .dot-failed { background-color: #F44336; }
         .dot-draft { background-color: #FFC107; }
+
+        /* Styles for the prominent Transcript section */
+        #transcriptSection {
+            background: rgba(255, 255, 255, 0.15); /* Slightly lighter glass for prominence */
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            min-height: 150px; /* Ensure visibility */
+            max-height: 300px; /* Allow scrolling for long transcripts */
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        #transcriptTextDisplay {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #e0e7ff; /* Lighter indigo for text */
+            white-space: pre-wrap; /* Preserve newlines and wrap text */
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-white font-sans min-h-screen p-6">
@@ -87,7 +106,7 @@
         let currentRecording = null;
         let currentForm = null;
         let currentAudioBlob = null;
-        let currentAudioURL = null; // To manage Object URL lifecycle
+        let currentAudioURL = null; 
 
         // Utility to format time (copied from new-form.html for consistency)
         function formatTime(totalSeconds) {
@@ -135,13 +154,24 @@
                 console.warn(`Audio blob for recording ${recordingId} not found.`);
             }
 
-            // --- Step 3: Populate the UI ---
+            // --- Step 3: Populate the UI with new layout ---
             const statusDotClass = 
                 currentRecording.status === 'confirmed' ? 'dot-confirmed' :
-                currentRecording.status === 'failed' ? 'dot-failed' : 
+                currentRecording.status === 'failed' ? 'dot-red' : 
                 currentRecording.status === 'draft' ? 'dot-draft' : 'dot-gray'; 
 
+            const transcriptContent = currentRecording.tasks.length > 0 
+                ? currentRecording.tasks.map((task, index) => `${index + 1}. ${task}`).join('\n') 
+                : 'No transcript available for this recording yet.';
+
             const reportHtml = `
+                <div class="glass p-6 rounded-xl shadow-lg mb-8" id="transcriptSection">
+                    <h2 class="text-2xl font-semibold mb-3">Transcript</h2>
+                    <div id="transcriptTextDisplay" class="text-indigo-100 text-left">
+                        ${transcriptContent}
+                    </div>
+                </div>
+
                 <div class="glass p-6 rounded-xl shadow-lg mb-8" id="formContextSection">
                     <h2 class="text-2xl font-semibold mb-3">Parent Form Context</h2>
                     <p class="text-indigo-100 mb-1"><strong>Title:</strong> ${currentForm?.title || 'N/A'}</p>
@@ -151,21 +181,10 @@
                     <p class="text-indigo-100 mb-1"><strong>Planned Date:</strong> ${currentForm?.plannedDateTime ? new Date(currentForm.plannedDateTime).toLocaleDateString('en-US') : 'N/A'}</p>
                 </div>
 
-                <div class="glass p-6 rounded-xl shadow-lg mb-8" id="recordingDetailsSection">
-                    <h2 class="text-2xl font-semibold mb-3">Recording Details</h2>
-                    <div class="flex items-center mb-2">
-                        <div class="recording-status-dot ${statusDotClass}"></div>
-                        <span class="font-medium text-lg">${currentRecording.name}</span>
-                    </div>
+                <div class="glass p-6 rounded-xl shadow-lg mb-8" id="recordingPlaybackSection">
+                    <h2 class="text-2xl font-semibold mb-3">Audio Playback</h2>
                     <p class="pl-5 text-indigo-100 mb-1">Recorded at ${currentRecording.recordedAtTime} on ${currentRecording.recordedAtDate}</p>
                     <p class="pl-5 text-indigo-100 mb-3">Duration: ${formatTime(currentRecording.duration)}</p>
-                    
-                    <h3 class="font-semibold text-lg text-indigo-300 mt-4 mb-2">Extracted Tasks:</h3>
-                    <ul class="list-disc ml-8 text-indigo-100 mb-4">
-                        ${currentRecording.tasks.map(t => `<li>${t}</li>`).join('')}
-                    </ul>
-
-                    <h3 class="font-semibold text-lg text-indigo-300 mt-4 mb-2">Audio Playback:</h3>
                     <audio controls class="w-full rounded-md" ${currentAudioURL ? `src="${currentAudioURL}"` : ''}>
                         Your browser does not support the audio element.
                     </audio>
@@ -173,22 +192,20 @@
             `;
             recordingReportContent.innerHTML = reportHtml;
 
-            // --- Step 4: Configure action buttons ---
-            if (currentForm) { // Only enable if we have a parent form
+            // --- Step 4: Configure action buttons and cleanup ---
+            if (currentForm) { 
                  backToFormButton.href = `new-form.html?id=${currentForm.id}`;
             } else {
-                 backToFormButton.href = `index.html`; // Fallback to home if no parent form found
+                 backToFormButton.href = `index.html`; 
                  backToFormButton.textContent = "Back to Home";
             }
            
-            // Ensure URL.revokeObjectURL is called when audio is loaded or page is left
-            const audioEl = document.querySelector('#recordingDetailsSection audio');
+            const audioEl = document.querySelector('#recordingPlaybackSection audio');
             if (audioEl && currentAudioURL) {
                 audioEl.addEventListener('loadeddata', () => {
                     URL.revokeObjectURL(currentAudioURL);
                 }, { once: true });
             }
-            // For a robust app, you might also want to revoke on page unload
             window.addEventListener('beforeunload', () => {
                 if (currentAudioURL) URL.revokeObjectURL(currentAudioURL);
             });
@@ -197,7 +214,6 @@
         // --- Action Button Logic ---
 
         function generatePDF() {
-            // Target the entire report content for PDF generation
             const content = document.getElementById('recordingReportContent'); 
             const clone = content.cloneNode(true);
 
@@ -213,11 +229,24 @@
             clone.style.backdropFilter = 'none';
             clone.querySelectorAll('.glass').forEach(el => {
                 el.style.background = 'white';
-                el.style.border = '1px solid #e2e8f0'; // Tailwind gray-200
+                el.style.border = '1px solid #e2e8f0'; 
                 el.style.boxShadow = 'none';
             });
-            clone.querySelectorAll('.text-indigo-100').forEach(el => el.style.color = '#475569'); // Tailwind slate-600
-            clone.querySelectorAll('.text-indigo-300').forEach(el => el.style.color = '#4f46e5'); // Tailwind indigo-600
+            clone.querySelectorAll('.text-indigo-100').forEach(el => el.style.color = '#475569'); 
+            clone.querySelectorAll('.text-indigo-300').forEach(el => el.style.color = '#4f46e5'); 
+
+            // Ensure the Transcript section is rendered clearly
+            const transcriptSectionClone = clone.querySelector('#transcriptSection');
+            if (transcriptSectionClone) {
+                transcriptSectionClone.style.background = 'white';
+                transcriptSectionClone.style.border = '1px solid #e2e8f0';
+                transcriptSectionClone.style.boxShadow = 'none';
+                const transcriptTextDisplayClone = transcriptSectionClone.querySelector('#transcriptTextDisplay');
+                if (transcriptTextDisplayClone) {
+                    transcriptTextDisplayClone.style.color = '#333'; // Ensure black text for transcript
+                }
+            }
+
 
             const filename = `Report_${currentRecording.id.slice(0, 8)}_${new Date().toISOString().slice(0, 16).replace(/[:T.]/g, '-')}.pdf`;
             const opt = {
@@ -240,7 +269,7 @@
             const body = encodeURIComponent(
                 `Hello,\n\nHere are the tasks extracted from the recording "${currentRecording.name}" (${currentRecording.recordedAtDate} at ${currentRecording.recordedAtTime}):\n\n` +
                 currentRecording.tasks.map((task, index) => `${index + 1}. ${task}`).join('\n') +
-                `\n\nAssociated Form: ${currentForm?.title || 'N/A'}\nAddress: ${currentForm?.address || 'N/A'}` +
+                `\n\nAssociated Form: ${currentForm?.title || 'N/A'}\nClient: ${currentForm?.beneficiary || 'N/A'}\nAddress: ${currentForm?.address || 'N/A'}` +
                 `\n\nBest regards,\nYour Assistant`
             );
 
@@ -255,7 +284,7 @@
 
             const tasksText = currentRecording.tasks.map((task, index) => `${index + 1}. ${task}`).join('\n');
             const fullText = `Tasks from recording "${currentRecording.name}" (${currentRecording.recordedAtDate} at ${currentRecording.recordedAtTime}):\n\n` + tasksText +
-                             `\n\nAssociated Form: ${currentForm?.title || 'N/A'}\nAddress: ${currentForm?.address || 'N/A'}`;
+                             `\n\nAssociated Form: ${currentForm?.title || 'N/A'}\nClient: ${currentForm?.beneficiary || 'N/A'}\nAddress: ${currentForm?.address || 'N/A'}`;
 
             navigator.clipboard.writeText(fullText)
                 .then(() => {
@@ -276,15 +305,17 @@
             const a = document.createElement('a');
             a.style.display = 'none';
             a.href = url;
-            a.download = `${currentRecording.name.replace(/[^a-z0-9]/gi, '_')}.webm`; // Sanitize filename
+            a.download = `${currentRecording.name.replace(/[^a-z0-9_]/gi, '')}_${currentRecording.id.slice(0, 8)}.webm`; // Sanitize filename
             document.body.appendChild(a);
             a.click();
-            URL.revokeObjectURL(url); // Clean up
+            URL.revokeObjectURL(url); 
             document.body.removeChild(a);
             alert('Audio download started.');
         }
 
         async function deleteRecording() {
+            if (!currentRecording) return; // Should not happen
+
             if (!confirm('Are you sure you want to delete THIS recording segment? This cannot be undone.')) return;
 
             // Delete from formRecordings-<formId>
@@ -297,7 +328,11 @@
 
             alert('Recording segment deleted successfully.');
             // Redirect back to the parent form
-            window.location.href = `new-form.html?id=${currentRecording.formId}`;
+            if (currentRecording.formId) {
+                window.location.href = `new-form.html?id=${currentRecording.formId}`;
+            } else {
+                window.location.href = `index.html`; // Fallback if no formId (shouldn't happen with current flow)
+            }
         }
 
         // --- Event Listeners ---

@@ -24,6 +24,18 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+        /* Status dot for recordings */
+        .recording-status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+        .dot-confirmed { background-color: #4CAF50; }
+        .dot-failed { background-color: #F44336; }
+        .dot-draft { background-color: #FFC107; }
+
         /* Styles for the prominent Consolidated Transcript section */
         #consolidatedTranscriptSection {
             background: rgba(255, 255, 255, 0.15); 
@@ -41,6 +53,19 @@
             line-height: 1.6;
             color: #e0e7ff; 
             white-space: pre-wrap; 
+        }
+
+        .transcript-segment-header {
+            font-weight: bold;
+            color: #a78bfa; /* purple-400 */
+            cursor: pointer;
+            text-decoration: underline;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+            display: block; /* Make it block level for better click area */
+        }
+        .transcript-segment-header:hover {
+            color: #c4b5fd; /* Light purple on hover */
         }
     </style>
 </head>
@@ -76,20 +101,24 @@
             <div id="recordingSegmentsList" class="flex flex-col gap-4 max-h-96 overflow-y-auto scrollable-list">
                 <p id="noRecordingSegmentsMessage" class="text-indigo-300 text-center hidden">No recording segments for this form.</p>
                 </div>
+             <div class="mt-4 text-sm text-indigo-200">
+                <input type="checkbox" id="selectAllSegments" class="form-checkbox h-4 w-4 text-indigo-600 rounded">
+                <label for="selectAllSegments" class="ml-2">Select All Segments</label>
+            </div>
         </div>
 
         <div class="flex flex-wrap justify-between items-center mt-6 gap-3">
             <button id="generatePdfButton"
                 class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg text-white text-sm font-semibold transition duration-300 flex-grow">
-                Generate PDF (Full Report)
+                Generate PDF (Selected)
             </button>
             <button id="emailFullTranscriptButton"
                 class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white text-sm font-semibold transition duration-300 flex-grow">
-                Email Full Transcript
+                Email Transcript (Selected)
             </button>
             <button id="copyFullTranscriptButton"
                 class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-white text-sm font-semibold transition duration-300 flex-grow">
-                Copy Full Transcript
+                Copy Transcript (Selected)
             </button>
             <button id="deleteFormButton"
                 class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-white text-sm font-semibold transition duration-300 flex-grow">
@@ -111,6 +140,7 @@
 
         const recordingSegmentsList = document.getElementById('recordingSegmentsList');
         const noRecordingSegmentsMessage = document.getElementById('noRecordingSegmentsMessage');
+        const selectAllSegmentsCheckbox = document.getElementById('selectAllSegments');
 
         const backToFormButton = document.getElementById('backToFormButton');
         const generatePdfButton = document.getElementById('generatePdfButton');
@@ -121,6 +151,7 @@
         let currentFormId = null;
         let currentForm = null;
         let allFormRecordings = []; // To store all segments for this form
+        let selectedSegmentIds = new Set(); // To store IDs of selected segments
 
         // Utility to format time (copied for consistency)
         function formatTime(totalSeconds) {
@@ -129,21 +160,43 @@
             return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
 
+        // --- Core Loading Logic ---
         async function loadFormReport() {
             const params = new URLSearchParams(window.location.search);
-            currentFormId = params.get('id');
+            const recordingIdFromURL = params.get('id'); // Can receive recording ID or form ID
 
-            if (!currentFormId) {
-                document.getElementById('formReportTitle').textContent = 'Error: Form ID Missing';
+            if (!recordingIdFromURL) {
+                document.getElementById('formReportTitle').textContent = 'Error: ID Missing';
                 return;
             }
 
-            // Load Form Details
-            const allForms = (await idbKeyval.get('formsMetadata')) || [];
-            currentForm = allForms.find(f => f.id === currentFormId);
+            // If we receive a recording ID, find its parent form ID
+            let initialFormId = null;
+            const allFormsMetadata = (await idbKeyval.get('formsMetadata')) || [];
+            if (recordingIdFromURL.length === 36 && recordingIdFromURL.includes('-')) { // Heuristic for UUID: 36 chars, contains hyphens
+                // Assume it's a recording ID, try to find its parent form
+                for (const form of allFormsMetadata) {
+                    const formRecordingsMeta = (await idbKeyval.get(`formRecordings-${form.id}`)) || [];
+                    if (formRecordingsMeta.some(rec => rec.id === recordingIdFromURL)) {
+                        initialFormId = form.id;
+                        break;
+                    }
+                }
+            } else {
+                // Assume it's a form ID directly
+                initialFormId = recordingIdFromURL;
+            }
+
+            if (!initialFormId) {
+                document.getElementById('formReportTitle').textContent = 'Error: Form Not Found for this Recording.';
+                return;
+            }
+
+            currentFormId = initialFormId; // Set the global form ID
+            currentForm = allFormsMetadata.find(f => f.id === currentFormId);
 
             if (!currentForm) {
-                document.getElementById('formReportTitle').textContent = 'Error: Form Not Found';
+                document.getElementById('formReportTitle').textContent = 'Error: Form Details Not Found.';
                 return;
             }
 
@@ -157,8 +210,18 @@
 
             // Load All Recording Segments for this Form
             allFormRecordings = (await idbKeyval.get(`formRecordings-${currentFormId}`)) || [];
+            allFormRecordings.sort((a, b) => new Date(a.recordedAtDate + ' ' + a.recordedAtTime).getTime() - new Date(b.recordedAtDate + ' ' + b.recordedAtTime).getTime()); // Sort by recording time
             
-            // --- Consolidated Transcript ---
+            renderConsolidatedTranscript();
+            renderIndividualRecordingSegments();
+
+            // Configure "Back to Form" button
+            backToFormButton.href = `new-form.html?id=${currentFormId}`;
+        }
+
+        // --- Render Functions ---
+
+        function renderConsolidatedTranscript() {
             let consolidatedTranscriptText = '';
             if (allFormRecordings.length === 0) {
                 noConsolidatedTranscriptMessage.style.display = 'block';
@@ -166,16 +229,28 @@
             } else {
                 noConsolidatedTranscriptMessage.style.display = 'none';
                 consolidatedTranscriptTextDisplay.style.display = 'block';
-                allFormRecordings.sort((a, b) => new Date(a.recordedAtDate + ' ' + a.recordedAtTime).getTime() - new Date(b.recordedAtDate + ' ' + b.recordedAtTime).getTime()); // Sort by recording time
                 
                 allFormRecordings.forEach((rec, index) => {
-                    consolidatedTranscriptText += `\n--- Segment ${index + 1}: ${rec.name} ---\n`;
-                    consolidatedTranscriptText += rec.tasks.map((task, i) => `${i + 1}. ${task}`).join('\n') + '\n';
+                    const segmentHeaderId = `transcript-segment-header-${rec.id}`;
+                    consolidatedTranscriptText += `<span class="transcript-segment-header" data-segment-id="${rec.id}" id="${segmentHeaderId}">\n--- Segment ${index + 1}: ${rec.name} (${rec.recordedAtDate} ${rec.recordedAtTime}) ---</span>\n`;
+                    consolidatedTranscriptText += rec.tasks.map((task, i) => `${i + 1}. ${task}`).join('\n') + '\n\n';
                 });
-                consolidatedTranscriptTextDisplay.textContent = consolidatedTranscriptText.trim();
-            }
+                consolidatedTranscriptTextDisplay.innerHTML = consolidatedTranscriptText.trim();
 
-            // --- Individual Recording Segments List ---
+                // Add click listeners to transcript segment headers for scrolling
+                consolidatedTranscriptTextDisplay.querySelectorAll('.transcript-segment-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const segmentId = header.dataset.segmentId;
+                        const audioPlayerCard = document.getElementById(`segment-card-${segmentId}`);
+                        if (audioPlayerCard) {
+                            audioPlayerCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    });
+                });
+            }
+        }
+
+        async function renderIndividualRecordingSegments() {
             recordingSegmentsList.innerHTML = '';
             if (allFormRecordings.length === 0) {
                 noRecordingSegmentsMessage.style.display = 'block';
@@ -184,13 +259,15 @@
                 for (const rec of allFormRecordings) {
                     const card = document.createElement('div');
                     card.className = 'glass p-4 text-white relative flex flex-col items-start rounded-xl';
-                    
+                    card.id = `segment-card-${rec.id}`; // Unique ID for scrolling
+
                     const audioBlob = await idbKeyval.get(`audio-${rec.id}`);
                     const audioURL = audioBlob ? URL.createObjectURL(audioBlob) : '';
 
                     card.innerHTML = `
                         <div class="pl-3 w-full flex justify-between items-center mb-1">
-                            <span class="font-medium text-lg">${rec.name}</span>
+                            <input type="checkbox" class="segment-checkbox form-checkbox h-4 w-4 text-indigo-600 rounded" data-segment-id="${rec.id}" ${selectedSegmentIds.has(rec.id) ? 'checked' : ''}>
+                            <span class="font-medium text-lg ml-2">${rec.name}</span>
                         </div>
                         <div class="pl-3 text-sm text-indigo-100 mb-2">
                             Recorded at ${rec.recordedAtTime} on ${rec.recordedAtDate} (${formatTime(rec.duration)})
@@ -201,9 +278,8 @@
                             </audio>
                         </div>
                         <div class="pl-3 mt-2 w-full flex justify-end gap-2 text-sm">
-                            <a href="record-details.html?id=${rec.id}" class="text-indigo-300 underline hover:text-indigo-400 transition-colors">
-                                Segment Details
-                            </a>
+                            <a href="record-details.html?id=${rec.id}" class="text-indigo-300 underline hover:text-indigo-400 transition-colors hidden">
+                                Segment Details </a>
                         </div>
                     `;
                     recordingSegmentsList.appendChild(card);
@@ -215,25 +291,114 @@
                             URL.revokeObjectURL(audioURL);
                         }, { once: true });
                     }
+
+                    // Add event listener for segment checkbox
+                    card.querySelector('.segment-checkbox').addEventListener('change', (e) => {
+                        if (e.target.checked) {
+                            selectedSegmentIds.add(e.target.dataset.segmentId);
+                        } else {
+                            selectedSegmentIds.delete(e.target.dataset.segmentId);
+                        }
+                        // Update select all checkbox state
+                        updateSelectAllCheckboxState();
+                    });
                 }
             }
+        }
 
-            // Configure "Back to Form" button
-            backToFormButton.href = `new-form.html?id=${currentFormId}`;
+        // --- Selection Logic ---
+        selectAllSegmentsCheckbox.addEventListener('change', (e) => {
+            const isChecked = e.target.checked;
+            selectedSegmentIds.clear(); // Clear current selection
+
+            recordingSegmentsList.querySelectorAll('.segment-checkbox').forEach(checkbox => {
+                checkbox.checked = isChecked;
+                if (isChecked) {
+                    selectedSegmentIds.add(checkbox.dataset.segmentId);
+                }
+            });
+        });
+
+        function updateSelectAllCheckboxState() {
+            const allCheckboxes = recordingSegmentsList.querySelectorAll('.segment-checkbox');
+            if (allCheckboxes.length === 0) {
+                selectAllSegmentsCheckbox.checked = false;
+                selectAllSegmentsCheckbox.indeterminate = false;
+                return;
+            }
+            const checkedCount = selectedSegmentIds.size;
+            if (checkedCount === 0) {
+                selectAllSegmentsCheckbox.checked = false;
+                selectAllSegmentsCheckbox.indeterminate = false;
+            } else if (checkedCount === allCheckboxes.length) {
+                selectAllSegmentsCheckbox.checked = true;
+                selectAllSegmentsCheckbox.indeterminate = false;
+            } else {
+                selectAllSegmentsCheckbox.checked = false;
+                selectAllSegmentsCheckbox.indeterminate = true;
+            }
         }
 
         // --- Action Button Logic ---
 
+        function getSelectedTranscripts() {
+            let selectedTranscripts = '';
+            const selectedRecordings = allFormRecordings.filter(rec => selectedSegmentIds.has(rec.id));
+            
+            if (selectedRecordings.length === 0) {
+                alert('Please select at least one recording segment.');
+                return null;
+            }
+
+            // Sort selected recordings by chronological order for the transcript
+            selectedRecordings.sort((a, b) => new Date(a.recordedAtDate + ' ' + a.recordedAtTime).getTime() - new Date(b.recordedAtDate + ' ' + b.recordedAtTime).getTime());
+
+            selectedRecordings.forEach((rec, index) => {
+                selectedTranscripts += `\n--- Segment ${index + 1}: ${rec.name} (${rec.recordedAtDate} ${rec.recordedAtTime}) --- \n`;
+                selectedTranscripts += rec.tasks.map((task, i) => `${i + 1}. ${task}`).join('\n') + '\n';
+            });
+            return selectedTranscripts.trim();
+        }
+
+
         function generatePDF() {
-            // Target the entire page content except header for the PDF
-            const content = document.querySelector('.max-w-2xl.mx-auto.glass'); 
-            const clone = content.cloneNode(true);
+            const contentToPrint = document.getElementById('recordingReportContent'); // Use the main report content
 
-            // Remove header and buttons from the PDF clone
-            clone.querySelector('header')?.remove();
+            // Get selected transcript content
+            let selectedTranscript = getSelectedTranscripts();
+
+            if (!selectedTranscript && allFormRecordings.length > 0) {
+                // If nothing is selected, generate PDF for the entire consolidated transcript
+                selectedTranscript = consolidatedTranscriptTextDisplay.textContent;
+                alert('No segments selected. Generating PDF for the entire consolidated transcript.');
+            } else if (!selectedTranscript && allFormRecordings.length === 0) {
+                alert('No recordings available to generate a PDF.');
+                return;
+            }
+
+            const clone = contentToPrint.cloneNode(true);
+
+            // Remove elements not needed in PDF
+            clone.querySelector('header')?.remove(); // Remove main page header
             clone.querySelector('.flex.flex-wrap.justify-between.items-center.mt-6.gap-3')?.remove(); // Action buttons div
+            clone.querySelectorAll('audio').forEach(el => el.remove());
+            clone.querySelectorAll('.segment-checkbox').forEach(el => el.remove()); // Remove checkboxes
+            clone.querySelector('#selectAllSegments')?.parentElement.remove(); // Remove select all checkbox row
 
-            // Style adjustments for PDF
+            // If selectedTranscript is not null, replace the consolidated transcript display with it
+            if (selectedTranscript) {
+                const consolidatedSectionClone = clone.querySelector('#consolidatedTranscriptSection');
+                if (consolidatedSectionClone) {
+                    consolidatedSectionClone.querySelector('#consolidatedTranscriptTextDisplay').textContent = selectedTranscript;
+                    consolidatedSectionClone.querySelector('#noConsolidatedTranscriptMessage')?.remove();
+                }
+            }
+            // Remove individual segments list from PDF if a selection was made
+            if (selectedSegmentIds.size > 0 && selectedTranscript) {
+                clone.querySelector('#recordingSegmentsList')?.parentElement.remove(); // Remove the entire recording segments section
+            }
+            
+            // Adjust styles for better PDF rendering (copied from previous impls)
             clone.style.background = 'white';
             clone.style.color = '#333';
             clone.style.backdropFilter = 'none';
@@ -244,13 +409,7 @@
             });
             clone.querySelectorAll('.text-indigo-100, .text-indigo-300').forEach(el => el.style.color = '#475569'); 
             
-            // Ensure audio players are removed from PDF
-            clone.querySelectorAll('audio').forEach(el => el.remove());
-            // Remove Segment Details links from PDF
-            clone.querySelectorAll('a[href^="record-details.html"]').forEach(el => el.remove());
-
-
-            const filename = `Form_Report_${currentForm.title.replace(/[^a-z0-9_]/gi, '')}_${currentForm.id.slice(0, 8)}.pdf`;
+            const filename = `Form_Report_${currentForm?.title.replace(/[^a-z0-9_]/gi, '') || 'Untitled'}_${currentFormId?.slice(0, 8) || 'N_A'}.pdf`;
             const opt = {
                 margin: 0.5,
                 filename: filename,
@@ -262,19 +421,29 @@
         }
 
         function emailFullTranscript() {
-            if (!currentForm || allFormRecordings.length === 0) {
-                alert('No transcript to email for this form.');
+            const transcript = getSelectedTranscripts();
+            if (!transcript && allFormRecordings.length > 0) {
+                alert('No segments selected. Emailing the entire consolidated transcript.');
+                const allTranscript = consolidatedTranscriptTextDisplay.textContent;
+                 const subject = encodeURIComponent(`Consolidated Report for Form: ${currentForm?.title || 'Untitled Form'}`);
+                 const body = encodeURIComponent(
+                    `Hello,\n\nHere is the consolidated transcript for the form "${currentForm?.title}" (${currentForm?.plannedDateTime ? new Date(currentForm.plannedDateTime).toLocaleDateString('en-US') : 'N/A'}):\n\n` +
+                    allTranscript +
+                    `\n\nClient: ${currentForm?.beneficiary || 'N/A'}\nAddress: ${currentForm?.address || 'N/A'}` +
+                    `\n\nBest regards,\nYour Assistant`
+                 );
+                 window.location.href = `mailto:?subject=${subject}&body=${body}`;
+                 return;
+            } else if (!transcript && allFormRecordings.length === 0) {
+                alert('No recordings available to email.');
                 return;
             }
 
-            const consolidatedTranscript = allFormRecordings.sort((a, b) => new Date(a.recordedAtDate + ' ' + a.recordedAtTime).getTime() - new Date(b.recordedAtDate + ' ' + b.recordedAtTime).getTime())
-                .map((rec, index) => `--- Segment ${index + 1}: ${rec.name} ---\n${rec.tasks.map((task, i) => `${i + 1}. ${task}`).join('\n')}`).join('\n\n');
-
-            const subject = encodeURIComponent(`Consolidated Report for Form: ${currentForm.title || 'Untitled Form'}`);
+            const subject = encodeURIComponent(`Selected Transcript for Form: ${currentForm?.title || 'Untitled Form'}`);
             const body = encodeURIComponent(
-                `Hello,\n\nHere is the consolidated transcript for the form "${currentForm.title}" (${currentForm.plannedDateTime ? new Date(currentForm.plannedDateTime).toLocaleDateString('en-US') : 'N/A'}):\n\n` +
-                consolidatedTranscript +
-                `\n\nClient: ${currentForm.beneficiary || 'N/A'}\nAddress: ${currentForm.address || 'N/A'}` +
+                `Hello,\n\nHere are the selected transcript segments for the form "${currentForm?.title}" (${currentForm?.plannedDateTime ? new Date(currentForm.plannedDateTime).toLocaleDateString('en-US') : 'N/A'}):\n\n` +
+                transcript +
+                `\n\nClient: ${currentForm?.beneficiary || 'N/A'}\nAddress: ${currentForm?.address || 'N/A'}` +
                 `\n\nBest regards,\nYour Assistant`
             );
 
@@ -282,20 +451,25 @@
         }
 
         function copyFullTranscript() {
-            if (!currentForm || allFormRecordings.length === 0) {
-                alert('No transcript to copy for this form.');
+            const transcript = getSelectedTranscripts();
+            if (!transcript && allFormRecordings.length > 0) {
+                alert('No segments selected. Copying the entire consolidated transcript.');
+                const allTranscript = consolidatedTranscriptTextDisplay.textContent;
+                const fullText = `Consolidated Transcript for Form "${currentForm?.title}" (${currentForm?.plannedDateTime ? new Date(currentForm.plannedDateTime).toLocaleDateString('en-US') : 'N/A'}):\n\n` + allTranscript +
+                                 `\n\nClient: ${currentForm?.beneficiary || 'N/A'}\nAddress: ${currentForm?.address || 'N/A'}`;
+                navigator.clipboard.writeText(fullText).then(() => alert('Full consolidated transcript and context copied to clipboard!'));
+                return;
+            } else if (!transcript && allFormRecordings.length === 0) {
+                alert('No recordings available to copy.');
                 return;
             }
 
-            const consolidatedTranscript = allFormRecordings.sort((a, b) => new Date(a.recordedAtDate + ' ' + a.recordedAtTime).getTime() - new Date(b.recordedAtDate + ' ' + b.recordedAtTime).getTime())
-                .map((rec, index) => `--- Segment ${index + 1}: ${rec.name} ---\n${rec.tasks.map((task, i) => `${i + 1}. ${task}`).join('\n')}`).join('\n\n');
-
-            const fullText = `Consolidated Transcript for Form "${currentForm.title}" (${currentForm.plannedDateTime ? new Date(currentForm.plannedDateTime).toLocaleDateString('en-US') : 'N/A'}):\n\n` + consolidatedTranscript +
-                             `\n\nClient: ${currentForm.beneficiary || 'N/A'}\nAddress: ${currentForm.address || 'N/A'}`;
+            const fullText = `Selected Transcript for Form "${currentForm?.title}" (${currentForm?.plannedDateTime ? new Date(currentForm.plannedDateTime).toLocaleDateString('en-US') : 'N/A'}):\n\n` + transcript +
+                             `\n\nClient: ${currentForm?.beneficiary || 'N/A'}\nAddress: ${currentForm?.address || 'N/A'}`;
 
             navigator.clipboard.writeText(fullText)
                 .then(() => {
-                    alert('Consolidated transcript and context copied to clipboard!');
+                    alert('Selected transcript segments and context copied to clipboard!');
                 })
                 .catch(err => {
                     console.error('Failed to copy transcript: ', err);
@@ -322,7 +496,7 @@
             await idbKeyval.set('formsMetadata', allForms);
             
             alert(`Form "${currentForm.title}" and all its recordings deleted successfully.`);
-            window.location.href = 'index.html'; // Redirect back to Home/My Forms
+            window.location.href = 'index.html'; 
         }
 
 
@@ -331,6 +505,7 @@
         emailFullTranscriptButton.addEventListener('click', emailFullTranscript);
         copyFullTranscriptButton.addEventListener('click', copyFullTranscript);
         deleteFormButton.addEventListener('click', deleteForm);
+        selectAllSegmentsCheckbox.addEventListener('change', updateSelectAllCheckboxState);
 
 
         document.addEventListener('DOMContentLoaded', loadFormReport);

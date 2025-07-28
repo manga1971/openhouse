@@ -15,7 +15,7 @@
             flex-direction: column;
             align-items: center;
             padding-top: 2rem;
-            padding-bottom: 2rem;
+            padding-bottom: 7rem; /* Increased padding for fixed button below */
         }
         .glass {
             background: rgba(255, 255, 255, 0.1);
@@ -35,7 +35,6 @@
         .status-red { background-color: #ef4444; }     /* Failed / Error (not used here but for consistency) */
         .status-yellow { background-color: #f59e0b; }  /* In Progress / Draft */
         .status-gray { background-color: #6b7280; }    /* Not Started */
-
 
         /* Custom scrollbar */
         .scrollable-list::-webkit-scrollbar {
@@ -63,7 +62,7 @@
             padding: 0.5rem; 
             border-radius: 9999px; 
             width: fit-content; 
-            margin: 0 auto 1rem; 
+            margin: 0 auto; 
             display: flex;
             justify-content: center; 
             align-items: center;
@@ -101,10 +100,9 @@
             background-color: #6366f1; /* indigo-500 */
             color: #fff;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Subtle shadow for active state */
-            /* Ensure it fills the rounded area */
-            padding-left: 1.25rem; /* Adjust padding to make it truly pill-shaped */
+            padding-left: 1.25rem; 
             padding-right: 1.25rem;
-            margin: 0 2px; /* Small margin to ensure separation in group */
+            margin: 0 2px; 
         }
         .custom-navbar .search-btn {
             background-color: #6366f1; 
@@ -132,11 +130,12 @@
 </head>
 <body class="bg-gray-900 text-white">
 
-    <div class="relative w-full max-w-md mx-auto p-4 pb-20"> <header class="text-center mb-6 flex justify-between items-center">
+    <div class="relative w-full max-w-md mx-auto p-4 pb-20"> 
+        <header class="text-center mb-6 flex justify-between items-center">
             <h1 class="text-4xl font-extrabold text-white">Forma</h1>
-            <button id="addNewFormButton" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 flex items-center">
-                <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15H9V7h2v10zm4 0h-2V7h2v10z"/></svg>
-                New Form
+            <button id="accountButton" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 flex items-center">
+                <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                Account
             </button>
         </header>
 
@@ -144,27 +143,24 @@
             <h2 class="text-2xl font-semibold mb-3">Today's Tasks/Objectives</h2>
             <div id="todayTasksList" class="flex flex-col gap-3 max-h-32 overflow-y-auto scrollable-list">
                 <p id="noTodayTasksMessage" class="text-indigo-200 text-center hidden">No tasks scheduled for today.</p>
-                </div>
+            </div>
         </div>
 
         <div class="glass p-6 rounded-xl shadow-lg mb-8">
             <h2 class="text-2xl font-semibold mb-4">My Forms</h2>
             <div id="formsList" class="flex flex-col gap-4 max-h-96 overflow-y-auto scrollable-list">
                 <p class="text-indigo-200 text-center" id="noFormsMessage">No forms created yet.</p>
-                </div>
+            </div>
         </div>
 
         <nav class="fixed bottom-0 left-0 right-0 custom-navbar z-10">
             <div class="nav-group">
-                <a href="index.html" class="active">
+                <a href="new-form.html" class="">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
                     <span class="text-xs mt-1">Home</span>
                 </a>
-                <a href="new-form.html" class="">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15H9V7h2v10zm4 0h-2V7h2v10z"/></svg>
-                    <span class="text-xs mt-1">New Form</span>
-                </a>
-                <a href="index.html" class=""> <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 11H5m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 7v7m0-7H5m14 0v7m0-7H5m7 0v7"/></svg>
+                <a href="index.html" class="active">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 11H5m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 7v7m0-7H5m14 0v7m0-7H5m7 0v7"/></svg>
                     <span class="text-xs mt-1">My Forms</span>
                 </a>
             </div>
@@ -178,23 +174,15 @@
     <script>
         const formsListContainer = document.getElementById('formsList');
         const noFormsMessage = document.getElementById('noFormsMessage');
-        const addNewFormButton = document.getElementById('addNewFormButton');
+        const accountButton = document.getElementById('accountButton'); // New reference
 
         const todayTasksList = document.getElementById('todayTasksList');
         const noTodayTasksMessage = document.getElementById('noTodayTasksMessage');
-
-        // Filter elements (removed from HTML, so references can be removed or left as null)
-        // const statusFilter = document.getElementById('statusFilter'); 
-        // const dateFilter = document.getElementById('dateFilter');
-        // const typeFilter = document.getElementById('typeFilter');
 
         // This function will render the list of forms from IndexedDB
         async function renderFormsList() {
             const allForms = (await idbKeyval.get('formsMetadata')) || []; 
             let filteredForms = allForms;
-
-            // Filters logic is removed/simplified since elements are gone
-            // if (statusFilter.value !== 'all') { /* ... */ }
 
             formsListContainer.innerHTML = ''; 
 
@@ -219,19 +207,27 @@
                     statusTextColorClass = 'text-green-300';
                 }
 
+                // Count segments and tasks for display
+                const formRecordings = (idbKeyval.get(`formRecordings-${form.id}`)) || [];
+                const numSegments = formRecordings.length;
+                const numTasks = formRecordings.reduce((total, rec) => total + (rec.tasks ? rec.tasks.length : 0), 0); // Assuming tasks array on each segment
+
                 const card = document.createElement('div');
                 card.className = 'glass p-4 text-white relative flex flex-col items-start rounded-xl';
                 card.innerHTML = `
                     <div class="status-indicator ${statusColorClass} rounded-tl-xl rounded-bl-xl"></div>
                     <div class="pl-3 w-full flex justify-between items-center mb-1">
-                        <span class="font-medium text-lg">${form.title || 'Untitled Form'}</span>
+                        <span class="font-medium text-lg">Form #${form.formNumber || 'N/A'} - ${form.title || 'Untitled Form'}</span>
                         <span class="${statusTextColorClass} text-sm font-semibold">${statusText}</span>
                     </div>
                     <div class="pl-3 text-sm text-indigo-100 mb-2">
                         ${form.plannedDateTime ? new Date(form.plannedDateTime).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'}) : 'No Date'} • ${form.beneficiary || 'No Client'} • ${form.type || 'General'}
                     </div>
+                    <div class="pl-3 text-sm text-indigo-100 mb-2">
+                        ${numSegments} Dictated Note(s) • ${numTasks} Task(s)
+                    </div>
                     <div class="pl-3 w-full flex justify-end gap-2 mt-2">
-                        <a href="new-form.html?id=${form.id}" class="bg-indigo-500 hover:bg-indigo-600 px-3 py-1 rounded-lg text-white text-sm transition duration-300">View/Edit</a>
+                        <button onclick="editForm('${form.id}')" class="bg-indigo-500 hover:bg-indigo-600 px-3 py-1 rounded-lg text-white text-sm transition duration-300">Update Form</button>
                         <button onclick="deleteForm('${form.id}')" class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded-lg text-white text-sm transition duration-300">Delete</button>
                     </div>
                 `;
@@ -239,21 +235,22 @@
             });
         }
 
+        // Renamed from "View/Edit" to "Update Form" to match flow
+        function editForm(id) {
+            window.location.href = `new-form.html?id=${id}`; 
+        }
+
         async function deleteForm(id) {
-            if (!confirm('Are you sure you want to delete this form and all its associated recordings?')) return;
+            if (!confirm('Are you sure you want to delete this form and all its associated dictated notes and tasks?')) return;
 
             let allForms = (await idbKeyval.get('formsMetadata')) || [];
             allForms = allForms.filter(f => f.id !== id);
             await idbKeyval.set('formsMetadata', allForms);
 
-            // Also delete associated audio blobs and recordings metadata
-            const formRecordings = (await idbKeyval.get(`formRecordings-${id}`)) || [];
-            for (const rec of formRecordings) {
-                await idbKeyval.del(`audio-${rec.id}`); // Delete individual audio blob
-            }
+            // Also delete associated dictated notes metadata
             await idbKeyval.del(`formRecordings-${id}`); // Delete the recordings metadata list for this form
             
-            alert('Form and all associated recordings deleted.');
+            alert('Form and all associated notes/tasks deleted.');
             renderFormsList(); // Re-render the list
             renderTodayTasks(); // Update today's tasks as well
         }
@@ -262,12 +259,14 @@
         async function renderTodayTasks() {
             const allForms = (await idbKeyval.get('formsMetadata')) || [];
             const today = new Date();
-            const todayString = today.toISOString().split('T')[0]; // YYYY-MM-DD
+            // Adjust to current timezone to ensure "today" is correct for comparison
+            today.setHours(0, 0, 0, 0); 
 
             const tasksForToday = allForms.filter(form => {
                 if (!form.plannedDateTime) return false;
-                const formPlannedDate = new Date(form.plannedDateTime).toISOString().split('T')[0];
-                return formPlannedDate === todayString && form.status !== 'completed';
+                const formPlannedDate = new Date(form.plannedDateTime);
+                formPlannedDate.setHours(0, 0, 0, 0); // Normalize to start of day for comparison
+                return formPlannedDate.getTime() === today.getTime() && form.status !== 'completed';
             });
 
             todayTasksList.innerHTML = '';
@@ -285,25 +284,17 @@
                     taskElement.onclick = () => { window.location.href = `new-form.html?id=${form.id}`; };
                     taskElement.innerHTML = `
                         <svg class="w-5 h-5 mr-2 ${iconColorClass}" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15H9V7h2v10zm4 0h-2V7h2v10z"/></svg>
-                        <span>${form.title || 'Untitled Form'}</span>
+                        <span>Form #${form.formNumber || 'N/A'} - ${form.title || 'Untitled Form'}</span>
                     `;
                     todayTasksList.appendChild(taskElement);
                 });
             }
         }
 
-
-        // Event listener for "Add New Form" button (header)
-        addNewFormButton.addEventListener('click', () => {
-            // This button now leads to new-form.html without auto-starting recording
-            window.location.href = 'new-form.html'; 
+        // Event listener for Account button (placeholder for now)
+        accountButton.addEventListener('click', () => {
+            alert('Account settings functionality to be implemented.');
         });
-
-        // Filter event listeners (removed since filters are gone from HTML)
-        // statusFilter.addEventListener('change', renderFormsList);
-        // dateFilter.addEventListener('change', renderFormsList);
-        // typeFilter.addEventListener('change', renderFormsList);
-
 
         // Run on page load
         document.addEventListener('DOMContentLoaded', async () => {

@@ -373,20 +373,35 @@ textarea::placeholder {
     white-space: pre-wrap; /* Păstrează formatarea textului */
 }
 
-/* Fixed Dictate/Stop Button (acum parte din Navbar) */
-.fixed-dictate-button {
-    display: none; /* Ascundem acest stil, funcționalitatea e în navbar */
-}
-
 /* --- Stiluri pentru Navbar (cu noile butoane MIC și AI) --- */
 .main-navbar {
-    bottom: 1.5rem;
-    /* Adjusted padding and internal button sizes for the new MIC/AI buttons */
-    padding: 0.75rem; 
+    position: fixed; /* Crucial: fixează navbar-ul la viewport */
+    left: 50%; /* Crucial: poziționează la mijlocul ecranului */
+    transform: translateX(-50%); /* Crucial: centrează elementul pe orizontală */
+    z-index: 1000; /* Crucial: asigură că este deasupra altor elemente */
+
+    /* Stiluri de aspect și glassmorphism */
+    background: rgba(255, 255, 255, 0.15); /* Fundal glass */
+    backdrop-filter: blur(15px); /* Efect de blur */
+    border: 1px solid rgba(255, 255, 255, 0.25); /* Margine glass */
+    border-radius: 9999px; /* Formă de pilulă */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Umbră */
+
+    /* Stiluri de layout intern */
+    display: flex; /* Crucial: aranjează butoanele orizontal */
+    justify-content: center; /* Centrează butoanele în navbar */
+    align-items: center; /* Aliniază vertical butoanele */
+    
+    bottom: 1.5rem; /* Poziționează la baza ecranului */
+    padding: 0.75rem; /* Padding intern */
+    width: fit-content; /* Lățime adaptabilă la conținut */
 }
 
 .navbar-group {
+    display: flex; /* Crucial: aranjează butoanele din grup orizontal */
     background: rgba(255, 255, 255, 0.05); /* Mai subtil pentru grup */
+    border-radius: 9999px; /* Colțuri rotunjite pentru grup */
+    overflow: hidden; /* Asigură că butoanele din grup nu depășesc marginile rotunjite */
 }
 
 .navbar-button {

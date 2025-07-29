@@ -1,38 +1,71 @@
-/* style.css - Stiluri globale și glassmorphism pentru Forma */
+/* style.css - Stiluri globale și glassmorphism pentru Forma (Updated) */
 
 /* Font-uri și Reset de bază */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+:root {
+    /* Paleta de culori inspirată din estetica modernă și undele furnizate */
+    --color-background-dark: #1a202c; /* Foarte închis, aproape negru */
+    --color-background-medium: #2d3748; /* Gri-albăstrui închis */
+    --color-background-light: #3a475a; /* Gri-albăstrui mediu */
+
+    --color-glass-bg: rgba(255, 255, 255, 0.08); /* Fundal glass de bază */
+    --color-glass-border: rgba(255, 255, 255, 0.15); /* Margine glass */
+    --color-glass-shadow: rgba(0, 0, 0, 0.15); /* Umbră glass */
+
+    --color-text-primary: #e0e7ff; /* Albastru-violet deschis, pentru titluri/text important */
+    --color-text-secondary: #cbd5e1; /* Gri-albastru deschis, pentru text normal */
+    --color-text-placeholder: rgba(255, 255, 255, 0.6); /* Placeholder input */
+    --color-text-subtle: #9baac7; /* Gri-albăstrui subtil */
+
+    --color-accent-blue: #6366f1; /* Indigo vibrant */
+    --color-accent-blue-hover: #5a5ee0;
+    --color-accent-green: #22c55e; /* Verde vibrant */
+    --color-accent-green-hover: #1eaf53;
+    --color-accent-red: #ef4444; /* Roșu vibrant */
+    --color-accent-red-hover: #dc2626;
+    --color-accent-purple: #a78bfa; /* Violet deschis pentru accente */
+
+    /* Culorile pentru unda de activitate (inspirate din unde.png) */
+    --wave-color-1: #8be1b7; /* Verde mentă */
+    --wave-color-2: #60cce6; /* Bleu deschis */
+    --wave-color-3: #52a1e3; /* Albastru mediu */
+    --wave-color-4: #ffd37f; /* Galben portocaliu */
+    --wave-color-5: #ffaa5e; /* Portocaliu deschis */
+}
 
 body {
     margin: 0;
     padding: 0;
     font-family: 'Inter', sans-serif;
-    background: linear-gradient(135deg, #1a202c, #2d3748); /* Fundal gradient */
+    background: linear-gradient(135deg, var(--color-background-dark), var(--color-background-medium));
     min-height: 100vh;
-    color: #cbd5e1; /* Culoare text implicită */
+    color: var(--color-text-secondary);
     display: flex;
     flex-direction: column;
     align-items: center;
     padding-top: 2rem;
     padding-bottom: 7rem; /* Spațiu pentru bara de navigare fixă */
-    box-sizing: border-box; /* Asigură că padding-ul nu mărește dimensiunea totală */
-}
-
-/* Stiluri Glassmorphism de bază */
-.glass-container {
-    background: rgba(255, 255, 255, 0.1); /* Fundal semi-transparent */
-    backdrop-filter: blur(10px); /* Efect de blur */
-    border: 1px solid rgba(255, 255, 255, 0.2); /* Margine subțire */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Umbră subtilă */
-    border-radius: 1rem; /* Colțuri rotunjite */
-    padding: 1.5rem; /* Padding intern */
-    width: 100%;
-    max-width: 480px; /* Lățime maximă pentru conținut pe mobil */
-    margin-bottom: 1.5rem; /* Spațiu între containere */
     box-sizing: border-box;
+    position: relative; /* Pentru a permite poziționarea absolută a elementelor */
 }
 
-/* Stiluri pentru antet */
+/* Stiluri Glassmorphism */
+.glass-container {
+    background: var(--color-glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--color-glass-border);
+    box-shadow: 0 4px 6px var(--color-glass-shadow);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 480px;
+    margin-bottom: 1.5rem;
+    box-sizing: border-box;
+    overflow: hidden; /* Asigură că conținutul rămâne în limitele containerului */
+}
+
+/* Antet General al Aplicației */
 .app-header {
     display: flex;
     justify-content: space-between;
@@ -40,41 +73,44 @@ body {
     width: 100%;
     max-width: 480px;
     margin-bottom: 1.5rem;
-    padding: 0 1rem; /* Asigură padding lateral */
+    padding: 0 1rem;
     box-sizing: border-box;
 }
 
 .app-title {
-    font-size: 2.5rem; /* Mărime mare pentru titlu */
-    font-weight: 800; /* Extra bold */
-    color: #e0e7ff; /* Culoare albastru-violet deschis */
-    flex-grow: 1; /* Permite titlului să ocupe spațiu */
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    flex-grow: 1;
     text-align: center;
+    line-height: 1; /* Pentru aliniere perfectă */
 }
 
+/* Butoane generice */
 .button-primary {
-    background-color: #6366f1; /* indigo-500 */
+    background-color: var(--color-accent-blue);
     color: white;
-    font-weight: 600; /* Semi-bold */
+    font-weight: 600;
     padding: 0.75rem 1.25rem;
-    border-radius: 0.5rem; /* Colțuri rotunjite */
+    border-radius: 0.5rem;
     transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
     cursor: pointer;
     border: none;
-    text-decoration: none; /* Pentru link-uri */
-    display: flex; /* Pentru iconiță și text */
+    text-decoration: none;
+    display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 1rem;
 }
 
 .button-primary:hover {
-    background-color: #5a5ee0; /* indigo-600 */
+    background-color: var(--color-accent-blue-hover);
     transform: translateY(-1px);
 }
 
 .button-secondary {
-    background-color: #4a5568; /* gray-700 */
-    color: white;
+    background-color: var(--color-background-medium);
+    color: var(--color-text-primary);
     font-weight: 600;
     padding: 0.75rem 1.25rem;
     border-radius: 0.5rem;
@@ -85,15 +121,16 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 1rem;
 }
 
 .button-secondary:hover {
-    background-color: #2d3748; /* gray-800 */
+    background-color: var(--color-background-light);
     transform: translateY(-1px);
 }
 
 .button-danger {
-    background-color: #ef4444; /* red-500 */
+    background-color: var(--color-accent-red);
     color: white;
     font-weight: 600;
     padding: 0.75rem 1.25rem;
@@ -105,12 +142,26 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 1rem;
 }
 
 .button-danger:hover {
-    background-color: #dc2626; /* red-600 */
+    background-color: var(--color-accent-red-hover);
     transform: translateY(-1px);
 }
+
+.button-group-row {
+    display: flex;
+    justify-content: space-around;
+    gap: 0.75rem;
+    width: 100%;
+    margin-top: 1.5rem;
+}
+
+.button-group-row button {
+    flex: 1; /* Butoanele ocupă spațiu egal */
+}
+
 
 /* Stiluri pentru inputuri */
 input[type="text"],
@@ -120,24 +171,46 @@ select {
     width: 100%;
     padding: 0.75rem;
     border-radius: 0.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    background-color: rgba(0, 0, 0, 0.3); /* Fundal ușor transparent */
-    color: #e0e7ff; /* Text alb-violet deschis */
-    outline: none; /* Fără outline la focus */
+    border: 1px solid var(--color-glass-border);
+    background-color: rgba(0, 0, 0, 0.2); /* Fundal ușor transparent */
+    color: var(--color-text-primary);
+    outline: none;
     transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    font-size: 1rem;
 }
 
 input[type="text"]:focus,
 input[type="datetime-local"]:focus,
 textarea:focus,
 select:focus {
-    border-color: #6366f1; /* Culoare de accent la focus */
-    background-color: rgba(0, 0, 0, 0.4);
+    border-color: var(--color-accent-blue);
+    background-color: rgba(0, 0, 0, 0.3);
 }
 
 input::placeholder,
 textarea::placeholder {
-    color: rgba(255, 255, 255, 0.5); /* Placeholder mai deschis */
+    color: var(--color-text-placeholder);
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.875rem; /* text-sm */
+    font-weight: 600;
+    color: var(--color-accent-purple); /* Text mov pentru label-uri */
+    margin-bottom: 0.5rem;
+}
+
+.section-divider h3 {
+    font-size: 1.25rem; /* text-xl */
+    font-weight: 600;
+    color: var(--color-accent-purple);
+    margin-bottom: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(167, 139, 250, 0.3); /* Linia mov subtilă */
 }
 
 /* Scrollbar personalizat */
@@ -145,30 +218,31 @@ textarea::placeholder {
     width: 8px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 10px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.2);
     border-radius: 10px;
-    border: 2px solid rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.05);
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.3);
 }
 
-/* Stiluri pentru carduri în liste (My Forms, Recording History) */
+/* Stiluri pentru carduri în liste (My Forms, Dictated Notes History) */
 .card-item {
     background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid var(--color-glass-border);
     border-radius: 0.75rem;
     padding: 1rem;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     position: relative;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px var(--color-glass-shadow);
     transition: transform 0.2s ease-in-out;
+    margin-bottom: 1rem; /* Spațiu între carduri */
 }
 
 .card-item:hover {
@@ -177,23 +251,37 @@ textarea::placeholder {
 
 .card-item-title {
     font-size: 1.125rem; /* lg */
-    font-weight: 600; /* semi-bold */
-    color: #e0e7ff;
+    font-weight: 600;
+    color: var(--color-text-primary);
     margin-bottom: 0.25rem;
+    padding-left: 1rem; /* Spațiu pentru bara de status */
 }
 
 .card-item-meta {
     font-size: 0.875rem; /* sm */
-    color: #a78bfa; /* purple-400 */
+    color: var(--color-text-subtle);
     margin-bottom: 0.5rem;
+    padding-left: 1rem;
+}
+
+.card-item-text {
+    font-size: 0.95rem;
+    color: var(--color-text-secondary);
+    padding-left: 1rem;
 }
 
 .card-item-actions {
     display: flex;
     gap: 0.75rem;
     margin-top: 1rem;
-    width: 100%; /* Ocupa toata latimea */
-    justify-content: flex-end; /* Aliniaza la dreapta */
+    width: 100%;
+    justify-content: flex-end;
+    padding-left: 1rem;
+}
+
+.small-button {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
 }
 
 /* Indicatori de status (pentru cardurile din My Forms) */
@@ -207,109 +295,183 @@ textarea::placeholder {
     border-bottom-left-radius: 0.75rem;
 }
 
-.status-green { background-color: #22c55e; } /* green-500 */
-.status-red { background-color: #ef4444; }   /* red-500 */
-.status-yellow { background-color: #f59e0b; }/* amber-500 */
-.status-gray { background-color: #6b7280; }  /* gray-500 */
+.status-green-bar { background-color: var(--color-accent-green); }
+.status-red-bar { background-color: var(--color-accent-red); }
+.status-yellow-bar { background-color: var(--color-accent-purple); } /* Use purple for in-progress/draft */
+.status-gray-bar { background-color: var(--color-background-light); } /* Gray for not-started */
 
-.text-status-green { color: #22c55e; }
-.text-status-yellow { color: #f59e0b; }
-.text-status-gray { color: #6b7280; }
 
-/* Bara de navigare fixă de jos */
-.main-navbar {
-    position: fixed;
-    bottom: 1.5rem;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000; /* Asigură că este deasupra altor elemente */
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    border-radius: 9999px; /* Pill shape */
-    padding: 0.5rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+/* Stiluri pentru mesajele de stare */
+.empty-state-message {
+    text-align: center;
+    color: var(--color-text-subtle);
+    padding: 1rem;
+    font-style: italic;
 }
 
-.navbar-group {
+/* --- Stiluri Specifice Paginii HOME (Dictare Centrală) --- */
+.dictation-main-area {
+    min-height: 400px; /* Asigură un chenar vizibil pentru dictare */
     display: flex;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 9999px;
-    overflow: hidden;
+    flex-direction: column;
 }
 
-.navbar-button {
-    padding: 0.75rem 1.25rem;
+.dictation-main-area .section-title {
+    font-size: 1.75rem; /* text-3xl */
+    font-weight: 700;
+    color: var(--color-text-primary);
+    text-align: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(167, 139, 250, 0.3); /* Linia mov subtilă */
+}
+
+#dictationStatusArea {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: #cbd5e1;
-    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-    text-decoration: none;
-    flex-shrink: 0;
-    min-width: 70px; /* Asigură spațiu pentru text și iconiță */
-    border-radius: 9999px;
+    margin-bottom: 1rem;
+    padding: 0.5rem 0;
 }
 
-.navbar-button:hover {
-    background-color: rgba(255, 255, 255, 0.25);
-    color: #fff;
+.wave-indicator {
+    width: 80%;
+    height: 6px; /* Ajustat pentru o undă mai subtilă și curată */
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--wave-color-1), var(--wave-color-2), var(--wave-color-3), var(--wave-color-4), var(--wave-color-5));
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
 }
 
-.navbar-button.active {
-    background-color: #6366f1; /* indigo-500 */
-    color: #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    transform: scale(1.05); /* Efect subtil de mărire */
+.wave-indicator.active {
+    animation: simple-wave 1.5s infinite alternate ease-in-out;
+    opacity: 1;
 }
 
-.navbar-button svg {
-    width: 24px;
-    height: 24px;
-    margin-bottom: 0.25rem;
+@keyframes simple-wave {
+    0%, 100% { transform: scaleX(0.2); }
+    50% { transform: scaleX(1); }
 }
 
-.navbar-button span {
-    font-size: 0.75rem; /* text-xs */
-    white-space: nowrap; /* Previne ruperea textului */
+#dictationStatusText {
+    font-size: 0.95rem;
+    color: var(--color-text-subtle);
+    margin-top: 0.75rem;
 }
 
-.navbar-search-button {
-    background-color: #6366f1;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
+.text-display {
+    flex-grow: 1; /* Permite să ocupe spațiul rămas */
+    min-height: 150px; /* Asigură înălțime minimă chiar și fără text */
+    max-height: 250px; /* Fixează înălțimea vizibilă */
+    overflow-y: auto;
+    border: 1px solid var(--color-glass-border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background-color: rgba(0, 0, 0, 0.2);
+    color: var(--color-text-primary);
+    line-height: 1.6;
+    white-space: pre-wrap; /* Păstrează formatarea textului */
+}
+
+/* Fixed Dictate/Stop Button (acum parte din Navbar) */
+.fixed-dictate-button {
+    display: none; /* Ascundem acest stil, funcționalitatea e în navbar */
+}
+
+/* --- Stiluri pentru Navbar (cu noile butoane MIC și AI) --- */
+.main-navbar {
+    bottom: 1.5rem;
+    /* Adjusted padding and internal button sizes for the new MIC/AI buttons */
+    padding: 0.75rem; 
+}
+
+.navbar-group {
+    background: rgba(255, 255, 255, 0.05); /* Mai subtil pentru grup */
+}
+
+.navbar-button {
+    min-width: 80px; /* Spațiu mai mare pentru "New Form" și "My Forms" */
+}
+
+.navbar-mic-button,
+.navbar-ai-button {
+    border-radius: 50%; /* Buton rotund */
+    width: 56px; /* Dimensiune fixă */
+    height: 56px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
-    transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
-    flex-shrink: 0;
-    margin-left: 0.75rem;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
 }
 
-.navbar-search-button:hover {
-    background-color: #5a5ee0;
-    transform: scale(1.05);
+.navbar-mic-button {
+    background-color: var(--color-accent-green); /* Verde pentru MIC */
+    margin-right: 0.75rem; /* Spațiu față de grupul central */
+}
+
+.navbar-mic-button:hover {
+    background-color: var(--color-accent-green-hover);
+    transform: scale(1.08);
+}
+
+.navbar-ai-button {
+    background-color: var(--color-accent-purple); /* Violet pentru AI */
+    margin-left: 0.75rem; /* Spațiu față de grupul central */
+}
+
+.navbar-ai-button:hover {
+    background-color: rgba(167, 139, 250, 0.8); /* O nuanță mai deschisă */
+    transform: scale(1.08);
+}
+
+.navbar-mic-button svg,
+.navbar-ai-button svg {
+    width: 28px; /* Mărime iconițe */
+    height: 28px;
+    margin: 0; /* Fără margini interne */
+}
+
+/* Stil pentru butonul Account (3 puncte) */
+.icon-button {
+    background: none;
+    border: none;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.icon-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.icon-button svg {
+    width: 24px;
+    height: 24px;
 }
 
 /* Responsivitate de bază */
 @media (max-width: 600px) {
-    .glass-container {
-        padding: 1rem;
+    .glass-container, .app-header {
         margin-left: 1rem;
         margin-right: 1rem;
     }
-
-    .app-header {
-        padding: 0;
-        margin-left: 1rem;
-        margin-right: 1rem;
+    .main-navbar {
+        bottom: 1rem; /* Ajustare pe ecrane mici */
+    }
+    .navbar-button {
+        min-width: 65px;
+        padding: 0.6rem 1rem;
+    }
+    .navbar-mic-button, .navbar-ai-button {
+        width: 50px;
+        height: 50px;
+    }
+    .navbar-mic-button svg, .navbar-ai-button svg {
+        width: 26px;
+        height: 26px;
     }
 }

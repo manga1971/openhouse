@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forma - Home (Dictate & New Form)</title>
+    <title>Forma - Home (Dictare)</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/idb-keyval@6/dist/umd.js"></script>
     <script src="common.js"></script>
@@ -13,61 +13,15 @@
     <div class="app-container">
         <header class="app-header">
             <h1 class="app-title">Forma</h1>
-            <button id="accountButton" class="button-secondary">
-                <svg class="icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                Account
+            <button id="accountSettingsButton" class="icon-button">
+                <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
             </button>
         </header>
 
-        <div id="formDetailsAccordion" class="glass-container">
-            <div class="accordion-header" onclick="toggleAccordion('formDetailsContent', this)">
-                <span>Characteristics / Details</span>
-                <svg class="accordion-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-            </div>
-            <div id="formDetailsContent" class="accordion-content">
-                <form id="formCreationForm">
-                    <div class="form-group">
-                        <label for="formTitleInput">Objective Title:</label>
-                        <input type="text" id="formTitleInput" placeholder="e.g., Villa Dacia No 75 Inspection" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="formBeneficiaryInput">Client:</label>
-                        <input type="text" id="formBeneficiaryInput" placeholder="e.g., Colosseum SRL">
-                    </div>
-                    <div class="form-group" style="display: none;"> <label for="formTypeSelect">Form Type:</label>
-                        <select id="formTypeSelect">
-                            <option value="inspection">Inspection</option>
-                            <option value="estimation">Estimation</option>
-                            <option value="reception">Reception</option>
-                            <option value="meeting">Meeting</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="formPlannedDateInput">Planned Date & Time:</label>
-                        <input type="datetime-local" id="formPlannedDateInput">
-                    </div>
-                    <div class="form-group">
-                        <label for="formAddressInput">Address:</label>
-                        <input type="text" id="formAddressInput" placeholder="e.g., Blvd Dacia No 75">
-                    </div>
-                    
-                    <div class="form-group section-divider">
-                        <h3>Personal Notes:</h3>
-                        <textarea id="formInitialNotesInput" placeholder="Any preliminary details or aspects..."></textarea>
-                    </div>
-
-                    <button type="button" id="saveFormDetailsButton" class="button-primary full-width">
-                        Save Form Details
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <div id="addVoiceNoteSection" class="glass-container">
-            <h2 class="section-title">Add Voice Note</h2>
+        <div id="mainDictationArea" class="glass-container dictation-main-area">
+            <h2 class="section-title" id="formContextTitle">New Form</h2>
             
-            <div id="dictationStatusArea">
+            <div id="dictationStatusArea" class="dictation-status-box">
                 <div id="visualWave" class="wave-indicator"></div>
                 <p id="dictationStatusText">Press "Dictate" button below to start speaking...</p>
             </div>
@@ -76,38 +30,25 @@
                 Your dictated text will appear here.
             </div>
             
-            <div class="button-group-vertical">
-                <button id="saveDictatedTextButton" class="button-primary" disabled>
-                    Save Dictated Note
-                </button>
-                <button id="discardDictatedTextButton" class="button-secondary" disabled>
-                    Discard Note
-                </button>
-                <button id="viewTranscriptReportButton" class="button-secondary" disabled>
-                    View Full Form Report
-                </button>
+            <div class="button-group-row">
+                <button id="saveDictatedTextButton" class="button-secondary">Save</button>
+                <button id="editDictatedTextButton" class="button-primary">Edit</button>
+                <button id="deleteDictatedTextButton" class="button-danger">Delete</button>
             </div>
         </div>
 
-        <div id="recordingHistorySection" class="glass-container">
-            <h2 class="section-title">Dictated Notes History</h2>
-            <div id="formRecordingsList" class="list-container custom-scrollbar">
-                <p class="empty-state-message" id="noRecordingsMessage">No dictated notes yet for this form.</p>
-            </div>
-        </div>
-        
         <nav class="main-navbar">
             <div class="navbar-group">
                 <a href="index.html" class="navbar-button active">
-                    <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-                    <span>Home</span>
+                    <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15H9V7h2v10zm4 0h-2V7h2v10z"/></svg>
+                    <span>New Form</span>
                 </a>
                 <a href="my-forms.html" class="navbar-button">
                     <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 11H5m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 7v7m0-7H5m14 0v7m0-7H5m7 0v7"/></svg>
                     <span>My Forms</span>
                 </a>
             </div>
-            <button class="navbar-search-button" onclick="alert('Search functionality to be implemented.')">
+            <button class="navbar-search-button" onclick="alert('Search functionality to be implemented in My Forms and Form Report pages.')">
                 <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16a6.471 6.471 0 003.73-1.29l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
             </button>
         </nav>
@@ -115,76 +56,47 @@
     </div>
 
     <button id="dictateToggleButton" class="fixed-dictate-button">
+        <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" id="dictateIcon"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 4c0-1.66-1.34-3-3-3S9 2.34 9 4v7c0 1.66 1.34 3 3 3zm5.3-3c0 3.53-2.64 6.43-6.14 6.95V21h-2v-3.05c-3.5-.52-6.16-3.42-6.16-6.95H2c0 4.17 3.13 7.63 7.27 8.24v3.01h5.46v-3.01c4.14-.61 7.27-4.07 7.27-8.24h-1.7z"/></svg>
         Dictate
     </button>
 
     <script>
         // DOM Elements
-        const formDetailsAccordion = document.getElementById('formDetailsAccordion');
-        const formDetailsContent = document.getElementById('formDetailsContent');
-        const formCreationForm = document.getElementById('formCreationForm');
-        const formTitleInput = document.getElementById('formTitleInput');
-        const formBeneficiaryInput = document.getElementById('formBeneficiaryInput');
-        const formTypeSelect = document.getElementById('formTypeSelect'); 
-        const formPlannedDateInput = document.getElementById('formPlannedDateInput');
-        const formAddressInput = document.getElementById('formAddressInput');
-        const formInitialNotesInput = document.getElementById('formInitialNotesInput');
-        const saveFormDetailsButton = document.getElementById('saveFormDetailsButton'); 
-
+        const formContextTitle = document.getElementById('formContextTitle');
         const dictationStatusArea = document.getElementById('dictationStatusArea');
         const visualWave = document.getElementById('visualWave');
         const dictationStatusText = document.getElementById('dictationStatusText');
         const transcriptionText = document.getElementById('transcriptionText');
 
         const saveDictatedTextButton = document.getElementById('saveDictatedTextButton'); 
-        const discardDictatedTextButton = document.getElementById('discardDictatedTextButton'); 
-        const viewTranscriptReportButton = document.getElementById('viewTranscriptReportButton'); 
+        const editDictatedTextButton = document.getElementById('editDictatedTextButton'); // Renamed
+        const deleteDictatedTextButton = document.getElementById('deleteDictatedTextButton'); // Renamed
 
         const dictateToggleButton = document.getElementById('dictateToggleButton');
+        const dictateIcon = document.getElementById('dictateIcon'); // Reference to the icon inside the button
 
-        const formRecordingsListContainer = document.getElementById('formRecordingsList');
-        const noRecordingsMessage = document.getElementById('noRecordingsMessage');
-        const accountButton = document.getElementById('accountButton');
+        const accountSettingsButton = document.getElementById('accountSettingsButton');
 
 
         // Global State Variables
         let currentFormId = null; 
-        let isDictating = false; // Tracks if dictation is active
-        let simulatedDictatedText = ""; // Accumulates simulated dictated text
+        let isDictating = false; 
+        let simulatedDictatedText = ""; 
+        let currentSegmentId = null; // To track the ID of the segment being dictated (if saved)
 
-        // --- UI & Accordion Logic ---
+        // --- UI & Dictation Logic ---
 
-        function toggleAccordion(contentId, headerElement, forceCollapse = false) {
-            const content = document.getElementById(contentId);
-            const icon = headerElement.querySelector('.accordion-icon');
-
-            if (forceCollapse) {
-                if (content.style.display !== 'none') { 
-                    content.style.display = 'none';
-                    icon.style.transform = 'rotate(-90deg)';
-                    headerElement.classList.add('collapsed');
-                }
-            } else { 
-                if (content.style.display === 'none' || content.style.display === '') {
-                    content.style.display = 'block';
-                    icon.style.transform = 'rotate(0deg)';
-                    headerElement.classList.remove('collapsed');
-                } else {
-                    content.style.display = 'none';
-                    icon.style.transform = 'rotate(-90deg)';
-                    headerElement.classList.add('collapsed');
-                }
+        function updateDictationButton(isActivelyDictating) {
+            if (isActivelyDictating) {
+                dictateToggleButton.textContent = 'Stop';
+                dictateToggleButton.classList.add('active-dictation-button'); // Add a class for potential styling
+                dictateIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'; // Pause icon
+            } else {
+                dictateToggleButton.textContent = 'Dictate';
+                dictateToggleButton.classList.remove('active-dictation-button');
+                dictateIcon.innerHTML = '<path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 4c0-1.66-1.34-3-3-3S9 2.34 9 4v7c0 1.66 1.34 3 3 3zm5.3-3c0 3.53-2.64 6.43-6.14 6.95V21h-2v-3.05c-3.5-.52-6.16-3.42-6.16-6.95H2c0 4.17 3.13 7.63 7.27 8.24v3.01h5.46v-3.01c4.14-.61 7.27-4.07 7.27-8.24h-1.7z"/>'; // Mic icon
             }
         }
-
-        function setupInitialAccordionState(isEditing = false) {
-            // By default, characteristics are open on Home for new forms.
-            formDetailsContent.style.display = 'block';
-            formDetailsAccordion.querySelector('.accordion-icon').style.transform = 'rotate(0deg)';
-            formDetailsAccordion.classList.remove('collapsed');
-        }
-
-        // --- Dictation Interface Functions (Simulated for Contest) ---
 
         function startNativeDictationProcess() {
             if (isDictating) return;
@@ -193,14 +105,14 @@
             dictationStatusText.textContent = 'Listening... Speak clearly.';
             visualWave.classList.add('active');
             visualWave.style.opacity = '1';
-            dictateToggleButton.textContent = 'Stop';
+            updateDictationButton(true);
             
-            transcriptionText.textContent = ''; // Clear previous text
+            transcriptionText.textContent = ''; 
             simulatedDictatedText = "";
             saveDictatedTextButton.disabled = true;
-            discardDictatedTextButton.disabled = true;
+            editDictatedTextButton.disabled = true;
+            deleteDictatedTextButton.disabled = true;
 
-            // Simulate dictation input from OS
             let textSegments = [
                 "Acesta este primul segment al dictării mele. ",
                 "Vreau să adaug un task nou, și anume: să verific stocul la depozit până vineri. ",
@@ -227,12 +139,9 @@
                     }
                 } else {
                     clearInterval(window.dictationTypingInterval);
-                    stopNativeDictationProcess(true); // Dictation finished naturally
+                    stopNativeDictationProcess(true);
                 }
             }, 50);
-            
-            // Collapse accordion when dictation starts
-            toggleAccordion('formDetailsContent', formDetailsAccordion.querySelector('.accordion-header'), true);
         }
 
         function stopNativeDictationProcess(dictationSuccessful = false) {
@@ -244,23 +153,40 @@
             dictationStatusText.textContent = dictationSuccessful ? 'Dictation complete. Review and save.' : 'Dictation stopped. No text saved.';
             visualWave.classList.remove('active');
             visualWave.style.opacity = '0';
-            dictateToggleButton.textContent = 'Dictate';
+            updateDictationButton(false);
 
             if (dictationSuccessful && simulatedDictatedText.trim().length > 0) {
                 saveDictatedTextButton.disabled = false;
-                discardDictatedTextButton.disabled = false;
-                // viewTranscriptReportButton.disabled will be handled after save
+                editDictatedTextButton.disabled = false; // Enable Edit button as it also saves
+                deleteDictatedTextButton.disabled = false;
             } else {
                 saveDictatedTextButton.disabled = true;
-                discardDictatedTextButton.disabled = true;
+                editDictatedTextButton.disabled = true;
+                deleteDictatedTextButton.disabled = true;
             }
         }
 
         // --- Form Data Save & Management ---
 
-        async function saveFormData(newStatus = null) {
-            // Ensure currentFormId exists, generate if needed (for quick dictation flow)
-            if (!currentFormId) {
+        async function createOrUpdateFormMetadata(formToUpdate = null) {
+            let formData;
+            let allForms = (await db.get('formsMetadata')) || [];
+
+            if (formToUpdate) { // Updating an existing form
+                currentFormId = formToUpdate.id;
+                formData = { ...formToUpdate }; // Copy existing data
+                // Update specific fields that might change if user later decides to fill them
+                formData.title = formToUpdate.title || `Quick Note - ${new Date(formToUpdate.createdAt).toLocaleDateString('en-US')} ${new Date(formToUpdate.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit'})}`;
+                formData.lastModified = new Date().toISOString();
+            } else if (currentFormId) { // Editing an existing form loaded by ID from URL
+                formData = allForms.find(f => f.id === currentFormId);
+                if (!formData) { // Should not happen if loadFormDataAndHistory is correct
+                    console.error("Attempted to update a form not found with currentFormId.");
+                    // Fallback to creating new if somehow ID is set but form not found
+                    return createOrUpdateFormMetadata(null); 
+                }
+                formData.lastModified = new Date().toISOString();
+            } else { // Creating a brand new form (e.g., first dictation on a fresh app load)
                 let lastFormSequenceNumber = (await db.get('lastFormSequenceNumber')) || 0;
                 const newFormNumber = ++lastFormSequenceNumber;
                 currentFormId = generateUUID(); 
@@ -270,7 +196,7 @@
                 now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); 
                 const quickFormTitle = `Quick Note - ${now.toLocaleDateString('en-US')} ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit'})}`;
 
-                const initialFormData = {
+                formData = {
                     id: currentFormId,
                     formNumber: newFormNumber,
                     title: quickFormTitle,
@@ -279,204 +205,61 @@
                     plannedDateTime: now.toISOString(),
                     address: '',
                     initialNotes: '',
-                    status: 'not-started',
+                    status: 'not-started', // Initially not-started
                     createdAt: now.toISOString(),
-                    lastModified: new Date().toISOString()
+                    lastModified: now.toISOString()
                 };
-                let allForms = (await db.get('formsMetadata')) || [];
-                allForms.unshift(initialFormData);
-                await db.set('formsMetadata', allForms);
-                alert(`New quick form created: ${quickFormTitle}`);
             }
 
-            const formData = {
-                id: currentFormId,
-                formNumber: (await db.get('formsMetadata') || []).find(f => f.id === currentFormId)?.formNumber || null,
-                title: formTitleInput.value.trim() || 'Untitled Form',
-                beneficiary: formBeneficiaryInput.value.trim(),
-                type: formTypeSelect.value,
-                plannedDateTime: formPlannedDateInput.value ? new Date(formPlannedDateInput.value).toISOString() : null,
-                address: formAddressInput.value.trim(),
-                initialNotes: formInitialNotesInput.value.trim(),
-                status: newStatus || (await db.get('formsMetadata') || []).find(f => f.id === currentFormId)?.status || 'not-started',
-                createdAt: (await db.get('formsMetadata') || []).find(f => f.id === currentFormId)?.createdAt || new Date().toISOString(),
-                lastModified: new Date().toISOString() 
-            };
+            // Update form status to "in-progress" if a dictation is added/edited for it
+            if (formData.status === 'not-started') {
+                formData.status = 'in-progress';
+            }
 
-            let allForms = (await db.get('formsMetadata')) || [];
             const index = allForms.findIndex(f => f.id === currentFormId);
-            
             if (index !== -1) {
                 allForms[index] = formData;
             } else {
-                // Should not happen if currentFormId is always managed correctly
-                let lastFormSequenceNumber = (await db.get('lastFormSequenceNumber')) || 0;
-                formData.formNumber = ++lastFormSequenceNumber;
-                await db.set('lastFormSequenceNumber', lastFormSequenceNumber);
-                allForms.unshift(formData);
+                allForms.unshift(formData); // Add new form to top
             }
             
             await db.set('formsMetadata', allForms);
-            return formData.id; 
+            formContextTitle.textContent = `Form #${formData.formNumber || 'N/A'}`; // Update title
+            return formData; 
         }
 
         // Save a dictated text segment
         async function saveDictatedSegment(text) {
-            if (!currentFormId) {
-                // This scenario means user clicked "Save Dictated Note" before dictating,
-                // or without a form. The dictateToggleButton click handles quick form creation.
-                alert('Error: No active form to save the dictated note to. Please start dictation first.');
-                return;
-            }
+            // Ensure a form exists and is the context for this dictation
+            let form = await createOrUpdateFormMetadata(null); // Ensures currentFormId is set and form exists
+            currentFormId = form.id; // Confirm currentFormId is the one we're saving to
+
             if (!text || text.trim().length === 0) {
                 alert('Cannot save an empty note.');
-                return;
+                return null;
             }
 
             const now = new Date();
-            const segmentId = generateUUID();
+            currentSegmentId = generateUUID(); // Assign ID to current segment
 
             const segmentMetaData = {
-                id: segmentId,
+                id: currentSegmentId,
                 formId: currentFormId,
-                name: `Dictated Note - ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`, 
-                status: 'draft', // Initial status for dictated notes
+                name: `Note ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`, // Simplified name
+                status: 'draft', 
                 recordedAtTime: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
                 recordedAtDate: now.toLocaleDateString('en-US'),
-                duration: Math.ceil(text.trim().split(/\s+/).length / 2.5), // Estimate duration based on word count (avg 150 wpm)
-                text: text.trim(), // Store the actual dictated text
+                duration: Math.ceil(text.trim().split(/\s+/).length / 2.5), 
+                text: text.trim(), 
                 tasks: [] // Tasks will be extracted manually later
             };
 
             const formRecordings = (await db.get(`formRecordings-${currentFormId}`)) || [];
             formRecordings.unshift(segmentMetaData); // Add new segment to the top
             await db.set(`formRecordings-${currentFormId}`, formRecordings);
-
-            // Update form status to "in-progress" if it's not already completed
-            let allForms = (await db.get('formsMetadata')) || [];
-            const formIndex = allForms.findIndex(f => f.id === currentFormId);
-            if (formIndex !== -1) {
-                if (allForms[formIndex].status !== 'completed' && allForms[formIndex].status !== 'in-progress') {
-                    allForms[formIndex].status = 'in-progress'; 
-                }
-                allForms[formIndex].lastModified = new Date().toISOString(); 
-                await db.set('formsMetadata', allForms);
-            }
             
-            renderFormRecordingsList(); 
             alert('Dictated note saved successfully!');
-        }
-
-        // Render dictated notes specific to this form
-        async function renderFormRecordingsList() {
-            const container = document.getElementById('formRecordingsList');
-            if (!container) return;
-
-            const recordings = (await db.get(`formRecordings-${currentFormId}`)) || [];
-            container.innerHTML = '';
-
-            if (recordings.length === 0) {
-                noRecordingsMessage.style.display = 'block';
-                return;
-            } else {
-                noRecordingsMessage.style.display = 'none';
-            }
-
-            // Sort by latest dictation first
-            recordings.sort((a, b) => new Date(b.recordedAtDate + ' ' + b.recordedAtTime).getTime() - new Date(a.recordedAtDate + ' ' + a.recordedAtTime).getTime());
-
-            for (const rec of recordings) {
-                const card = document.createElement('div');
-                card.className = 'card-item';
-                card.innerHTML = `
-                    <div class="status-indicator-bar status-gray"></div>
-                    <h3 class="card-item-title">${rec.name}</h3>
-                    <p class="card-item-meta">Dictated at ${rec.recordedAtTime} on ${rec.recordedAtDate} (approx. ${formatDuration(rec.duration)})</p>
-                    <p class="card-item-text">"${rec.text.substring(0, 120)}${rec.text.length > 120 ? '...' : ''}"</p>
-                    <div class="card-item-actions">
-                        <button onclick="viewOrUpdateOldForm('${rec.formId}', '${rec.id}')" class="button-secondary small-button">Load for Update</button>
-                        <button onclick="deleteSegment('${rec.id}')" class="button-danger small-button">Delete</button>
-                    </div>
-                `;
-                container.appendChild(card);
-            }
-        }
-
-        async function deleteSegment(segmentId) {
-            if (!confirm('Are you sure you want to delete this dictated note?')) return;
-
-            let formRecordings = (await db.get(`formRecordings-${currentFormId}`)) || [];
-            formRecordings = formRecordings.filter(rec => rec.id !== segmentId);
-            await db.set(`formRecordings-${currentFormId}`, formRecordings);
-            
-            alert('Dictated note deleted.');
-            renderFormRecordingsList(); 
-        }
-
-        // --- Page Load & Initialization ---
-
-        // Function to load and display form details and dictated notes
-        async function loadFormDataAndHistory() {
-            const params = new URLSearchParams(window.location.search);
-            currentFormId = params.get('id'); // Get form ID from URL (if coming from My Forms)
-
-            if (currentFormId) {
-                const allForms = (await db.get('formsMetadata')) || [];
-                const form = allForms.find(f => f.id === currentFormId);
-
-                if (form) {
-                    formTitleInput.value = form.title || '';
-                    formBeneficiaryInput.value = form.beneficiary || '';
-                    formTypeSelect.value = form.type || 'inspection'; // Keep default or set from form
-                    if (form.plannedDateTime) {
-                        formPlannedDateInput.value = new Date(form.plannedDateTime).toISOString().slice(0, 16);
-                    } else {
-                        // If no planned date, set current date/time for new forms or old forms without it
-                        const now = new Date();
-                        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-                        formPlannedDateInput.value = now.toISOString().slice(0, 16);
-                    }
-                    formAddressInput.value = form.address || '';
-                    formInitialNotesInput.value = form.initialNotes || '';
-                    setupInitialAccordionState(true); // Editing existing form
-
-                    // Load last 1-2 segments for continuation if this is an old form
-                    const formRecordings = (await db.get(`formRecordings-${currentFormId}`)) || [];
-                    if (formRecordings.length > 0) {
-                        // Sort by latest and take top 2 for display
-                        formRecordings.sort((a, b) => new Date(b.recordedAtDate + ' ' + b.recordedAtTime).getTime() - new Date(a.recordedAtDate + ' ' + a.recordedAtTime).getTime());
-                        const lastSegmentsText = formRecordings.slice(0, 2).map(rec => rec.text).reverse().join('\n\n'); // Reverse to show chronologically
-                        transcriptionText.textContent = `...${lastSegmentsText}\n\n`;
-                        transcriptionText.scrollTop = transcriptionText.scrollHeight; // Scroll to end
-                        dictationStatusText.textContent = 'Continuing dictation for this form. Press "Dictate" to add more...';
-                        viewTranscriptReportButton.disabled = false; // Enable if there are recordings
-                    } else {
-                        dictationStatusText.textContent = 'Start dictating for this form. Press "Dictate" below...';
-                    }
-                } else {
-                    // Form ID from URL not found, treat as new blank form
-                    alert('Form not found. Starting a new blank form.');
-                    currentFormId = null; 
-                    window.history.replaceState(null, null, 'index.html'); // Clean URL
-                    setupInitialAccordionState(false); // New form
-                    const now = new Date();
-                    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-                    formPlannedDateInput.value = now.toISOString().slice(0, 16);
-                    dictationStatusText.textContent = 'Press "Dictate" button below to start speaking for a new form...';
-                }
-            } else {
-                // No form ID in URL, this is a truly new form session
-                setupInitialAccordionState(false); // New form
-                const now = new Date();
-                now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); 
-                formPlannedDateInput.value = now.toISOString().slice(0, 16);
-                dictationStatusText.textContent = 'Press "Dictate" button below to start speaking for a new form...';
-            }
-            
-            // Always render history if a form is active or just created (even if empty)
-            if (currentFormId) {
-                 await renderFormRecordingsList();
-            }
+            return segmentMetaData;
         }
 
         // --- Event Listeners ---
@@ -485,45 +268,47 @@
             if (isDictating) {
                 stopNativeDictationProcess(true);
             } else {
-                // Ensure a form exists before starting dictation
-                if (!currentFormId) {
-                    await saveFormData(); // Create a quick form if user just starts dictating
-                }
+                // Ensure form context is established before dictating
+                await createOrUpdateFormMetadata(null); // This will set currentFormId if new, or ensure it's loaded
                 startNativeDictationProcess();
             }
         });
 
-        saveFormDetailsButton.addEventListener('click', async () => {
-            if (!formTitleInput.value.trim()) {
-                alert('Please provide an Objective Title for the form.');
-                return;
-            }
-            const formId = await saveFormData();
-            if (formId) {
-                currentFormId = formId; 
-                await renderFormRecordingsList(); 
-            }
-            alert('Form data saved!');
-            toggleAccordion('formDetailsContent', formDetailsAccordion.querySelector('.accordion-header'), true);
-        });
-
-        formCreationForm.addEventListener('input', debounce(async () => {
-            if (formTitleInput.value.trim()) {
-                await saveFormData(); 
-            }
-        }, 1000)); 
-        
         saveDictatedTextButton.addEventListener('click', async () => {
             if (simulatedDictatedText) {
-                await saveDictatedSegment(simulatedDictatedText);
+                const savedSegment = await saveDictatedSegment(simulatedDictatedText);
+                if (savedSegment) {
+                    // After saving, reset UI for next dictation or allow new actions
+                    stopNativeDictationProcess(false); // Reset to non-dictating state
+                    transcriptionText.textContent = ''; 
+                    simulatedDictatedText = ''; 
+                    // No need to disable edit/delete here, as save button handles its own state
+                }
+            } else {
+                alert("Nothing to save. Dictate something first!");
             }
-            // Reset dictation UI after saving
-            stopNativeDictationProcess(false);
-            transcriptionText.textContent = ''; 
-            simulatedDictatedText = ''; 
         });
 
-        discardDictatedTextButton.addEventListener('click', () => {
+        editDictatedTextButton.addEventListener('click', async () => {
+            if (simulatedDictatedText) {
+                const savedSegment = await saveDictatedSegment(simulatedDictatedText); // Save first
+                if (savedSegment) {
+                    // Reset UI for dictation
+                    stopNativeDictationProcess(false); 
+                    transcriptionText.textContent = '';
+                    simulatedDictatedText = '';
+                    // Redirect to form-report.html to edit/extract tasks for the form/segment
+                    window.location.href = `form-report.html?id=${currentFormId}`; 
+                }
+            } else if (currentFormId) {
+                 // If no current dictation, but a form is active, go to its report
+                window.location.href = `form-report.html?id=${currentFormId}`; 
+            } else {
+                alert("Nothing to edit. Dictate something first or load an existing form.");
+            }
+        });
+
+        deleteDictatedTextButton.addEventListener('click', () => {
             if (confirm('Are you sure you want to discard this dictated note? It will not be saved.')) {
                 transcriptionText.textContent = '';
                 simulatedDictatedText = '';
@@ -534,29 +319,74 @@
             simulatedDictatedText = ''; 
         });
 
-        viewTranscriptReportButton.addEventListener('click', async () => {
-            if (currentFormId) {
-                window.location.href = `form-report.html?id=${currentFormId}`; 
-            } else {
-                alert('No form available to view report. Please dictate or save form details first.');
-            }
-        });
-
-        accountButton.addEventListener('click', () => {
+        accountSettingsButton.addEventListener('click', () => {
             alert('Account settings functionality to be implemented.');
         });
 
-        // Function to load an old form for update/dictation from My Forms
-        async function viewOrUpdateOldForm(formId, segmentIdToLoad = null) {
-            // This function is intended to be called from my-forms.html's "Update Form" button
-            // It will redirect to index.html with the formId
-            window.location.href = `index.html?id=${formId}`;
+
+        // --- Page Load & Initialization ---
+
+        async function loadInitialFormData() {
+            const params = new URLSearchParams(window.location.search);
+            const formIdFromURL = params.get('id'); 
+
+            if (formIdFromURL) {
+                const allForms = (await db.get('formsMetadata')) || [];
+                const formToLoad = allForms.find(f => f.id === formIdFromURL);
+
+                if (formToLoad) {
+                    currentFormId = formIdFromURL;
+                    formContextTitle.textContent = `Form #${formToLoad.formNumber || 'N/A'}`; // Update context title
+                    
+                    // Pre-fill form details if they exist for editing
+                    // (This part is visually hidden but data could be loaded for consistency)
+                    if (document.getElementById('formTitleInput')) { // Check if elements exist (they're not visible but JS might reference)
+                        document.getElementById('formTitleInput').value = formToLoad.title || '';
+                        document.getElementById('formBeneficiaryInput').value = formToLoad.beneficiary || '';
+                        document.getElementById('formTypeSelect').value = formToLoad.type || 'other';
+                        if (formToLoad.plannedDateTime) {
+                            document.getElementById('formPlannedDateInput').value = new Date(formToLoad.plannedDateTime).toISOString().slice(0, 16);
+                        } else {
+                            const now = new Date();
+                            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+                            document.getElementById('formPlannedDateInput').value = now.toISOString().slice(0, 16);
+                        }
+                        document.getElementById('formAddressInput').value = formToLoad.address || '';
+                        document.getElementById('formInitialNotesInput').value = formToLoad.initialNotes || '';
+                    }
+
+                    // Load last 1-2 segments for continuation
+                    const formRecordings = (await db.get(`formRecordings-${currentFormId}`)) || [];
+                    if (formRecordings.length > 0) {
+                        formRecordings.sort((a, b) => new Date(b.recordedAtDate + ' ' + b.recordedAtTime).getTime() - new Date(a.recordedAtDate + ' ' + a.recordedAtTime).getTime());
+                        const lastSegmentsText = formRecordings.slice(0, 2).map(rec => rec.text).reverse().join('\n\n');
+                        transcriptionText.textContent = `...${lastSegmentsText}\n\n`;
+                        transcriptionText.scrollTop = transcriptionText.scrollHeight; 
+                        dictationStatusText.textContent = `Continuing dictation for Form #${formToLoad.formNumber || 'N/A'}. Press "Dictate" to add more...`;
+                    } else {
+                        dictationStatusText.textContent = `Start dictating for Form #${formToLoad.formNumber || 'N/A'}. Press "Dictate" below...`;
+                    }
+                } else {
+                    // Form ID not found, start fresh
+                    alert('Form not found. Starting a new blank form.');
+                    currentFormId = null;
+                    window.history.replaceState(null, null, 'index.html'); // Clean URL
+                    formContextTitle.textContent = 'New Form';
+                    dictationStatusText.textContent = 'Press "Dictate" button below to start speaking for a new form...';
+                }
+            } else {
+                // No form ID in URL, fresh start
+                formContextTitle.textContent = 'New Form';
+                dictationStatusText.textContent = 'Press "Dictate" button below to start speaking for a new form...';
+            }
+            // Ensure buttons are disabled initially
+            saveDictatedTextButton.disabled = true;
+            editDictatedTextButton.disabled = true;
+            deleteDictatedTextButton.disabled = true;
         }
 
-
-        // Run on page load
         document.addEventListener('DOMContentLoaded', async () => {
-            await loadFormDataAndHistory(); 
+            await loadInitialFormData(); 
             stopNativeDictationProcess(false); 
         });
     </script>

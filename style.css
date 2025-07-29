@@ -74,7 +74,17 @@ body {
     max-width: 480px;
     margin-bottom: 1.5rem;
     padding: 0 1rem;
-   }
+    box-sizing: border-box;
+}
+
+.app-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    flex-grow: 1;
+    text-align: center;
+    line-height: 1; /* Pentru aliniere perfectă */
+}
 
 .icon-button {
     background: none;
@@ -96,17 +106,6 @@ body {
 .icon-button svg {
     width: 24px;
     height: 24px;
-}
-    box-sizing: border-box;
-}
-
-.app-title {
-    font-size: 2.5rem;
-    font-weight: 800;
-    color: var(--color-text-primary);
-    flex-grow: 1;
-    text-align: center;
-    line-height: 1; /* Pentru aliniere perfectă */
 }
 
 /* Butoane generice */
@@ -384,8 +383,8 @@ textarea::placeholder {
 
 .text-display {
     flex-grow: 1; /* Permite să ocupe spațiul rămas */
-    min-height: 150px; /* Asigură înălțime minimă chiar și fără text */
-    max-height: 250px; /* Fixează înălțimea vizibilă */
+    min-height: 180px; /* Asigură înălțime minimă chiar și fără text */
+    max-height: 280px; /* Fixează înălțimea vizibilă */
     overflow-y: auto;
     border: 1px solid var(--color-glass-border);
     border-radius: 0.5rem;
@@ -394,6 +393,7 @@ textarea::placeholder {
     color: var(--color-text-primary);
     line-height: 1.6;
     white-space: pre-wrap; /* Păstrează formatarea textului */
+    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Subtly defined top border */
 }
 
 /* --- Stiluri pentru Navbar (cu noile butoane MIC și AI) --- */
@@ -428,15 +428,15 @@ textarea::placeholder {
 .navbar-button {
     padding: 0.75rem 1.25rem;
     display: flex;
-    flex-direction: column; /* Rămâne column pentru iconiță și text */
+    flex-direction: column; /* Păstrăm column pentru text centrat sub iconiță (dacă se decide ulterior să reintroducem iconițe) */
     align-items: center;
     justify-content: center;
     text-align: center;
-    color: var(--color-text-primary); /* Culoare text primară pentru butoane navbar */
+    color: var(--color-text-primary); 
     transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
     text-decoration: none;
     flex-shrink: 0;
-    min-width: 80px; /* Lățime minimă pentru text pe un singur rând */
+    min-width: 80px; 
     border-radius: 9999px;
 }
 
@@ -447,21 +447,24 @@ textarea::placeholder {
 
 .navbar-button.active {
     background-color: var(--color-accent-blue);
-    color: white; /* Text alb pentru butonul activ */
+    color: white; 
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     transform: scale(1.05);
 }
 
-.navbar-button svg {
-    width: 24px;
-    height: 24px;
-    margin-bottom: 0.25rem; /* Spațiu între iconiță și text */
+/* Stil pentru textul din butoanele navbar (New Form, My Forms) */
+.navbar-button span {
+    font-size: 0.9rem; /* Mărire font pentru lizibilitate */
+    white-space: nowrap; 
+    line-height: 1; 
+    font-weight: 600; /* Asigură că textul este vizibil și clar */
+    padding: 0; /* Fără padding intern la span */
+    display: block; /* Asigură că textul ocupă spațiu pe un singur rând */
 }
 
-.navbar-button span {
-    font-size: 0.75rem; /* Text-xs */
-    white-space: nowrap; /* Crucial: textul pe un singur rând */
-    line-height: 1; /* Asigură o înălțime compactă pentru text */
+/* Iconițele SVG din butoanele navbar-button sunt eliminate din HTML, deci nu le mai stilizăm aici */
+.navbar-button svg {
+    display: none; /* Ascundem forțat, deși sunt eliminate din HTML */
 }
 
 .navbar-mic-button,
@@ -511,26 +514,6 @@ textarea::placeholder {
     width: 28px;
     height: 28px;
     margin: 0;
-}
-
-/* Stil pentru butonul Account (3 puncte) */
-.icon-button {
-    background: none;
-    border: none;
-    color: var(--color-text-secondary);
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 50%;
-    transition: background-color 0.2s ease-in-out;
-}
-
-.icon-button:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.icon-button svg {
-    width: 24px;
-    height: 24px;
 }
 
 /* Responsivitate de bază */

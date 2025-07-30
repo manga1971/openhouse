@@ -62,7 +62,7 @@ body {
     max-width: 480px;
     margin-bottom: 1.5rem;
     box-sizing: border-box;
-    overflow: hidden; /* Asigură că conținutul rămâne în limitele containerului */
+    overflow: visible; /* Asigură că conținutul rămâne în limitele containerului */
 }
 
 /* Antet General al Aplicației */
@@ -514,6 +514,183 @@ textarea::placeholder {
     width: 28px;
     height: 28px;
     margin: 0;
+}
+
+/* Stiluri specifice pentru Form Report */
+.form-details-display {
+    margin-bottom: 1rem;
+    color: var(--color-text-primary);
+}
+.form-details-display p {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+.form-details-display strong {
+    color: var(--color-text-subtle);
+    font-weight: 600;
+    margin-right: 0.5rem;
+}
+
+/* Stiluri pentru form-ul de editare a detaliilor (initial hidden) */
+#formDetailsEditForm {
+    margin-top: 1rem; /* Space from display details */
+}
+#formDetailsEditForm .form-group {
+    margin-bottom: 0.75rem;
+}
+#formDetailsEditForm textarea {
+    min-height: 80px; /* Adjust height for notes */
+}
+
+/* Stiluri pentru butoanele full-width */
+.full-width-button {
+    width: 100%;
+    margin-top: 0.75rem; /* Consistent spacing */
+}
+
+/* Stiluri pentru checkbox-uri custom */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+}
+.custom-checkbox {
+    /* Base style for the native checkbox */
+    -webkit-appearance: none; /* Remove default styling */
+    -moz-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 1px solid var(--color-glass-border);
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    position: relative;
+    outline: none;
+    transition: background-color 0.2s, border-color 0.2s;
+    flex-shrink: 0; /* Prevent it from shrinking */
+}
+
+.custom-checkbox:checked {
+    background-color: var(--color-accent-blue);
+    border-color: var(--color-accent-blue);
+}
+
+.custom-checkbox:checked::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px; /* Checkmark width */
+    height: 10px; /* Checkmark height */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 12.6111L8.92308 17.5L20 6.5' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3C/path%3E%3C/svg%3E"); /* White checkmark SVG */
+    background-size: contain;
+    background-repeat: no-repeat;
+    transform: translate(-50%, -50%);
+}
+.checkbox-group label {
+    margin-left: 0.5rem;
+    cursor: pointer;
+}
+
+/* Stiluri pentru lista de task-uri extrase */
+.extracted-task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-text-primary);
+    font-size: 0.95rem;
+}
+.extracted-task-item span {
+    flex-grow: 1;
+}
+.small-icon-button {
+    background: none;
+    border: none;
+    color: var(--color-text-subtle);
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 50%;
+    transition: background-color 0.2s ease-in-out;
+}
+.small-icon-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+.small-icon-button svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Input + Button group for Add Task */
+.input-button-group {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+.input-button-group input {
+    flex-grow: 1;
+    margin-bottom: 0; /* Override default form-group margin */
+}
+.input-button-group button {
+    flex-shrink: 0;
+    padding: 0.75rem 1rem;
+}
+
+
+/* Selection Popup for task extraction */
+.selection-popup {
+    position: absolute;
+    background-color: var(--color-accent-blue);
+    color: white;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 10; /* Above other content */
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+/* Reorganized action buttons section */
+.button-group-reorganized {
+    display: flex;
+    flex-direction: column; /* Stack sections vertically */
+    align-items: center;
+}
+
+.button-group-row-small-icons {
+    display: flex;
+    justify-content: space-around;
+    gap: 0.75rem;
+    width: 100%;
+    margin-bottom: 1.5rem; /* Space below this group */
+}
+
+.icon-text-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0.75rem 0.5rem; /* Adjusted padding for smaller size */
+    font-size: 0.8rem; /* Smaller font for text */
+    flex: 1; /* Distribute space evenly */
+    min-width: 70px; /* Ensure some minimum width */
+}
+.icon-text-button svg {
+    width: 20px; /* Smaller icon */
+    height: 20px;
+    margin-bottom: 0.25rem;
+}
+.icon-text-button span {
+    white-space: nowrap;
 }
 
 /* Responsivitate de bază */

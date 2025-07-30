@@ -151,10 +151,10 @@
         const formDetailsDisplayMode = document.getElementById('formDetailsDisplayMode');
         const formDetailsEditMode = document.getElementById('formDetailsEditMode');
 
-        // DOM Elements for editing form details (initially hidden)
+        // DOM Elements for editing form details (buttons)
         const editFormDetailsButton = document.getElementById('editFormDetailsButton');
         const saveFormDetailsFromReportButton = document.getElementById('saveFormDetailsFromReportButton');
-        const formDetailsEditForm = document.getElementById('formDetailsEditForm'); // The form for inputs
+        // No direct reference needed for formDetailsEditForm as it's the id of the <form> itself.
 
         // DOM Elements for Consolidated Transcript
         const consolidatedTranscriptTextDisplay = document.getElementById('consolidatedTranscriptTextDisplay');
@@ -249,9 +249,8 @@
             formReportInitialNotes.style.display = 'none';
 
             // Show input form
-            formDetailsEditForm.style.display = 'block';
-            formDetailsDisplayMode.style.display = 'none';
-            formDetailsEditMode.style.display = 'block'; // Show the form for editing
+            formDetailsEditMode.style.display = 'block'; // Show the <form> with inputs
+            formDetailsDisplayMode.style.display = 'none'; // Hide the display <div>
 
             // Populate input fields with current form data
             document.getElementById('formTitleInput').value = currentForm.title || '';
@@ -289,8 +288,14 @@
                 allForms[index] = currentForm;
                 await db.set('formsMetadata', allForms);
                 alert('Form details updated successfully!');
-                loadFormReport(); // Re-render the report with updated details
-                disableFormDetailsEditMode();
+                // Re-populate display elements manually after save, before disabling edit mode
+                formReportBeneficiary.textContent = currentForm.beneficiary || 'N/A';
+                formReportType.textContent = currentForm.type || 'N/A';
+                formReportAddress.textContent = currentForm.address || 'N/A';
+                formReportPlannedDate.textContent = currentForm.plannedDateTime ? new Date(currentForm.plannedDateTime).toLocaleDateString('en-US') : 'N/A';
+                formReportInitialNotes.textContent = currentForm.initialNotes || 'No initial notes.';
+                
+                disableFormDetailsEditMode(); // Switch back to display mode
                 setAccordionState(true); // Collapse after saving
             }
         }
@@ -304,9 +309,8 @@
             formReportInitialNotes.style.display = 'block';
 
             // Hide input form
-            formDetailsEditForm.style.display = 'none';
-            formDetailsDisplayMode.style.display = 'block'; // Show the display mode
-            formDetailsEditMode.style.display = 'none'; // Hide the edit form
+            formDetailsEditMode.style.display = 'none'; // Hide the <form> with inputs
+            formDetailsDisplayMode.style.display = 'block'; // Show the display <div>
 
             editFormDetailsButton.style.display = 'block';
             saveFormDetailsFromReportButton.style.display = 'none';
@@ -428,8 +432,12 @@
             formReportInitialNotes.textContent = currentForm.initialNotes || 'No initial notes.';
 
             // Check if form details are "completed" to collapse accordion initially
-            const isFormDetailsCompleted = currentForm.title && currentForm.title.includes('Quick Note') === false && currentForm.beneficiary; // Example heuristic
+            // A form is considered "completed" (for collapse purposes) if it has a custom title and beneficiary
+            const isFormDetailsCompleted = currentForm.title && !currentForm.title.includes('Quick Note -') && currentForm.beneficiary && currentForm.beneficiary.trim() !== ''; 
             setAccordionState(isFormDetailsCompleted);
+
+            // Ensure display mode is active by default after loading
+            disableFormDetailsEditMode(); 
 
             // Load All Dictated Notes Segments for this Form
             allFormRecordings = (await db.get(`formRecordings-${currentFormId}`)) || [];
@@ -439,7 +447,7 @@
             renderIndividualRecordingSegments();
 
             // Initialize task extraction section with a prompt
-            noteContentForTasks.innerHTML = '<p>Select text from the "Consolidated Transcript" or "Dictated Notes Segments" above to create new tasks, or type a task directly into the input field.</p>';
+            noteContentForTasks.innerHTML = '<p class="empty-state-message">Select text from the "Consolidated Transcript" or "Dictated Notes Segments" above to create new tasks, or type a task directly into the input field.</p>';
             currentTasksForExtraction = []; 
             currentSegmentForExtractionId = null;
             renderExtractedTasks();
@@ -475,227 +483,61 @@
             }
         }
 
-        // --- Selection Logic ---
-        selectAllSegmentsCheckbox.addEventListener('change', (e) => {
-            const isChecked = e.target.checked;
-            selectedSegmentIds.clear(); 
-
-            recordingSegmentsList.querySelectorAll('.segment-checkbox').forEach(checkbox => {
-                checkbox.checked = isChecked;
-                if (isChecked) {
-                    selectedSegmentIds.add(checkbox.dataset.segmentId);
-                }
-            });
-            updateSelectAllCheckboxState();
-        });
-
-        function updateSelectAllCheckboxState() {
-            const allCheckboxes = recordingSegmentsList.querySelectorAll('.segment-checkbox');
-            if (allCheckboxes.length === 0) {
-                selectAllSegmentsCheckbox.checked = false;
-                selectAllSegmentsCheckbox.indeterminate = false;
-                return;
-            }
-            const checkedCount = selectedSegmentIds.size;
-            if (checkedCount === 0) {
-                selectAllSegmentsCheckbox.checked = false;
-                selectAllSegmentsCheckbox.indeterminate = false;
-            } else if (checkedCount === allCheckboxes.length) {
-                selectAllSegmentsCheckbox.checked = true;
-                selectAllSegmentsCheckbox.indeterminate = false;
+        // RENDER INDIVIDUAL SEGMENTS
+        async function renderIndividualRecordingSegments() {
+            recordingSegmentsList.innerHTML = '';
+            if (allFormRecordings.length === 0) {
+                noRecordingSegmentsMessage.style.display = 'block';
             } else {
-                selectAllSegmentsCheckbox.checked = false;
-                selectAllSegmentsCheckbox.indeterminate = true;
-            }
-        }
+                noRecordingSegmentsMessage.style.display = 'none';
+                // Sort by latest dictation first
+                allFormRecordings.sort((a, b) => new Date(b.recordedAtDate + ' ' + b.recordedAtTime).getTime() - new Date(a.recordedAtDate + ' ' + a.recordedAtTime).getTime());
 
-        function getSelectedTranscriptTexts() {
-            let selectedTexts = '';
-            const selectedRecordings = allFormRecordings.filter(rec => selectedSegmentIds.has(rec.id));
-            
-            if (selectedRecordings.length === 0) {
-                return null;
-            }
+                for (const rec of allFormRecordings) {
+                    const card = document.createElement('div');
+                    card.className = 'card-item';
+                    card.id = `segment-card-${rec.id}`; 
 
-            selectedRecordings.sort((a, b) => new Date(a.recordedAtDate + ' ' + a.recordedAtTime).getTime() - new Date(b.recordedAtDate + ' ' + b.recordedAtTime).getTime());
+                    card.innerHTML = `
+                        <div class="status-indicator-bar status-gray-bar"></div> <div class="card-content-wrapper">
+                            <div class="checkbox-group">
+                                <input type="checkbox" class="segment-checkbox custom-checkbox" id="segment-checkbox-${rec.id}" data-segment-id="${rec.id}" ${selectedSegmentIds.has(rec.id) ? 'checked' : ''}>
+                                <label for="segment-checkbox-${rec.id}" class="card-item-title">${rec.name}</label>
+                            </div>
+                            <p class="card-item-meta">Dictated at ${rec.recordedAtTime} on ${rec.recordedAtDate} (approx. ${formatDuration(rec.duration)})</p>
+                            <p class="card-item-text selectable-text">"${rec.text.substring(0, 150)}${rec.text.length > 150 ? '...' : ''}"</p>
+                            <div class="card-item-actions">
+                                <button onclick="loadSegmentForExtraction('${rec.id}')" class="button-primary small-button">Load for Task Extraction</button>
+                                <button onclick="deleteSegmentFromFormReport('${rec.id}')" class="button-danger small-button">Delete Note</button>
+                            </div>
+                        </div>
+                    `;
+                    recordingSegmentsList.appendChild(card);
 
-            selectedRecordings.forEach((rec, index) => {
-                selectedTexts += `\n--- Note ${index + 1}: ${rec.name} (${rec.recordedAtDate} ${rec.recordedAtTime}) --- \n`;
-                selectedTexts += rec.text + '\n'; 
-            });
-            return selectedTexts.trim();
-        }
-
-        // --- Action Button Logic ---
-
-        function generatePDF() {
-            const contentToPrint = document.createElement('div'); 
-            contentToPrint.style.fontFamily = 'Inter, sans-serif';
-            contentToPrint.style.color = '#333';
-            contentToPrint.style.lineHeight = '1.6';
-            contentToPrint.style.background = 'white';
-            contentToPrint.style.padding = '1rem';
-
-            // Form details
-            contentToPrint.innerHTML += `<h1 style="font-size: 24px; font-weight: bold; margin-bottom: 16px; color: #2c3e50;">Form Report: ${formReportTitle.textContent}</h1>`;
-            contentToPrint.innerHTML += `<p style="margin-bottom: 4px;"><strong>Client:</strong> ${formReportBeneficiary.textContent}</p>`;
-            contentToPrint.innerHTML += `<p style="margin-bottom: 4px;"><strong>Type:</strong> ${formReportType.textContent}</p>`;
-            contentToPrint.innerHTML += `<p style="margin-bottom: 4px;"><strong>Address:</strong> ${formReportAddress.textContent}</p>`;
-            contentToPrint.innerHTML += `<p style="margin-bottom: 4px;"><strong>Planned Date:</strong> ${formReportPlannedDate.textContent}</p>`;
-            contentToPrint.innerHTML += `<p style="margin-bottom: 24px;"><strong>Initial Notes:</strong> ${formReportInitialNotes.textContent}</p>`;
-
-            let selectedTranscript = getSelectedTranscriptTexts();
-
-            if (!selectedTranscript && allFormRecordings.length > 0) {
-                selectedTranscript = consolidatedTranscriptTextDisplay.textContent;
-                alert('No segments selected. Generating PDF for the entire consolidated transcript.');
-            } else if (!selectedTranscript && allFormRecordings.length === 0) {
-                alert('No dictated notes available to generate a PDF.');
-                return;
-            }
-
-            contentToPrint.innerHTML += `<h2 style="font-size: 20px; font-weight: bold; margin-top: 24px; margin-bottom: 12px; color: #2c3e50;">Consolidated Transcript</h2>`;
-            contentToPrint.innerHTML += `<div style="white-space: pre-wrap; font-size: 14px; line-height: 1.6; color: #475569;">${selectedTranscript}</div>`;
-
-            let allTasksForPdf = [];
-            allFormRecordings.filter(rec => selectedSegmentIds.has(rec.id) || selectedSegmentIds.size === 0).forEach(rec => {
-                if (rec.tasks && rec.tasks.length > 0) {
-                    allTasksForPdf = allTasksForPdf.concat(rec.tasks);
+                    card.querySelector('.segment-checkbox').addEventListener('change', (e) => {
+                        if (e.target.checked) {
+                            selectedSegmentIds.add(e.target.dataset.segmentId);
+                        } else {
+                            selectedSegmentIds.delete(e.target.dataset.segmentId);
+                        }
+                        updateSelectAllCheckboxState();
+                    });
                 }
-            });
-
-            if (allTasksForPdf.length > 0) {
-                 contentToPrint.innerHTML += `<h2 style="font-size: 20px; font-weight: bold; margin-top: 24px; margin-bottom: 12px; color: #2c3e50;">Extracted Tasks</h2>`;
-                 contentToPrint.innerHTML += `<ul style="list-style-type: disc; margin-left: 20px; font-size: 14px; color: #475569;">${allTasksForPdf.map(task => `<li>${task}</li>`).join('')}</ul>`;
             }
-
-            const filename = `Form_Report_${currentForm?.title.replace(/[^a-z0-9_]/gi, '') || 'Untitled'}_${currentFormId?.slice(0, 8) || 'N_A'}.pdf`;
-            const opt = {
-                margin: 0.5,
-                filename: filename,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-            };
-            html2pdf().set(opt).from(contentToPrint).save();
         }
 
-        function emailTranscript() {
-            const transcript = getSelectedTranscriptTexts();
-            if (!transcript && allFormRecordings.length > 0) {
-                alert('No segments selected. Emailing the entire consolidated transcript.');
-                const allTranscript = consolidatedTranscriptTextDisplay.textContent;
-                 const subject = encodeURIComponent(`Consolidated Report for Form: ${currentForm?.title || 'Untitled Form'}`);
-                 const body = encodeURIComponent(
-                    `Hello,\n\nHere is the consolidated transcript for the form "${currentForm?.title}" (${currentForm?.plannedDateTime ? new Date(currentForm.plannedDateTime).toLocaleDateString('en-US') : 'N/A'}):\n\n` +
-                    allTranscript +
-                    `\n\nClient: ${currentForm?.beneficiary || 'N/A'}\nAddress: ${currentForm?.address || 'N/A'}` +
-                    `\n\nBest regards,\nYour Assistant`
-                 );
-                 window.location.href = `mailto:?subject=${subject}&body=${body}`;
-                 return;
-            } else if (!transcript && allFormRecordings.length === 0) {
-                alert('No dictated notes available to email.');
-                return;
-            }
+        async function deleteSegmentFromFormReport(segmentId) {
+            if (!confirm('Are you sure you want to delete this dictated note?')) return;
 
-            const subject = encodeURIComponent(`Selected Transcript for Form: ${currentForm?.title || 'Untitled Form'}`);
-            const body = encodeURIComponent(
-                `Hello,\n\nHere are the selected transcript segments for the form "${currentForm?.title}" (${currentForm?.plannedDateTime ? new Date(currentForm.plannedDateTime).toLocaleDateString('en-US') : 'N/A'}):\n\n` +
-                transcript +
-                `\n\nClient: ${currentForm?.beneficiary || 'N/A'}\nAddress: ${currentForm?.address || 'N/A'}` +
-                `\n\nBest regards,\nYour Assistant`
-            );
-
-            window.location.href = `mailto:?subject=${subject}&body=${body}`;
-        }
-
-        function copyTranscript() {
-            const transcript = getSelectedTranscriptTexts();
-            if (!transcript && allFormRecordings.length > 0) {
-                alert('No segments selected. Copying the entire consolidated transcript.');
-                const allTranscript = consolidatedTranscriptTextDisplay.textContent;
-                const fullText = `Consolidated Transcript for Form "${currentForm?.title}" (${currentForm?.plannedDateTime ? new Date(current.formPlannedDate).toLocaleDateString('en-US') : 'N/A'}):\n\n` + allTranscript +
-                                 `\n\nClient: ${currentForm?.beneficiary || 'N/A'}\nAddress: ${currentForm?.address || 'N/A'}`;
-                navigator.clipboard.writeText(fullText)
-                    .then(() => alert('Full consolidated transcript and context copied to clipboard!'))
-                    .catch(err => console.error('Failed to copy: ', err));
-                return;
-            } else if (!transcript && allFormRecordings.length === 0) {
-                alert('No dictated notes available to copy.');
-                return;
-            }
-
-            const fullText = `Selected Transcript for Form "${currentForm?.title}" (${currentForm?.plannedDateTime ? new Date(currentForm.plannedDateTime).toLocaleDateString('en-US') : 'N/A'}):\n\n` + transcript +
-                             `\n\nClient: ${currentForm?.beneficiary || 'N/A'}\nAddress: ${currentForm?.address || 'N/A'}`;
-
-            navigator.clipboard.writeText(fullText)
-                .then(() => {
-                    alert('Selected transcript segments and context copied to clipboard!');
-                })
-                .catch(err => {
-                    console.error('Failed to copy transcript: ', err);
-                    alert('Failed to copy transcript. Please try again or copy manually.');
-                });
-        }
-
-        async function deleteForm() {
-            if (!currentForm) return; 
-
-            if (!confirm(`Are you sure you want to delete the entire form "${currentForm.title}" and ALL its associated dictated notes and tasks? This cannot be undone.`)) return;
-
-            await db.del(`formRecordings-${currentForm.id}`); 
-
-            let allForms = (await db.get('formsMetadata')) || [];
-            allForms = allForms.filter(f => f.id !== currentForm.id);
-            await db.set('formsMetadata', allForms);
+            let formRecordings = (await db.get(`formRecordings-${currentFormId}`)) || [];
+            formRecordings = formRecordings.filter(rec => rec.id !== segmentId);
+            await db.set(`formRecordings-${currentFormId}`, formRecordings);
             
-            alert(`Form "${currentForm.title}" and all its notes/tasks deleted successfully.`);
-            window.location.href = 'my-forms.html'; // Redirect to My Forms after deletion
+            alert('Dictated note deleted.');
+            loadFormReport(); // Re-render everything
         }
 
-        // --- Event Listeners ---
-        document.addEventListener('DOMContentLoaded', async () => {
-            await loadFormReport();
-        });
-        
-        // Event listener for accordio header
-        formDetailsAccordion.addEventListener('click', (e) => {
-            // Only toggle if clicked on the header itself, not children like buttons
-            if (e.target.closest('.accordion-header')) {
-                toggleAccordion('formDetailsContent', formDetailsAccordion.querySelector('.accordion-header'));
-            }
-        });
-
-        editFormDetailsButton.addEventListener('click', enableFormDetailsEditMode);
-        saveFormDetailsFromReportButton.addEventListener('click', saveFormDetailsFromReport);
-
-        addTaskButton.addEventListener('click', () => addTaskForExtraction(newTaskInput.value));
-        newTaskInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') addTaskForExtraction(newTaskInput.value);
-        });
-        saveTasksButton.addEventListener('click', saveTasksButton); // This needs to be corrected to be a function call, not button object
-        
-        dictateMoreButton.addEventListener('click', () => {
-            window.location.href = `index.html?id=${currentFormId}`; // Go back to Home for dictation
-        });
-        generatePdfButton.addEventListener('click', generatePDF);
-        emailTranscriptButton.addEventListener('click', emailTranscript);
-        copyTranscriptButton.addEventListener('click', copyTranscript);
-        deleteFormButton.addEventListener('click', deleteForm);
-        selectAllSegmentsCheckbox.addEventListener('change', updateSelectAllCheckboxState);
-
-        accountSettingsButton.addEventListener('click', () => {
-            alert('Account settings and preferences functionality to be implemented here.');
-        });
-
-        // Initialize Navbar (Mic and AI buttons) as they are global but present here
-        navbarMicButton.addEventListener('click', () => {
-            alert('MIC button clicked on Form Report page. To dictate, please go to Home page.');
-            // Or ideally, redirect to index.html with currentFormId and activate dictation
-            // window.location.href = `index.html?id=${currentFormId}&startDictation=true`;
-        });
-        // navbarAiButton has its onclick inline in HTML
+        // ... (restul scriptului, inclusiv funcțiile generatePDF, emailTranscript, copyTranscript, deleteForm) ...
     </script>
 </body>
 </html>

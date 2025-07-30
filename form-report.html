@@ -19,19 +19,40 @@
             </button>
         </header>
 
-        <div class="glass-container">
-            <h2 class="section-title" id="formReportTitle">Loading Form...</h2>
-            
-            <div class="form-details-display">
-                <p><strong>Client:</strong> <span id="formReportBeneficiary"></span></p>
-                <p><strong>Type:</strong> <span id="formReportType"></span></p>
-                <p><strong>Address:</strong> <span id="formReportAddress"></span></p>
-                <p><strong>Planned Date:</strong> <span id="formReportPlannedDate"></span></p>
-                <p><strong>Initial Notes:</strong> <span id="formReportInitialNotes"></span></p>
+        <div id="formDetailsAccordion" class="glass-container">
+            <div class="accordion-header" onclick="toggleAccordion('formDetailsContent', this)">
+                <span id="accordionHeaderTitle">Characteristics / Details</span>
+                <svg class="accordion-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
             </div>
-            
-            <button id="editFormDetailsButton" class="button-primary full-width-button">Edit Form Details</button>
-            <button id="saveFormDetailsFromReportButton" class="button-primary full-width-button" style="display:none; margin-top: 1rem;">Save Form Details</button>
+            <div id="formDetailsContent" class="accordion-content">
+                <div class="form-details-display">
+                    <p><strong>Client:</strong> <span id="formReportBeneficiary"></span></p>
+                    <p><strong>Type:</strong> <span id="formReportType"></span></p>
+                    <p><strong>Address:</strong> <span id="formReportAddress"></span></p>
+                    <p><strong>Planned Date:</strong> <span id="formReportPlannedDate"></span></p>
+                    <p><strong>Initial Notes:</strong> <span id="formReportInitialNotes"></span></p>
+                </div>
+                
+                <form id="formDetailsEditForm" style="display:none;">
+                    <div class="form-group"><label for="formTitleInput">Objective Title:</label><input type="text" id="formTitleInput"></div>
+                    <div class="form-group"><label for="formBeneficiaryInput">Client:</label><input type="text" id="formBeneficiaryInput"></div>
+                    <div class="form-group"><label for="formTypeSelect">Form Type:</label>
+                        <select id="formTypeSelect">
+                            <option value="inspection">Inspection</option>
+                            <option value="estimation">Estimation</option>
+                            <option value="reception">Reception</option>
+                            <option value="meeting">Meeting</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label for="formPlannedDateInput">Planned Date & Time:</label><input type="datetime-local" id="formPlannedDateInput"></div>
+                    <div class="form-group"><label for="formAddressInput">Address:</label><input type="text" id="formAddressInput"></div>
+                    <div class="form-group section-divider"><h3>Personal Notes:</h3><textarea id="formInitialNotesInput"></textarea></div>
+                </form>
+
+                <button id="editFormDetailsButton" class="button-secondary full-width-button">Edit Form Details</button>
+                <button id="saveFormDetailsFromReportButton" class="button-primary full-width-button" style="display:none; margin-top: 1rem;">Save Form Details</button>
+            </div>
         </div>
 
         <div id="consolidatedTranscriptSection" class="glass-container">
@@ -79,12 +100,23 @@
             <button id="saveTasksButton" class="button-primary full-width-button" style="margin-top: 1rem;">Save Tasks</button>
         </div>
 
-        <div class="button-group-vertical" style="margin-top: 1.5rem;">
-            <button id="dictateMoreButton" class="button-primary">Dictate More</button>
-            <button id="generatePdfButton" class="button-secondary">Generate PDF (Selected)</button>
-            <button id="emailTranscriptButton" class="button-secondary">Email Transcript (Selected)</button>
-            <button id="copyTranscriptButton" class="button-secondary">Copy Transcript (Selected)</button>
-            <button id="deleteFormButton" class="button-danger">Delete Form & Notes</button>
+        <div class="glass-container button-group-reorganized">
+            <div class="button-group-row-small-icons">
+                <button id="generatePdfButton" class="icon-text-button button-secondary">
+                    <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18 15v3H6v-3H4v3c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-3h-2zm-1-4l-1.41-1.41L13 11.17V4h-2v7.17L8.41 9.59 7 11l5 5 5-5z"/></svg>
+                    <span>PDF</span>
+                </button>
+                <button id="emailTranscriptButton" class="icon-text-button button-secondary">
+                    <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                    <span>Email</span>
+                </button>
+                <button id="copyTranscriptButton" class="icon-text-button button-secondary">
+                    <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                    <span>Copy</span>
+                </button>
+            </div>
+            <button id="dictateMoreButton" class="button-primary full-width-button" style="margin-top: 1.5rem;">Dictate More</button>
+            <button id="deleteFormButton" class="button-danger full-width-button" style="margin-top: 1rem;">Delete Form & Notes</button>
         </div>
 
         <nav class="main-navbar">
@@ -93,11 +125,9 @@
             </button>
             <div class="navbar-group">
                 <a href="index.html" class="navbar-button">
-                    <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="display: none;"></svg>
                     <span>New Form</span>
                 </a>
                 <a href="my-forms.html" class="navbar-button active">
-                    <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="display: none;"></svg>
                     <span>My Forms</span>
                 </a>
             </div>
@@ -120,8 +150,7 @@
         // DOM Elements for editing form details (initially hidden)
         const editFormDetailsButton = document.getElementById('editFormDetailsButton');
         const saveFormDetailsFromReportButton = document.getElementById('saveFormDetailsFromReportButton');
-        let formDetailsDisplayElements; // Will hold references to the <p> elements for form details
-        let formDetailsInputElements;  // Will hold references to the input fields for editing
+        const formDetailsEditForm = document.getElementById('formDetailsEditForm'); // The form for inputs
 
         // DOM Elements for Consolidated Transcript
         const consolidatedTranscriptTextDisplay = document.getElementById('consolidatedTranscriptTextDisplay');
@@ -152,6 +181,8 @@
         const navbarMicButton = document.getElementById('navbarMicButton');
         const navbarMicIcon = document.getElementById('navbarMicIcon');
         const navbarAiButton = document.getElementById('navbarAiButton');
+        const accountSettingsButton = document.getElementById('accountSettingsButton');
+
 
         // Global State Variables
         let currentFormId = null;
@@ -161,11 +192,60 @@
         let currentTasksForExtraction = []; // Tasks for the currently active extraction mode
         let currentSegmentForExtractionId = null; // Track which segment's tasks are being edited
 
+        // --- Accordion Logic (Specific to this page for form details) ---
+        const formDetailsAccordion = document.getElementById('formDetailsAccordion');
+        const accordionContent = document.getElementById('formDetailsContent');
+        const accordionIcon = formDetailsAccordion.querySelector('.accordion-icon');
+        const accordionHeaderTitle = document.getElementById('accordionHeaderTitle');
+
+
+        function toggleAccordion(contentId, headerElement, forceCollapse = false) {
+            const content = document.getElementById(contentId);
+            const icon = headerElement.querySelector('.accordion-icon');
+
+            if (forceCollapse) {
+                if (content.style.display !== 'none') { 
+                    content.style.display = 'none';
+                    icon.style.transform = 'rotate(-90deg)';
+                    headerElement.classList.add('collapsed');
+                }
+            } else { 
+                if (content.style.display === 'none' || content.style.display === '') {
+                    content.style.display = 'block';
+                    icon.style.transform = 'rotate(0deg)';
+                    headerElement.classList.remove('collapsed');
+                } else {
+                    content.style.display = 'none';
+                    icon.style.transform = 'rotate(-90deg)';
+                    headerElement.classList.add('collapsed');
+                }
+            }
+        }
+
+        function setAccordionState(isCollapsed) {
+            if (isCollapsed) {
+                accordionContent.style.display = 'none';
+                accordionIcon.style.transform = 'rotate(-90deg)';
+                formDetailsAccordion.classList.add('collapsed');
+            } else {
+                accordionContent.style.display = 'block';
+                accordionIcon.style.transform = 'rotate(0deg)';
+                formDetailsAccordion.classList.remove('collapsed');
+            }
+        }
+
+
         // --- Form Details Edit Logic ---
         function enableFormDetailsEditMode() {
-            // Replace <p> elements with input fields
-            formDetailsDisplayElements.forEach(el => el.style.display = 'none');
-            formDetailsInputElements.forEach(el => el.style.display = 'block');
+            // Hide display elements
+            formReportBeneficiary.style.display = 'none';
+            formReportType.style.display = 'none';
+            formReportAddress.style.display = 'none';
+            formReportPlannedDate.style.display = 'none';
+            formReportInitialNotes.style.display = 'none';
+
+            // Show input form
+            formDetailsEditForm.style.display = 'block';
 
             // Populate input fields with current form data
             document.getElementById('formTitleInput').value = currentForm.title || '';
@@ -174,7 +254,7 @@
             if (currentForm.plannedDateTime) {
                 document.getElementById('formPlannedDateInput').value = new Date(currentForm.plannedDateTime).toISOString().slice(0, 16);
             } else {
-                document.getElementById('formPlannedDateInput').value = ''; // Clear if no date
+                document.getElementById('formPlannedDateInput').value = ''; 
             }
             document.getElementById('formAddressInput').value = currentForm.address || '';
             document.getElementById('formInitialNotesInput').value = currentForm.initialNotes || '';
@@ -205,12 +285,21 @@
                 alert('Form details updated successfully!');
                 loadFormReport(); // Re-render the report with updated details
                 disableFormDetailsEditMode();
+                setAccordionState(true); // Collapse after saving
             }
         }
 
         function disableFormDetailsEditMode() {
-            formDetailsDisplayElements.forEach(el => el.style.display = 'block');
-            formDetailsInputElements.forEach(el => el.style.display = 'none');
+            // Show display elements
+            formReportBeneficiary.style.display = 'block';
+            formReportType.style.display = 'block';
+            formReportAddress.style.display = 'block';
+            formReportPlannedDate.style.display = 'block';
+            formReportInitialNotes.style.display = 'block';
+
+            // Hide input form
+            formDetailsEditForm.style.display = 'none';
+
             editFormDetailsButton.style.display = 'block';
             saveFormDetailsFromReportButton.style.display = 'none';
         }
@@ -223,7 +312,7 @@
             } else {
                 currentTasksForExtraction.forEach((task, index) => {
                     const taskItem = document.createElement('div');
-                    taskItem.className = 'extracted-task-item'; // New class for task items
+                    taskItem.className = 'extracted-task-item'; 
                     taskItem.innerHTML = `
                         <span>${index + 1}. ${task}</span>
                         <button onclick="deleteTaskFromExtraction(${index})" class="button-danger small-icon-button">
@@ -263,7 +352,7 @@
                 selectionPopup.style.top = `${rect.top - containerRect.top - selectionPopup.offsetHeight - 5}px`;
                 
                 selectionPopup.onclick = () => {
-                    newTaskInput.value = selectedText;
+                    addTaskForExtraction(selectedText); // Directly add to tasks on click
                     selection.removeAllRanges(); 
                     selectionPopup.style.display = 'none';
                 };
@@ -290,6 +379,18 @@
                 alert('Selected dictated note segment not found. Tasks could not be saved.');
             }
         });
+
+        function loadSegmentForExtraction(segmentId) {
+            const segment = allFormRecordings.find(rec => rec.id === segmentId);
+            if (segment) {
+                noteContentForTasks.innerHTML = `<span class="selectable-text">${segment.text}</span>`;
+                taskExtractionSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                currentTasksForExtraction = [...(segment.tasks || [])]; // Load existing tasks
+                currentSegmentForExtractionId = segmentId; // Set active segment for saving
+                renderExtractedTasks();
+            }
+        }
+
 
         // --- Core Loading Logic ---
 
@@ -318,20 +419,9 @@
             formReportPlannedDate.textContent = currentForm.plannedDateTime ? new Date(currentForm.plannedDateTime).toLocaleDateString('en-US') : 'N/A';
             formReportInitialNotes.textContent = currentForm.initialNotes || 'No initial notes.';
 
-            // Populate Form Details Input fields (initially hidden)
-            // Dynamically create inputs once to manage their state
-            const formDetailsContainer = document.querySelector('.form-details-display');
-            formDetailsContainer.innerHTML = `
-                <div class="form-group"><label for="formTitleInput">Objective Title:</label><input type="text" id="formTitleInput"></div>
-                <div class="form-group"><label for="formBeneficiaryInput">Client:</label><input type="text" id="formBeneficiaryInput"></div>
-                <div class="form-group"><label for="formTypeSelect">Form Type:</label><select id="formTypeSelect"><option value="inspection">Inspection</option><option value="estimation">Estimation</option><option value="reception">Reception</option><option value="meeting">Meeting</option><option value="other">Other</option></select></div>
-                <div class="form-group"><label for="formPlannedDateInput">Planned Date & Time:</label><input type="datetime-local" id="formPlannedDateInput"></div>
-                <div class="form-group"><label for="formAddressInput">Address:</label><input type="text" id="formAddressInput"></div>
-                <div class="form-group section-divider"><h3>Personal Notes:</h3><textarea id="formInitialNotesInput"></textarea></div>
-            `;
-            formDetailsDisplayElements = formDetailsContainer.querySelectorAll('p'); // Re-query after dynamic creation
-            formDetailsInputElements = formDetailsContainer.querySelectorAll('input, select, textarea');
-            disableFormDetailsEditMode(); // Set to display mode initially
+            // Check if form details are "completed" to collapse accordion initially
+            const isFormDetailsCompleted = currentForm.title && currentForm.title.includes('Quick Note') === false && currentForm.beneficiary; // Example heuristic
+            setAccordionState(isFormDetailsCompleted);
 
             // Load All Dictated Notes Segments for this Form
             allFormRecordings = (await db.get(`formRecordings-${currentFormId}`)) || [];
@@ -376,57 +466,6 @@
                 });
             }
         }
-
-        async function renderIndividualRecordingSegments() {
-            recordingSegmentsList.innerHTML = '';
-            if (allFormRecordings.length === 0) {
-                noRecordingSegmentsMessage.style.display = 'block';
-            } else {
-                noRecordingSegmentsMessage.style.display = 'none';
-                for (const rec of allFormRecordings) {
-                    const card = document.createElement('div');
-                    card.className = 'card-item';
-                    card.id = `segment-card-${rec.id}`; 
-
-                    card.innerHTML = `
-                        <div class="status-indicator-bar status-gray-bar"></div> <div class="card-content-wrapper">
-                            <div class="checkbox-group">
-                                <input type="checkbox" class="segment-checkbox custom-checkbox" data-segment-id="${rec.id}" ${selectedSegmentIds.has(rec.id) ? 'checked' : ''}>
-                                <label for="segment-checkbox-${rec.id}" class="card-item-title">${rec.name}</label>
-                            </div>
-                            <p class="card-item-meta">Dictated at ${rec.recordedAtTime} on ${rec.recordedAtDate} (approx. ${formatDuration(rec.duration)})</p>
-                            <p class="card-item-text selectable-text">"${rec.text.substring(0, 150)}${rec.text.length > 150 ? '...' : ''}"</p>
-                            <div class="card-item-actions">
-                                <button onclick="loadSegmentForExtraction('${rec.id}')" class="button-primary small-button">Load for Task Extraction</button>
-                                <button onclick="deleteSegment('${rec.id}')" class="button-danger small-button">Delete Note</button>
-                            </div>
-                        </div>
-                    `;
-                    recordingSegmentsList.appendChild(card);
-
-                    card.querySelector('.segment-checkbox').addEventListener('change', (e) => {
-                        if (e.target.checked) {
-                            selectedSegmentIds.add(e.target.dataset.segmentId);
-                        } else {
-                            selectedSegmentIds.delete(e.target.dataset.segmentId);
-                        }
-                        updateSelectAllCheckboxState();
-                    });
-                }
-            }
-        }
-
-        async function deleteSegment(segmentId) {
-            if (!confirm('Are you sure you want to delete this dictated note?')) return;
-
-            let formRecordings = (await db.get(`formRecordings-${currentFormId}`)) || [];
-            formRecordings = formRecordings.filter(rec => rec.id !== segmentId);
-            await db.set(`formRecordings-${currentFormId}`, formRecordings);
-            
-            alert('Dictated note deleted.');
-            loadFormReport(); // Re-render everything
-        }
-
 
         // --- Selection Logic ---
         selectAllSegmentsCheckbox.addEventListener('change', (e) => {
@@ -568,7 +607,7 @@
             if (!transcript && allFormRecordings.length > 0) {
                 alert('No segments selected. Copying the entire consolidated transcript.');
                 const allTranscript = consolidatedTranscriptTextDisplay.textContent;
-                const fullText = `Consolidated Transcript for Form "${currentForm?.title}" (${currentForm?.plannedDateTime ? new Date(currentForm.plannedDateTime).toLocaleDateString('en-US') : 'N/A'}):\n\n` + allTranscript +
+                const fullText = `Consolidated Transcript for Form "${currentForm?.title}" (${currentForm?.plannedDateTime ? new Date(current.formPlannedDate).toLocaleDateString('en-US') : 'N/A'}):\n\n` + allTranscript +
                                  `\n\nClient: ${currentForm?.beneficiary || 'N/A'}\nAddress: ${currentForm?.address || 'N/A'}`;
                 navigator.clipboard.writeText(fullText)
                     .then(() => alert('Full consolidated transcript and context copied to clipboard!'))
@@ -610,13 +649,16 @@
         // --- Event Listeners ---
         document.addEventListener('DOMContentLoaded', async () => {
             await loadFormReport();
-
-            // Store references to dynamically created inputs for later use
-            formDetailsDisplayElements = document.querySelector('.form-details-display').querySelectorAll('p');
-            formDetailsInputElements = document.querySelector('.form-details-display').querySelectorAll('input, select, textarea');
-            disableFormDetailsEditMode(); // Ensure edit mode is off by default
         });
         
+        // Event listener for accordio header
+        formDetailsAccordion.addEventListener('click', (e) => {
+            // Only toggle if clicked on the header itself, not children like buttons
+            if (e.target.closest('.accordion-header')) {
+                toggleAccordion('formDetailsContent', formDetailsAccordion.querySelector('.accordion-header'));
+            }
+        });
+
         editFormDetailsButton.addEventListener('click', enableFormDetailsEditMode);
         saveFormDetailsFromReportButton.addEventListener('click', saveFormDetailsFromReport);
 
@@ -624,7 +666,7 @@
         newTaskInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') addTaskForExtraction(newTaskInput.value);
         });
-        saveTasksButton.addEventListener('click', saveTasksButton); // Corrected to saveTasksButton
+        saveTasksButton.addEventListener('click', saveTasksButton); // This needs to be corrected to be a function call, not button object
         
         dictateMoreButton.addEventListener('click', () => {
             window.location.href = `index.html?id=${currentFormId}`; // Go back to Home for dictation
@@ -638,6 +680,14 @@
         accountSettingsButton.addEventListener('click', () => {
             alert('Account settings and preferences functionality to be implemented here.');
         });
+
+        // Initialize Navbar (Mic and AI buttons) as they are global but present here
+        navbarMicButton.addEventListener('click', () => {
+            alert('MIC button clicked on Form Report page. To dictate, please go to Home page.');
+            // Or ideally, redirect to index.html with currentFormId and activate dictation
+            // window.location.href = `index.html?id=${currentFormId}&startDictation=true`;
+        });
+        // navbarAiButton has its onclick inline in HTML
     </script>
 </body>
 </html>

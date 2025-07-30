@@ -108,6 +108,39 @@ body {
     height: 24px;
 }
 
+/* Accordion styles */
+.accordion-header {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 1rem;
+    border-radius: 0.75rem;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    color: var(--color-text-primary); /* Adăugat pentru coerență */
+}
+.accordion-content {
+    padding: 1rem;
+    border-radius: 0.75rem;
+    background: rgba(0, 0, 0, 0.2);
+    margin-top: -0.5rem; 
+    margin-bottom: 1rem;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+.accordion-icon {
+    transition: transform 0.2s;
+    /* Adăugat/Corectat: Dimensiunea iconiței */
+    width: 24px; 
+    height: 24px;
+    flex-shrink: 0; /* Prevents it from shrinking */
+}
+.accordion-header.collapsed .accordion-icon {
+    transform: rotate(-90deg);
+}
+
 /* Butoane generice */
 .button-primary {
     background-color: var(--color-accent-blue);

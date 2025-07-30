@@ -1,1 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forma - Home (Dictare)</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/idb-keyval@6/dist/umd.js"></script>
+    <script src="common.js"></script>
+</head>
+<body>
 
+    <div class="app-container">
+        <header class="app-header">
+            <h1 class="app-title">Forma</h1>
+            <button id="accountSettingsButton" class="icon-button">
+                <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.33 0-4 .67-4 2v3h8v-3c0-1.33-2.67-2-4-2z"/></svg>
+            </button>
+        </header>
+
+        <div id="mainDictationArea" class="glass-container dictation-main-area">
+            <h2 class="section-title" id="formContextTitle">New Form</h2>
+            
+            <div id="dictationStatusArea" class="dictation-status-box">
+                <div id="visualWave" class="wave-indicator"></div>
+                <p id="dictationStatusText">Press the MIC button in the navbar to start speaking for a new form...</p>
+            </div>
+
+            <div id="transcriptionText" class="text-display custom-scrollbar">
+                Your dictated text will appear here.
+            </div>
+            
+            <div class="button-group-row">
+                <button id="saveDictatedTextButton" class="button-secondary" disabled>Save</button>
+                <button id="editDictatedTextButton" class="button-primary" disabled>Edit</button>
+                <button id="deleteDictatedTextButton" class="button-danger" disabled>Delete</button>
+            </div>
+        </div>
+
+        <nav class="main-navbar">
+            <button id="navbarMicButton" class="navbar-mic-button">
+                <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" id="navbarMicIcon"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 4c0-1.66-1.34-3-3-3S9 2.34 9 4v7c0 1.66 1.34 3 3 3zm5.3-3c0 3.53-2.64 6.43-6.14 6.95V21h-2v-3.05c-3.5-.52-6.16-3.42-6.16-6.95H2c0 4.17 3.13 7.63 7.27 8.24v3.01h5.46v-3.01c4.14-.61 7.27-4.07 7.27-8.24h-1.7z"/></svg>
+            </button>
+            <div class="navbar-group">
+                <a href="index.html" class="navbar-button active">
+                    <span>New Form</span>
+                </a>
+                <a href="my-forms.html" class="navbar-button">
+                    <span>My Forms</span>
+                </a>
+            </div>
+            <button id="navbarAiButton" class="navbar-ai-button" onclick="alert('AI Chat functionality to be implemented.')">
+                <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 10v-.5c0-.28-.22-.5-.5-.5h-1c-.28 0-.5.22-.5.5V10h-1v-.5c0-.28-.22-.5-.5-.5h-1c-.28 0-.5.22-.5.5V10H2.5c-.28 0-.5.22-.5.5V11c0 .28.22.5.5.5H5v-.5c0-.28.22-.5.5-.5h1c.28 0 .5.22.5.5V11h1v-.5c0-.28.22-.5.5-.5h1c.28 0 .5.22.5.5V11h2.5c.28 0 .5-.22.5-.5V10.5c0-.28-.22-.5-.5-.5H16.5V9.5c0-.28-.22-.5-.5-.5h-1c-.28 0-.5.22-.5.5V10h-1V9.5c0-.28-.22-.5-.5-.5h-1c-.28 0-.5.22-.5.5V10H9v-.5zM12 20c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm-.88-10.95L9.65 9.12l.23-.23c.09-.09.2-.14.32-.14.12 0 .23.05.32.14l.23.23c.09.09.14.2.14.32 0 .12-.05.23-.14.32L9.9 10.95c-.09.09-.2.14-.32.14s-.23-.05-.32-.14L9.07 10.08c-.09-.09-.14-.2-.14-.32 0-.12.05-.23.14-.32zM12.95 10.08l-.23-.23c-.09-.09-.2-.14-.32-.14s-.23.05-.32.14L11.8 10.95c-.09.09-.14.2-.14.32s.05.23.14.32l.23.23c.09.09.2.14.32.14s.23-.05.32-.14l.23-.23c.09-.09.14-.2.14-.32s-.05-.23-.14-.32z"/></svg>
+            </button>
+        </nav>
+
+    </div>
+
+    <script>
+        // DOM Elements
+        const formContextTitle = document.getElementById('formContextTitle');
+        const dictationStatusArea = document.getElementById('dictationStatusArea');
+        const visualWave = document.getElementById('visualWave');
+        const dictationStatusText = document.getElementById('dictationStatusText');
+        const transcriptionText = document.getElementById('transcriptionText');
+
+        const saveDictatedTextButton = document.getElementById('saveDictatedTextButton'); 
+        const editDictatedTextButton = document.getElementById('editDictatedTextButton'); 
+        const deleteDictatedTextButton = document.getElementById('deleteDictatedTextButton'); 
+
+        const navbarMicButton = document.getElementById('navbarMicButton'); 
+        const navbarMicIcon = document.getElementById('navbarMicIcon'); 
+
+        const accountSettingsButton = document.getElementById('accountSettingsButton');
+
+
+        // Global State Variables
+        let currentFormId = null; 
+        let isDictating = false; 
+        let simulatedDictatedText = ""; 
+        let currentSegmentId = null; 
+
+        // --- UI & Dictation Logic ---
+
+        function updateDictationButton(isActivelyDictating) {
+            if (isActivelyDictating) {
+                navbarMicIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'; // Pause icon
+                navbarMicButton.classList.add('navbar-mic-button-active'); // For pulsating effect
+            } else {
+                navbarMicIcon.innerHTML = '<path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 4c0-1.66-1.34-3-3-3S9 2.34 9 4v7c0 1.66 1.34 3 3 3zm5.3-3c0 3.53-2.64 6.43-6.14 6.95V21h-2v-3.05c-3.5-.52-6.16-3.42-6.16-6.95H2c0 4.17 3.13 7.63 7.27 8.24v3.01h5.46v-3.01c4.14-.61 7.27-4.07 7.27-8.24h-1.7z"/></svg>'; // Mic icon
+                navbarMicButton.classList.remove('navbar-mic-button-active');
+            }
+        }
+
+        function startNativeDictationProcess() {
+            if (isDictating) return;
+
+            isDictating = true;
+            dictationStatusText.textContent = 'Listening... Speak clearly.';
+            visualWave.classList.add('active');
+            visualWave.style.opacity = '1';
+            updateDictationButton(true);
+            
+            transcriptionText.textContent = ''; 
+            simulatedDictatedText = "";
+            saveDictatedTextButton.disabled = true;
+            editDictatedTextButton.disabled = true;
+            deleteDictatedTextButton.disabled = true;
+
+            let textSegments = [
+                "Acesta este primul segment al dictării mele. ",
+                "Vreau să adaug un task nou, și anume: să verific stocul la depozit până vineri. ",
+                "Am vorbit și despre proiectul X și este important să planificăm o întâlnire săptămâna viitoare. ",
+                "Acest segment se încheie aici și este gata de procesare."
+            ];
+            let segmentIndex = 0;
+            let charIndex = 0;
+
+            window.dictationTypingInterval = setInterval(() => {
+                if (!isDictating) {
+                    clearInterval(window.dictationTypingInterval);
+                    return;
+                }
+                if (segmentIndex < textSegments.length) {
+                    if (charIndex < textSegments[segmentIndex].length) {
+                        simulatedDictatedText += textSegments[segmentIndex][charIndex];
+                        transcriptionText.textContent = simulatedDictatedText;
+                        transcriptionText.scrollTop = transcriptionText.scrollHeight;
+                        charIndex++;
+                    } else {
+                        segmentIndex++;
+                        charIndex = 0;
+                    }
+                } else {
+                    clearInterval(window.dictationTypingInterval);
+                    stopNativeDictationProcess(true);
+                }
+            }, 50);
+        }
+
+        function stopNativeDictationProcess(dictationSuccessful = false) {
+            if (!isDictating) return;
+
+            isDictating = false;
+            clearInterval(window.dictationTypingInterval);
+            
+            dictationStatusText.textContent = dictationSuccessful ? 'Dictation complete. Review and save.' : 'Dictation stopped. No text saved.';
+            visualWave.classList.remove('active');
+            visualWave.style.opacity = '0';
+            updateDictationButton(false);
+
+            if (dictationSuccessful && simulatedDictatedText.trim().length > 0) {
+                saveDictatedTextButton.disabled = false;
+                editDictatedTextButton.disabled = false;
+                deleteDictatedTextButton.disabled = false;
+            } else {
+                saveDictatedTextButton.disabled = true;
+                editDictatedTextButton.disabled = true;
+                deleteDictatedTextButton.disabled = true;
+            }
+        }
+
+        // --- Form Data Save & Management ---
+
+        async function createOrUpdateFormMetadata(formToUpdate = null) {
+            let formData;
+            let allForms = (await db.get('formsMetadata')) || [];
+
+            if (formToUpdate) { 
+                currentFormId = formToUpdate.id;
+                formData = { ...formToUpdate }; 
+                formData.title = formToUpdate.title || `Quick Note - ${new Date(formToUpdate.createdAt).toLocaleDateString('en-US')} ${new Date(formToUpdate.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit'})}`;
+                formData.lastModified = new Date().toISOString();
+            } else if (currentFormId) { 
+                formData = allForms.find(f => f.id === currentFormId);
+                if (!formData) { 
+                    console.error("Attempted to update a form not found with currentFormId. Creating new form.");
+                    return createOrUpdateFormMetadata(null); 
+                }
+                formData.lastModified = new Date().toISOString();
+            } else { 
+                let lastFormSequenceNumber = (await db.get('lastFormSequenceNumber')) || 0;
+                const newFormNumber = ++lastFormSequenceNumber;
+                currentFormId = generateUUID(); 
+                await db.set('lastFormSequenceNumber', newFormNumber);
+
+                const now = new Date();
+                now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); 
+                const quickFormTitle = `Quick Note - ${now.toLocaleDateString('en-US')} ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit'})}`;
+
+                formData = {
+                    id: currentFormId,
+                    formNumber: newFormNumber,
+                    title: quickFormTitle,
+                    beneficiary: '',
+                    type: 'other', 
+                    plannedDateTime: now.toISOString(),
+                    address: '',
+                    initialNotes: '',
+                    status: 'not-started', 
+                    createdAt: now.toISOString(),
+                    lastModified: new Date().toISOString()
+                };
+            }
+
+            if (formData.status === 'not-started') {
+                formData.status = 'in-progress';
+            }
+
+            const index = allForms.findIndex(f => f.id === currentFormId);
+            if (index !== -1) {
+                allForms[index] = formData;
+            } else {
+                allForms.unshift(formData); 
+            }
+            
+            await db.set('formsMetadata', allForms);
+            formContextTitle.textContent = `Form #${formData.formNumber || 'N/A'}`; 
+            return formData; 
+        }
+
+        async function saveDictatedSegment(text) {
+            let form = await createOrUpdateFormMetadata(null); 
+            currentFormId = form.id; 
+
+            if (!text || text.trim().length === 0) {
+                alert('Cannot save an empty note.');
+                return null;
+            }
+
+            const now = new Date();
+            currentSegmentId = generateUUID(); 
+
+            const segmentMetaData = {
+                id: currentSegmentId,
+                formId: currentFormId,
+                name: `Note ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`, 
+                status: 'draft', 
+                recordedAtTime: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                recordedAtDate: now.toLocaleDateString('en-US'),
+                duration: Math.ceil(text.trim().split(/\s+/).length / 2.5), 
+                text: text.trim(), 
+                tasks: [] 
+            };
+
+            const formRecordings = (await db.get(`formRecordings-${currentFormId}`)) || [];
+            formRecordings.unshift(segmentMetaData); 
+            await db.set(`formRecordings-${currentFormId}`, formRecordings);
+            
+            alert('Dictated note saved successfully!');
+            return segmentMetaData;
+        }
+
+        // --- Event Listeners ---
+
+        navbarMicButton.addEventListener('click', async () => {
+            if (isDictating) {
+                stopNativeDictationProcess(true);
+            } else {
+                await createOrUpdateFormMetadata(null); 
+                startNativeDictationProcess();
+            }
+        });
+
+        saveDictatedTextButton.addEventListener('click', async () => {
+            if (simulatedDictatedText) {
+                const savedSegment = await saveDictatedSegment(simulatedDictatedText);
+                if (savedSegment) {
+                    stopNativeDictationProcess(false); 
+                    transcriptionText.textContent = ''; 
+                    simulatedDictatedText = ''; 
+                }
+            } else {
+                alert("Nothing to save. Dictate something first!");
+            }
+        });
+
+        editDictatedTextButton.addEventListener('click', async () => {
+            if (simulatedDictatedText) {
+                const savedSegment = await saveDictatedSegment(simulatedDictatedText); 
+                if (savedSegment) {
+                    stopNativeDictationProcess(false); 
+                    transcriptionText.textContent = '';
+                    simulatedDictatedText = '';
+                    window.location.href = `form-report.html?id=${currentFormId}`; 
+                }
+            } else if (currentFormId) {
+                window.location.href = `form-report.html?id=${currentFormId}`; 
+            } else {
+                alert("Nothing to edit. Dictate something first or load an existing form.");
+            }
+        });
+
+        deleteDictatedTextButton.addEventListener('click', () => {
+            if (confirm('Are you sure you want to discard this dictated note? It will not be saved.')) {
+                transcriptionText.textContent = '';
+                simulatedDictatedText = '';
+                alert('Dictated note discarded.');
+            }
+            stopNativeDictationProcess(false);
+            transcriptionText.textContent = '';
+            simulatedDictatedText = ''; 
+        });
+
+        accountSettingsButton.addEventListener('click', () => {
+            alert('Account settings and preferences functionality to be implemented here.');
+        });
+
+
+        // --- Page Load & Initialization ---
+
+        async function loadInitialFormData() {
+            const params = new URLSearchParams(window.location.search);
+            const formIdFromURL = params.get('id'); 
+
+            if (formIdFromURL) {
+                const allForms = (await db.get('formsMetadata')) || [];
+                const formToLoad = allForms.find(f => f.id === formIdFromURL);
+
+                if (formToLoad) {
+                    currentFormId = formIdFromURL;
+                    formContextTitle.textContent = `Form #${formToLoad.formNumber || 'N/A'} ${formToLoad.title ? '- ' + formToLoad.title : ''}`; 
+                    
+                    const formRecordings = (await db.get(`formRecordings-${currentFormId}`)) || [];
+                    if (formRecordings.length > 0) {
+                        formRecordings.sort((a, b) => new Date(b.recordedAtDate + ' ' + b.recordedAtTime).getTime() - new Date(a.recordedAtDate + ' ' + a.recordedAtTime).getTime());
+                        const lastSegmentsText = formRecordings.slice(0, 2).map(rec => rec.text).reverse().join('\n\n');
+                        transcriptionText.textContent = `...${lastSegmentsText}\n\n`;
+                        transcriptionText.scrollTop = transcriptionText.scrollHeight; 
+                        dictationStatusText.textContent = `Continuing dictation for Form #${formToLoad.formNumber || 'N/A'}. Press MIC to add more...`;
+                    } else {
+                        dictationStatusText.textContent = `Start dictating for Form #${formToLoad.formNumber || 'N/A'}. Press MIC to start...`;
+                    }
+                } else {
+                    alert('Form not found. Starting a new blank form.');
+                    currentFormId = null;
+                    window.history.replaceState(null, null, 'index.html'); 
+                    formContextTitle.textContent = 'New Form';
+                    dictationStatusText.textContent = 'Press the MIC button in the navbar to start speaking for a new form...';
+                }
+            } else {
+                formContextTitle.textContent = 'New Form';
+                dictationStatusText.textContent = 'Press the MIC button in the navbar to start speaking for a new form...';
+            }
+            saveDictatedTextButton.disabled = true;
+            editDictatedTextButton.disabled = true;
+            deleteDictatedTextButton.disabled = true;
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadInitialFormData(); 
+            stopNativeDictationProcess(false); 
+        });
+    </script>
+</body>
+</html>

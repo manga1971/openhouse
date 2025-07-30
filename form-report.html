@@ -25,7 +25,7 @@
                 <svg class="accordion-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
             </div>
             <div id="formDetailsContent" class="accordion-content">
-                <div class="form-details-display">
+                <div id="formDetailsDisplayMode" class="form-details-display">
                     <p><strong>Client:</strong> <span id="formReportBeneficiary"></span></p>
                     <p><strong>Type:</strong> <span id="formReportType"></span></p>
                     <p><strong>Address:</strong> <span id="formReportAddress"></span></p>
@@ -33,7 +33,7 @@
                     <p><strong>Initial Notes:</strong> <span id="formReportInitialNotes"></span></p>
                 </div>
                 
-                <form id="formDetailsEditForm" style="display:none;">
+                <form id="formDetailsEditMode" class="form-details-edit-mode" style="display:none;">
                     <div class="form-group"><label for="formTitleInput">Objective Title:</label><input type="text" id="formTitleInput"></div>
                     <div class="form-group"><label for="formBeneficiaryInput">Client:</label><input type="text" id="formBeneficiaryInput"></div>
                     <div class="form-group"><label for="formTypeSelect">Form Type:</label>
@@ -147,6 +147,10 @@
         const formReportPlannedDate = document.getElementById('formReportPlannedDate');
         const formReportInitialNotes = document.getElementById('formReportInitialNotes');
 
+        // NEW DOM Elements for Form Details Edit Mode
+        const formDetailsDisplayMode = document.getElementById('formDetailsDisplayMode');
+        const formDetailsEditMode = document.getElementById('formDetailsEditMode');
+
         // DOM Elements for editing form details (initially hidden)
         const editFormDetailsButton = document.getElementById('editFormDetailsButton');
         const saveFormDetailsFromReportButton = document.getElementById('saveFormDetailsFromReportButton');
@@ -246,6 +250,8 @@
 
             // Show input form
             formDetailsEditForm.style.display = 'block';
+            formDetailsDisplayMode.style.display = 'none';
+            formDetailsEditMode.style.display = 'block'; // Show the form for editing
 
             // Populate input fields with current form data
             document.getElementById('formTitleInput').value = currentForm.title || '';
@@ -299,6 +305,8 @@
 
             // Hide input form
             formDetailsEditForm.style.display = 'none';
+            formDetailsDisplayMode.style.display = 'block'; // Show the display mode
+            formDetailsEditMode.style.display = 'none'; // Hide the edit form
 
             editFormDetailsButton.style.display = 'block';
             saveFormDetailsFromReportButton.style.display = 'none';

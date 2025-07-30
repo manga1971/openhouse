@@ -532,6 +532,15 @@ textarea::placeholder {
 }
 
 /* Stiluri pentru form-ul de editare a detaliilor (initial hidden) */
+.form-details-edit-mode { /* Renamed class for clarity */
+    margin-top: 1rem;
+}
+.form-details-edit-mode .form-group {
+    margin-bottom: 0.75rem;
+}
+.form-details-edit-mode textarea {
+    min-height: 80px;
+}
 #formDetailsEditForm {
     margin-top: 1rem; /* Space from display details */
 }

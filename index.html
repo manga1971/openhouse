@@ -1,781 +1,299 @@
-<!DOCTYPE html>
-<html lang="ro" class="scroll-smooth">
+<!doctype html>
+<html lang="ro">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Vanzare Teren - Îți găsim terenul exact unde vrei. Soluții personalizate pentru proiecte logistice, industriale și retail în București și Ilfov.">
-    <meta name="keywords" content="teren de vanzare, teren industrial, teren logistic, teren comercial, strip mall, land hunting, vanzare teren Bucuresti, vanzare teren Ilfov">
-    <meta name="author" content="Vanzare Teren">
-    <meta property="og:title" content="Vanzare Teren - Îți găsim terenul, exact unde vrei." />
-    <meta property="og:description" content="Soluții personalizate pentru proiecte logistice, industriale și retail. Shortlist în 7-14 zile." />
-    <meta property="og:image" content="https://manga1971.github.io/openhouse/uploads/og-image.jpg"> 
-    <meta property="og:url" content="https://vanzareteren.ro">
-    <meta name="twitter:card" content="summary_large_image">
-    <title>Vanzare Teren - Îți găsim terenul, exact unde vrei.</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>vanzareteren.ro — Îți găsim terenul, exact unde vrei (Land Hunting: logistic, retail, rezidențial)</title>
+  <meta name="description" content="Spui zona pe hartă, iar noi îți găsim terenul dorit. Land hunting pentru logistic/industrial, strip-mall/comercial și rezidențial. Shortlist în 7–14 zile, due-diligence rapid." />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://vanzareteren.ro/" />
 
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"></noscript>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            overflow-y: scroll;
-            scroll-snap-type: y mandatory;
-            -webkit-overflow-scrolling: touch;
-            height: 100vh;
-            background-color: black;
-        }
+  <!-- Open Graph -->
+  <meta property="og:site_name" content="vanzareteren.ro" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Îți găsim terenul, exact unde vrei — vanzareteren.ro" />
+  <meta property="og:description" content="Land hunting: logistic/industrial, comercial/strip-mall, rezidențial. Shortlist în 7–14 zile." />
+  <meta property="og:url" content="https://vanzareteren.ro/" />
+  <meta property="og:image" content="https://vanzareteren.ro/img/cover-social.jpg" />
 
-        .snap-section {
-            height: 100vh;
-            scroll-snap-align: start;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-            padding-bottom: 4rem;
-            z-index: 0;
-        }
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Îți găsim terenul, exact unde vrei — vanzareteren.ro">
+  <meta name="twitter:description" content="Land hunting pentru logistic/industrial, comercial/strip-mall și rezidențial.">
+  <meta name="twitter:image" content="https://vanzareteren.ro/img/cover-social.jpg">
 
-        .background-element {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-        }
+  <style>
+    :root{
+      --pad: clamp(16px, 3vw, 32px);
+      --radius: 16px;
+      --text: #0f172a;
+      --muted:#475569;
+      --bg:#ffffff;
+      --bg-soft:#f8fafc;
+      --brand:#111111;
+      --brand-weak:#1f2937;
+    }
+    html, body { margin:0; padding:0; color:var(--text); background:var(--bg); font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, 'Helvetica Neue', Arial, sans-serif; }
+    a { color: var(--brand-weak); text-decoration: none; }
+    a:hover { text-decoration: underline; }
 
-        .background-element.active {
-            opacity: 1;
-        }
-        
-        .background-container {
-            background-size: cover;
-            background-position: center center;
-            background-repeat: no-repeat;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
+    /* Header */
+    .skip-link{ position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;}
+    .skip-link:focus{ position:fixed; left:var(--pad); top:var(--pad); width:auto; height:auto; background:#fff; padding:8px 10px; border-radius:8px; z-index:999; }
+    header.site-header{
+      position:fixed; inset-inline:0; top:0; height:64px;
+      display:flex; align-items:center; justify-content:space-between;
+      padding-inline:var(--pad); z-index:50;
+      background: color-mix(in srgb, #ffffff 85%, transparent);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .brand { display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:.2px; }
+    .brand .logo-dot { width:12px; height:12px; border-radius:50%; background:var(--brand); display:inline-block; }
+    nav.main-nav { display:flex; align-items:center; gap:16px; }
+    nav.main-nav a { padding:8px 12px; border-radius:999px; }
+    nav.main-nav a.cta  { background:var(--brand); color:#fff; border:1px solid var(--brand); }
+    nav.main-nav a.ghost{ background:#fff; border:1px solid #e5e7eb; }
 
-        .youtube-iframe {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100vw;
-            height: 100vh;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-        }
+    /* Snap container */
+    main.snap { height:100svh; overflow-y:auto; scroll-snap-type: y mandatory; }
+    section.snap-panel {
+      scroll-snap-align: start;
+      min-height: 100svh;
+      display:grid; grid-template-columns: 1.1fr 1fr;
+      gap: clamp(12px, 2vw, 24px);
+      padding: calc(64px + var(--pad)) var(--pad) var(--pad);
+      align-items:center;
+      content-visibility: auto;
+      contain-intrinsic-size: 800px 600px;
+    }
+    @media (max-width: 980px) {
+      section.snap-panel { grid-template-columns: 1fr; padding-top: calc(64px + var(--pad)); }
+    }
 
-        .text-overlay {
-            background-color: rgba(64, 64, 64, 0.4);
-            backdrop-filter: blur(2px);
-            padding: 1.5rem;
-            border-radius: 0.75rem;
-            text-align: center;
-            width: 96%;
-            box-sizing: border-box;
-            transition: all 0.5s ease-in-out;
-            z-index: 2;
-        }
+    .content h1, .content h2{ margin:0 0 12px; line-height:1.1; }
+    .content p { margin:0 0 16px; color:var(--muted); max-width: 65ch; }
+    .bullets { display:flex; gap:10px; flex-wrap:wrap; list-style:none; padding:0; margin:8px 0 0; color:#0b1221; font-size:0.95rem; }
+    .bullets li { background:var(--bg-soft); padding:6px 10px; border-radius:999px; border:1px solid #e5e7eb; }
 
-        .text-overlay:hover {
-            transform: scale(1.02);
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
-        }
+    .actions { display:flex; gap:12px; flex-wrap:wrap; margin-top: 8px; }
+    .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 18px; border-radius:999px; border:1px solid #e5e7eb; background:#fff; }
+    .btn.primary { background:var(--brand); color:#fff; border-color:var(--brand); }
+    .btn.ghost   { background:#fff; color:var(--text); }
+    .btn.link    { background:transparent; border-color:transparent; text-decoration:underline; padding-inline:0; }
 
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 100;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.8);
-            align-items: center;
-            justify-content: center;
-        }
+    .media.slider{ display:flex; gap:12px; overflow-x:auto; scroll-snap-type: x proximity; padding-bottom:8px; overscroll-behavior-inline: contain; }
+    .media.slider img{ flex:0 0 85%; max-width: 85%; border-radius: var(--radius); aspect-ratio: 16/9; object-fit: cover; scroll-snap-align: center; }
 
-        .modal-content {
-            position: relative;
-            margin: auto;
-            padding: 0;
-            width: 96%;
-            max-width: 800px;
-            border-radius: 0.75rem;
-            overflow: hidden;
-        }
+    .contact-card{
+      display:grid; gap:10px; padding:20px; border:1px solid #e5e7eb; border-radius:var(--radius); background:#fff;
+      max-width: 520px;
+    }
+    .contact-card a { font-weight:600; }
 
-        .modal-body {
-            background-color: #000;
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
-        }
+    footer.site-footer{
+      padding: 24px var(--pad);
+      background: var(--bg-soft);
+      border-top:1px solid #e5e7eb;
+      display:grid; gap:10px;
+    }
+    .legal{ font-size:.9rem; color:var(--muted); }
 
-        .modal-body iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
+    /* Sticky CTA on mobile */
+    .sticky-cta { position: sticky; bottom: 0; display:none; gap:10px; justify-content:center; padding:10px; background:linear-gradient(to top, #fff, transparent); z-index:30; }
+    @media (max-width: 768px){ .sticky-cta{ display:flex; } }
 
-        .close-button {
-            color: #aaa;
-            font-size: 28px;
-            font-weight: bold;
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            z-index: 101;
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
+    /* Small helpers */
+    .kpi { display:flex; gap:16px; margin-top:10px; }
+    .kpi .card{ padding:10px 12px; border-radius:12px; border:1px solid #e5e7eb; background:#fff; }
+    .note { font-size:.95rem; color:var(--muted); }
+  </style>
 
-        .close-button:hover,
-        .close-button:focus {
-            color: #fff;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .framed-button {
-            border: 2px solid #ef4444;
-            color: #ef4444;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.75rem;
-            display: inline-block;
-            margin-top: 1.5rem;
-            text-decoration: none;
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .framed-button:hover {
-            background-color: #ef4444;
-            color: #ffffff;
-            box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
-        }
-
-        @media (min-width: 768px) {
-            .snap-section {
-                padding-bottom: 6rem;
-            }
-            .text-overlay {
-                width: 80%;
-            }
-        }
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Structured Data: RealEstateAgent + WebSite + 2 CaseStudies -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "RealEstateAgent",
+    "name": "vanzareteren.ro",
+    "url": "https://vanzareteren.ro/",
+    "email": "intravilan@gmail.com",
+    "telephone": "+40726340034",
+    "areaServed": "Romania",
+    "logo": "https://vanzareteren.ro/img/logo.png"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"WebSite",
+    "name":"vanzareteren.ro",
+    "url":"https://vanzareteren.ro/",
+    "potentialAction":{
+      "@type":"SearchAction",
+      "target":"https://vanzareteren.ro/oferte?q={search_term_string}",
+      "query-input":"required name=search_term_string"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"ItemList",
+    "itemListElement":[
+      {"@type":"ListItem","position":1,"url":"https://vanzareteren.ro/rezidential"},
+      {"@type":"ListItem","position":2,"url":"https://vanzareteren.ro/comercial-office"},
+      {"@type":"ListItem","position":3,"url":"https://vanzareteren.ro/industrial-logistica"}
+    ]
+  }
+  </script>
 </head>
-<body class="bg-gray-900 text-white">
+<body>
+  <a class="skip-link" href="#content">Sari la conținut</a>
 
-    <header class="fixed top-0 left-0 w-full p-4 z-[9999] bg-transparent">
-        <div class="flex items-center justify-start">
-            <svg id="logo-openhouse" width="210" height="40" viewBox="0 0 210 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="transition-colors duration-500">
-                <text x="0" y="30" font-family="Inter, sans-serif" font-size="30" font-weight="bold">Vanzare Teren</text>
-            </svg>
-        </div>
-    </header>
+  <header class="site-header" role="banner">
+    <div class="brand">
+      <span class="logo-dot" aria-hidden="true"></span>
+      <a href="/" aria-label="vanzareteren.ro - acasă">vanzareteren.ro</a>
+    </div>
+    <nav class="main-nav" role="navigation" aria-label="Navigare principală">
+      <a href="/oferte">Oferte</a>
+      <a href="/wanted" class="ghost">Caut teren</a>
+      <a href="/pentru-proprietari" class="ghost">Am teren</a>
+      <a class="cta" href="tel:+40726340034">Sună acum</a>
+    </nav>
+  </header>
 
-    <div id="youtube-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-button" id="close-modal" aria-label="Închide video">×</span>
-            <div class="modal-body">
-                <div id="youtube-player"></div>
-            </div>
+  <main id="content" class="snap" role="main">
+
+    <!-- SNAP 1: Introducere (Land Hunting) -->
+    <section class="snap-panel" aria-label="Introducere">
+      <div class="content">
+        <h1>Spune zona. Găsim terenul.</h1>
+        <p>Logistic/industrial &amp; strip-mall, dar și rezidențial. Desenezi zona dorită pe hartă sau selectezi localitățile, iar noi îți livrăm shortlist-ul în 7–14 zile — cu due-diligence rapid.</p>
+        <div class="actions">
+          <a class="btn primary" href="/wanted">Caut teren</a>
+          <a class="btn ghost" href="/pentru-proprietari">Am teren compatibil</a>
+          <a class="btn link" href="#contact">Contact rapid</a>
         </div>
+        <ul class="bullets">
+          <li>Poligon pe hartă</li>
+          <li>SLA status 48h</li>
+          <li>NDA la cerere</li>
+        </ul>
+        <div class="kpi">
+          <div class="card"><strong>3–5</strong> opțiuni validate</div>
+          <div class="card"><strong>7–14</strong> zile shortlist</div>
+          <div class="card"><strong>24–48h</strong> evaluare proprietar</div>
+        </div>
+      </div>
+      <div class="media slider" aria-label="Galerie land hunting">
+        <img loading="eager" fetchpriority="high" src="/img/hero-1.webp" alt="Hartă zonă logistică cu trasee A0/A1" />
+        <img loading="lazy" src="/img/hero-2.webp" alt="Exemplu shortlist de terenuri potrivite" />
+        <img loading="lazy" src="/img/hero-3.webp" alt="Distanțe cheie și acces rutier" />
+      </div>
+    </section>
+
+    <!-- SNAP 2: Studiu de caz (MicroLogistic) -->
+    <section class="snap-panel" aria-label="Studiu de caz: MicroLogistic depozit">
+      <div class="content">
+        <h2>Studiu de caz: teren gol → depozit logistic</h2>
+        <p><strong>Client:</strong> MicroLogistic. <strong>Brief:</strong> 15–25.000 mp, acces A0, utilități la limită, front &ge; 60 m. <strong>Rezultat:</strong> teren identificat în 9 zile; tranzacție accelerată, construcție depozit.</p>
+        <div class="actions">
+          <a class="btn primary" href="/caz/micrologistic">Vezi studiul de caz</a>
+          <a class="btn link" href="/industrial-logistica">Terenuri industrial/logistic</a>
+        </div>
+        <p class="note">În studiu: criterii, shortlist, vizionări, due-diligence, timeline și rezultate.</p>
+      </div>
+      <div class="media slider" aria-label="Before / After depozit">
+        <img loading="lazy" src="/img/case-micro-before.webp" alt="Înainte: teren gol în proximitate A0" />
+        <img loading="lazy" src="/img/case-micro-after.webp" alt="După: depozit logistic construit pe teren" />
+      </div>
+    </section>
+
+    <!-- SNAP 3: Studiu de caz (vânzare rapidă proprietar) -->
+    <section class="snap-panel" aria-label="Studiu de caz: vânzare rapidă proprietar">
+      <div class="content">
+        <h2>Studiu de caz: proprietar → cumpărător în câteva zile</h2>
+        <p><strong>Context:</strong> Proprietar cu nevoie de tranzacționare rapidă. <strong>Acțiune:</strong> am potrivit cererea activă din WANTED și am pre-calificat actele. <strong>Rezultat:</strong> vizionare + ofertă fermă în 5 zile.</p>
+        <div class="actions">
+          <a class="btn primary" href="/caz/vanzare-rapida">Vezi studiul de caz</a>
+          <a class="btn link" href="/pentru-proprietari">Am teren compatibil</a>
+        </div>
+        <p class="note">Transparență: CF, plan cadastral, CU/PUZ (unde există), termene & comisioane clare.</p>
+      </div>
+      <div class="media slider" aria-label="Flux vânzare rapidă">
+        <img loading="lazy" src="/img/case-owner-1.webp" alt="Documente verificate pentru listare rapidă" />
+        <img loading="lazy" src="/img/case-owner-2.webp" alt="Întâlnire proprietar-cumpărător potrivit" />
+      </div>
+    </section>
+
+    <!-- SNAP 4: CTA + Contact -->
+    <section class="snap-panel" aria-label="Contact" id="contact">
+      <div class="content">
+        <h2>Hai să începem — răspundem în aceeași zi</h2>
+        <p>Contactează-ne direct sau completează un brief. Îți confirmăm în 48h statusul și pașii următori.</p>
+        <div class="contact-card" role="group" aria-label="Detalii contact">
+          <div><strong>Telefon:</strong> <a href="tel:+40726340034">+40 726 340 034</a></div>
+          <div><strong>Email:</strong> <a href="mailto:intravilan@gmail.com">intravilan@gmail.com</a></div>
+          <div><strong>WhatsApp:</strong> <a href="https://wa.me/40726340034" target="_blank" rel="noopener">Trimite mesaj</a></div>
+          <div class="actions">
+            <a class="btn primary" href="/wanted">Caut teren</a>
+            <a class="btn ghost" href="/pentru-proprietari">Am teren</a>
+          </div>
+          <p class="note">Program: L–V 09:00–18:00 (RO). Răspundem la urgente și în afara programului.</p>
+        </div>
+      </div>
+      <div class="media slider" aria-label="Galerie contact / rezultate">
+        <img loading="lazy" src="/img/contact-1.webp" alt="Hartă cu zone active de căutare" />
+        <img loading="lazy" src="/img/contact-2.webp" alt="Exemple de oferte HOT" />
+        <img loading="lazy" src="/img/contact-3.webp" alt="Echipa la vizionare" />
+      </div>
+    </section>
+
+    <!-- Sticky mobile cta -->
+    <div class="sticky-cta" aria-hidden="false">
+      <a class="btn primary" href="/wanted">Caut teren</a>
+      <a class="btn ghost" href="/pentru-proprietari">Am teren</a>
     </div>
 
-    <main id="main-content" class="scroll-snap-container h-screen overflow-y-scroll" role="main">
-        <section id="snap-scroll-1" class="snap-section bg-gray-800">
-            <div class="background-container absolute inset-0"></div>
-            <div class="text-overlay p-6 rounded-xl flex flex-col items-center justify-center">
-                <h1 id="snap1-title" class="text-red-500 text-xl md:text-3xl font-bold mb-4"></h1>
-                <p id="snap1-content" class="text-white text-base md:text-lg leading-relaxed whitespace-pre-line"></p>
-                <a href="/caut-teren.html" id="snap1-cta" class="framed-button mt-6 hidden">Caut teren</a>
-            </div>
-        </section>
+  </main>
 
-        <section id="snap-scroll-2" class="snap-section bg-gray-700">
-            <div class="background-container absolute inset-0"></div>
-            <div class="text-overlay p-6 rounded-xl flex flex-col items-center justify-center">
-                <h2 id="snap2-title" class="text-red-500 text-xl md:text-3xl font-bold mb-4"></h2>
-                <p id="snap2-content" class="text-white text-base md:text-lg leading-relaxed"></p>
-                
-                <div class="bg-gray-800 p-4 rounded-lg mt-4 w-full max-w-sm">
-                    <p class="text-lg font-semibold text-white text-left">Exemplu: Societatea MT Transport & Logistic SRL a trimis cererea catre noi in 21.02.2025</p>
-                    <ul class="text-sm text-gray-300 mt-2 list-disc list-inside text-left">
-                        <li>wanted: teren logistic industrial</li>
-                        <li>Suprafață: 15.000-20.000 mp</li>
-                        <li>Deschidere: minim 50m</li>
-                        <li>Zonă:</li>
-                        <li>Acces:</li>
-                        <li>Preferințe:</li>
-                        <li>Client: MT Transport & Logistic SRL</li>
-                    </ul>
-                    <p class="text-lg font-semibold text-white text-left mt-4">In 27.02.2025 am raspuns prin aceste 2 oferte:</p>
-                    <ul class="text-sm text-gray-300 mt-2 list-disc list-inside text-left">
-                        <li>offer 1:</li>
-                        <li>Suprafață: 17.210 mp</li>
-                        <li>Deschidere: 66m</li>
-                        <li>Zonă: Stefanesti</li>
-                        <li>Acces: str. Unirii</li>
-                        <li>Utilități: gaze și curent - post trafo</li>
-                    </ul>
-                    <ul class="text-sm text-gray-300 mt-2 list-disc list-inside text-left">
-                        <li>offer 2:</li>
-                        <li>Suprafață: 17.210 mp</li>
-                        <li>Deschidere: 66m</li>
-                        <li>Zonă: Stefanesti</li>
-                        <li>Acces: str. Unirii</li>
-                        <li>Utilități: gaze și curent - post trafo</li>
-                    </ul>
-                    <a href="/caut-teren.html" class="framed-button mt-4 w-full">Spune-ne ce cauți</a>
-                </div>
-            </div>
-        </section>
+  <footer class="site-footer" role="contentinfo">
+    <div><strong>vanzareteren.ro</strong> — Îți găsim terenul, exact unde vrei.</div>
+    <div class="legal">© <span id="y"></span> vanzareteren.ro · RealEstateAgent · Logistic/Industrial &amp; Comercial/Strip-mall · <a href="/termeni">Termeni</a> · <a href="/confidentialitate">Politica de confidențialitate</a></div>
+  </footer>
 
-        <section id="snap-scroll-3" class="snap-section bg-gray-600">
-            <div class="background-container absolute inset-0"></div>
-            <div class="text-overlay p-6 rounded-xl flex flex-col items-center justify-center">
-                <h2 id="snap3-title" class="text-red-500 text-xl md:text-3xl font-bold mb-4"></h2>
-                <p id="snap3-content" class="text-white text-base md:text-lg leading-relaxed"></p>
-                
-                <div class="bg-gray-800 p-4 rounded-lg mt-4 w-full max-w-sm">
-                    <p class="text-lg font-semibold text-white text-left">Exemplu: Proprietarul Popescu M. a trimis oferta catre noi in 12.06.2025</p>
-                    <ul class="text-sm text-gray-300 mt-2 list-disc list-inside text-left">
-                        <li>offer: teren intravilan</li>
-                        <li>suprafață 12.000 mp</li>
-                        <li>Zonă Tunari</li>
-                        <li>Acces drum servitute din str Principatele</li>
-                        <li>Utilități doar curent la 300m distanta</li>
-                    </ul>
-                    <p class="text-lg font-semibold text-white text-left mt-4">In 22.06.2025 am prezentat dlui Popescu acest potential cumparator</p>
-                    <ul class="text-sm text-gray-300 mt-2 list-disc list-inside text-left">
-                        <li>client: societatea Allegra System SRL</li>
-                        <li>ofertă: 645.000 euro</li>
-                        <li>termen de plată 11.07.2025</li>
-                    </ul>
-                    <a href="/pentru-proprietari.html" class="framed-button mt-4 w-full">Am teren compatibil</a>
-                </div>
-            </div>
-        </section>
+  <script>
+    // Update year
+    document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
 
-        <section id="snap-scroll-4" class="snap-section bg-gray-500">
-            <div class="background-container absolute inset-0"></div>
-            <div class="text-overlay p-6 rounded-xl flex flex-col items-center justify-center space-y-4">
-                <p id="snap4-title" class="text-red-500 text-xl md:text-3xl font-bold mb-4"></p>
-                <p id="snap4-content" class="text-white text-base md:text-lg leading-relaxed"></p>
-                
-                <p id="snap4-phone" class="text-red-500 border-2 border-red-500 rounded-xl px-4 py-2 text-lg md:text-xl font-bold"></p>
-                <div class="flex items-center space-x-2">
-                    <a href="#" id="snap4-whatsapp-link" target="_blank" rel="noopener noreferrer" class="text-green-500 text-2xl md:text-3xl"><i class="fab fa-whatsapp"></i></a>
-                    <span class="text-white text-lg md:text-xl">Whatsapp</span>
-                </div>
-                <p id="snap4-email" class="text-blue-400 border-2 border-white rounded-xl px-4 py-2 text-lg md:text-xl"></p>
-                <div class="flex items-center space-x-4 mt-4">
-                    <a href="#" id="snap4-linkedin-link" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-400 text-3xl transition-colors duration-300"><i class="fab fa-linkedin"></i></a>
-                    <span class="text-white text-lg">I</span>
-                    <a href="#" id="snap4-youtube-link" target="_blank" rel="noopener noreferrer" class="text-red-600 hover:text-red-400 text-3xl transition-colors duration-300"><i class="fab fa-youtube"></i></a>
-                    <span class="text-white text-lg">I</span>
-                    <a href="#" id="snap4-tiktok-link" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gray-400 text-3xl transition-colors duration-300"><i class="fab fa-tiktok"></i></a>
-                    <span class="text-white text-lg">I</span>
-                    <a href="#" id="snap4-instagram-link" target="_blank" rel="noopener noreferrer" class="text-pink-500 hover:text-pink-300 text-3xl transition-colors duration-300"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="w-full py-4 bg-gray-900 text-gray-400 text-center text-sm md:text-base absolute bottom-0 z-40">
-        <div class="flex justify-center space-x-4">
-            <a href="#" class="hover:underline">Confidențialitate</a>
-            <span>I</span>
-            <a href="#" class="hover:underline">Termeni și condiții</a>
-        </div>
-    </footer>
-
-    <script>
-        function getBasePath() {
-            // Calea relativă directă funcționează mai bine pe GitHub Pages.
-            // Presupune că fișierul este la manga1971.github.io/openhouse/
-            return window.location.origin + '/openhouse/';
-        }
-        
-        const basePath = getBasePath();
-        const mediaPath = `${basePath}uploads/`;
-
-        const pageContent = {
-            mobile: {
-                snap1: {
-                    title: "Îți găsim terenul, exact unde vrei.",
-                    content: "Soluții personalizate pentru proiecte logistice, industriale și retail. Spune zona pe hartă, primești un shortlist în 7-14 zile.",
-                    mp4Url: `${mediaPath}V1.mp4`,
-                    imageUrl: `${mediaPath}SS1.jpg`
-                },
-                snap2: {
-                    title: "",
-                    content: "",
-                    mp4Url: `${mediaPath}V2.mp4`,
-                    imageUrl: `${mediaPath}SS2.jpg`
-                },
-                snap3: {
-                    title: "",
-                    content: "",
-                    mp4Url: `${mediaPath}V3.mp4`,
-                    imageUrl: `${mediaPath}SS3.jpg`
-                },
-                snap4: {
-                    title: "Un partener de încredere pentru afacerea ta.",
-                    content: "",
-                    contact: {
-                        phone: "+40726340034",
-                        whatsapp: "https://wa.me/40726340034",
-                        email: "intravilan@gmail.com",
-                        social: {
-                            linkedin: "https://www.linkedin.com/company/google",
-                            youtube: "https://www.youtube.com/user/youtube",
-                            tiktok: "https://www.tiktok.com/@tiktok",
-                            instagram: "https://www.instagram.com/instagram"
-                        }
-                    },
-                    mp4Url: `${mediaPath}V4.mp4`,
-                    imageUrl: `${mediaPath}SS4.jpg`
-                }
-            },
-            desktop: {
-                snap1: {
-                    title: "Îți găsim terenul, exact unde vrei.",
-                    content: "Soluții personalizate pentru proiecte logistice, industriale și retail. Spune zona pe hartă, primești un shortlist în 7-14 zile.",
-                    youtubeId: "vNscPtijCe4",
-                    imageUrl: `${mediaPath}SS1.jpg`,
-                    mp4Url: ""
-                },
-                snap2: {
-                    title: "",
-                    content: "",
-                    mp4Url: `${mediaPath}V2.mp4`,
-                    imageUrl: `${mediaPath}SS2.jpg`
-                },
-                snap3: {
-                    title: "",
-                    content: "",
-                    mp4Url: `${mediaPath}V3.mp4`,
-                    imageUrl: `${mediaPath}SS3.jpg`
-                },
-                snap4: {
-                    title: "Un partener de încredere pentru afacerea ta.",
-                    content: "",
-                    contact: {
-                        phone: "+40726340034",
-                        whatsapp: "https://wa.me/40726340034",
-                        email: "intravilan@gmail.com",
-                        social: {
-                            linkedin: "https://www.linkedin.com/company/google",
-                            youtube: "https://www.youtube.com/user/youtube",
-                            tiktok: "https://www.tiktok.com/@tiktok",
-                            instagram: "https://www.instagram.com/instagram"
-                        }
-                    },
-                    mp4Url: `${mediaPath}V4.mp4`,
-                    imageUrl: `${mediaPath}SS4.jpg`
-                }
-            }
-        };
-
-        let backgroundYoutubePlayers = {};
-
-        const isMobileDevice = () => window.innerWidth < 768;
-
-        function loadYouTubeAPI() {
-            if (typeof YT !== 'undefined' && YT.Player) {
-                if (window.onYouTubeIframeAPIReady) {
-                    window.onYouTubeIframeAPIReady();
-                }
-                return;
-            }
-
-            const tag = document.createElement('script');
-            tag.src = "https://www.youtube.com/iframe_api";
-            const firstScriptTag = document.getElementsByTagName('script')[0];
-            if (firstScriptTag && firstScriptTag.parentNode) {
-                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-            }
-
-            setTimeout(() => {
-                if (typeof YT === 'undefined' || typeof YT.Player === 'undefined') {
-                    console.warn('YouTube API failed to load. Some video functionalities might be affected.');
-                }
-            }, 5000);
-        }
-
-        window.onYouTubeIframeAPIReady = function() {
-            document.querySelectorAll('.snap-section').forEach((section, index) => {
-                const isDesktop = !isMobileDevice();
-                const snapKey = `snap${index + 1}`;
-                const content = isDesktop ? pageContent.desktop[snapKey] : pageContent.mobile[snapKey];
-                
-                if (isDesktop && section.id === 'snap-scroll-1' && content.youtubeId) {
-                    const playerDivId = `youtube-bg-player-${section.id}`;
-                    let playerDiv = document.getElementById(playerDivId);
-
-                    if (!playerDiv) {
-                        playerDiv = document.createElement('div');
-                        playerDiv.id = playerDivId;
-                        playerDiv.className = 'youtube-iframe background-element';
-                        const backgroundContainer = section.querySelector('.background-container');
-                        if (backgroundContainer) {
-                            backgroundContainer.appendChild(playerDiv);
-                        }
-                    }
-
-                    if (!backgroundYoutubePlayers[playerDivId]) {
-                        backgroundYoutubePlayers[playerDivId] = new YT.Player(playerDivId, {
-                            videoId: content.youtubeId,
-                            playerVars: {
-                                autoplay: 0,
-                                controls: 0,
-                                loop: 1,
-                                mute: 1,
-                                playlist: content.youtubeId,
-                                rel: 0,
-                                showinfo: 0,
-                                modestbranding: 1
-                            },
-                            events: {
-                                'onReady': (event) => {
-                                    event.target.setPlaybackQuality('hd1080');
-                                    const playerElement = document.getElementById(playerDivId);
-                                    if (playerElement) {
-                                        setTimeout(() => playerElement.classList.add('active'), 50);
-                                    }
-                                },
-                                'onStateChange': (event) => {
-                                    if (event.data === YT.PlayerState.ENDED) {
-                                        event.target.seekTo(0);
-                                    }
-                                }
-                            }
-                        });
-                    }
-                }
-            });
-        };
-
-        function updateBackground(sectionElement, contentData) {
-            const bgContainer = sectionElement.querySelector('.background-container');
-            if (!bgContainer) {
-                console.warn(`Containerul de fundal lipsește pentru secțiunea ${sectionElement.id}`);
-                return;
-            }
-            bgContainer.innerHTML = ''; 
-
-            let elementToAppend = null;
-            const isDesktop = !isMobileDevice();
-
-            if (isDesktop && sectionElement.id === 'snap-scroll-1' && contentData.youtubeId) {
-                const playerDivId = `youtube-bg-player-${sectionElement.id}`;
-                let existingPlayerDiv = document.getElementById(playerDivId);
-                if (existingPlayerDiv) {
-                    bgContainer.appendChild(existingPlayerDiv);
-                    setTimeout(() => existingPlayerDiv.classList.add('active'), 50);
-                    return;
-                } else {
-                    const playerDiv = document.createElement('div');
-                    playerDiv.id = playerDivId;
-                    playerDiv.className = 'youtube-iframe background-element';
-                    bgContainer.appendChild(playerDiv);
-                    return;
-                }
-            }
-            
-            if (contentData.mp4Url && contentData.mp4Url !== '') {
-                const video = document.createElement('video');
-                video.src = contentData.mp4Url;
-                video.className = 'background-element'; 
-                video.autoplay = true;
-                video.loop = true;
-                video.muted = true;
-                video.playsInline = true;
-                video.preload = "auto";
-                video.setAttribute('aria-label', `Video de fundal pentru secțiunea ${sectionElement.id.replace('snap-scroll-', '')}`);
-
-                video.onerror = (e) => {
-                    console.error(`Eroare la incarcarea video-ului MP4: ${video.src}`, e);
-                    if (contentData.imageUrl && contentData.imageUrl !== '') {
-                        const img = document.createElement('img');
-                        img.src = contentData.imageUrl;
-                        img.className = 'background-element active';
-                        img.alt = `Fundal static (fallback video) pentru ${sectionElement.id}`;
-                        img.loading = "lazy";
-                        bgContainer.innerHTML = '';
-                        bgContainer.appendChild(img);
-                    } else {
-                        bgContainer.innerHTML = '<div class="background-element flex items-center justify-center text-gray-500 text-center p-4">Fundal video indisponibil.</div>';
-                    }
-                };
-                
-                elementToAppend = video;
-                
-            } else if (contentData.imageUrl && contentData.imageUrl !== '') {
-                const img = document.createElement('img');
-                img.src = contentData.imageUrl;
-                img.className = 'background-element'; 
-                img.alt = `Fundal pentru secțiunea ${sectionElement.id.replace('snap-scroll-', '')}`;\
-                img.loading = "lazy";
-
-                img.onerror = (e) => {
-                    console.error(`Eroare la incarcarea imaginii: ${img.src}`, e);
-                    bgContainer.innerHTML = '<div class="background-element flex items-center justify-center text-gray-500 text-center p-4">Fundal imagine indisponibil.</div>';
-                };
-                elementToAppend = img;
-            } else {
-                bgContainer.innerHTML = '<div class="background-element flex items-center justify-center text-gray-500 text-center p-4">Fundal indisponibil.</div>';
-            }
-
-            if (elementToAppend) {
-                bgContainer.appendChild(elementToAppend);
-
-                if (elementToAppend.tagName === 'VIDEO') {
-                    elementToAppend.play().catch(e => {
-                        console.warn(`Autoplay video MP4 blocat pentru ${elementToAppend.src}. Eroare:`, e);
-                        if (contentData.imageUrl && contentData.imageUrl !== '') {
-                            const img = document.createElement('img');
-                            img.src = contentData.imageUrl;
-                            img.className = 'background-element active';
-                            img.alt = `Fundal static (video blocat) pentru ${sectionElement.id}`;
-                            img.loading = "lazy";
-                            bgContainer.innerHTML = '';
-                            bgContainer.appendChild(img);
-                        } else {
-                            bgContainer.innerHTML = '<div class="background-element flex items-center justify-center text-gray-500 text-center p-4">Video nu poate fi redat automat.</div>';
-                        }
-                    });
-                }
-                
-                if (!(isDesktop && sectionElement.id === 'snap-scroll-1' && contentData.youtubeId)) {
-                    setTimeout(() => elementToAppend.classList.add('active'), 50);
-                }
-            }
-        }
-
-        function populateContent() {
-            const currentContentSource = isMobileDevice() ? pageContent.mobile : pageContent.desktop;
-
-            // Snap 1
-            const snap1Data = currentContentSource.snap1;
-            const snap1Title = document.getElementById('snap1-title');
-            const snap1Content = document.getElementById('snap1-content');
-            const snap1Cta = document.getElementById('snap1-cta');
-            if (snap1Title) snap1Title.textContent = snap1Data.title || '';
-            if (snap1Content) snap1Content.textContent = snap1Data.content || '';
-            if (snap1Cta) {
-                snap1Cta.textContent = snap1Data.linkCtaText || '';
-                snap1Cta.href = snap1Data.linkCtaUrl || '#';
-                snap1Cta.style.display = snap1Data.linkCtaText ? 'inline-block' : 'none';
-            }
-            const snap1Section = document.getElementById('snap-scroll-1');
-            if (snap1Section) updateBackground(snap1Section, snap1Data);
-
-            // Snap 2
-            const snap2Data = currentContentSource.snap2;
-            const snap2Title = document.getElementById('snap2-title');
-            const snap2Content = document.getElementById('snap2-content');
-            const snap2Section = document.getElementById('snap-scroll-2');
-            if (snap2Title) snap2Title.textContent = snap2Data.title || '';
-            if (snap2Content) snap2Content.textContent = snap2Data.content || '';
-            if (snap2Section) updateBackground(snap2Section, snap2Data);
-
-
-            // Snap 3
-            const snap3Data = currentContentSource.snap3;
-            const snap3Title = document.getElementById('snap3-title');
-            const snap3Content = document.getElementById('snap3-content');
-            const snap3Section = document.getElementById('snap-scroll-3');
-            if (snap3Title) snap3Title.textContent = snap3Data.title || '';
-            if (snap3Content) snap3Content.textContent = snap3Data.content || '';
-            if (snap3Section) updateBackground(snap3Section, snap3Data);
-
-
-            // Snap 4
-            const snap4Data = currentContentSource.snap4;
-            const snap4Title = document.getElementById('snap4-title');
-            const snap4Content = document.getElementById('snap4-content');
-            const snap4Link = document.getElementById('snap4-link');
-            const snap4Phone = document.getElementById('snap4-phone');
-            const snap4WhatsappLink = document.getElementById('snap4-whatsapp-link');
-            const snap4Email = document.getElementById('snap4-email');
-            const snap4LinkedinLink = document.getElementById('snap4-linkedin-link');
-            const snap4YoutubeLink = document.getElementById('snap4-youtube-link');
-            const snap4TiktokLink = document.getElementById('snap4-tiktok-link');
-            const snap4InstagramLink = document.getElementById('snap4-instagram-link');
-            const snap4Section = document.getElementById('snap-scroll-4');
-
-            if (snap4Title) snap4Title.textContent = snap4Data.title || '';
-            if (snap4Content) snap4Content.textContent = snap4Data.content || '';
-            if (snap4Link) {
-                snap4Link.textContent = snap4Data.linkCtaText || '';
-                snap4Link.href = snap4Data.linkCtaUrl || '#';
-                snap4Link.style.display = snap4Data.linkCtaText ? 'inline-block' : 'none';
-            }
-
-            if (snap4Phone) {
-                snap4Phone.textContent = ` ${snap4Data.contact.phone}` || '';
-                snap4Phone.style.display = snap4Data.contact.phone ? 'block' : 'none';
-            }
-            if (snap4WhatsappLink) {
-                snap4WhatsappLink.href = snap4Data.contact.whatsapp || '#';
-                if (snap4WhatsappLink.parentElement) {
-                    snap4WhatsappLink.parentElement.style.display = snap4Data.contact.whatsapp ? 'flex' : 'none';
-                }
-            }
-            if (snap4Email) {
-                snap4Email.textContent = ` ${snap4Data.contact.email}` || '';
-                snap4Email.style.display = snap4Data.contact.email ? 'block' : 'none';
-            }
-
-            if (snap4LinkedinLink) snap4LinkedinLink.href = snap4Data.contact.social.linkedin || '#';
-            if (snap4YoutubeLink) snap4YoutubeLink.href = snap4Data.contact.social.youtube || '#';
-            if (snap4TiktokLink) snap4TiktokLink.href = snap4Data.contact.social.tiktok || '#';
-            if (snap4InstagramLink) snap4InstagramLink.href = snap4Data.contact.social.instagram || '#';
-
-            const socialLinksContainer = document.querySelector('#snap-scroll-4 .flex.items-center.space-x-4');
-            if (socialLinksContainer) {
-                const hasSocialLinks = Object.values(snap4Data.contact.social).some(link => link && link !== '#');
-                socialLinksContainer.style.display = hasSocialLinks ? 'flex' : 'none';
-            }
-
-            if (snap4Section) updateBackground(snap4Section, snap4Data);
-        }
-
-        const logoColors = ['#F97316', '#FACC15', '#22C55E', '#A855F7'];
-        const logoElement = document.getElementById('logo-openhouse');
-        const snapSections = document.querySelectorAll('.snap-section');
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const index = Array.from(snapSections).indexOf(entry.target);
-                    if (index !== -1 && logoElement) {
-                        logoElement.style.color = logoColors[index];
-
-                        const isDesktop = !isMobileDevice();
-                        const snapKey = `snap${index + 1}`;
-                        const content = isDesktop ? pageContent.desktop[snapKey] : pageContent.mobile[snapKey];
-
-                        if (isDesktop && entry.target.id === 'snap-scroll-1' && content.youtubeId) {
-                             const playerDivId = `youtube-bg-player-${entry.target.id}`;
-                             const player = backgroundYoutubePlayers[playerDivId];
-                             if (player && player.playVideo) {
-                                 const playPromise = player.playVideo();
-                                 if (playPromise !== undefined) {
-                                     playPromise.then(_ => {
-                                     }).catch(error => {
-                                         const bgContainer = entry.target.querySelector('.background-container');
-                                         if (content.imageUrl && bgContainer) {
-                                            const img = document.createElement('img');
-                                            img.src = content.imageUrl;
-                                            img.className = 'background-element active';
-                                            img.alt = 'Video blocat';
-                                            bgContainer.innerHTML = ''; 
-                                            bgContainer.appendChild(img);
-                                         }
-                                     });
-                                 }
-                             }
-                         }
-                    }
-                } else {
-                    const index = Array.from(snapSections).indexOf(entry.target);
-                    const isDesktop = !isMobileDevice();
-                    const snapKey = `snap${index + 1}`;
-                    const content = isDesktop ? pageContent.desktop[snapKey] : pageContent.mobile[snapKey];
-
-                    if (isDesktop && entry.target.id === 'snap-scroll-1' && content.youtubeId) {
-                         const playerDivId = `youtube-bg-player-${entry.target.id}`;
-                         const player = backgroundYoutubePlayers[playerDivId];
-                         if (player && player.pauseVideo) {
-                             player.pauseVideo();
-                         }
-                    }
-                }
-            });
-        }, {
-            threshold: 0.5
-        });
-
-        snapSections.forEach(section => {
-            observer.observe(section);
-        });
-
-        const youtubeModal = document.getElementById('youtube-modal');
-        const closeModalBtn = document.getElementById('close-modal');
-        let modalYoutubePlayer;
-
-        function openYoutubeModal(videoId) {
-            if (youtubeModal) youtubeModal.style.display = 'flex';
-
-            const youtubePlayerDiv = document.getElementById('youtube-player');
-            if (typeof YT !== 'undefined' && YT.Player && youtubePlayerDiv) {
-                if (modalYoutubePlayer) {
-                    modalYoutubePlayer.loadVideoById(videoId);
-                } else {
-                    modalYoutubePlayer = new YT.Player('youtube-player', {
-                        videoId: videoId,
-                        playerVars: {
-                            autoplay: 1,
-                            controls: 1,
-                            rel: 0,
-                            showinfo: 0,
-                            modestbranding: 1
-                        }
-                    });
-                }
-            } else {
-                console.warn("YouTube API not loaded or player div missing. Cannot open video modal.");
-            }
-        }
-
-        function closeYoutubeModal() {
-            if (youtubeModal) youtubeModal.style.display = 'none';
-            if (modalYoutubePlayer && modalYoutubePlayer.stopVideo) {
-                modalYoutubePlayer.stopVideo();
-            }
-        }
-        
-        if (closeModalBtn) closeModalBtn.onclick = closeYoutubeModal;
-        window.onclick = function(event) {
-            if (youtubeModal && event.target === youtubeModal) {
-                closeYoutubeModal();
-            }
-        };
-
-        let resizeTimeout;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(() => {
-                populateContent();
-            }, 250);
-        });
-
-        window.addEventListener('load', () => {
-            populateContent();
-            loadYouTubeAPI();
-        });
-    </script>
+  <!-- Structured Data: 2 Case Studies on Home -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"CaseStudy",
+    "name":"Teren gol → depozit logistic (MicroLogistic)",
+    "url":"https://vanzareteren.ro/caz/micrologistic",
+    "image":[
+      "https://vanzareteren.ro/img/case-micro-before.webp",
+      "https://vanzareteren.ro/img/case-micro-after.webp"
+    ],
+    "description":"Land hunting pentru clientul MicroLogistic: 15–25.000 mp, acces A0, utilități la limită, front ≥ 60 m. Teren identificat în 9 zile, tranzacție accelerată și construcție depozit."
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"CaseStudy",
+    "name":"Proprietar → cumpărător în câteva zile (vânzare rapidă)",
+    "url":"https://vanzareteren.ro/caz/vanzare-rapida",
+    "image":[
+      "https://vanzareteren.ro/img/case-owner-1.webp",
+      "https://vanzareteren.ro/img/case-owner-2.webp"
+    ],
+    "description":"Am potrivit cererea activă din WANTED cu terenul proprietarului, am pre-calificat actele (CF, plan cadastral, CU/PUZ) și am facilitat ofertă fermă în 5 zile."
+  }
+  </script>
 </body>
 </html>
